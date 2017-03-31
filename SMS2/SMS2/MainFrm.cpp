@@ -94,7 +94,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableAutoHideBars(CBRS_ALIGN_ANY);
 	DockControlBar(&m_wndOutput);
 
-
+	//连接数据
+	CString strMsg("");
+	if (!g_mysqlCon.Connect("localhost", 3306, "snow", "snow", "snow123", "utf8", strMsg))
+	{
+		MessageBox(_T("连接数据库失败!\r\n") + strMsg);
+	}
+	else
+	{
+		MessageBox("连接数据库成功！");
+	}
 	//开始子线程
 	m_threadMySQL.StartThread();
 
@@ -388,9 +397,26 @@ LRESULT CMainFrame::OnRedraw(WPARAM, LPARAM)
 void CALLBACK CMainFrame::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
 {
 	CMainFrame* pThis = (CMainFrame*)pParam;
+	DWORD dwWaitTime = 0;
 
-	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, 10))
+	//已连接时等待5s，未连接时等待2s
+	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, dwWaitTime))
 	{
+		CString strMsg;
+		if (g_mysqlCon.IsConnected())
+		{
+			strMsg.Format("%s(数据库已连接)", APP_TITLE);
+			pThis->SetWindowText(strMsg);
+			dwWaitTime = 5000;
+		}
+		else
+		{
+			g_mysqlCon.Close();
+			strMsg.Format("%s(数据库未连接)", APP_TITLE);
+			pThis->SetWindowText(strMsg);
+			g_mysqlCon.Reconnect(strMsg);
+			dwWaitTime = 2000;
+		}
 	}
 }
 

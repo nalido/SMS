@@ -73,4 +73,5 @@
 #pragma comment(lib, "libmysql.lib")
 #include "mysql.h"
 
+#define	APP_TITLE _T("东华驾校学员管理系统")
 #define UM_REDRAW (WM_USER + 101)

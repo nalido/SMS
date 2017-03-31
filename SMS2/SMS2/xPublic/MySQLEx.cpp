@@ -6,6 +6,13 @@ namespace xPublic{
 	CMySQLEx::CMySQLEx()
 	{
 		m_isInit = false;
+		m_host = "";
+		m_Db = "";
+		m_user = "";
+		m_passw = "";
+		m_Charset = "";
+		m_port = 3306;
+		m_canReconnect = FALSE;
 	}
 
 
@@ -14,8 +21,17 @@ namespace xPublic{
 		Close();
 	}
 
+
 	int CMySQLEx::Connect(char *host, int port, char * Db, char * user, char* passwd, char * charset, CString& Msg)
 	{
+		m_host = host;
+		m_Db = Db;
+		m_user = user;
+		m_passw = passwd;
+		m_Charset = charset;
+		m_port = port;
+		m_canReconnect = TRUE;
+
 		if (mysql_init(&m_mysql) == NULL)
 		{
 			Msg = "initial mysql handle error!";
@@ -41,11 +57,25 @@ namespace xPublic{
 		return 1;
 	}
 
+	int CMySQLEx::Reconnect(CString& Msg)
+	{
+		if (0)//(m_canReconnect)
+		{
+			Connect(m_host, m_port, m_Db, m_user, m_passw, m_Charset, Msg);
+		}
+		else
+		{
+			Msg = "连接参数未初始化！";
+			return 0;
+		}
+		Msg = "重连成功！";
+		return 1;
+	}
 	
 	BOOL CMySQLEx::IsConnected()
 	{
-		if (m_mysql.status != MYSQL_STATUS_READY) return true;
-		else return false;
+		CString strMsg;
+		return ExecuteQueryExist("SELECT DATE_FORMAT(NOW(),'%Y%m%e-%H:%i:%s')", strMsg);
 	}
 
 	
@@ -100,6 +130,7 @@ namespace xPublic{
 	
 	BOOL CMySQLEx::ExecuteQueryExist(LPCTSTR lpszSQL, CString& Msg)
 	{
+		Msg = "Exist!";
 		if (!m_isInit)
 		{
 			Msg = "No connection exist.";
@@ -113,7 +144,13 @@ namespace xPublic{
 			return false;
 		}
 
-		return mysql_field_count(&m_mysql) ? true : false;
+		MYSQL_RES *res;
+		res = mysql_store_result(&m_mysql);
+		BOOL isExist = FALSE;
+		if (res) isExist = TRUE;
+		mysql_free_result(res);
+
+		return isExist;
 	}
 
 	

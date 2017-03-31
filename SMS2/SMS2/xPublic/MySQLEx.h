@@ -17,6 +17,14 @@ namespace xPublic{
 		MYSQL m_mysql;
 		BOOL m_isInit; //检验m_mysql是否被初始化过
 
+		char* m_host;
+		char* m_Db;
+		char* m_user;
+		char* m_passw;
+		char* m_Charset;
+		int m_port;
+		BOOL m_canReconnect;
+
 		/*
 		函数功能：
 			初始化数据库
@@ -34,6 +42,9 @@ namespace xPublic{
 			int ：1表示成功；0表示失败
 		*/
 		int Connect(char *host, int port, char * Db, char * user, char* passwd, char * charset, CString& Msg);
+
+		//重连数据库
+		int Reconnect(CString& Msg);
 
 		/*
 		函数功能：检验数据库是否连上
