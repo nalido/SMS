@@ -28,6 +28,15 @@ void CViewRegister::DoDataExchange(CDataExchange* pDX)
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_PHOTO, m_SPhoto);
 	DDX_Control(pDX, IDC_CAMERA, m_Btn_Cap);
+	DDX_Control(pDX, IDC_NUMBER, m_Sta_Num);
+	DDX_Control(pDX, IDC_DATE_SIGNIN, m_Date_Sign);
+	DDX_Control(pDX, IDC_CARTYPE, m_Comb_CarType);
+	DDX_Control(pDX, IDC_NAME, m_Ed_Name);
+	DDX_Control(pDX, IDC_BIRTH, m_Date_Birth);
+	DDX_Control(pDX, IDC_TEL, m_Ed_Tel);
+	DDX_Control(pDX, IDC_ID, m_Ed_ID);
+	DDX_Control(pDX, IDC_HOME, m_Ed_Home);
+	DDX_Control(pDX, IDC_FEE, m_Ed_Fee);
 }
 
 BEGIN_MESSAGE_MAP(CViewRegister, CBCGPFormView)
@@ -35,6 +44,8 @@ BEGIN_MESSAGE_MAP(CViewRegister, CBCGPFormView)
 	ON_WM_TIMER()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
+	ON_BN_CLICKED(IDC_BTN_SIGN, &CViewRegister::OnBnClickedBtnSign)
+	ON_BN_CLICKED(IDC_NEWFILE, &CViewRegister::OnBnClickedNewfile)
 END_MESSAGE_MAP()
 
 
@@ -114,6 +125,10 @@ void CViewRegister::OnInitialUpdate()
 		MessageBox("Failed to open camera");
 	}
 
+	m_Comb_CarType.AddString("C1手动挡");
+	m_Comb_CarType.AddString("C2自动挡");
+	m_Comb_CarType.AddString("B2大货车");
+	m_Comb_CarType.SetCurSel(0);
 }
 
 
@@ -143,14 +158,32 @@ void CViewRegister::OnSize(UINT nType, int cx, int cy)
 {
 	CBCGPFormView::OnSize(nType, cx, cy);
 
-	int margin = 200; //控件外边距
-	if (m_SPhoto) //控制控件位置
-	{
-		CRect rct;
-		m_SPhoto.GetClientRect(&rct);
-		m_SPhoto.MapWindowPoints(this, &rct);
-		rct.MoveToX(cx - rct.Width() - margin);
+	//int margin = 200; //控件外边距
+	//if (m_SPhoto) //控制控件位置
+	//{
+	//	CRect rct;
+	//	m_SPhoto.GetClientRect(&rct);
+	//	m_SPhoto.MapWindowPoints(this, &rct);
+	//	rct.MoveToX(cx - rct.Width() - margin);
 
-		m_SPhoto.MoveWindow(rct);
-	}
+	//	m_SPhoto.MoveWindow(rct);
+	//}
+}
+
+
+void CViewRegister::OnBnClickedBtnSign()
+{
+	m_Sta_Num.SetWindowTextA("DL17040005");
+}
+
+
+void CViewRegister::OnBnClickedNewfile()
+{
+	m_Ed_Name.SetWindowTextA("");
+	m_Ed_ID.SetWindowTextA("");
+	m_Ed_Tel.SetWindowTextA("");
+	m_Ed_Home.SetWindowTextA("");
+	m_Ed_Fee.SetWindowTextA("");
+	m_Comb_CarType.SetCurSel(0);
+	UpdateData(FALSE);
 }

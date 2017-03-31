@@ -13,7 +13,7 @@
 #define new DEBUG_NEW
 #endif
 
-
+xPublic::CMySQLEx g_mysqlCon;
 // CMainFrame
 
 IMPLEMENT_DYNCREATE(CMainFrame, CBCGPFrameWnd)
@@ -28,6 +28,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
 	ON_MESSAGE(UM_REDRAW, OnRedraw)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 // CMainFrame construction/destruction
@@ -38,6 +39,7 @@ enum VIEW_TYPE{
 };
 
 CMainFrame::CMainFrame()
+: m_threadMySQL(this, ThreadMySQLCallback)
 {
 	// TODO: add member initialization code here
 }
@@ -91,6 +93,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableDocking(CBRS_ALIGN_ANY);
 	EnableAutoHideBars(CBRS_ALIGN_ANY);
 	DockControlBar(&m_wndOutput);
+
+
+	//开始子线程
+	m_threadMySQL.StartThread();
+
 	return 0;
 }
 
@@ -101,8 +108,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
 
-	cs.cx = GetSystemMetrics(SM_CXSCREEN);
-	cs.cy = GetSystemMetrics(SM_CYSCREEN);
+	//cs.cx = GetSystemMetrics(SM_CXSCREEN);
+	//cs.cy = GetSystemMetrics(SM_CYSCREEN);
 
 	return TRUE;
 }
@@ -375,4 +382,21 @@ LRESULT CMainFrame::OnRedraw(WPARAM, LPARAM)
 	GetActiveView()->UpdateWindow();
 	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ALLCHILDREN | RDW_FRAME);
 	return 0;
+}
+
+
+void CALLBACK CMainFrame::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
+{
+	CMainFrame* pThis = (CMainFrame*)pParam;
+
+	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, 10))
+	{
+	}
+}
+
+void CMainFrame::OnClose()
+{
+	//关闭子线程
+	m_threadMySQL.StopThread();
+	CBCGPFrameWnd::OnClose();
 }

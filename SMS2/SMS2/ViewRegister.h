@@ -37,6 +37,20 @@ public:
 
 	CStatic m_SPhoto;
 	CButton m_Btn_Cap;
+
+	CStatic m_Sta_Num;
+	CString m_strNumber; //档案号
+	CString m_strDate;
+	CString m_strBirth;
+	CEdit m_Ed_Name; 
+	CEdit m_Ed_ID;
+	CEdit m_Ed_Tel;
+	CEdit m_Ed_Home;
+	CEdit m_Ed_Fee;
+	CComboBox m_Comb_CarType;
+	CDateTimeCtrl m_Date_Sign;
+	CDateTimeCtrl m_Date_Birth;
+
 	cv::VideoCapture m_videoCap;//镜头捕捉
 	cv::Mat m_cap;//捕捉到的帧
 	BOOL m_canCap; //是否已打开摄像头
@@ -45,6 +59,8 @@ public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnBnClickedBtnSign();
+	afx_msg void OnBnClickedNewfile();
 };
 
 

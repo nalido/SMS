@@ -4,6 +4,8 @@
 
 #pragma once
 #include "OutputBar.h"
+#include "xPublic\ThreadBase.h"
+#include "xPublic\MySQLEx.h"
 
 class CMainFrame : public CBCGPFrameWnd
 {
@@ -56,4 +58,13 @@ protected:
 	CArray<CView*, CView*>	m_arViews;
 public:
 	void SelectView(int nID);
+
+
+	//SQL
+	xPublic::CThreadBase m_threadMySQL;
+	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
+	afx_msg void OnClose();
 };
+
+
+extern xPublic::CMySQLEx g_mysqlCon;

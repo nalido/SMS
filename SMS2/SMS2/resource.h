@@ -20,7 +20,18 @@
 #define IDC_BUTTON1                     1055
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
-#define IDC_BTN_CAP                     1059
+#define IDC_DATE_SIGNIN                 1061
+#define IDC_CARTYPE                     1063
+#define IDC_NUMBER                      1064
+#define IDC_BTN_SIGN                    1065
+#define IDC_BUTTON2                     1066
+#define IDC_NEWFILE                     1066
+#define IDC_NAME                        1067
+#define IDC_TEL                         1069
+#define IDC_FEE                         1070
+#define IDC_ID                          1071
+#define IDC_HOME                        1072
+#define IDC_BIRTH                       1073
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
 #define ID_VIEW_APPLOOK_2000            32826
@@ -58,7 +69,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        169
 #define _APS_NEXT_COMMAND_VALUE         32868
-#define _APS_NEXT_CONTROL_VALUE         1060
+#define _APS_NEXT_CONTROL_VALUE         1067
 #define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif
