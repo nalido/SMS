@@ -2,7 +2,7 @@
 <BCGP_RIBBON>
 	<HEADER>
 		<VERSION>1</VERSION>
-		<VERSION_STAMP>1</VERSION_STAMP>
+		<VERSION_STAMP>2</VERSION_STAMP>
 	</HEADER>
 	<RIBBON_BAR>
 		<ELEMENT_NAME>RibbonBar</ELEMENT_NAME>
@@ -420,6 +420,39 @@
 								</ID>
 								<TEXT>报表打印</TEXT>
 								<INDEX_LARGE>4</INDEX_LARGE>
+							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>学员管理</NAME>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_2</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>学员管理</NAME>
+						<ELEMENTS>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_BOOKING1</NAME>
+									<VALUE>32866</VALUE>
+								</ID>
+								<TEXT>科一预约</TEXT>
+								<INDEX_LARGE>6</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_BOOKING2</NAME>
+									<VALUE>32867</VALUE>
+								</ID>
+								<TEXT>科二预约</TEXT>
+								<INDEX_LARGE>6</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>

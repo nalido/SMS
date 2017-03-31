@@ -42,6 +42,12 @@
     <ClInclude Include="ViewRegister.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ViewBooking1.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewBooking2.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -63,6 +69,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ViewRegister.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewBooking1.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewBooking2.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

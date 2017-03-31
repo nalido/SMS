@@ -111,6 +111,8 @@
     <ClInclude Include="SMS2Doc.h" />
     <ClInclude Include="SMS2View.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ViewBooking1.h" />
+    <ClInclude Include="ViewBooking2.h" />
     <ClInclude Include="ViewRegister.h" />
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +125,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ViewBooking1.cpp" />
+    <ClCompile Include="ViewBooking2.cpp" />
     <ClCompile Include="ViewRegister.cpp" />
   </ItemGroup>
   <ItemGroup>

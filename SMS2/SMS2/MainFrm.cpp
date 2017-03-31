@@ -6,6 +6,8 @@
 
 #include "MainFrm.h"
 #include "ViewRegister.h"
+#include "ViewBooking1.h"
+#include "ViewBooking2.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,6 +22,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_VIEW_OUTPUT, OnViewOutput)
 	ON_COMMAND(ID_VIEW_REGISTER, OnViewRegister)
+	ON_COMMAND(ID_VIEW_BOOKING1, OnViewBooking1)
+	ON_COMMAND(ID_VIEW_BOOKING2, OnViewBooking2)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
@@ -233,6 +237,16 @@ void CMainFrame::OnViewRegister()
 	SelectView(VIEW_REGISTER);
 }
 
+
+void CMainFrame::OnViewBooking1()
+{
+	SelectView(VIEW_BOOKING1);
+}
+
+void CMainFrame::OnViewBooking2()
+{
+	SelectView(VIEW_BOOKING2);
+}
  // UI_TYPE_RIBBON
 
 
@@ -266,12 +280,12 @@ CView* CMainFrame::GetView(int nID)
 	case VIEW_REGISTER:
 		pClass = RUNTIME_CLASS(CViewRegister);
 		break;
-	//case VIEW_BOOKING1:
-	//	pClass = RUNTIME_CLASS(CBooking1);
-	//	break;
-	//case VIEW_BOOKING2:
-	//	pClass = RUNTIME_CLASS(CBooking2);
-	//	break;
+	case VIEW_BOOKING1:
+		pClass = RUNTIME_CLASS(CViewBooking1);
+		break;
+	case VIEW_BOOKING2:
+		pClass = RUNTIME_CLASS(CViewBooking2);
+		break;
 	}
 	if (pClass == NULL)
 	{

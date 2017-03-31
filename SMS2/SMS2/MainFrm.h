@@ -43,6 +43,8 @@ protected:
 	afx_msg void OnToolsOptions();
 	afx_msg void OnViewOutput();
 	afx_msg void OnViewRegister();
+	afx_msg void OnViewBooking1();
+	afx_msg void OnViewBooking2();
 	afx_msg void OnUpdateViewOutput(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnRedraw(WPARAM, LPARAM);
 	DECLARE_MESSAGE_MAP()

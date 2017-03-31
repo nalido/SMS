@@ -13,7 +13,12 @@
 #define IDR_THEME_MENU                  136
 #define IDB_WORKSPACE                   147
 #define IDD_REGISTER                    166
+#define IDD_DIALOG1                     167
+#define IDD_BOOKING1                    167
+#define IDD_DIALOG2                     168
+#define IDD_BOOKING2                    168
 #define IDC_COMPANY_URL                 1041
+#define IDC_BUTTON1                     1055
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
 #define ID_VIEW_APPLOOK_2000            32826
@@ -42,14 +47,16 @@
 #define ID_STATUSBAR_PANE2              32855
 #define ID_VIEW_REGISTER                32864
 #define ID_VIEW_REPORT                  32865
+#define ID_VIEW_BOOKING1                32866
+#define ID_VIEW_BOOKING2                32867
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        167
-#define _APS_NEXT_COMMAND_VALUE         32866
-#define _APS_NEXT_CONTROL_VALUE         1055
+#define _APS_NEXT_RESOURCE_VALUE        169
+#define _APS_NEXT_COMMAND_VALUE         32868
+#define _APS_NEXT_CONTROL_VALUE         1058
 #define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif
