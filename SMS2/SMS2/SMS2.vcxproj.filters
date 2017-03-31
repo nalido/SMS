@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="xPublic">
+      <UniqueIdentifier>{7990ec57-7cba-4fe8-ac8e-588cac6d3591}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -48,6 +51,21 @@
     <ClInclude Include="ViewBooking2.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="xPublic\CObjectBase.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
+    <ClInclude Include="xPublic\CvvImage.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
+    <ClInclude Include="xPublic\MyPrint.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
+    <ClInclude Include="xPublic\MySQLEx.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
+    <ClInclude Include="xPublic\ThreadBase.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -76,6 +94,21 @@
     </ClCompile>
     <ClCompile Include="ViewBooking2.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="xPublic\CObjectBase.cpp">
+      <Filter>xPublic</Filter>
+    </ClCompile>
+    <ClCompile Include="xPublic\CvvImage.cpp">
+      <Filter>xPublic</Filter>
+    </ClCompile>
+    <ClCompile Include="xPublic\MyPrint.cpp">
+      <Filter>xPublic</Filter>
+    </ClCompile>
+    <ClCompile Include="xPublic\MySQLEx.cpp">
+      <Filter>xPublic</Filter>
+    </ClCompile>
+    <ClCompile Include="xPublic\ThreadBase.cpp">
+      <Filter>xPublic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

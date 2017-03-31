@@ -17,6 +17,7 @@
 IMPLEMENT_DYNCREATE(CSMS2View, CBCGPFormView)
 
 BEGIN_MESSAGE_MAP(CSMS2View, CBCGPFormView)
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 // CSMS2View construction/destruction
@@ -44,7 +45,6 @@ BOOL CSMS2View::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
-
 	return CBCGPFormView::PreCreateWindow(cs);
 }
 
@@ -79,3 +79,9 @@ CSMS2Doc* CSMS2View::GetDocument() const // non-debug version is inline
 
 
 // CSMS2View message handlers
+
+
+void CSMS2View::OnSize(UINT nType, int cx, int cy)
+{
+	CBCGPFormView::OnSize(nType, cx, cy);
+}

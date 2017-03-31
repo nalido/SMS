@@ -42,6 +42,8 @@ protected:
 protected:
 	afx_msg void OnFilePrintPreview();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };
 
 #ifndef _DEBUG  // debug version in SMS2View.cpp

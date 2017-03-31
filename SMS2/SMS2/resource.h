@@ -15,10 +15,12 @@
 #define IDD_REGISTER                    166
 #define IDD_DIALOG1                     167
 #define IDD_BOOKING1                    167
-#define IDD_DIALOG2                     168
 #define IDD_BOOKING2                    168
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
+#define IDC_PHOTO                       1058
+#define IDC_CAMERA                      1059
+#define IDC_BTN_CAP                     1059
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
 #define ID_VIEW_APPLOOK_2000            32826
@@ -56,7 +58,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        169
 #define _APS_NEXT_COMMAND_VALUE         32868
-#define _APS_NEXT_CONTROL_VALUE         1058
+#define _APS_NEXT_CONTROL_VALUE         1060
 #define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif
