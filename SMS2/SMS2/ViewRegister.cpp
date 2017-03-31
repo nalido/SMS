@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "SMS2.h"
 #include "ViewRegister.h"
+#include "xPublic\MySQLEx.h"
+#include "MainFrm.h"
 
 
 using namespace cv;
@@ -17,6 +19,9 @@ CViewRegister::CViewRegister()
 , m_canCap(FALSE)
 {
 	EnableVisualManagerStyle();
+
+
+	m_strNumber = ""; //档案号
 }
 
 CViewRegister::~CViewRegister()
@@ -83,8 +88,7 @@ void CViewRegister::OnBnClickedCamera()
 	{
 		KillTimer(0);
 		m_isCaptured = TRUE;
-		imwrite("123.bmp", m_cap);
-		MessageBox("拍照成功");
+		ShowMsg2Output1("拍照成功");
 		m_Btn_Cap.SetWindowTextA("打开摄像头");
 	}
 }
@@ -173,17 +177,96 @@ void CViewRegister::OnSize(UINT nType, int cx, int cy)
 
 void CViewRegister::OnBnClickedBtnSign()
 {
-	m_Sta_Num.SetWindowTextA("DL17040005");
+	UpdateData(TRUE); //获取输入
+
+
+	//m_strNumber = ""; //档案号
+	CString name, type, tel, fee, id, home, birth, date;
+	m_Ed_Name.GetWindowTextA(name);
+	m_Ed_Tel.GetWindowTextA(tel);
+	m_Ed_Fee.GetWindowTextA(fee);
+	m_Ed_ID.GetWindowTextA(id);
+	m_Ed_Home.GetWindowTextA(home);
+	m_Comb_CarType.GetWindowTextA(type);
+	m_Date_Sign.GetWindowTextA(date);
+	m_Date_Birth.GetWindowTextA(birth);
+	if (name.IsEmpty() || type.IsEmpty() || tel.IsEmpty()
+		|| fee.IsEmpty() || id.IsEmpty() || home.IsEmpty()
+		|| birth.IsEmpty() || date.IsEmpty())
+	{
+		MessageBox("必须每一项都填完再点击注册！");
+		ShowMsg2Output1("没填完数据就点击了注册按钮");
+	}
+	else
+	{
+		CString strMsg("");
+		CString strSQL("");
+		strSQL.Format("INSERT INTO STUDENTS(ID, SNAME, BIRTHDAY, FILE_NUMBER, REGIST_DATE, CAR_TYPE, TEL, HOME, FEE) \
+					  			VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+								id, name, birth, m_strNumber.Right(4), date, type, tel, home, fee);
+		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+		{
+			MessageBox("注册成功！");
+			ShowMsg2Output1(name+"注册成功！");
+			GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE); //防止重复注册同一个信息
+			GetDlgItem(IDC_NEWFILE)->EnableWindow(TRUE);
+
+			//保存照片
+			CString sFileName("");
+			sFileName.Format("%s%s.bmp", g_FilePath, id);
+			::SHCreateDirectory(NULL, CA2W(g_FilePath));
+			cv::String s = sFileName.GetBuffer();
+			imwrite(s, m_cap);
+			sFileName.ReleaseBuffer();
+
+		}
+		else
+		{
+			MessageBox("注册错误！");
+			ShowMsg2Output1("注册操作错误：" + strSQL);
+			LOG("SQLERROR.log", strSQL);
+			LOG("SQLERROR.log", g_mysqlCon.GetError());
+		}
+	}
 }
 
 
 void CViewRegister::OnBnClickedNewfile()
 {
+	//清空输入框
 	m_Ed_Name.SetWindowTextA("");
 	m_Ed_ID.SetWindowTextA("");
 	m_Ed_Tel.SetWindowTextA("");
 	m_Ed_Home.SetWindowTextA("");
 	m_Ed_Fee.SetWindowTextA("");
 	m_Comb_CarType.SetCurSel(0);
-	UpdateData(FALSE);
+
+
+	CTime localtime;
+	localtime = CTime::GetCurrentTime();
+
+	//获取已有档案数量
+	CDStrs data;
+	CString strMsg("");
+	CString strSQL("SELECT MAX(FILE_NUMBER) FROM students");
+	if (g_mysqlCon.ExecuteQuery(strSQL, data, strMsg))
+	{
+		ShowMsg2Output1("查询档案数量数据成功！");
+		int nfiles = 1;
+		if (!data[0][0].IsEmpty())
+		{
+			nfiles = atoi(data[0][0]) + 1;
+		}
+		CString strTmp;
+		strTmp = (localtime.Format("%Y%m")).Right(4);
+		m_strNumber.Format("DJ%s%04d", strTmp, nfiles);
+		m_Sta_Num.SetWindowTextA(m_strNumber);
+		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(TRUE);
+	}
+	else
+	{
+		ShowMsg2Output1(_T("查询档案数量数据操作失败!\r\n") + strMsg);
+	}
+
+	UpdateData(FALSE); //更新显示
 }

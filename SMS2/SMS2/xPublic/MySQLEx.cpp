@@ -59,7 +59,7 @@ namespace xPublic{
 
 	int CMySQLEx::Reconnect(CString& Msg)
 	{
-		if (0)//(m_canReconnect)
+		if (m_canReconnect)
 		{
 			Connect(m_host, m_port, m_Db, m_user, m_passw, m_Charset, Msg);
 		}
@@ -174,6 +174,11 @@ namespace xPublic{
 		{
 		}
 		return true;
+	}
+
+	CString CMySQLEx::GetError()
+	{
+		return mysql_error(&m_mysql);
 	}
 
 }//xPublic

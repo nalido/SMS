@@ -40,8 +40,6 @@ public:
 
 	CStatic m_Sta_Num;
 	CString m_strNumber; //µµ°¸ºÅ
-	CString m_strDate;
-	CString m_strBirth;
 	CEdit m_Ed_Name; 
 	CEdit m_Ed_ID;
 	CEdit m_Ed_Tel;

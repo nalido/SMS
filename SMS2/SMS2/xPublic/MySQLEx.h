@@ -87,6 +87,14 @@ namespace xPublic{
 		BOOL ExecuteSQL(LPCTSTR lpszSQL, CString& Msg);
 
 		/*
+		函数功能：获取错误信息
+		输入参数；
+		输出参数：
+		返回参数：
+		*/
+		CString GetError();
+
+		/*
 		函数功能：
 		输入参数；
 		输出参数：

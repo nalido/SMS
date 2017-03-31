@@ -13,7 +13,38 @@
 #define new DEBUG_NEW
 #endif
 
+////////////////global functions and values///////////////////////
+CString g_FilePath = "E:\\Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
+void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
+{
+	//12.6
+	CFile f;
+	if (f.Open(sFileName, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeReadWrite))
+	{
+		f.SeekToEnd();
+		if (flag)
+		{
+			CTime localtime;
+			localtime = CTime::GetCurrentTime();
+			str_log = localtime.Format("\r\n\r\n%Y-%m-%d\t%X\r\n") + str_log;
+		}
+		else
+		{
+			str_log.Format(_T("%s\r\n"), str_log);
+		}
+		f.Write(str_log, strlen(str_log));
+		f.Close();
+	}
+}
+void ShowMsg2Output1(CString strMsg)
+{
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+	pFrame->m_wndOutput.AddItem2List1(strMsg);
+}
+
+///////////////////////////////end of global functions//////////////
+
 // CMainFrame
 
 IMPLEMENT_DYNCREATE(CMainFrame, CBCGPFrameWnd)
@@ -28,6 +59,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
 	ON_MESSAGE(UM_REDRAW, OnRedraw)
+	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
@@ -96,13 +128,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//连接数据
 	CString strMsg("");
-	if (!g_mysqlCon.Connect("localhost", 3306, "snow", "snow", "snow123", "utf8", strMsg))
+	if (!g_mysqlCon.Connect("localhost", 3306, "snow", "snow", "snow123", "gbk", strMsg))
 	{
-		MessageBox(_T("连接数据库失败!\r\n") + strMsg);
+		m_wndOutput.AddItem2List1(_T("连接数据库失败!\r\n") + strMsg);
 	}
 	else
 	{
-		MessageBox("连接数据库成功！");
+		m_wndOutput.AddItem2List1("连接数据库成功！");
 	}
 	//开始子线程
 	m_threadMySQL.StartThread();
@@ -425,4 +457,10 @@ void CMainFrame::OnClose()
 	//关闭子线程
 	m_threadMySQL.StopThread();
 	CBCGPFrameWnd::OnClose();
+}
+
+
+LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
+{
+	return 0;
 }
