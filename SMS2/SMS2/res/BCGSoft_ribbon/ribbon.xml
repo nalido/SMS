@@ -2,7 +2,7 @@
 <BCGP_RIBBON>
 	<HEADER>
 		<VERSION>1</VERSION>
-		<VERSION_STAMP>2</VERSION_STAMP>
+		<VERSION_STAMP>3</VERSION_STAMP>
 	</HEADER>
 	<RIBBON_BAR>
 		<ELEMENT_NAME>RibbonBar</ELEMENT_NAME>
@@ -239,85 +239,134 @@
 		<CATEGORIES>
 			<CATEGORY>
 				<ELEMENT_NAME>Category</ELEMENT_NAME>
-				<NAME>Home</NAME>
-				<KEYS>H</KEYS>
-				<IMAGE_SMALL>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_SMALL_0</NAME>
-				</IMAGE_SMALL>
+				<NAME>新生管理</NAME>
 				<IMAGE_LARGE>
 					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_0</NAME>
 				</IMAGE_LARGE>
 				<PANELS>
 					<PANEL>
 						<ELEMENT_NAME>Panel</ELEMENT_NAME>
-						<NAME>Clipboard</NAME>
-						<KEYS>zc</KEYS>
-						<INDEX>1</INDEX>
+						<NAME>新生管理</NAME>
 						<ELEMENTS>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>57637</NAME>
-									<VALUE>57637</VALUE>
+									<NAME>ID_VIEW_REGISTER</NAME>
+									<VALUE>32864</VALUE>
 								</ID>
-								<TEXT>Paste</TEXT>
-								<KEYS>v</KEYS>
-								<INDEX_SMALL>0</INDEX_SMALL>
-								<INDEX_LARGE>0</INDEX_LARGE>
-								<ELEMENTS>
-									<ELEMENT>
-										<ELEMENT_NAME>Button</ELEMENT_NAME>
-										<ID>
-											<NAME>57637</NAME>
-											<VALUE>57637</VALUE>
-										</ID>
-										<TEXT>&amp;Paste</TEXT>
-									</ELEMENT>
-									<ELEMENT>
-										<ELEMENT_NAME>Button</ELEMENT_NAME>
-										<ID>
-											<NAME>57639</NAME>
-											<VALUE>57639</VALUE>
-										</ID>
-										<TEXT>Paste &amp;Special...</TEXT>
-									</ELEMENT>
-								</ELEMENTS>
+								<TEXT>新生注册</TEXT>
+								<INDEX_LARGE>9</INDEX_LARGE>
 							</ELEMENT>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>57635</NAME>
-									<VALUE>57635</VALUE>
+									<NAME>ID_VIEW_REPORT</NAME>
+									<VALUE>32865</VALUE>
 								</ID>
-								<TEXT>Cut</TEXT>
-								<KEYS>x</KEYS>
-								<INDEX_SMALL>1</INDEX_SMALL>
-							</ELEMENT>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>57634</NAME>
-									<VALUE>57634</VALUE>
-								</ID>
-								<TEXT>Copy</TEXT>
-								<KEYS>c</KEYS>
-								<INDEX_SMALL>2</INDEX_SMALL>
-							</ELEMENT>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>57632</NAME>
-									<VALUE>57632</VALUE>
-								</ID>
-								<TEXT>Erase</TEXT>
-								<KEYS>r</KEYS>
-								<INDEX_SMALL>3</INDEX_SMALL>
+								<TEXT>报表打印</TEXT>
+								<INDEX_LARGE>4</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>学员管理</NAME>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_1</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
 					<PANEL>
 						<ELEMENT_NAME>Panel</ELEMENT_NAME>
-						<NAME>Window</NAME>
+						<NAME>学员管理</NAME>
+						<ELEMENTS>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_BOOKING1</NAME>
+									<VALUE>32866</VALUE>
+								</ID>
+								<TEXT>科一预约</TEXT>
+								<INDEX_LARGE>10</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_BOOKING2</NAME>
+									<VALUE>32867</VALUE>
+								</ID>
+								<TEXT>科二预约</TEXT>
+								<INDEX_LARGE>10</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_PRINTB</NAME>
+									<VALUE>32871</VALUE>
+								</ID>
+								<TEXT>打印</TEXT>
+								<INDEX_LARGE>4</INDEX_LARGE>
+							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>员工管理</NAME>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_2</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>员工管理</NAME>
+						<ELEMENTS>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_DEVICE</NAME>
+									<VALUE>32873</VALUE>
+								</ID>
+								<TEXT>设备管理</TEXT>
+								<INDEX_LARGE>0</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_KPI</NAME>
+									<VALUE>32874</VALUE>
+								</ID>
+								<TEXT>KPI</TEXT>
+								<INDEX_LARGE>1</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_CHECK</NAME>
+									<VALUE>32875</VALUE>
+								</ID>
+								<TEXT>查阅</TEXT>
+								<INDEX_LARGE>11</INDEX_LARGE>
+							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>设置</NAME>
+				<IMAGE_SMALL>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_SMALL_3</NAME>
+				</IMAGE_SMALL>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_3</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>显示窗口</NAME>
 						<KEYS>zw</KEYS>
 						<INDEX>2</INDEX>
 						<ELEMENTS>
@@ -343,39 +392,27 @@
 					</PANEL>
 					<PANEL>
 						<ELEMENT_NAME>Panel</ELEMENT_NAME>
-						<NAME>Editing</NAME>
-						<KEYS>e</KEYS>
-						<INDEX>4</INDEX>
+						<NAME>系统设置</NAME>
 						<ELEMENTS>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>57642</NAME>
-									<VALUE>57642</VALUE>
+									<NAME>ID_VIEW_SCHOOLSETTING</NAME>
+									<VALUE>32870</VALUE>
 								</ID>
-								<TEXT>Select All</TEXT>
-								<KEYS>a</KEYS>
-								<INDEX_SMALL>5</INDEX_SMALL>
+								<TEXT>驾校管理</TEXT>
+								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
+								<INDEX_LARGE>12</INDEX_LARGE>
 							</ELEMENT>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>57636</NAME>
-									<VALUE>57636</VALUE>
+									<NAME>ID_VIEW_SYSTEMSETTING</NAME>
+									<VALUE>32869</VALUE>
 								</ID>
-								<TEXT>Find</TEXT>
-								<KEYS>fd</KEYS>
-								<INDEX_SMALL>6</INDEX_SMALL>
-							</ELEMENT>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>57641</NAME>
-									<VALUE>57641</VALUE>
-								</ID>
-								<TEXT>Replace</TEXT>
-								<KEYS>r</KEYS>
-								<INDEX_SMALL>7</INDEX_SMALL>
+								<TEXT>系统参数</TEXT>
+								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
+								<INDEX_LARGE>13</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>
@@ -391,72 +428,6 @@
 						<INDEX_SMALL>4</INDEX_SMALL>
 					</ELEMENT>
 				</ELEMENTS>
-			</CATEGORY>
-			<CATEGORY>
-				<ELEMENT_NAME>Category</ELEMENT_NAME>
-				<NAME>新生管理</NAME>
-				<IMAGE_LARGE>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_1</NAME>
-				</IMAGE_LARGE>
-				<PANELS>
-					<PANEL>
-						<ELEMENT_NAME>Panel</ELEMENT_NAME>
-						<NAME>新生管理</NAME>
-						<ELEMENTS>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>ID_VIEW_REGISTER</NAME>
-									<VALUE>32864</VALUE>
-								</ID>
-								<TEXT>新生注册</TEXT>
-								<INDEX_LARGE>5</INDEX_LARGE>
-							</ELEMENT>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>ID_VIEW_REPORT</NAME>
-									<VALUE>32865</VALUE>
-								</ID>
-								<TEXT>报表打印</TEXT>
-								<INDEX_LARGE>4</INDEX_LARGE>
-							</ELEMENT>
-						</ELEMENTS>
-					</PANEL>
-				</PANELS>
-			</CATEGORY>
-			<CATEGORY>
-				<ELEMENT_NAME>Category</ELEMENT_NAME>
-				<NAME>学员管理</NAME>
-				<IMAGE_LARGE>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_2</NAME>
-				</IMAGE_LARGE>
-				<PANELS>
-					<PANEL>
-						<ELEMENT_NAME>Panel</ELEMENT_NAME>
-						<NAME>学员管理</NAME>
-						<ELEMENTS>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>ID_VIEW_BOOKING1</NAME>
-									<VALUE>32866</VALUE>
-								</ID>
-								<TEXT>科一预约</TEXT>
-								<INDEX_LARGE>6</INDEX_LARGE>
-							</ELEMENT>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>ID_VIEW_BOOKING2</NAME>
-									<VALUE>32867</VALUE>
-								</ID>
-								<TEXT>科二预约</TEXT>
-								<INDEX_LARGE>6</INDEX_LARGE>
-							</ELEMENT>
-						</ELEMENTS>
-					</PANEL>
-				</PANELS>
 			</CATEGORY>
 		</CATEGORIES>
 	</RIBBON_BAR>

@@ -62,14 +62,21 @@
 #define ID_VIEW_REPORT                  32865
 #define ID_VIEW_BOOKING1                32866
 #define ID_VIEW_BOOKING2                32867
+#define ID_VIEW_SCHOOLSETING            32868
+#define ID_VIEW_SYSTEMSETTING           32869
+#define ID_VIEW_SCHOOLSETTING           32870
+#define ID_VIEW_PRINTB                  32871
+#define ID_VIEW_DEVICE                  32873
+#define ID_VIEW_KPI                     32874
+#define ID_VIEW_CHECK                   32875
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        169
-#define _APS_NEXT_COMMAND_VALUE         32868
-#define _APS_NEXT_CONTROL_VALUE         1067
+#define _APS_NEXT_COMMAND_VALUE         32876
+#define _APS_NEXT_CONTROL_VALUE         1073
 #define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif
