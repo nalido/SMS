@@ -4,6 +4,8 @@
 
 #pragma once
 #include "OutputBar.h"
+#include "xPublic\ThreadBase.h"
+#include "xPublic\MySQLEx.h"
 
 class CMainFrame : public CBCGPFrameWnd
 {
@@ -35,6 +37,7 @@ protected:  // control bar embedded members
 	CBCGPRibbonBar			m_wndRibbonBar;
 	CBCGPMenuBar			m_wndMenuBar;
 	CBCGPToolBar			m_wndToolBar;
+public:
 	COutputBar				m_wndOutput;
 // Generated message map functions
 protected:
@@ -56,4 +59,16 @@ protected:
 	CArray<CView*, CView*>	m_arViews;
 public:
 	void SelectView(int nID);
+	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
+
+
+	//SQL
+	xPublic::CThreadBase m_threadMySQL;
+	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
+	afx_msg void OnClose();
 };
+
+extern CString g_FilePath;
+extern xPublic::CMySQLEx g_mysqlCon;
+extern void LOG(CString sFileName, CString str_log, int flag = 1);
+extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。

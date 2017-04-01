@@ -13,6 +13,37 @@
 #define new DEBUG_NEW
 #endif
 
+////////////////global functions and values///////////////////////
+CString g_FilePath = "E:\\Photos\\";
+xPublic::CMySQLEx g_mysqlCon;
+void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
+{
+	//12.6
+	CFile f;
+	if (f.Open(sFileName, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeReadWrite))
+	{
+		f.SeekToEnd();
+		if (flag)
+		{
+			CTime localtime;
+			localtime = CTime::GetCurrentTime();
+			str_log = localtime.Format("\r\n\r\n%Y-%m-%d\t%X\r\n") + str_log;
+		}
+		else
+		{
+			str_log.Format(_T("%s\r\n"), str_log);
+		}
+		f.Write(str_log, strlen(str_log));
+		f.Close();
+	}
+}
+void ShowMsg2Output1(CString strMsg)
+{
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+	pFrame->m_wndOutput.AddItem2List1(strMsg);
+}
+
+///////////////////////////////end of global functions//////////////
 
 // CMainFrame
 
@@ -28,6 +59,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
 	ON_MESSAGE(UM_REDRAW, OnRedraw)
+	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 // CMainFrame construction/destruction
@@ -38,6 +71,7 @@ enum VIEW_TYPE{
 };
 
 CMainFrame::CMainFrame()
+: m_threadMySQL(this, ThreadMySQLCallback)
 {
 	// TODO: add member initialization code here
 }
@@ -91,6 +125,20 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableDocking(CBRS_ALIGN_ANY);
 	EnableAutoHideBars(CBRS_ALIGN_ANY);
 	DockControlBar(&m_wndOutput);
+
+	//连接数据
+	CString strMsg("");
+	if (!g_mysqlCon.Connect("localhost", 3306, "snow", "snow", "snow123", "gbk", strMsg))
+	{
+		m_wndOutput.AddItem2List1(_T("连接数据库失败!\r\n") + strMsg);
+	}
+	else
+	{
+		m_wndOutput.AddItem2List1("连接数据库成功！");
+	}
+	//开始子线程
+	m_threadMySQL.StartThread();
+
 	return 0;
 }
 
@@ -100,6 +148,9 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 		return FALSE;
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
+
+	//cs.cx = GetSystemMetrics(SM_CXSCREEN);
+	//cs.cy = GetSystemMetrics(SM_CYSCREEN);
 
 	return TRUE;
 }
@@ -371,5 +422,45 @@ LRESULT CMainFrame::OnRedraw(WPARAM, LPARAM)
 	RecalcLayout(TRUE);
 	GetActiveView()->UpdateWindow();
 	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ALLCHILDREN | RDW_FRAME);
+	return 0;
+}
+
+
+void CALLBACK CMainFrame::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
+{
+	CMainFrame* pThis = (CMainFrame*)pParam;
+	DWORD dwWaitTime = 0;
+
+	//已连接时等待5s，未连接时等待2s
+	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, dwWaitTime))
+	{
+		CString strMsg;
+		if (g_mysqlCon.IsConnected())
+		{
+			strMsg.Format("%s(数据库已连接)", APP_TITLE);
+			pThis->SetWindowText(strMsg);
+			dwWaitTime = 5000;
+		}
+		else
+		{
+			g_mysqlCon.Close();
+			strMsg.Format("%s(数据库未连接)", APP_TITLE);
+			pThis->SetWindowText(strMsg);
+			g_mysqlCon.Reconnect(strMsg);
+			dwWaitTime = 2000;
+		}
+	}
+}
+
+void CMainFrame::OnClose()
+{
+	//关闭子线程
+	m_threadMySQL.StopThread();
+	CBCGPFrameWnd::OnClose();
+}
+
+
+LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
+{
 	return 0;
 }
