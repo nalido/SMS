@@ -26,6 +26,7 @@ void CViewBooking1::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
+	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -47,3 +48,9 @@ void CViewBooking1::Dump(CDumpContext& dc) const
 
 
 // CViewBooking1 消息处理程序
+
+
+void CViewBooking1::OnBnClickedButton1()
+{
+	// TODO:  在此添加控件通知处理程序代码
+}

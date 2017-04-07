@@ -75,6 +75,8 @@ int COutputBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	m_wndList1.InsertColumn(0, _T("information"), LVCFMT_LEFT, 800);
+	m_wndList2.InsertColumn(0, _T("information"), LVCFMT_LEFT, 800);
+	m_wndList3.InsertColumn(0, _T("information"), LVCFMT_LEFT, 800);
 
 	return 0;
 }

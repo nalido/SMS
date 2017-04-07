@@ -16,6 +16,7 @@
 ////////////////global functions and values///////////////////////
 CString g_FilePath = "E:\\Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
+CString g_sServerIP;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -72,8 +73,9 @@ enum VIEW_TYPE{
 
 CMainFrame::CMainFrame()
 : m_threadMySQL(this, ThreadMySQLCallback)
+, m_threadSocket(this, ThreadSocketCallback)
 {
-	// TODO: add member initialization code here
+	m_pPicBuf = NULL;
 }
 
 CMainFrame::~CMainFrame()
@@ -138,6 +140,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	//开始子线程
 	m_threadMySQL.StartThread();
+	m_threadSocket.StartThread();
 
 	return 0;
 }
@@ -456,6 +459,7 @@ void CMainFrame::OnClose()
 {
 	//关闭子线程
 	m_threadMySQL.StopThread();
+	m_threadSocket.StopThread();
 	CBCGPFrameWnd::OnClose();
 }
 
@@ -463,4 +467,48 @@ void CMainFrame::OnClose()
 LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 {
 	return 0;
+}
+
+
+void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent)
+{
+	CMainFrame* pThis = (CMainFrame*)pParam;
+	xPublic::CTCPClient *pTcpClient = &pThis->m_tcpClient;
+	DWORD dwWaitTime = 10;
+	BOOL bNotify = TRUE;
+
+	//
+	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, dwWaitTime))
+	{
+		//if (pThis->m_pPicBuf == NULL)
+		//{
+		//	if (pTcpClient->Close())
+		//	{
+		//		CString strMsg("没有图像发送，自动断开与服务器的连接");
+		//		ShowMsg2Output1(strMsg);
+		//	}
+		//	continue;
+		//}
+
+		//检测和创建TCP连接
+		if (!pTcpClient->IsConnected())
+		{
+			if (!pTcpClient->Connect(g_sServerIP, 39200, 0))
+			{
+				if (bNotify)
+				{
+					bNotify = FALSE;
+					CString strMsg;
+					strMsg.Format("连接服务器(%s:39200)失败", g_sServerIP);
+					ShowMsg2Output1(strMsg);
+				}
+				::WaitForSingleObject(hCloseEvent, 2000);
+				continue;
+			}
+			bNotify = TRUE;
+			CString strMsg;
+			strMsg.Format("连接服务器(%s:39200)成功", g_sServerIP);
+			ShowMsg2Output1(strMsg);
+		}
+	}
 }

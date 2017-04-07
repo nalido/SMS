@@ -201,15 +201,15 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 		char szBuffer[256] = {};
 		pClient->Receive(szBuffer, 255);
 
-		CString strMsg;
-		strMsg.Format("客户端信息：%s", szBuffer);
-		if (strlen(szBuffer) > 0)
-		{
-			CStrs strs;
-			strs.push_back(strMsg);
-			g_strMsgLog.push_back(strs);
-			pThis->ListFresh();
-		}
+		//CString strMsg;
+		//strMsg.Format("客户端信息：%s", szBuffer);
+		//if (strlen(szBuffer) > 0)
+		//{
+		//	CStrs strs;
+		//	strs.push_back(strMsg);
+		//	g_strMsgLog.push_back(strs);
+		//	pThis->ListFresh();
+		//}
 	}
 }
 

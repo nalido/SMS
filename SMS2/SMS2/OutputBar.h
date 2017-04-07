@@ -17,6 +17,7 @@ protected:
 	CBCGPListCtrl	m_wndList2;
 	CBCGPListCtrl	m_wndList3;
 
+
 // Operations
 public:
 

@@ -201,7 +201,8 @@ void CViewRegister::OnBnClickedBtnSign()
 	{
 		CString strMsg("");
 		CString strSQL("");
-		strSQL.Format("INSERT INTO STUDENTS(ID, SNAME, BIRTHDAY, FILE_NUMBER, REGIST_DATE, CAR_TYPE, TEL, HOME, FEE) \
+		strSQL.Format("INSERT INTO STUDENTS \
+			(ID, SNAME, BIRTHDAY, FILE_NUMBER, REGIST_DATE, CAR_TYPE, TEL, HOME, FEE) \
 					  			VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
 								id, name, birth, m_strNumber.Right(4), date, type, tel, home, fee);
 		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
@@ -219,6 +220,8 @@ void CViewRegister::OnBnClickedBtnSign()
 			imwrite(s, m_cap);
 			sFileName.ReleaseBuffer();
 
+			CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+			pFrame->m_pPicBuf = m_cap.data;
 		}
 		else
 		{
