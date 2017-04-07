@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include "xPublic\netSocket.h"
+#include "BCGClass\VirtualGridCtrl.h"
+#include "xPublic\MySQLEx.h"
 
 class CSMS_SERVERView : public CBCGPFormView
 {
@@ -44,6 +47,24 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+
+
+	xPublic::CTCPServer		m_tcpServer;
+	UINT					m_nHostPort;
+	CImageList				m_TreeImages;
+	xPublic::CTCPTree		m_cTreeCtrl;
+	static void CALLBACK OnTCPAccept(LPVOID lParam, xPublic::CTCPClient *pSocket, BOOL bNew);
+	static void CALLBACK OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pSocket);
+	static void CALLBACK OnTCPClosed(LPVOID lParam, xPublic::CTCPClient *pSocket);
+	afx_msg void OnDestroy();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+
+
+	//virtualGrid
+	CStatic m_wndGridLocation;
+	CVirtualGridCtrl m_wndGrid;
+	CDStrs m_datas;
+	void ListFresh();
 };
 
 #ifndef _DEBUG  // debug version in SMS_SERVERView.cpp

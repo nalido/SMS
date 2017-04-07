@@ -8,7 +8,6 @@
 #include "SMS_SERVERDoc.h"
 #include "SMS_SERVERView.h"
 
-#include "ViewRegister.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
