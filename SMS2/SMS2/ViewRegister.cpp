@@ -272,7 +272,7 @@ void CViewRegister::OnBnClickedNewfile()
 	CString strMonth;
 	strMonth = (localtime.Format("%Y%m")).Right(4);
 	CString strSQL("");
-	strSQL.Format("SELECT FILE_NUMBER FROM (SELECT FILE_NUMBER FROM students WHERE FILE_NUMBER LIKE '%s%%' ) as file_num", strMonth);
+	strSQL.Format("SELECT MAX(FILE_NUMBER) FROM (SELECT FILE_NUMBER FROM students WHERE FILE_NUMBER LIKE '%s%%' ) as file_num", strMonth);
 	if (g_mysqlCon.ExecuteQuery(strSQL, data, strMsg))
 	{
 		ShowMsg2Output1("查询档案数量数据成功！");
