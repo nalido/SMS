@@ -16,7 +16,7 @@
 ////////////////global functions and values///////////////////////
 CString g_FilePath = "E:\\Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
-CString g_sServerIP;
+CString g_sServerIP = "127.0.0.1";
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -62,6 +62,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_MESSAGE(UM_REDRAW, OnRedraw)
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 	ON_WM_CLOSE()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CMainFrame construction/destruction
@@ -75,7 +76,8 @@ CMainFrame::CMainFrame()
 : m_threadMySQL(this, ThreadMySQLCallback)
 , m_threadSocket(this, ThreadSocketCallback)
 {
-	m_pPicBuf = NULL;
+	m_pSendBuf = NULL;
+	m_nSendLen = 0;
 }
 
 CMainFrame::~CMainFrame()
@@ -141,6 +143,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//开始子线程
 	m_threadMySQL.StartThread();
 	m_threadSocket.StartThread();
+
+	//timer
+	SetTimer(0, 100, NULL); //定时刷新子界面
 
 	return 0;
 }
@@ -476,39 +481,75 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 	xPublic::CTCPClient *pTcpClient = &pThis->m_tcpClient;
 	DWORD dwWaitTime = 10;
 	BOOL bNotify = TRUE;
+	CString strMsg;
+	BYTE senttime = 0;
 
-	//
 	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, dwWaitTime))
 	{
-		//if (pThis->m_pPicBuf == NULL)
-		//{
-		//	if (pTcpClient->Close())
-		//	{
-		//		CString strMsg("没有图像发送，自动断开与服务器的连接");
-		//		ShowMsg2Output1(strMsg);
-		//	}
-		//	continue;
-		//}
+		if (pThis->m_pSendBuf == NULL)
+		{
+			if (pTcpClient->Close())
+			{
+				strMsg.Format("没有图像发送，自动断开与服务器的连接");
+				pThis->m_wndOutput.AddItem2List4(strMsg);
+			}
+			continue;
+		}
 
 		//检测和创建TCP连接
 		if (!pTcpClient->IsConnected())
 		{
-			if (!pTcpClient->Connect(g_sServerIP, 39200, 0))
+			if (!pTcpClient->Connect(g_sServerIP, 39200, 2670))
 			{
 				if (bNotify)
 				{
 					bNotify = FALSE;
-					CString strMsg;
 					strMsg.Format("连接服务器(%s:39200)失败", g_sServerIP);
-					ShowMsg2Output1(strMsg);
+					pThis->m_wndOutput.AddItem2List4(strMsg);
 				}
 				::WaitForSingleObject(hCloseEvent, 2000);
 				continue;
 			}
 			bNotify = TRUE;
-			CString strMsg;
 			strMsg.Format("连接服务器(%s:39200)成功", g_sServerIP);
-			ShowMsg2Output1(strMsg);
+			pThis->m_wndOutput.AddItem2List4(strMsg);
+		}//检测和创建连接
+
+		//发送数据
+		strMsg.Format("第%d次发送图像数据", senttime);
+		pThis->m_wndOutput.AddItem2List4(strMsg);
+		BOOL bSendOK = FALSE;
+		int nPicLen = pThis->m_nSendLen;
+		if (pTcpClient->IsConnected() && pTcpClient->Send(pThis->m_pSendBuf, nPicLen) & !bSendOK)
+		{
+			bSendOK = TRUE;
+			delete[]pThis->m_pSendBuf; //删除数据
+			pThis->m_pSendBuf = NULL;
+			strMsg.Format("图像数据发送成功");
+			pThis->m_wndOutput.AddItem2List4(strMsg);
+		}
+
+		//判断是否发送成功，删除图像缓存
+		if (!bSendOK)
+		{
+			if (++senttime >= 3) //试发三次后删除图像
+			{
+				if (pThis->m_pSendBuf != NULL)
+				{
+					delete[] pThis->m_pSendBuf;
+					pThis->m_pSendBuf = NULL;
+				}
+				senttime = 0;
+				strMsg.Format("图像数据发送三次失败");
+				pThis->m_wndOutput.AddItem2List4(strMsg);
+			}
 		}
 	}
+}
+
+void CMainFrame::OnTimer(UINT_PTR nIDEvent)
+{
+	m_wndOutput.ListFresh();
+
+	CBCGPFrameWnd::OnTimer(nIDEvent);
 }

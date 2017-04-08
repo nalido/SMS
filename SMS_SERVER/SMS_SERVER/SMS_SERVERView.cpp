@@ -8,6 +8,10 @@
 #include "SMS_SERVERView.h"
 
 #include "MainFrm.h"
+#include <opencv\cxcore.h>
+#include <opencv2\core.hpp>
+#include <opencv2\opencv.hpp>
+#include "xPublic\CvvImage.h"
 
 using namespace xPublic;
 
@@ -198,19 +202,58 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 	CSMS_SERVERView*  pThis = (CSMS_SERVERView *)lParam;
 	if (NULL != pClient)
 	{
-		char szBuffer[256] = {};
-		pClient->Receive(szBuffer, 255);
+		BYTE MsgType = 0;
+		pClient->Receive(&MsgType, 1);
 
-		//CString strMsg;
-		//strMsg.Format("客户端信息：%s", szBuffer);
-		//if (strlen(szBuffer) > 0)
-		//{
-		//	CStrs strs;
-		//	strs.push_back(strMsg);
-		//	g_strMsgLog.push_back(strs);
-		//	pThis->ListFresh();
-		//}
+		CString strMsg;
+		if (MsgType == 1)
+		{
+			char FileNum[11] = { 0 };
+			pClient->Receive(&FileNum, 10);
+			int wid, hei, imgSize;
+			pClient->Receive(&wid, 4);
+			pClient->Receive(&hei, 4);
+			pClient->Receive(&imgSize, 4);
+			BYTE* picBuf = new BYTE[imgSize + 1];
+			if (pClient->Receive(picBuf, imgSize))
+			{
+				strMsg.Format("收到客户端图像信息：%s %dX%d 接收成功", FileNum, wid, hei);
+				pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize);
+				CStrs strs;
+				strs.push_back(strMsg);
+				g_strMsgLog.push_back(strs);
+				pThis->ListFresh();
+			}
+			else
+			{
+				strMsg.Format("收到客户端图像信息：%s %dX%d 接收图像数据失败", FileNum, wid, hei);
+				pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize);
+				CStrs strs;
+				strs.push_back(strMsg);
+				g_strMsgLog.push_back(strs);
+				pThis->ListFresh();
+			}
+
+			delete[] picBuf; picBuf = NULL;
+		}
 	}
+}
+
+
+void CSMS_SERVERView::SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize)
+{
+	IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
+	int lineByte = 1920;// (wid + 3) / 4 * 4;
+	cvSetData(pImg, picBuf, lineByte);
+
+	cv::Mat img = cv::cvarrToMatND(pImg);
+	CString sFileName("");
+	sFileName.Format("%s%s.bmp", g_FilePath, FileNum);
+	::SHCreateDirectory(NULL, CA2W(g_FilePath));
+	cv::String s = sFileName.GetBuffer();
+	imwrite(s, img);
+	sFileName.ReleaseBuffer();
+	pImg = NULL;
 }
 
 void CSMS_SERVERView::OnTCPClosed(LPVOID lParam, xPublic::CTCPClient *pClient)
@@ -238,6 +281,7 @@ void CSMS_SERVERView::ListFresh()
 
 	if (g_strMsgLog.size() > 5000)
 	{
-		g_strMsgLog.clear();
+		std::vector<CStrs>::iterator it = g_strMsgLog.begin();
+		g_strMsgLog.erase(it);
 	}
 }

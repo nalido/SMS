@@ -59,6 +59,7 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedBtnSign();
 	afx_msg void OnBnClickedNewfile();
+	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
 };
 
 

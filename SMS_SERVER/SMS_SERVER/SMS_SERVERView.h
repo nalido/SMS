@@ -65,6 +65,9 @@ public:
 	CVirtualGridCtrl m_wndGrid;
 	CDStrs m_datas;
 	void ListFresh();
+
+	//±£´æÍ¼Æ¬
+	void SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize);
 };
 
 #ifndef _DEBUG  // debug version in SMS_SERVERView.cpp

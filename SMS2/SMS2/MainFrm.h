@@ -71,8 +71,10 @@ public:
 	//SOCKET
 	xPublic::CTCPClient m_tcpClient;
 	xPublic::CThreadBase m_threadSocket;
-	BYTE* m_pPicBuf;
+	BYTE* m_pSendBuf; //发送数据缓存
+	int m_nSendLen; //发送数据长度
 	static void CALLBACK ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 extern CString g_FilePath;
