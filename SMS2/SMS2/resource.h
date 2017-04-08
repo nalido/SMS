@@ -32,6 +32,7 @@
 #define IDC_ID                          1071
 #define IDC_HOME                        1072
 #define IDC_BIRTH                       1073
+#define IDC_BUTTON1073                  1073
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
 #define ID_VIEW_APPLOOK_2000            32826
@@ -76,7 +77,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        169
 #define _APS_NEXT_COMMAND_VALUE         32876
-#define _APS_NEXT_CONTROL_VALUE         1073
+#define _APS_NEXT_CONTROL_VALUE         1074
 #define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif
