@@ -198,6 +198,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BCGClass\VirtualGridCtrl.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputBar.h" />
     <ClInclude Include="Resource.h" />
@@ -212,9 +213,11 @@
     <ClInclude Include="xPublic\CvvImage.h" />
     <ClInclude Include="xPublic\MyPrint.h" />
     <ClInclude Include="xPublic\MySQLEx.h" />
+    <ClInclude Include="xPublic\TCPClient.h" />
     <ClInclude Include="xPublic\ThreadBase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BCGClass\VirtualGridCtrl.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputBar.cpp" />
     <ClCompile Include="SMS2.cpp" />
@@ -233,6 +236,7 @@
     <ClCompile Include="xPublic\CvvImage.cpp" />
     <ClCompile Include="xPublic\MyPrint.cpp" />
     <ClCompile Include="xPublic\MySQLEx.cpp" />
+    <ClCompile Include="xPublic\TCPClient.cpp" />
     <ClCompile Include="xPublic\ThreadBase.cpp" />
   </ItemGroup>
   <ItemGroup>

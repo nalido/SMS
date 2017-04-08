@@ -198,6 +198,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BCGClass\VirtualGridCtrl.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OutputBar.h" />
     <ClInclude Include="Resource.h" />
@@ -205,16 +206,15 @@
     <ClInclude Include="SMS_SERVERDoc.h" />
     <ClInclude Include="SMS_SERVERView.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="ViewBooking1.h" />
-    <ClInclude Include="ViewBooking2.h" />
-    <ClInclude Include="ViewRegister.h" />
     <ClInclude Include="xPublic\CObjectBase.h" />
     <ClInclude Include="xPublic\CvvImage.h" />
     <ClInclude Include="xPublic\MyPrint.h" />
     <ClInclude Include="xPublic\MySQLEx.h" />
+    <ClInclude Include="xPublic\NetSocket.h" />
     <ClInclude Include="xPublic\ThreadBase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BCGClass\VirtualGridCtrl.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OutputBar.cpp" />
     <ClCompile Include="SMS_SERVER.cpp" />
@@ -226,13 +226,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ViewBooking1.cpp" />
-    <ClCompile Include="ViewBooking2.cpp" />
-    <ClCompile Include="ViewRegister.cpp" />
     <ClCompile Include="xPublic\CObjectBase.cpp" />
     <ClCompile Include="xPublic\CvvImage.cpp" />
     <ClCompile Include="xPublic\MyPrint.cpp" />
     <ClCompile Include="xPublic\MySQLEx.cpp" />
+    <ClCompile Include="xPublic\NetSocket.cpp" />
     <ClCompile Include="xPublic\ThreadBase.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -252,6 +250,7 @@
     <Image Include="res\SMS_SERVER.ico" />
     <Image Include="res\SMS_SERVERDoc.ico" />
     <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\treeImg.bmp" />
     <Image Include="res\Workspace.bmp" />
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 #include "OutputBar.h"
 #include "xPublic\ThreadBase.h"
 #include "xPublic\MySQLEx.h"
+#include "xPublic\TCPClient.h"
 
 class CMainFrame : public CBCGPFrameWnd
 {
@@ -60,15 +61,24 @@ protected:
 public:
 	void SelectView(int nID);
 	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
+	afx_msg void OnClose();
 
 
 	//SQL
 	xPublic::CThreadBase m_threadMySQL;
 	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
-	afx_msg void OnClose();
+
+	//SOCKET
+	xPublic::CTCPClient m_tcpClient;
+	xPublic::CThreadBase m_threadSocket;
+	BYTE* m_pSendBuf; //发送数据缓存
+	int m_nSendLen; //发送数据长度
+	static void CALLBACK ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 extern CString g_FilePath;
 extern xPublic::CMySQLEx g_mysqlCon;
 extern void LOG(CString sFileName, CString str_log, int flag = 1);
 extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。
+extern CString g_sServerIP; //服务器IP

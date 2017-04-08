@@ -11,6 +11,31 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
+{
+	ASSERT(pdi != NULL);
+
+	COutputBar* pThis = (COutputBar*)lp;
+
+	int nRow = pdi->item.nRow;	// Row of an item
+	int nCol = pdi->item.nCol;	// Column of an item
+	int ndata = pThis->m_datas.size(); //number of data exist
+	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
+	{
+		pdi->item.varValue = pThis->m_datas[nRow][nCol];
+		//if (pThis->m_datas[nRow][nCol] == "nalido")
+		//{
+		//	pdi->item.clrText = COLORREF(RGB(255, 0, 0));
+		//}
+		//if (pThis->m_datas[nRow][nCol] == "snow")
+		//{
+		//	pdi->item.clrBackground = COLORREF(RGB(0, 110, 0));
+		//}
+	}
+
+	return TRUE;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // COutputBar
 
@@ -75,8 +100,49 @@ int COutputBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	m_wndList1.InsertColumn(0, _T("information"), LVCFMT_LEFT, 800);
+	m_wndList2.InsertColumn(0, _T("information"), LVCFMT_LEFT, 800);
+	m_wndList3.InsertColumn(0, _T("information"), LVCFMT_LEFT, 800);
+
+
+	m_wndGrid.Create(WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rectDummy, &m_wndTabs, 5);
+	m_wndTabs.AddTab(&m_wndGrid, _T("Output 4"), -1);
+	m_wndGrid.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndGrid.SetReadOnly();
+	m_wndGrid.InsertColumn(0, _T("服务器连接信息"), 800);
+	//注册虚拟列表回调函数
+	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
+
+	//for (int i = 0; i < 200; i++)
+	//{
+	//	CStrs strs;
+	//	CString str;
+	//	str.Format("item %d", i);
+	//	strs.push_back(str);
+	//	m_datas.push_back(strs);
+	//}
+	//ListFresh();
 
 	return 0;
+}
+
+void COutputBar::ListFresh()
+{
+	m_wndGrid.RemoveAll();
+	m_wndGrid.SetVirtualRows(m_datas.size());
+	m_wndGrid.AdjustLayout();
+
+	if (m_datas.size() > 5000)
+	{
+		std::vector<CStrs>::iterator it = m_datas.begin();
+		m_datas.erase(it);
+	}
+}
+
+void COutputBar::AddItem2List4(CString str)
+{
+	CStrs strs;
+	strs.push_back(str);
+	m_datas.push_back(strs);
 }
 
 void COutputBar::OnSize(UINT nType, int cx, int cy) 

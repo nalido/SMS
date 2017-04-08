@@ -51,6 +51,7 @@ BEGIN_MESSAGE_MAP(CViewRegister, CBCGPFormView)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BTN_SIGN, &CViewRegister::OnBnClickedBtnSign)
 	ON_BN_CLICKED(IDC_NEWFILE, &CViewRegister::OnBnClickedNewfile)
+	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 END_MESSAGE_MAP()
 
 
@@ -201,24 +202,39 @@ void CViewRegister::OnBnClickedBtnSign()
 	{
 		CString strMsg("");
 		CString strSQL("");
-		strSQL.Format("INSERT INTO STUDENTS(ID, SNAME, BIRTHDAY, FILE_NUMBER, REGIST_DATE, CAR_TYPE, TEL, HOME, FEE) \
+		strSQL.Format("INSERT INTO STUDENTS \
+			(ID, SNAME, BIRTHDAY, FILE_NUMBER, REGIST_DATE, CAR_TYPE, TEL, HOME, FEE) \
 					  			VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
-								id, name, birth, m_strNumber.Right(4), date, type, tel, home, fee);
+								id, name, birth, m_strNumber.Right(8), date, type, tel, home, fee);
 		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 		{
 			MessageBox("注册成功！");
-			ShowMsg2Output1(name+"注册成功！");
+			ShowMsg2Output1(name + "注册成功！");
 			GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE); //防止重复注册同一个信息
 			GetDlgItem(IDC_NEWFILE)->EnableWindow(TRUE);
 
 			//保存照片
 			CString sFileName("");
-			sFileName.Format("%s%s.bmp", g_FilePath, id);
+			sFileName.Format("%s%s.bmp", g_FilePath, m_strNumber);
 			::SHCreateDirectory(NULL, CA2W(g_FilePath));
 			cv::String s = sFileName.GetBuffer();
 			imwrite(s, m_cap);
 			sFileName.ReleaseBuffer();
 
+			//数据打包
+			CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+			IplImage ipl_img = m_cap;
+			int len = ipl_img.imageSize + 23;
+			pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+			pFrame->m_nSendLen = len;
+			pFrame->m_pSendBuf[0] = 1; //发送图像数据
+			char* cID = m_strNumber.GetBuffer();
+			memcpy(pFrame->m_pSendBuf + 1, cID, 10); //档案号
+			m_strNumber.ReleaseBuffer();
+			memcpy(pFrame->m_pSendBuf + 11, &m_cap.cols, 4); //图像宽度
+			memcpy(pFrame->m_pSendBuf + 15, &m_cap.rows, 4); //图像高度
+			memcpy(pFrame->m_pSendBuf + 19, &ipl_img.imageSize, 4); //图像尺寸
+			memcpy(pFrame->m_pSendBuf + 23, ipl_img.imageData, ipl_img.imageSize); //图像数据
 		}
 		else
 		{
@@ -230,6 +246,10 @@ void CViewRegister::OnBnClickedBtnSign()
 	}
 }
 
+LRESULT CViewRegister::OnUserMessage(WPARAM wParam, LPARAM lParam)
+{
+	return 0;
+}
 
 void CViewRegister::OnBnClickedNewfile()
 {
@@ -248,18 +268,28 @@ void CViewRegister::OnBnClickedNewfile()
 	//获取已有档案数量
 	CDStrs data;
 	CString strMsg("");
-	CString strSQL("SELECT MAX(FILE_NUMBER) FROM students");
+
+	CString strMonth;
+	strMonth = (localtime.Format("%Y%m")).Right(4);
+	CString strSQL("");
+	strSQL.Format("SELECT FILE_NUMBER FROM (SELECT FILE_NUMBER FROM students WHERE FILE_NUMBER LIKE '%s%%' ) as file_num", strMonth);
 	if (g_mysqlCon.ExecuteQuery(strSQL, data, strMsg))
 	{
 		ShowMsg2Output1("查询档案数量数据成功！");
 		int nfiles = 1;
 		if (!data[0][0].IsEmpty())
 		{
-			nfiles = atoi(data[0][0]) + 1;
+			if (atoi(data[0][0]) == 0) //整个记录表的第一条
+			{
+				nfiles = 1;
+				m_strNumber.Format("DJ%s%04d", strMonth, nfiles);
+			}
+			else
+			{
+				nfiles = atoi(data[0][0]) + 1;
+				m_strNumber.Format("DJ%d", nfiles);
+			}
 		}
-		CString strTmp;
-		strTmp = (localtime.Format("%Y%m")).Right(4);
-		m_strNumber.Format("DJ%s%04d", strTmp, nfiles);
 		m_Sta_Num.SetWindowTextA(m_strNumber);
 		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(TRUE);
 	}
