@@ -260,19 +260,20 @@
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
+									<NAME>ID_VIEW_K1CHECK</NAME>
+									<VALUE>32876</VALUE>
+								</ID>
+								<TEXT>科一登记表</TEXT>
+								<INDEX_LARGE>10</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
 									<NAME>ID_VIEW_REPORT</NAME>
 									<VALUE>32865</VALUE>
 								</ID>
 								<TEXT>报表打印</TEXT>
 								<INDEX_LARGE>4</INDEX_LARGE>
-							</ELEMENT>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>IDC_BUTTON1073</NAME>
-									<VALUE>1073</VALUE>
-								</ID>
-								<TEXT>科一登记表</TEXT>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>

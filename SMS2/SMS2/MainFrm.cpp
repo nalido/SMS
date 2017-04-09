@@ -8,6 +8,7 @@
 #include "ViewRegister.h"
 #include "ViewBooking1.h"
 #include "ViewBooking2.h"
+#include "ViewK1Check.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -53,9 +54,10 @@ IMPLEMENT_DYNCREATE(CMainFrame, CBCGPFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_VIEW_OUTPUT, OnViewOutput)
-	ON_COMMAND(ID_VIEW_REGISTER, OnViewRegister)
-	ON_COMMAND(ID_VIEW_BOOKING1, OnViewBooking1)
-	ON_COMMAND(ID_VIEW_BOOKING2, OnViewBooking2)
+	ON_COMMAND_EX(ID_VIEW_REGISTER, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_K1CHECK, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
@@ -68,8 +70,10 @@ END_MESSAGE_MAP()
 // CMainFrame construction/destruction
 enum VIEW_TYPE{
 	VIEW_REGISTER = 0,
+	VIEW_K1CHECK,
 	VIEW_BOOKING1,
-	VIEW_BOOKING2
+	VIEW_BOOKING2,
+	VIEW_NUM
 };
 
 CMainFrame::CMainFrame()
@@ -290,22 +294,27 @@ void CMainFrame::OnUpdateViewOutput(CCmdUI* pCmdUI)
 }
  // OUTPUTBAR
 
- // Register
-void CMainFrame::OnViewRegister()
+
+BOOL CMainFrame::OnViewSelected(UINT nID)
 {
-	SelectView(VIEW_REGISTER);
+	switch (nID)
+	{
+	case ID_VIEW_BOOKING1:
+		SelectView(VIEW_BOOKING1);
+		break;
+	case ID_VIEW_BOOKING2:
+		SelectView(VIEW_BOOKING2);
+		break;
+	case ID_VIEW_REGISTER:
+		SelectView(VIEW_REGISTER);
+		break;
+	case ID_VIEW_K1CHECK:
+		SelectView(VIEW_K1CHECK);
+		break;
+	}
+	return TRUE;
 }
 
-
-void CMainFrame::OnViewBooking1()
-{
-	SelectView(VIEW_BOOKING1);
-}
-
-void CMainFrame::OnViewBooking2()
-{
-	SelectView(VIEW_BOOKING2);
-}
  // UI_TYPE_RIBBON
 
 
@@ -313,7 +322,7 @@ CView* CMainFrame::GetView(int nID)
 {
 	if (m_arViews.GetSize() == 0)
 	{
-		const int nCount = 3; //子窗口总数
+		const int nCount = VIEW_NUM; //子窗口总数
 		for (int i = 0; i < nCount; i++)
 		{
 			m_arViews.Add(NULL);
@@ -344,6 +353,9 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_BOOKING2:
 		pClass = RUNTIME_CLASS(CViewBooking2);
+		break;
+	case VIEW_K1CHECK:
+		pClass = RUNTIME_CLASS(CViewK1Check);
 		break;
 	}
 	if (pClass == NULL)
@@ -506,6 +518,11 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 					bNotify = FALSE;
 					strMsg.Format("连接服务器(%s:39200)失败", g_sServerIP);
 					pThis->m_wndOutput.AddItem2List4(strMsg);
+					if (pThis->m_pSendBuf != NULL) //服务器无连接则直接删除数据
+					{
+						delete[] pThis->m_pSendBuf;
+						pThis->m_pSendBuf = NULL;
+					}
 				}
 				::WaitForSingleObject(hCloseEvent, 2000);
 				continue;

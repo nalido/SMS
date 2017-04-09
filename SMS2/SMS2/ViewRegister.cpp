@@ -36,6 +36,7 @@ void CViewRegister::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_NUMBER, m_Sta_Num);
 	DDX_Control(pDX, IDC_DATE_SIGNIN, m_Date_Sign);
 	DDX_Control(pDX, IDC_CARTYPE, m_Comb_CarType);
+	DDX_Control(pDX, IDC_GENDER, m_Comb_Gender);
 	DDX_Control(pDX, IDC_NAME, m_Ed_Name);
 	DDX_Control(pDX, IDC_BIRTH, m_Date_Birth);
 	DDX_Control(pDX, IDC_TEL, m_Ed_Tel);
@@ -134,6 +135,12 @@ void CViewRegister::OnInitialUpdate()
 	m_Comb_CarType.AddString("C2自动挡");
 	m_Comb_CarType.AddString("B2大货车");
 	m_Comb_CarType.SetCurSel(0);
+
+	m_Comb_Gender.AddString("男");
+	m_Comb_Gender.AddString("女");
+
+	GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE); //必须先有档案号
+	GetDlgItem(IDC_NEWFILE)->EnableWindow(TRUE);
 }
 
 
@@ -180,20 +187,25 @@ void CViewRegister::OnBnClickedBtnSign()
 {
 	UpdateData(TRUE); //获取输入
 
+	if (!m_isCaptured){
+		MessageBox("请打开摄像头进行照片采集！");
+		return;
+	}
 
 	//m_strNumber = ""; //档案号
-	CString name, type, tel, fee, id, home, birth, date;
+	CString name, type, tel, fee, id, home, birth, date, gender;
 	m_Ed_Name.GetWindowTextA(name);
 	m_Ed_Tel.GetWindowTextA(tel);
 	m_Ed_Fee.GetWindowTextA(fee);
 	m_Ed_ID.GetWindowTextA(id);
 	m_Ed_Home.GetWindowTextA(home);
 	m_Comb_CarType.GetWindowTextA(type);
+	m_Comb_Gender.GetWindowTextA(gender);
 	m_Date_Sign.GetWindowTextA(date);
 	m_Date_Birth.GetWindowTextA(birth);
 	if (name.IsEmpty() || type.IsEmpty() || tel.IsEmpty()
 		|| fee.IsEmpty() || id.IsEmpty() || home.IsEmpty()
-		|| birth.IsEmpty() || date.IsEmpty())
+		|| birth.IsEmpty() || date.IsEmpty() || gender.IsEmpty())
 	{
 		MessageBox("必须每一项都填完再点击注册！");
 		ShowMsg2Output1("没填完数据就点击了注册按钮");
@@ -203,9 +215,9 @@ void CViewRegister::OnBnClickedBtnSign()
 		CString strMsg("");
 		CString strSQL("");
 		strSQL.Format("INSERT INTO STUDENTS \
-			(ID, SNAME, BIRTHDAY, FILE_NUMBER, REGIST_DATE, CAR_TYPE, TEL, HOME, FEE) \
-					  			VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
-								id, name, birth, m_strNumber.Right(8), date, type, tel, home, fee);
+			(ID, SNAME, BIRTHDAY, FILE_NUMBER, REGIST_DATE, CAR_TYPE, TEL, HOME, FEE, GENDER) \
+					  			VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+								id, name, birth, m_strNumber.Right(8), date, type, tel, home, fee, gender);
 		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 		{
 			MessageBox("注册成功！");

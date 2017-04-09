@@ -46,9 +46,7 @@ protected:
 	afx_msg LRESULT OnRibbonCustomize (WPARAM wp, LPARAM lp);
 	afx_msg void OnToolsOptions();
 	afx_msg void OnViewOutput();
-	afx_msg void OnViewRegister();
-	afx_msg void OnViewBooking1();
-	afx_msg void OnViewBooking2();
+	afx_msg BOOL OnViewSelected(UINT nID);
 	afx_msg void OnUpdateViewOutput(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnRedraw(WPARAM, LPARAM);
 	DECLARE_MESSAGE_MAP()
@@ -80,5 +78,5 @@ public:
 extern CString g_FilePath;
 extern xPublic::CMySQLEx g_mysqlCon;
 extern void LOG(CString sFileName, CString str_log, int flag = 1);
-extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。
+extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。 没有使用虚拟列表技术，只用于显示当前窗口的信息
 extern CString g_sServerIP; //服务器IP

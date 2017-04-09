@@ -16,8 +16,10 @@
 #define IDD_DIALOG1                     167
 #define IDD_BOOKING1                    167
 #define IDD_BOOKING2                    168
+#define IDD_K1CHECK                     169
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
+#define IDC_BTN_NOPASS                  1056
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
@@ -33,6 +35,10 @@
 #define IDC_HOME                        1072
 #define IDC_BIRTH                       1073
 #define IDC_BUTTON1073                  1073
+#define IDC_LIST                        1074
+#define IDC_GENDER                      1075
+#define IDC_BTN_PASS                    1076
+#define IDC_BTN_FRESH                   1077
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
 #define ID_VIEW_APPLOOK_2000            32826
@@ -70,14 +76,15 @@
 #define ID_VIEW_DEVICE                  32873
 #define ID_VIEW_KPI                     32874
 #define ID_VIEW_CHECK                   32875
+#define ID_VIEW_K1CHECK                 32876
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        169
-#define _APS_NEXT_COMMAND_VALUE         32876
-#define _APS_NEXT_CONTROL_VALUE         1074
+#define _APS_NEXT_COMMAND_VALUE         32877
+#define _APS_NEXT_CONTROL_VALUE         1078
 #define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif

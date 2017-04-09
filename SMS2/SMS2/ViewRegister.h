@@ -46,6 +46,7 @@ public:
 	CEdit m_Ed_Home;
 	CEdit m_Ed_Fee;
 	CComboBox m_Comb_CarType;
+	CComboBox m_Comb_Gender;
 	CDateTimeCtrl m_Date_Sign;
 	CDateTimeCtrl m_Date_Birth;
 
