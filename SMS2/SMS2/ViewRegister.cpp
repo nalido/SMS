@@ -235,18 +235,28 @@ void CViewRegister::OnBnClickedBtnSign()
 
 			//数据打包
 			CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+			pFrame->m_isSendReady = FALSE;
 			IplImage ipl_img = m_cap;
 			int len = ipl_img.imageSize + 23;
-			pFrame->m_pSendBuf = new BYTE[len];//发送完删除
-			pFrame->m_nSendLen = len;
-			pFrame->m_pSendBuf[0] = 1; //发送图像数据
-			char* cID = m_strNumber.GetBuffer();
-			memcpy(pFrame->m_pSendBuf + 1, cID, 10); //档案号
-			m_strNumber.ReleaseBuffer();
-			memcpy(pFrame->m_pSendBuf + 11, &m_cap.cols, 4); //图像宽度
-			memcpy(pFrame->m_pSendBuf + 15, &m_cap.rows, 4); //图像高度
-			memcpy(pFrame->m_pSendBuf + 19, &ipl_img.imageSize, 4); //图像尺寸
-			memcpy(pFrame->m_pSendBuf + 23, ipl_img.imageData, ipl_img.imageSize); //图像数据
+			if (pFrame->m_pSendBuf != NULL)
+			{ 
+				MessageBox("上一个信息还未处理完毕，请稍等重试。");
+			}
+			else
+			{
+				pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+				pFrame->m_nSendLen = len;
+				pFrame->m_pSendBuf[0] = 1; //发送图像数据
+				char* cID = m_strNumber.GetBuffer();
+				memcpy(pFrame->m_pSendBuf + 1, cID, 10); //档案号
+				m_strNumber.ReleaseBuffer();
+				memcpy(pFrame->m_pSendBuf + 11, &m_cap.cols, 4); //图像宽度
+				memcpy(pFrame->m_pSendBuf + 15, &m_cap.rows, 4); //图像高度
+				memcpy(pFrame->m_pSendBuf + 19, &ipl_img.imageSize, 4); //图像尺寸
+				memcpy(pFrame->m_pSendBuf + 23, ipl_img.imageData, ipl_img.imageSize); //图像数据
+
+				pFrame->m_isSendReady = TRUE;
+			}
 		}
 		else
 		{

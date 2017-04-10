@@ -71,6 +71,7 @@ public:
 	xPublic::CThreadBase m_threadSocket;
 	BYTE* m_pSendBuf; //发送数据缓存
 	int m_nSendLen; //发送数据长度
+	BOOL m_isSendReady; //是否准备好发送数据
 	static void CALLBACK ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };

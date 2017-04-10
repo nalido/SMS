@@ -13,13 +13,34 @@
 #include <opencv2\opencv.hpp>
 #include "xPublic\CvvImage.h"
 
+#include "xPublic\HTTPClient.h"
+
 using namespace xPublic;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+char* EncodeToUTF8(const char* mbcsStr)
+{
+	wchar_t*  wideStr;
+	char*   utf8Str;
+	int   charLen;
 
+	charLen = MultiByteToWideChar(CP_UTF8, 0, mbcsStr, -1, NULL, 0);
+	wideStr = (wchar_t*)malloc(sizeof(wchar_t)*charLen);
+	MultiByteToWideChar(CP_ACP, 0, mbcsStr, -1, wideStr, charLen);
+
+	charLen = WideCharToMultiByte(CP_UTF8, 0, wideStr, -1, NULL, 0, NULL, NULL);
+
+	utf8Str = (char*)malloc(charLen);
+
+	WideCharToMultiByte(CP_UTF8, 0, wideStr, -1, utf8Str, charLen, NULL, NULL);
+
+	free(wideStr);
+	return utf8Str;
+
+}
 // CSMS_SERVERView
 
 IMPLEMENT_DYNCREATE(CSMS_SERVERView, CBCGPFormView)
@@ -40,18 +61,19 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 
 	int nRow = pdi->item.nRow;	// Row of an item
 	int nCol = pdi->item.nCol;	// Column of an item
-	int ndata = g_strMsgLog.size(); //number of data exist
+	int ndata = pThis->m_datas.size(); //number of data exist
 	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
 	{
-		pdi->item.varValue = g_strMsgLog[nRow][nCol];
-		//if (pThis->m_datas[nRow][nCol] == "nalido")
-		//{
-		//	pdi->item.clrText = COLORREF(RGB(255, 0, 0));
-		//}
-		//if (pThis->m_datas[nRow][nCol] == "snow")
-		//{
-		//	pdi->item.clrBackground = COLORREF(RGB(0, 110, 0));
-		//}
+		vector<CStrs>::iterator it = pThis->m_datas.begin() + nRow;
+		if (!it->empty())
+		{
+			CString str = pThis->m_datas[nRow][nCol];
+			pdi->item.varValue = str;
+		}
+		else
+		{
+			pdi->item.varValue = "访问内存错误";
+		}
 	}
 
 	return TRUE;
@@ -90,7 +112,7 @@ void CSMS_SERVERView::OnInitialUpdate()
 {
 	CBCGPFormView::OnInitialUpdate();
 	GetParentFrame()->RecalcLayout();
-	ResizeParentToFit();
+	//ResizeParentToFit();
 
 
 	m_cTreeCtrl.SetImageList(&m_TreeImages, TVSIL_NORMAL);
@@ -190,7 +212,7 @@ void CSMS_SERVERView::OnTCPAccept(LPVOID lParam, xPublic::CTCPClient *pClient, B
 		strMsg.Format("监听到客户端【%s】的连接", pClient->m_sHostIPPort);
 		CStrs strs;
 		strs.push_back(strMsg);
-		g_strMsgLog.push_back(strs);
+		pThis->m_datas.push_back(strs);
 		pThis->ListFresh();
 		pThis->m_cTreeCtrl.Invalidate();
 	}
@@ -221,7 +243,7 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 				pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize);
 				CStrs strs;
 				strs.push_back(strMsg);
-				g_strMsgLog.push_back(strs);
+				pThis->m_datas.push_back(strs);
 				pThis->ListFresh();
 			}
 			else
@@ -230,15 +252,84 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 				pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize);
 				CStrs strs;
 				strs.push_back(strMsg);
-				g_strMsgLog.push_back(strs);
+				pThis->m_datas.push_back(strs);
 				pThis->ListFresh();
 			}
 
 			delete[] picBuf; picBuf = NULL;
-		}
+		}//end MsgType 1
+		else if (MsgType == 2) //短信平台
+		{
+			BYTE Flag = 0;
+			pClient->Receive(&Flag, 1);
+			int number = 0;
+			pClient->Receive(&number, 4);
+			vector<CString> vFiles;
+			for (int i = 0; i < number; i++)
+			{
+				char FileNum[9] = { 0 };
+				pClient->Receive(&FileNum, 8); //8位纯数字档案号
+				vFiles.push_back(FileNum);
+			}
+			pThis->SendSMS(Flag, vFiles);
+		}// end MsgType 2
 	}
 }
 
+void CSMS_SERVERView::SendSMS(BYTE flag, vector<CString>& vFiles)
+{
+	//查询手机号和姓名
+	CDStrs datas;
+	CString strMsg;
+	CString strSQL;
+	int nCount = vFiles.size();
+	for (int i = 0; i < nCount; i++)
+	{
+		if (vFiles[i].IsEmpty()) continue;
+
+		CDStrs tmp;
+		strSQL.Format("SELECT SNAME, TEL FROM students WHERE FILE_NUMBER='%s'", vFiles[i]);
+		if (g_mysqlCon.ExecuteQuery(strSQL, tmp, strMsg))
+		{
+			datas.push_back(tmp[0]);
+			m_datas.push_back(tmp[0]);
+		}
+		else
+		{
+			CStrs strs;
+			strs.push_back(strMsg);
+			m_datas.push_back(strs);
+			ListFresh();
+		}
+	}
+	CStrs strs;
+	strs.push_back("查询通讯信息成功");
+	m_datas.push_back(strs);
+	ListFresh();
+
+	//发送短信
+	if (flag == 1)
+	{
+		CHttpClient hPost;
+		CString strUrl("https://sms.253.com/msg/send");
+		CString strPosData;
+		string strResponse("");
+		strMsg.Format("【253云通讯】尊敬的%s先生：您个人的相关资料已顺利通过审核，\
+			请于2017年6月23日（星期二）上午8点：30分之前来我校参加科目一第105期理\
+			论学习（地址：南京市红山路90号第二教室）。谢谢您的配合！", m_datas[0][0]);
+		//strMsg.Format("【253云通讯】您的验证码是黄剑冰");
+		char* cstring = EncodeToUTF8(strMsg);
+		strPosData.Format("un=N5676872&pw=clERDUIcs@17&phone=%s&msg=%s&rd=1", m_datas[0][1], cstring);
+		hPost.HttpPost(strUrl, strPosData, strResponse);
+		strMsg = strResponse.c_str();
+	}//end flag 1
+	else if (flag == 2) //退款通知
+	{
+
+	}// end flag 2
+
+
+}
 
 void CSMS_SERVERView::SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize)
 {
@@ -265,7 +356,7 @@ void CSMS_SERVERView::OnTCPClosed(LPVOID lParam, xPublic::CTCPClient *pClient)
 		strMsg.Format("客户端【%s】断开连接", pClient->m_sHostIPPort);
 		CStrs strs;
 		strs.push_back(strMsg);
-		g_strMsgLog.push_back(strs);
+		pThis->m_datas.push_back(strs);
 		pThis->ListFresh();
 		pThis->m_cTreeCtrl.Invalidate();
 	}
@@ -275,13 +366,16 @@ void CSMS_SERVERView::OnTCPClosed(LPVOID lParam, xPublic::CTCPClient *pClient)
 
 void CSMS_SERVERView::ListFresh()
 {
+	if (m_datas.size() > 5000)
+	{
+		//m_cs.Lock();
+		std::vector<CStrs>::iterator it = m_datas.begin();
+		m_datas.erase(it);
+		//m_cs.Unlock();
+	}
+
 	m_wndGrid.RemoveAll();
-	m_wndGrid.SetVirtualRows(1000000);// m_datas.size());
+	m_wndGrid.SetVirtualRows(m_datas.size());// 10000000);
 	m_wndGrid.AdjustLayout();
 
-	if (g_strMsgLog.size() > 5000)
-	{
-		std::vector<CStrs>::iterator it = g_strMsgLog.begin();
-		g_strMsgLog.erase(it);
-	}
 }

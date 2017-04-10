@@ -127,14 +127,21 @@ int COutputBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void COutputBar::ListFresh()
 {
-	m_wndGrid.RemoveAll();
-	m_wndGrid.SetVirtualRows(m_datas.size());
-	m_wndGrid.AdjustLayout();
-
 	if (m_datas.size() > 5000)
 	{
 		std::vector<CStrs>::iterator it = m_datas.begin();
 		m_datas.erase(it);
+	}
+
+	m_wndGrid.RemoveAll();
+	int nCount = m_datas.size();
+	m_wndGrid.SetVirtualRows(nCount);
+	m_wndGrid.AdjustLayout();
+
+	if (nCount > 0)
+	{
+		CBCGPGridRow* pRow = m_wndGrid.GetRow(nCount - 1);
+		m_wndGrid.EnsureVisible(pRow);
 	}
 }
 

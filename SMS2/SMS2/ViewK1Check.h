@@ -41,7 +41,7 @@ public:
 	CDStrs m_datas_nopass;
 	void InitList(CVirtualGridCtrl* pGrid, CRect& rect);
 	void ListFresh();
-	void Refresh();
+	void Refresh(BOOL isInit = FALSE);
 	void RemoveData(int type, int nRow);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual void OnInitialUpdate();
@@ -52,6 +52,9 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedReturn1();
 	afx_msg void OnBnClickedReturn2();
+	afx_msg void OnBnClickedBtnSms1();
+	afx_msg void OnBnClickedBtnSms2();
+	afx_msg void OnBnClickedBtnFresh2();
 };
 
 

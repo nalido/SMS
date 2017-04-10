@@ -118,6 +118,9 @@ BEGIN_MESSAGE_MAP(CViewK1Check, CBCGPFormView)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_RETURN1, &CViewK1Check::OnBnClickedReturn1)
 	ON_BN_CLICKED(IDC_RETURN2, &CViewK1Check::OnBnClickedReturn2)
+	ON_BN_CLICKED(IDC_BTN_SMS1, &CViewK1Check::OnBnClickedBtnSms1)
+	ON_BN_CLICKED(IDC_BTN_SMS2, &CViewK1Check::OnBnClickedBtnSms2)
+	ON_BN_CLICKED(IDC_BTN_FRESH2, &CViewK1Check::OnBnClickedBtnFresh2)
 END_MESSAGE_MAP()
 
 
@@ -179,7 +182,7 @@ void CViewK1Check::OnInitialUpdate()
 	m_wndGrid_nopass.EnableVirtualMode(GridCallback3, (LPARAM)this);
 	
 	//查询新生信息
-	Refresh();
+	Refresh(TRUE); //第一次刷新为三个表格都刷新
 }
 
 void CViewK1Check::InitList(CVirtualGridCtrl* pGrid, CRect& rect)
@@ -212,7 +215,7 @@ void CViewK1Check::InitList(CVirtualGridCtrl* pGrid, CRect& rect)
 	pGrid->SetHeaderAlign(5, HDF_CENTER);
 }
 
-void CViewK1Check::Refresh()
+void CViewK1Check::Refresh(BOOL isInit)
 {
 	CString strMsg("");
 	CString strSQL("");
@@ -222,20 +225,26 @@ void CViewK1Check::Refresh()
 	{
 		ShowMsg2Output1("查询新生信息成功");
 	}
+	else ShowMsg2Output1(strMsg);
 
-	//strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NUMBER FROM students WHERE STEP='1'");
-	//m_datas_pass.clear();
-	//if (g_mysqlCon.ExecuteQuery(strSQL, m_datas_pass, strMsg))
-	//{
-	//	ShowMsg2Output1("查询通过新生信息成功");
-	//}
+	if (isInit)
+	{
+		strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NUMBER FROM students WHERE STEP='1'");
+		m_datas_pass.clear();
+		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas_pass, strMsg))
+		{
+			ShowMsg2Output1("查询通过新生信息成功");
+		}
+		else ShowMsg2Output1(strMsg);
 
-	//strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NUMBER FROM students WHERE STEP='1000'");
-	//m_datas_nopass.clear();
-	//if (g_mysqlCon.ExecuteQuery(strSQL, m_datas_nopass, strMsg))
-	//{
-	//	ShowMsg2Output1("查询通过新生信息成功");
-	//}
+		strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NUMBER FROM students WHERE STEP='1000'");
+		m_datas_nopass.clear();
+		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas_nopass, strMsg))
+		{
+			ShowMsg2Output1("查询通过新生信息成功");
+		}
+		else ShowMsg2Output1(strMsg);
+	}
 	ListFresh();
 }
 
@@ -272,6 +281,7 @@ void CViewK1Check::OnBnClickedBtnPass()
 				m_datas_pass.push_back(strs);
 				RemoveData(0, i);
 			}
+			else ShowMsg2Output1(strMsg);
 		}
 	}
 	ListFresh();// Refresh();
@@ -325,6 +335,7 @@ void CViewK1Check::OnBnClickedBtnNopass()
 				m_datas_nopass.push_back(strs);
 				RemoveData(0, i);
 			}
+			else ShowMsg2Output1(strMsg);
 		}
 	}
 	ListFresh();// Refresh();
@@ -370,6 +381,7 @@ void CViewK1Check::OnBnClickedReturn1()
 				m_datas.push_back(strs);
 				RemoveData(1, i);
 			}
+			else ShowMsg2Output1(strMsg);
 		}
 	}
 	ListFresh();// Refresh();
@@ -398,9 +410,88 @@ void CViewK1Check::OnBnClickedReturn2()
 				m_datas.push_back(strs);
 				RemoveData(2, i);
 			}
+			else ShowMsg2Output1(strMsg);
 		}
 	}
 	ListFresh();// Refresh();
 	strMsg.Format("共选中%d行", nSel);
 	ShowMsg2Output1(strMsg);
+}
+
+
+void CViewK1Check::OnBnClickedBtnSms1()
+{
+	//数据打包
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+
+	if (pFrame->m_pSendBuf != NULL)
+	{
+		MessageBox("上一个信息还未处理完毕，请稍等重试。");
+	}
+	else
+	{
+		int nCount = m_datas_pass.size();
+		int len = 6 + nCount * 8; //Type(1) Flag(1) Number(4) FileNums(Number*8)
+		pFrame->m_isSendReady = FALSE;
+		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+		pFrame->m_nSendLen = len;
+		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+		pFrame->m_pSendBuf[1] = 1; //开班通知短信
+		memcpy(pFrame->m_pSendBuf + 2, &nCount, 4); //档案数量
+
+		CString strFileNum;
+		for (int i = 0; i < nCount; i++)
+		{
+			strFileNum = m_datas_pass[i][4].Right(8);
+			char* data = strFileNum.GetBuffer();
+			memcpy(pFrame->m_pSendBuf + 6 + 8*i, data, 8);
+			strFileNum.ReleaseBuffer();
+		}
+
+		pFrame->m_isSendReady = TRUE;
+		m_datas_pass.clear();
+		ListFresh();
+	}
+}
+
+
+void CViewK1Check::OnBnClickedBtnSms2()
+{
+	//数据打包
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+
+	if (pFrame->m_pSendBuf != NULL)
+	{
+		MessageBox("上一个信息还未处理完毕，请稍等重试。");
+	}
+	else
+	{
+		int nCount = m_datas_nopass.size();
+		int len = 6 + nCount * 8; //Type(1) Flag(1) Number(4) FileNums(Number*8)
+		pFrame->m_isSendReady = FALSE;
+		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+		pFrame->m_nSendLen = len;
+		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+		pFrame->m_pSendBuf[1] = 2; //退款通知短信
+		memcpy(pFrame->m_pSendBuf + 2, &nCount, 4); //档案数量
+
+		CString strFileNum;
+		for (int i = 0; i < nCount; i++)
+		{
+			strFileNum = m_datas_nopass[i][4].Right(8);
+			char* data = strFileNum.GetBuffer();
+			memcpy(pFrame->m_pSendBuf + 6 + 8 * i, data, 8);
+			strFileNum.ReleaseBuffer();
+		}
+		pFrame->m_isSendReady = TRUE;
+
+		m_datas_nopass.clear();
+		ListFresh();
+	}
+}
+
+
+void CViewK1Check::OnBnClickedBtnFresh2()
+{
+	Refresh(TRUE);
 }

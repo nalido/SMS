@@ -43,6 +43,9 @@
 #define IDC_LIST3                       1078
 #define IDC_RETURN1                     1079
 #define IDC_RETURN2                     1080
+#define IDC_BTN_SMS1                    1081
+#define IDC_BTN_SMS2                    1082
+#define IDC_BTN_FRESH2                  1083
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
 #define ID_VIEW_APPLOOK_2000            32826
@@ -88,7 +91,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        169
 #define _APS_NEXT_COMMAND_VALUE         32877
-#define _APS_NEXT_CONTROL_VALUE         1080
+#define _APS_NEXT_CONTROL_VALUE         1082
 #define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif

@@ -82,6 +82,7 @@ CMainFrame::CMainFrame()
 {
 	m_pSendBuf = NULL;
 	m_nSendLen = 0;
+	m_isSendReady = FALSE;
 }
 
 CMainFrame::~CMainFrame()
@@ -508,6 +509,8 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 			continue;
 		}
 
+		if (pThis->m_isSendReady == FALSE) continue; //数据还没有准备好
+
 		//检测和创建TCP连接
 		if (!pTcpClient->IsConnected())
 		{
@@ -516,7 +519,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 				if (bNotify)
 				{
 					bNotify = FALSE;
-					strMsg.Format("连接服务器(%s:39200)失败", g_sServerIP);
+					strMsg.Format("连接服务器(%s:39200)失败,直接删除数据", g_sServerIP);
 					pThis->m_wndOutput.AddItem2List4(strMsg);
 					if (pThis->m_pSendBuf != NULL) //服务器无连接则直接删除数据
 					{
@@ -533,7 +536,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 		}//检测和创建连接
 
 		//发送数据
-		strMsg.Format("第%d次发送图像数据", senttime);
+		strMsg.Format("第%d次发送数据", senttime);
 		pThis->m_wndOutput.AddItem2List4(strMsg);
 		BOOL bSendOK = FALSE;
 		int nPicLen = pThis->m_nSendLen;
@@ -542,7 +545,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 			bSendOK = TRUE;
 			delete[]pThis->m_pSendBuf; //删除数据
 			pThis->m_pSendBuf = NULL;
-			strMsg.Format("图像数据发送成功");
+			strMsg.Format("数据发送成功");
 			pThis->m_wndOutput.AddItem2List4(strMsg);
 		}
 
@@ -557,10 +560,17 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 					pThis->m_pSendBuf = NULL;
 				}
 				senttime = 0;
-				strMsg.Format("图像数据发送三次失败");
+				strMsg.Format("数据发送三次失败");
 				pThis->m_wndOutput.AddItem2List4(strMsg);
 			}
 		}
+	}//end while
+
+
+	if (pThis->m_pSendBuf != NULL)
+	{
+		delete[] pThis->m_pSendBuf;
+		pThis->m_pSendBuf = NULL;
 	}
 }
 
