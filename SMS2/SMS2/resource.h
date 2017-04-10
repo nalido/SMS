@@ -37,8 +37,12 @@
 #define IDC_BUTTON1073                  1073
 #define IDC_LIST                        1074
 #define IDC_GENDER                      1075
+#define IDC_LIST2                       1075
 #define IDC_BTN_PASS                    1076
 #define IDC_BTN_FRESH                   1077
+#define IDC_LIST3                       1078
+#define IDC_RETURN1                     1079
+#define IDC_RETURN2                     1080
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
 #define ID_VIEW_APPLOOK_2000            32826
@@ -84,7 +88,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        169
 #define _APS_NEXT_COMMAND_VALUE         32877
-#define _APS_NEXT_CONTROL_VALUE         1078
+#define _APS_NEXT_CONTROL_VALUE         1080
 #define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif

@@ -31,17 +31,27 @@ protected:
 public:
 	//virtualGrid
 	CStatic m_wndGridLocation;
+	CStatic m_wndGridLocation_pass;
+	CStatic m_wndGridLocation_nopass;
 	CVirtualGridCtrl m_wndGrid;
+	CVirtualGridCtrl m_wndGrid_pass;
+	CVirtualGridCtrl m_wndGrid_nopass;
 	CDStrs m_datas;
+	CDStrs m_datas_pass;
+	CDStrs m_datas_nopass;
+	void InitList(CVirtualGridCtrl* pGrid, CRect& rect);
 	void ListFresh();
 	void Refresh();
-	void RemoveData(int nRow);
+	void RemoveData(int type, int nRow);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual void OnInitialUpdate();
 	afx_msg void OnBnClickedBtnPass();
 
 	afx_msg void OnBnClickedBtnFresh();
 	afx_msg void OnBnClickedBtnNopass();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnBnClickedReturn1();
+	afx_msg void OnBnClickedReturn2();
 };
 
 

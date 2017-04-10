@@ -52,7 +52,7 @@ void CSMS2View::OnInitialUpdate()
 {
 	CBCGPFormView::OnInitialUpdate();
 	GetParentFrame()->RecalcLayout();
-	ResizeParentToFit();
+	//ResizeParentToFit();
 
 }
 

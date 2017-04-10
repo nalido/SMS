@@ -138,7 +138,7 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_ABOUTBOX };
-	CBCGPURLLinkButton m_btnURL;
+	//CBCGPURLLinkButton m_btnURL;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -146,6 +146,8 @@ protected:
 // Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedCompanyUrl();
 };
 
 CAboutDlg::CAboutDlg() : CBCGPDialog(CAboutDlg::IDD)
@@ -156,10 +158,11 @@ CAboutDlg::CAboutDlg() : CBCGPDialog(CAboutDlg::IDD)
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_COMPANY_URL, m_btnURL);
+	//DDX_Control(pDX, IDC_COMPANY_URL, m_btnURL);
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CBCGPDialog)
+	ON_BN_CLICKED(IDC_COMPANY_URL, &CAboutDlg::OnBnClickedCompanyUrl)
 END_MESSAGE_MAP()
 
 // App command to run the dialog
@@ -175,4 +178,12 @@ void CSMS2App::OnAppAbout()
 
 void CSMS2App::PreLoadState()
 {
+}
+
+
+void CAboutDlg::OnBnClickedCompanyUrl()
+{
+	CString strMsg;
+	strMsg.Format("ø™∑¢…Ã£∫ª∆Ω£±˘\r\n” œ‰£∫nalido@yeah.net\r\n");
+	MessageBox(strMsg);
 }

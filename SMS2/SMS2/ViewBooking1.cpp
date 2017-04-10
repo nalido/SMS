@@ -27,6 +27,7 @@ void CViewBooking1::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
 	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -53,4 +54,26 @@ void CViewBooking1::Dump(CDumpContext& dc) const
 void CViewBooking1::OnBnClickedButton1()
 {
 	// TODO:  在此添加控件通知处理程序代码
+}
+
+
+void CViewBooking1::OnInitialUpdate()
+{
+	CBCGPFormView::OnInitialUpdate();
+}
+
+
+void CViewBooking1::OnSize(UINT nType, int cx, int cy)
+{
+	CBCGPFormView::OnSize(nType, cx, cy);
+
+	if (IsWindow(GetDlgItem(IDC_BUTTON1)->GetSafeHwnd())) //判断控件窗口是否已经创建
+	{
+		CRect rect, rect_btn;
+		GetClientRect(&rect);
+		GetDlgItem(IDC_BUTTON1)->GetClientRect(&rect_btn);
+		GetDlgItem(IDC_BUTTON1)->MapWindowPoints(this, &rect_btn);
+
+		GetDlgItem(IDC_BUTTON1)->MoveWindow(rect.right / 2, rect_btn.top, rect_btn.Width(), rect_btn.Height());
+	}
 }

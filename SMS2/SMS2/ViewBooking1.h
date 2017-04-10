@@ -27,6 +27,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButton1();
+	virtual void OnInitialUpdate();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+
 };
 
 
