@@ -28,46 +28,6 @@
 			</IMAGE_LARGE>
 			<ELEMENTS>
 				<ELEMENT>
-					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<ID>
-						<NAME>57600</NAME>
-						<VALUE>57600</VALUE>
-					</ID>
-					<TEXT>&amp;New</TEXT>
-					<INDEX_SMALL>0</INDEX_SMALL>
-					<INDEX_LARGE>0</INDEX_LARGE>
-				</ELEMENT>
-				<ELEMENT>
-					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<ID>
-						<NAME>57601</NAME>
-						<VALUE>57601</VALUE>
-					</ID>
-					<TEXT>&amp;Open...</TEXT>
-					<INDEX_SMALL>1</INDEX_SMALL>
-					<INDEX_LARGE>1</INDEX_LARGE>
-				</ELEMENT>
-				<ELEMENT>
-					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<ID>
-						<NAME>57603</NAME>
-						<VALUE>57603</VALUE>
-					</ID>
-					<TEXT>&amp;Save</TEXT>
-					<INDEX_SMALL>2</INDEX_SMALL>
-					<INDEX_LARGE>2</INDEX_LARGE>
-				</ELEMENT>
-				<ELEMENT>
-					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<ID>
-						<NAME>57604</NAME>
-						<VALUE>57604</VALUE>
-					</ID>
-					<TEXT>Save &amp;As...</TEXT>
-					<INDEX_SMALL>3</INDEX_SMALL>
-					<INDEX_LARGE>3</INDEX_LARGE>
-				</ELEMENT>
-				<ELEMENT>
 					<ELEMENT_NAME>Button_Main_Panel</ELEMENT_NAME>
 					<ID>
 						<NAME>57665</NAME>
@@ -85,34 +45,6 @@
 		</CATEGORY_MAIN>
 		<QAT_ELEMENTS>
 			<ELEMENT_NAME>QAT</ELEMENT_NAME>
-			<ITEMS>
-				<ITEM>
-					<ID>
-						<NAME>57600</NAME>
-						<VALUE>57600</VALUE>
-					</ID>
-					<VISIBLE>FALSE</VISIBLE>
-				</ITEM>
-				<ITEM>
-					<ID>
-						<NAME>57601</NAME>
-						<VALUE>57601</VALUE>
-					</ID>
-					<VISIBLE>FALSE</VISIBLE>
-				</ITEM>
-				<ITEM>
-					<ID>
-						<NAME>57603</NAME>
-						<VALUE>57603</VALUE>
-					</ID>
-				</ITEM>
-				<ITEM>
-					<ID>
-						<NAME>57643</NAME>
-						<VALUE>57643</VALUE>
-					</ID>
-				</ITEM>
-			</ITEMS>
 		</QAT_ELEMENTS>
 		<TAB_ELEMENTS>
 			<ELEMENT_NAME>Group</ELEMENT_NAME>
@@ -260,19 +192,11 @@
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>ID_VIEW_REPORT</NAME>
-									<VALUE>32865</VALUE>
-								</ID>
-								<TEXT>报表打印</TEXT>
-								<INDEX_LARGE>4</INDEX_LARGE>
-							</ELEMENT>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>IDC_BUTTON1073</NAME>
-									<VALUE>1073</VALUE>
+									<NAME>ID_VIEW_K1CHECK</NAME>
+									<VALUE>32876</VALUE>
 								</ID>
 								<TEXT>科一登记表</TEXT>
+								<INDEX_LARGE>10</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>

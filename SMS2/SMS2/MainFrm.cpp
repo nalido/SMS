@@ -8,6 +8,7 @@
 #include "ViewRegister.h"
 #include "ViewBooking1.h"
 #include "ViewBooking2.h"
+#include "ViewK1Check.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -53,9 +54,10 @@ IMPLEMENT_DYNCREATE(CMainFrame, CBCGPFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_VIEW_OUTPUT, OnViewOutput)
-	ON_COMMAND(ID_VIEW_REGISTER, OnViewRegister)
-	ON_COMMAND(ID_VIEW_BOOKING1, OnViewBooking1)
-	ON_COMMAND(ID_VIEW_BOOKING2, OnViewBooking2)
+	ON_COMMAND_EX(ID_VIEW_REGISTER, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_K1CHECK, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
@@ -68,8 +70,10 @@ END_MESSAGE_MAP()
 // CMainFrame construction/destruction
 enum VIEW_TYPE{
 	VIEW_REGISTER = 0,
+	VIEW_K1CHECK,
 	VIEW_BOOKING1,
-	VIEW_BOOKING2
+	VIEW_BOOKING2,
+	VIEW_NUM
 };
 
 CMainFrame::CMainFrame()
@@ -78,6 +82,7 @@ CMainFrame::CMainFrame()
 {
 	m_pSendBuf = NULL;
 	m_nSendLen = 0;
+	m_isSendReady = FALSE;
 }
 
 CMainFrame::~CMainFrame()
@@ -157,6 +162,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
 
+	cs.style &= ~FWS_ADDTOTITLE; //使用固定标题
+	cs.lpszName = "东华驾校学员管理系统";
 	//cs.cx = GetSystemMetrics(SM_CXSCREEN);
 	//cs.cy = GetSystemMetrics(SM_CYSCREEN);
 
@@ -290,22 +297,27 @@ void CMainFrame::OnUpdateViewOutput(CCmdUI* pCmdUI)
 }
  // OUTPUTBAR
 
- // Register
-void CMainFrame::OnViewRegister()
+
+BOOL CMainFrame::OnViewSelected(UINT nID)
 {
-	SelectView(VIEW_REGISTER);
+	switch (nID)
+	{
+	case ID_VIEW_BOOKING1:
+		SelectView(VIEW_BOOKING1);
+		break;
+	case ID_VIEW_BOOKING2:
+		SelectView(VIEW_BOOKING2);
+		break;
+	case ID_VIEW_REGISTER:
+		SelectView(VIEW_REGISTER);
+		break;
+	case ID_VIEW_K1CHECK:
+		SelectView(VIEW_K1CHECK);
+		break;
+	}
+	return TRUE;
 }
 
-
-void CMainFrame::OnViewBooking1()
-{
-	SelectView(VIEW_BOOKING1);
-}
-
-void CMainFrame::OnViewBooking2()
-{
-	SelectView(VIEW_BOOKING2);
-}
  // UI_TYPE_RIBBON
 
 
@@ -313,7 +325,7 @@ CView* CMainFrame::GetView(int nID)
 {
 	if (m_arViews.GetSize() == 0)
 	{
-		const int nCount = 3; //子窗口总数
+		const int nCount = VIEW_NUM; //子窗口总数
 		for (int i = 0; i < nCount; i++)
 		{
 			m_arViews.Add(NULL);
@@ -344,6 +356,9 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_BOOKING2:
 		pClass = RUNTIME_CLASS(CViewBooking2);
+		break;
+	case VIEW_K1CHECK:
+		pClass = RUNTIME_CLASS(CViewK1Check);
 		break;
 	}
 	if (pClass == NULL)
@@ -496,6 +511,8 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 			continue;
 		}
 
+		if (pThis->m_isSendReady == FALSE) continue; //数据还没有准备好
+
 		//检测和创建TCP连接
 		if (!pTcpClient->IsConnected())
 		{
@@ -504,8 +521,14 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 				if (bNotify)
 				{
 					bNotify = FALSE;
-					strMsg.Format("连接服务器(%s:39200)失败", g_sServerIP);
+					strMsg.Format("连接服务器(%s:39200)失败,直接删除数据", g_sServerIP);
 					pThis->m_wndOutput.AddItem2List4(strMsg);
+					if (pThis->m_pSendBuf != NULL) //服务器无连接则直接删除数据
+					{
+						delete[] pThis->m_pSendBuf;
+						pThis->m_pSendBuf = NULL;
+						bNotify = TRUE;
+					}
 				}
 				::WaitForSingleObject(hCloseEvent, 2000);
 				continue;
@@ -516,7 +539,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 		}//检测和创建连接
 
 		//发送数据
-		strMsg.Format("第%d次发送图像数据", senttime);
+		strMsg.Format("第%d次发送数据", senttime);
 		pThis->m_wndOutput.AddItem2List4(strMsg);
 		BOOL bSendOK = FALSE;
 		int nPicLen = pThis->m_nSendLen;
@@ -525,7 +548,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 			bSendOK = TRUE;
 			delete[]pThis->m_pSendBuf; //删除数据
 			pThis->m_pSendBuf = NULL;
-			strMsg.Format("图像数据发送成功");
+			strMsg.Format("数据发送成功");
 			pThis->m_wndOutput.AddItem2List4(strMsg);
 		}
 
@@ -540,10 +563,17 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 					pThis->m_pSendBuf = NULL;
 				}
 				senttime = 0;
-				strMsg.Format("图像数据发送三次失败");
+				strMsg.Format("数据发送三次失败");
 				pThis->m_wndOutput.AddItem2List4(strMsg);
 			}
 		}
+	}//end while
+
+
+	if (pThis->m_pSendBuf != NULL)
+	{
+		delete[] pThis->m_pSendBuf;
+		pThis->m_pSendBuf = NULL;
 	}
 }
 

@@ -75,6 +75,12 @@
     <ClInclude Include="BCGClass\VirtualGridCtrl.h">
       <Filter>BCGClass</Filter>
     </ClInclude>
+    <ClInclude Include="ViewK1Check.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MSGINFO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -124,6 +130,12 @@
     </ClCompile>
     <ClCompile Include="BCGClass\VirtualGridCtrl.cpp">
       <Filter>BCGClass</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewK1Check.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MSGINFO.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
