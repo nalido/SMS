@@ -17,6 +17,7 @@
 #define IDD_BOOKING1                    167
 #define IDD_BOOKING2                    168
 #define IDD_K1CHECK                     169
+#define IDD_SMSINFO                     170
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_BTN_NOPASS                  1056
@@ -89,7 +90,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        169
+#define _APS_NEXT_RESOURCE_VALUE        171
 #define _APS_NEXT_COMMAND_VALUE         32877
 #define _APS_NEXT_CONTROL_VALUE         1082
 #define _APS_NEXT_SYMED_VALUE           117

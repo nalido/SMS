@@ -5,6 +5,7 @@
 #include "SMS2.h"
 #include "ViewK1Check.h"
 #include "MainFrm.h"
+#include "MSGINFO.h"
 
 
 static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
@@ -421,6 +422,9 @@ void CViewK1Check::OnBnClickedReturn2()
 
 void CViewK1Check::OnBnClickedBtnSms1()
 {
+	CMSGINFO dlgMsg;
+	dlgMsg.DoModal();
+
 	//数据打包
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 

@@ -113,18 +113,18 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_LIST,"Static",SS_BLACKFRAME,11,25,348,377
-    PUSHBUTTON      "通过 >>",IDC_BTN_PASS,375,63,62,13
-    PUSHBUTTON      "不通过 >>",IDC_BTN_NOPASS,375,269,62,13
+    PUSHBUTTON      "通过 >>",IDC_BTN_PASS,375,91,62,13
+    PUSHBUTTON      "不通过 >>",IDC_BTN_NOPASS,375,287,62,13
     PUSHBUTTON      "刷新",IDC_BTN_FRESH,375,25,62,13
     CONTROL         "",IDC_LIST2,"Static",SS_BLACKFRAME,453,25,344,183
     CONTROL         "",IDC_LIST3,"Static",SS_BLACKFRAME,453,236,344,166
-    PUSHBUTTON      "<< 撤销",IDC_RETURN1,375,82,62,14
-    PUSHBUTTON      "<< 撤销",IDC_RETURN2,375,290,62,14
+    PUSHBUTTON      "<< 撤销",IDC_RETURN1,375,110,62,14
+    PUSHBUTTON      "<< 撤销",IDC_RETURN2,375,308,62,14
     LTEXT           "新生登记表",IDC_STATIC,13,11,147,10
     LTEXT           "科目一开班统计表",IDC_STATIC,453,11,147,10
     LTEXT           "待退款人员统计表",IDC_STATIC,453,223,147,10
-    PUSHBUTTON      "发送开班短信",IDC_BTN_SMS1,375,102,62,14
-    PUSHBUTTON      "发送退款短信",IDC_BTN_SMS2,375,312,62,14
+    PUSHBUTTON      "发送开班短信",IDC_BTN_SMS1,375,130,62,14
+    PUSHBUTTON      "发送退款短信",IDC_BTN_SMS2,375,330,62,14
     PUSHBUTTON      "刷新统计表",IDC_BTN_FRESH2,375,44,62,13
 END
 
@@ -138,6 +138,22 @@ BEGIN
     LTEXT           "Copyright (C) 2017",IDC_STATIC,40,25,119,8
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
     PUSHBUTTON      "开发商信息",IDC_COMPANY_URL,40,36,119,14
+END
+
+IDD_SMS2_FORM DIALOGEX 0, 0, 690, 327
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "TODO: Place form controls on this dialog.",IDC_STATIC,32,40,280,8
+END
+
+IDD_SMSINFO DIALOGEX 0, 0, 217, 154
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "短信确认窗口"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,43,126,50,14
+    PUSHBUTTON      "取消",IDCANCEL,104,126,50,14
 END
 
 
@@ -202,6 +218,22 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 48
     END
+
+    IDD_SMS2_FORM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 683
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 320
+    END
+
+    IDD_SMSINFO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 210
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 147
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -215,38 +247,6 @@ END
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_SMS2_FORM DIALOGEX 0, 0, 690, 327
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
-FONT 8, "MS Shell Dlg", 0, 0, 0x1
-BEGIN
-    LTEXT           "TODO: Place form controls on this dialog.",IDC_STATIC,32,40,280,8
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
-BEGIN
-    IDD_SMS2_FORM, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 683
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 320
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
 
 /////////////////////////////////////////////////////////////////////////////
 //

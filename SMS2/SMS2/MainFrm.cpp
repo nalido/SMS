@@ -162,6 +162,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
 
+	cs.style &= ~FWS_ADDTOTITLE; //使用固定标题
+	cs.lpszName = "东华驾校学员管理系统";
 	//cs.cx = GetSystemMetrics(SM_CXSCREEN);
 	//cs.cy = GetSystemMetrics(SM_CYSCREEN);
 
@@ -525,6 +527,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 					{
 						delete[] pThis->m_pSendBuf;
 						pThis->m_pSendBuf = NULL;
+						bNotify = TRUE;
 					}
 				}
 				::WaitForSingleObject(hCloseEvent, 2000);

@@ -200,6 +200,7 @@
   <ItemGroup>
     <ClInclude Include="BCGClass\VirtualGridCtrl.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MSGINFO.h" />
     <ClInclude Include="OutputBar.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SMS2.h" />
@@ -220,6 +221,7 @@
   <ItemGroup>
     <ClCompile Include="BCGClass\VirtualGridCtrl.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MSGINFO.cpp" />
     <ClCompile Include="OutputBar.cpp" />
     <ClCompile Include="SMS2.cpp" />
     <ClCompile Include="SMS2Doc.cpp" />
