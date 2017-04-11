@@ -18,6 +18,8 @@
 #define IDD_BOOKING2                    168
 #define IDD_K1CHECK                     169
 #define IDD_SMSINFO                     170
+#define IDD_SYSTEM                      171
+#define IDD_SCHOOL                      172
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_BTN_NOPASS                  1056
@@ -46,7 +48,12 @@
 #define IDC_RETURN2                     1080
 #define IDC_BTN_SMS1                    1081
 #define IDC_BTN_SMS2                    1082
+#define IDC_EDIT_FILEPATH               1082
 #define IDC_BTN_FRESH2                  1083
+#define IDC_FILEPATH                    1083
+#define IDC_CHANGEPATH                  1084
+#define IDC_SMSINFO                     1084
+#define IDC_CHANGEBACK                  1085
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
 #define ID_VIEW_APPLOOK_2000            32826
@@ -90,9 +97,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        171
+#define _APS_NEXT_RESOURCE_VALUE        173
 #define _APS_NEXT_COMMAND_VALUE         32877
-#define _APS_NEXT_CONTROL_VALUE         1082
+#define _APS_NEXT_CONTROL_VALUE         1085
 #define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif

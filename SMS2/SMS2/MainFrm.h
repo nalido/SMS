@@ -76,8 +76,9 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
-extern CString g_FilePath;
+extern CString g_strFilePath;
 extern xPublic::CMySQLEx g_mysqlCon;
 extern void LOG(CString sFileName, CString str_log, int flag = 1);
 extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。 没有使用虚拟列表技术，只用于显示当前窗口的信息
 extern CString g_sServerIP; //服务器IP
+extern char* EncodeToUTF8(const char* mbcsStr);

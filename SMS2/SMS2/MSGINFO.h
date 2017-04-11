@@ -18,4 +18,10 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+
+public:
+	int m_nFlag; //短信类型标志
+	CString m_strSMS;
+	virtual BOOL OnInitDialog();
+	void Init(int flag);
 };

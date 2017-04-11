@@ -32,7 +32,6 @@ void CViewRegister::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_PHOTO, m_SPhoto);
-	DDX_Control(pDX, IDC_CAMERA, m_Btn_Cap);
 	DDX_Control(pDX, IDC_NUMBER, m_Sta_Num);
 	DDX_Control(pDX, IDC_DATE_SIGNIN, m_Date_Sign);
 	DDX_Control(pDX, IDC_CARTYPE, m_Comb_CarType);
@@ -79,19 +78,19 @@ void CViewRegister::Dump(CDumpContext& dc) const
 void CViewRegister::OnBnClickedCamera()
 {
 	CString str;
-	m_Btn_Cap.GetWindowTextA(str);
+	GetDlgItem(IDC_CAMERA)->GetWindowTextA(str);
 	if (str == "打开摄像头")
 	{
 		//init the timer
 		SetTimer(0, 50, NULL);
-		m_Btn_Cap.SetWindowTextA("采集照片");
+		GetDlgItem(IDC_CAMERA)->SetWindowTextA("采集照片");
 	}
 	else if (str == "采集照片")
 	{
 		KillTimer(0);
 		m_isCaptured = TRUE;
 		ShowMsg2Output1("拍照成功");
-		m_Btn_Cap.SetWindowTextA("打开摄像头");
+		GetDlgItem(IDC_CAMERA)->SetWindowTextA("打开摄像头");
 	}
 }
 
@@ -227,8 +226,9 @@ void CViewRegister::OnBnClickedBtnSign()
 
 			//保存照片
 			CString sFileName("");
-			sFileName.Format("%s%s.bmp", g_FilePath, m_strNumber);
-			::SHCreateDirectory(NULL, CA2W(g_FilePath));
+			sFileName.Format("%s\\", g_strFilePath);
+			::SHCreateDirectory(NULL, CA2W(sFileName));
+			sFileName.Format("%s\\%s.bmp", g_strFilePath, m_strNumber);
 			cv::String s = sFileName.GetBuffer();
 			imwrite(s, m_cap);
 			sFileName.ReleaseBuffer();

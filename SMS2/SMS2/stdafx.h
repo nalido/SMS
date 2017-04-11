@@ -77,3 +77,5 @@
 #define	APP_TITLE _T("东华驾校学员管理系统")
 #define UM_REDRAW (WM_USER + 101)
 #define WM_USER_MESSAGE		(WM_USER + 2001)//自定义消息
+
+#include "xPublic\Common.h"

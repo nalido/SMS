@@ -9,13 +9,15 @@
 #include "ViewBooking1.h"
 #include "ViewBooking2.h"
 #include "ViewK1Check.h"
+#include "School.h"
+#include "System.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 ////////////////global functions and values///////////////////////
-CString g_FilePath = "E:\\Photos\\";
+CString g_strFilePath = "E:\\Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
 CString g_sServerIP = "127.0.0.1";
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
@@ -45,6 +47,26 @@ void ShowMsg2Output1(CString strMsg)
 	pFrame->m_wndOutput.AddItem2List1(strMsg);
 }
 
+char* EncodeToUTF8(const char* mbcsStr)
+{
+	wchar_t*  wideStr;
+	char*   utf8Str;
+	int   charLen;
+
+	charLen = MultiByteToWideChar(CP_UTF8, 0, mbcsStr, -1, NULL, 0);
+	wideStr = (wchar_t*)malloc(sizeof(wchar_t)*charLen);
+	MultiByteToWideChar(CP_ACP, 0, mbcsStr, -1, wideStr, charLen);
+
+	charLen = WideCharToMultiByte(CP_UTF8, 0, wideStr, -1, NULL, 0, NULL, NULL);
+
+	utf8Str = (char*)malloc(charLen);
+
+	WideCharToMultiByte(CP_UTF8, 0, wideStr, -1, utf8Str, charLen, NULL, NULL);
+
+	free(wideStr);
+	return utf8Str;
+
+}
 ///////////////////////////////end of global functions//////////////
 
 // CMainFrame
@@ -58,6 +80,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_K1CHECK, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
@@ -73,6 +97,8 @@ enum VIEW_TYPE{
 	VIEW_K1CHECK,
 	VIEW_BOOKING1,
 	VIEW_BOOKING2,
+	VIEW_SCHOOL,
+	VIEW_SYSTEM,
 	VIEW_NUM
 };
 
@@ -314,6 +340,12 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_K1CHECK:
 		SelectView(VIEW_K1CHECK);
 		break;
+	case ID_VIEW_SYSTEMSETTING:
+		SelectView(VIEW_SYSTEM);
+		break;
+	case ID_VIEW_SCHOOLSETTING:
+		SelectView(VIEW_SCHOOL);
+		break;
 	}
 	return TRUE;
 }
@@ -359,6 +391,12 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_K1CHECK:
 		pClass = RUNTIME_CLASS(CViewK1Check);
+		break;
+	case VIEW_SCHOOL:
+		pClass = RUNTIME_CLASS(CSchool);
+		break;
+	case VIEW_SYSTEM:
+		pClass = RUNTIME_CLASS(CSystem);
 		break;
 	}
 	if (pClass == NULL)
@@ -434,6 +472,12 @@ void CMainFrame::SelectView(int nID)
 		pNewView->ShowWindow(SW_SHOW);
 
 		SetActiveView(pNewView);
+	}
+
+	//特殊窗口的初始化刷新(可以重复初始化的窗口)
+	if (pNewView->IsKindOf(RUNTIME_CLASS(CSystem)))
+	{
+		pNewView->OnInitialUpdate();
 	}
 
 	//theApp.WriteInt(_T("ViewType"), m_nCurrType);

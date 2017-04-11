@@ -203,15 +203,18 @@
     <ClInclude Include="MSGINFO.h" />
     <ClInclude Include="OutputBar.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="School.h" />
     <ClInclude Include="SMS2.h" />
     <ClInclude Include="SMS2Doc.h" />
     <ClInclude Include="SMS2View.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="System.h" />
     <ClInclude Include="ViewBooking1.h" />
     <ClInclude Include="ViewBooking2.h" />
     <ClInclude Include="ViewK1Check.h" />
     <ClInclude Include="ViewRegister.h" />
     <ClInclude Include="xPublic\CObjectBase.h" />
+    <ClInclude Include="xPublic\Common.h" />
     <ClInclude Include="xPublic\CvvImage.h" />
     <ClInclude Include="xPublic\MyPrint.h" />
     <ClInclude Include="xPublic\MySQLEx.h" />
@@ -223,6 +226,7 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MSGINFO.cpp" />
     <ClCompile Include="OutputBar.cpp" />
+    <ClCompile Include="School.cpp" />
     <ClCompile Include="SMS2.cpp" />
     <ClCompile Include="SMS2Doc.cpp" />
     <ClCompile Include="SMS2View.cpp" />
@@ -232,11 +236,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="System.cpp" />
     <ClCompile Include="ViewBooking1.cpp" />
     <ClCompile Include="ViewBooking2.cpp" />
     <ClCompile Include="ViewK1Check.cpp" />
     <ClCompile Include="ViewRegister.cpp" />
     <ClCompile Include="xPublic\CObjectBase.cpp" />
+    <ClCompile Include="xPublic\Common.cpp" />
     <ClCompile Include="xPublic\CvvImage.cpp" />
     <ClCompile Include="xPublic\MyPrint.cpp" />
     <ClCompile Include="xPublic\MySQLEx.cpp" />
