@@ -90,6 +90,9 @@
     <ClInclude Include="xPublic\Common.h">
       <Filter>xPublic</Filter>
     </ClInclude>
+    <ClInclude Include="ViewK1Exam.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -154,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="xPublic\Common.cpp">
       <Filter>xPublic</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewK1Exam.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,7 @@
 #include "ViewBooking1.h"
 #include "ViewBooking2.h"
 #include "ViewK1Check.h"
+#include "ViewK1Exam.h"
 #include "School.h"
 #include "System.h"
 
@@ -78,6 +79,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND(ID_VIEW_OUTPUT, OnViewOutput)
 	ON_COMMAND_EX(ID_VIEW_REGISTER, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_K1CHECK, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_K1EXAM, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
@@ -97,6 +99,7 @@ enum VIEW_TYPE{
 	VIEW_K1CHECK,
 	VIEW_BOOKING1,
 	VIEW_BOOKING2,
+	VIEW_K1EXAM,
 	VIEW_SCHOOL,
 	VIEW_SYSTEM,
 	VIEW_NUM
@@ -340,6 +343,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_K1CHECK:
 		SelectView(VIEW_K1CHECK);
 		break;
+	case ID_VIEW_K1EXAM:
+		SelectView(VIEW_K1EXAM);
+		break;
 	case ID_VIEW_SYSTEMSETTING:
 		SelectView(VIEW_SYSTEM);
 		break;
@@ -391,6 +397,9 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_K1CHECK:
 		pClass = RUNTIME_CLASS(CViewK1Check);
+		break;
+	case VIEW_K1EXAM:
+		pClass = RUNTIME_CLASS(CViewK1Exam);
 		break;
 	case VIEW_SCHOOL:
 		pClass = RUNTIME_CLASS(CSchool);
