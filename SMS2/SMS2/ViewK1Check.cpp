@@ -422,8 +422,11 @@ void CViewK1Check::OnBnClickedReturn2()
 
 void CViewK1Check::OnBnClickedBtnSms1()
 {
+	int nCount = m_datas_pass.size();
 	CMSGINFO dlgMsg;
-	dlgMsg.DoModal();
+	dlgMsg.m_nFlag = 1;
+	dlgMsg.m_strSMS.Format("即将给%d个新生发送科目一开班通知短信，请确认名单无误后点击确认按钮", nCount);
+	if(dlgMsg.DoModal() != IDOK) return;
 
 	//数据打包
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
@@ -434,7 +437,6 @@ void CViewK1Check::OnBnClickedBtnSms1()
 	}
 	else
 	{
-		int nCount = m_datas_pass.size();
 		int len = 6 + nCount * 8; //Type(1) Flag(1) Number(4) FileNums(Number*8)
 		pFrame->m_isSendReady = FALSE;
 		pFrame->m_pSendBuf = new BYTE[len];//发送完删除

@@ -81,6 +81,15 @@
     <ClInclude Include="MSGINFO.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="School.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="xPublic\Common.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -136,6 +145,15 @@
     </ClCompile>
     <ClCompile Include="MSGINFO.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="School.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="xPublic\Common.cpp">
+      <Filter>xPublic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -36,7 +36,6 @@ public:
 
 
 	CStatic m_SPhoto;
-	CButton m_Btn_Cap;
 
 	CStatic m_Sta_Num;
 	CString m_strNumber; //µµ°¸ºÅ

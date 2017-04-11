@@ -9,6 +9,7 @@
 #include "SMS2View.h"
 
 #include "ViewRegister.h"
+#include "xPublic\Common.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -69,6 +70,11 @@ BOOL CSMS2App::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CBCGPWinApp::InitInstance();
+
+
+	//系统配置初始化
+	xPublic::GetWorkPath("StudentsManagementSystem");
+	g_strFilePath = xPublic::GETSTR2("Option", "PicSavePath", _T("E:\\Photos\\"));
 
 	// Initialize OLE libraries
 	if (!AfxOleInit())
