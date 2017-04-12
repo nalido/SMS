@@ -22,6 +22,7 @@
 #define IDD_SCHOOL                      172
 #define IDD_DIALOG2                     173
 #define IDD_K1EXAM                      173
+#define IDD_STUPROGRESS                 174
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_BTN_NOPASS                  1056
@@ -57,6 +58,12 @@
 #define IDC_SMSINFO                     1084
 #define IDC_CHANGEBACK                  1085
 #define IDC_BUTTON1085                  1085
+#define IDC_STUPROGRESS                 1087
+#define IDC_STUFRESH                    1088
+#define IDC_SENDBOOKMSG                 1089
+#define IDC_SPHOTO                      1089
+#define IDC_SLIST                       1090
+#define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
 #define ID_VIEW_APPLOOK_2000            32826
@@ -96,14 +103,15 @@
 #define ID_VIEW_CHECK                   32875
 #define ID_VIEW_K1CHECK                 32876
 #define ID_VIEW_K1EXAM                  32877
+#define ID_VIEW_STUPROGRESS             32879
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        174
-#define _APS_NEXT_COMMAND_VALUE         32878
-#define _APS_NEXT_CONTROL_VALUE         1086
-#define _APS_NEXT_SYMED_VALUE           117
+#define _APS_NEXT_RESOURCE_VALUE        175
+#define _APS_NEXT_COMMAND_VALUE         32880
+#define _APS_NEXT_CONTROL_VALUE         1091
+#define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

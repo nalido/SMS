@@ -1,7 +1,8 @@
 #pragma once
 
 
-
+#include "BCGClass\VirtualGridCtrl.h"
+#include "xPublic\MySQLEx.h"
 // CViewBooking1 ¥∞ÃÂ ”Õº
 
 class CViewBooking1 : public CBCGPFormView
@@ -26,9 +27,15 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedButton1();
+//	afx_msg void OnBnClickedButton1();
 	virtual void OnInitialUpdate();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+
+	//virtualGrid
+	CStatic m_wndGridLocation;
+	CVirtualGridCtrl m_wndGrid;
+	CDStrs m_datas;
+	static void CALLBACK OnGridClick(LPVOID lParam);
 
 };
 

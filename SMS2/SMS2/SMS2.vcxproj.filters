@@ -93,6 +93,9 @@
     <ClInclude Include="ViewK1Exam.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ViewStuProgress.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -159,6 +162,9 @@
       <Filter>xPublic</Filter>
     </ClCompile>
     <ClCompile Include="ViewK1Exam.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewStuProgress.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -47,6 +47,8 @@ static char THIS_FILE[] = __FILE__;
 
 CVirtualGridCtrl::CVirtualGridCtrl()
 {
+	m_OnWork_DbClick = NULL;
+	m_OnWork_Click = NULL;
 }
 
 CVirtualGridCtrl::~CVirtualGridCtrl()
@@ -59,6 +61,9 @@ BEGIN_MESSAGE_MAP(CVirtualGridCtrl, CBCGPGridCtrl)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	//}}AFX_MSG_MAP
+//	ON_WM_MBUTTONDBLCLK()
+ON_WM_LBUTTONDBLCLK()
+ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 
@@ -154,4 +159,43 @@ void CVirtualGridCtrl::OnPreparePrintPages (CPrintInfo* pInfo,
 								  int /*nFirstItem*/, int /*nLastItem*/)
 {
 	CBCGPGridCtrl::OnPreparePrintPages (pInfo, m_rangePrint.m_nTop, m_rangePrint.m_nBottom);
+}
+
+
+//void CVirtualGridCtrl::OnMButtonDblClk(UINT nFlags, CPoint point)
+//{
+//	// TODO:  在此添加消息处理程序代码和/或调用默认值
+//
+//	CBCGPGridCtrl::OnMButtonDblClk(nFlags, point);
+//}
+
+
+void CVirtualGridCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
+{
+	if (m_OnWork_DbClick != NULL)
+	{
+		m_OnWork_DbClick(this->GetParent());
+	}
+
+	CBCGPGridCtrl::OnLButtonDblClk(nFlags, point);
+}
+
+void CVirtualGridCtrl::SetCallBack_DblClk(ONWORK onWork) //注册双击鼠标回调函数
+{
+	m_OnWork_DbClick = onWork;
+}
+
+void CVirtualGridCtrl::SetCallBack_Clk(ONWORK onWork) //注册双击鼠标回调函数
+{
+	m_OnWork_Click = onWork;
+}
+
+void CVirtualGridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
+{
+
+	if (m_OnWork_Click != NULL)
+	{
+		m_OnWork_Click(this->GetParent());
+	}
+	CBCGPGridCtrl::OnLButtonDown(nFlags, point);
 }

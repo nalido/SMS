@@ -82,3 +82,15 @@ extern void LOG(CString sFileName, CString str_log, int flag = 1);
 extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。 没有使用虚拟列表技术，只用于显示当前窗口的信息
 extern CString g_sServerIP; //服务器IP
 extern char* EncodeToUTF8(const char* mbcsStr);
+
+enum enum_StudentProgress{
+	SP_NEWONE = 0,			//新生记录
+	SP_K0PASS,				//政审通过	
+	SP_K0SMS,				//政审通过短信
+	SP_K1WAIT,				//科一报考申请
+	SP_K1SMS,				//
+	SP_K1EXAM,				//科一考试
+	SP_K1PASS,				//
+	SP_K2K3BOOKING,			//路训预约	
+	SP_K2K3BOOKED			//预约完成
+};

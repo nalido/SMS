@@ -23,10 +23,11 @@ CViewBooking1::~CViewBooking1()
 void CViewBooking1::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPFormView::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_SLIST, m_wndGridLocation);
 }
 
 BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
-	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
+//	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
@@ -50,12 +51,15 @@ void CViewBooking1::Dump(CDumpContext& dc) const
 
 // CViewBooking1 消息处理程序
 
-
-void CViewBooking1::OnBnClickedButton1()
+void CALLBACK CViewBooking1::OnGridClick(LPVOID lParam)
 {
-	// TODO:  在此添加控件通知处理程序代码
-}
+	CViewBooking1* pThis = (CViewBooking1*)lParam;
 
+	CBCGPGridRow* pRow = pThis->m_wndGrid.GetCurSel();
+	int nRow = pRow->GetRowId();
+	CString strFileName = pThis->m_datas[nRow][0];
+	pThis->MessageBox(strFileName);
+}
 
 void CViewBooking1::OnInitialUpdate()
 {
@@ -67,13 +71,13 @@ void CViewBooking1::OnSize(UINT nType, int cx, int cy)
 {
 	CBCGPFormView::OnSize(nType, cx, cy);
 
-	if (IsWindow(GetDlgItem(IDC_BUTTON1)->GetSafeHwnd())) //判断控件窗口是否已经创建
-	{
-		CRect rect, rect_btn;
-		GetClientRect(&rect);
-		GetDlgItem(IDC_BUTTON1)->GetClientRect(&rect_btn);
-		GetDlgItem(IDC_BUTTON1)->MapWindowPoints(this, &rect_btn);
+	//if (IsWindow(GetDlgItem(IDC_BUTTON1)->GetSafeHwnd())) //判断控件窗口是否已经创建
+	//{
+	//	CRect rect, rect_btn;
+	//	GetClientRect(&rect);
+	//	GetDlgItem(IDC_BUTTON1)->GetClientRect(&rect_btn);
+	//	GetDlgItem(IDC_BUTTON1)->MapWindowPoints(this, &rect_btn);
 
-		GetDlgItem(IDC_BUTTON1)->MoveWindow(rect.right / 2, rect_btn.top, rect_btn.Width(), rect_btn.Height());
-	}
+	//	GetDlgItem(IDC_BUTTON1)->MoveWindow(rect.right / 2, rect_btn.top, rect_btn.Width(), rect_btn.Height());
+	//}
 }

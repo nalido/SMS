@@ -10,6 +10,7 @@
 #include "ViewBooking2.h"
 #include "ViewK1Check.h"
 #include "ViewK1Exam.h"
+#include "ViewStuProgress.h"
 #include "School.h"
 #include "System.h"
 
@@ -80,6 +81,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_REGISTER, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_K1CHECK, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_K1EXAM, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_STUPROGRESS, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
@@ -100,6 +102,7 @@ enum VIEW_TYPE{
 	VIEW_BOOKING1,
 	VIEW_BOOKING2,
 	VIEW_K1EXAM,
+	VIEW_STUPROGRESS,
 	VIEW_SCHOOL,
 	VIEW_SYSTEM,
 	VIEW_NUM
@@ -346,6 +349,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_K1EXAM:
 		SelectView(VIEW_K1EXAM);
 		break;
+	case ID_VIEW_STUPROGRESS:
+		SelectView(VIEW_STUPROGRESS);
+		break;
 	case ID_VIEW_SYSTEMSETTING:
 		SelectView(VIEW_SYSTEM);
 		break;
@@ -399,8 +405,11 @@ CView* CMainFrame::GetView(int nID)
 		pClass = RUNTIME_CLASS(CViewK1Check);
 		break;
 	case VIEW_K1EXAM:
-		pClass = RUNTIME_CLASS(CViewK1Exam);
-		break;
+		pClass = RUNTIME_CLASS(CViewK1Exam); 
+			break;
+	case VIEW_STUPROGRESS:
+		pClass = RUNTIME_CLASS(CViewStuProgress); 
+			break;
 	case VIEW_SCHOOL:
 		pClass = RUNTIME_CLASS(CSchool);
 		break;
@@ -487,6 +496,10 @@ void CMainFrame::SelectView(int nID)
 	if (pNewView->IsKindOf(RUNTIME_CLASS(CSystem)))
 	{
 		pNewView->OnInitialUpdate();
+	}
+	if (pNewView->IsKindOf(RUNTIME_CLASS(CViewStuProgress)))
+	{
+		((CViewStuProgress*)pNewView)->Refresh();
 	}
 
 	//theApp.WriteInt(_T("ViewType"), m_nCurrType);

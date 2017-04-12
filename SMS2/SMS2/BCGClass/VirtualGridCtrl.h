@@ -24,6 +24,7 @@
 #include "BCGPGridCtrl.h"
 class CVirtualGridCtrl : public CBCGPGridCtrl
 {
+	typedef void (CALLBACK *ONWORK)(LPVOID lParam); //回调函数
 // Construction
 public:
 	CVirtualGridCtrl();
@@ -57,6 +58,14 @@ protected:
 	afx_msg void OnDestroy();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+//	afx_msg void OnMButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point); 
+	ONWORK m_OnWork_DbClick;
+	ONWORK m_OnWork_Click;
+	void SetCallBack_DblClk(ONWORK noWork); //注册双击鼠标回调函数
+	void SetCallBack_Clk(ONWORK noWork);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 };
 
 /////////////////////////////////////////////////////////////////////////////

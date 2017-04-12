@@ -225,10 +225,19 @@
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
+									<NAME>ID_VIEW_STUPROGRESS</NAME>
+									<VALUE>32879</VALUE>
+								</ID>
+								<TEXT>学员进度</TEXT>
+								<INDEX_LARGE>12</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
 									<NAME>ID_VIEW_BOOKING1</NAME>
 									<VALUE>32866</VALUE>
 								</ID>
-								<TEXT>科一预约</TEXT>
+								<TEXT>培训预约</TEXT>
 								<INDEX_LARGE>10</INDEX_LARGE>
 							</ELEMENT>
 							<ELEMENT>

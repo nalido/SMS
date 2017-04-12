@@ -214,9 +214,9 @@ void CViewRegister::OnBnClickedBtnSign()
 		CString strMsg("");
 		CString strSQL("");
 		strSQL.Format("INSERT INTO STUDENTS \
-			(ID, SNAME, BIRTHDAY, FILE_NUMBER, REGIST_DATE, CAR_TYPE, TEL, HOME, FEE, GENDER) \
-					  			VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
-								id, name, birth, m_strNumber.Right(8), date, type, tel, home, fee, gender);
+			(ID, SNAME, BIRTHDAY, FILE_NUMBER, FILE_NAME, REGIST_DATE, CAR_TYPE, TEL, HOME, FEE, GENDER, STEP) \
+					  			VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '0000')",
+								id, name, birth, m_strNumber.Right(8), m_strNumber, date, type, tel, home, fee, gender);
 		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 		{
 			MessageBox("×¢²á³É¹¦£¡");

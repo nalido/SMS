@@ -220,7 +220,7 @@ void CViewK1Check::Refresh(BOOL isInit)
 {
 	CString strMsg("");
 	CString strSQL("");
-	strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NUMBER FROM students WHERE STEP='0'");
+	strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NAME FROM students WHERE STEP='0000'");
 	m_datas.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg))
 	{
@@ -230,7 +230,7 @@ void CViewK1Check::Refresh(BOOL isInit)
 
 	if (isInit)
 	{
-		strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NUMBER FROM students WHERE STEP='1'");
+		strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NAME FROM students WHERE STEP='0001'");
 		m_datas_pass.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas_pass, strMsg))
 		{
@@ -238,7 +238,7 @@ void CViewK1Check::Refresh(BOOL isInit)
 		}
 		else ShowMsg2Output1(strMsg);
 
-		strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NUMBER FROM students WHERE STEP='1000'");
+		strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NAME FROM students WHERE STEP='1000'");
 		m_datas_nopass.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas_nopass, strMsg))
 		{
@@ -274,7 +274,7 @@ void CViewK1Check::OnBnClickedBtnPass()
 			nSel++;
 			CString fileNum = m_datas[i][4];
 			CString strSQL;
-			strSQL.Format("UPDATE students SET STEP='1' WHERE FILE_NUMBER='%s'", fileNum);
+			strSQL.Format("UPDATE students SET STEP='0001' WHERE FILE_NAME='%s'", fileNum);
 			if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 			{
 				ShowMsg2Output1("更新新生信息成功");
@@ -328,7 +328,7 @@ void CViewK1Check::OnBnClickedBtnNopass()
 			nSel++;
 			CString fileNum = m_datas[i][4];
 			CString strSQL;
-			strSQL.Format("UPDATE students SET STEP='1000' WHERE FILE_NUMBER='%s'", fileNum);
+			strSQL.Format("UPDATE students SET STEP='1000' WHERE FILE_NAME='%s'", fileNum);
 			if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 			{
 				ShowMsg2Output1("更新新生信息成功");
@@ -374,7 +374,7 @@ void CViewK1Check::OnBnClickedReturn1()
 			nSel++;
 			CString fileNum = m_datas_pass[i][4];
 			CString strSQL;
-			strSQL.Format("UPDATE students SET STEP='0' WHERE FILE_NUMBER='%s'", fileNum);
+			strSQL.Format("UPDATE students SET STEP='0000' WHERE FILE_NAME='%s'", fileNum);
 			if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 			{
 				ShowMsg2Output1("更新新生信息成功");
@@ -403,7 +403,7 @@ void CViewK1Check::OnBnClickedReturn2()
 			nSel++;
 			CString fileNum = m_datas_nopass[i][4];
 			CString strSQL;
-			strSQL.Format("UPDATE students SET STEP='0' WHERE FILE_NUMBER='%s'", fileNum);
+			strSQL.Format("UPDATE students SET STEP='0000' WHERE FILE_NAME='%s'", fileNum);
 			if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 			{
 				ShowMsg2Output1("更新新生信息成功");
