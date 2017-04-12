@@ -35,8 +35,11 @@
 #define IDC_BUTTON2                     1066
 #define IDC_NEWFILE                     1066
 #define IDC_NAME                        1067
+#define IDC_NAME2                       1068
 #define IDC_TEL                         1069
+#define IDC_NAME3                       1069
 #define IDC_FEE                         1070
+#define IDC_NCLASS                      1070
 #define IDC_ID                          1071
 #define IDC_HOME                        1072
 #define IDC_BIRTH                       1073
@@ -63,6 +66,7 @@
 #define IDC_SENDBOOKMSG                 1089
 #define IDC_SPHOTO                      1089
 #define IDC_SLIST                       1090
+#define IDC_NAME0                       1091
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -111,7 +115,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        175
 #define _APS_NEXT_COMMAND_VALUE         32880
-#define _APS_NEXT_CONTROL_VALUE         1091
+#define _APS_NEXT_CONTROL_VALUE         1092
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

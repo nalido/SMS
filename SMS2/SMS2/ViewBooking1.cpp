@@ -25,11 +25,13 @@ void CViewBooking1::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_SLIST, m_wndGridLocation);
+	DDX_Control(pDX, IDC_SPHOTO, m_SPhoto);
 }
 
 BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
 //	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
 	ON_WM_SIZE()
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
@@ -85,7 +87,14 @@ void CALLBACK CViewBooking1::OnGridClick(LPVOID lParam)
 	{
 		int nRow = pRow->GetRowId();
 		CString strFileName = pThis->m_datas[nRow][0];
-		pThis->MessageBox(strFileName);
+		ShowMsg2Output1("选择预约对象：档案" + strFileName);
+		strFileName.Format("%s\\%s.bmp", g_strFilePath, strFileName);
+		char* file = strFileName.GetBuffer();
+		pThis->m_img = cv::imread(file);
+
+		CString strName = pThis->m_datas[nRow][1];
+		pThis->GetDlgItem(IDC_NAME)->SetWindowText(strName);
+		pThis->Invalidate();
 	}
 }
 
@@ -152,4 +161,25 @@ void CViewBooking1::OnSize(UINT nType, int cx, int cy)
 
 	//	GetDlgItem(IDC_BUTTON1)->MoveWindow(rect.right / 2, rect_btn.top, rect_btn.Width(), rect_btn.Height());
 	//}
+}
+
+
+void CViewBooking1::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	// TODO:  在此处添加消息处理程序代码
+
+	if (!m_img.empty())
+	{
+		CRect rect;
+		m_SPhoto.GetClientRect(&rect);
+		CDC* pDc = m_SPhoto.GetDC();
+		HDC hdc = pDc->GetSafeHdc();
+
+		IplImage* frame;
+		frame = &IplImage(m_img);
+		CvvImage cvvImage;
+		cvvImage.CopyOf(frame);
+		cvvImage.DrawToHDC(hdc, rect);
+	}
 }

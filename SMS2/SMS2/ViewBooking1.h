@@ -2,6 +2,10 @@
 
 
 #include "BCGClass\VirtualGridCtrl.h"
+#include "xPublic\CvvImage.h"
+#include <opencv\cxcore.h>
+#include <opencv2\core.hpp>
+#include <opencv2\opencv.hpp>
 // CViewBooking1 ¥∞ÃÂ ”Õº
 
 class CViewBooking1 : public CBCGPFormView
@@ -36,6 +40,10 @@ public:
 	CDStrs m_datas;
 	static void CALLBACK OnGridClick(LPVOID lParam);
 	void Refresh();
+
+	CStatic m_SPhoto;
+	cv::Mat m_img;
+	afx_msg void OnPaint();
 };
 
 

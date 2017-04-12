@@ -501,6 +501,10 @@ void CMainFrame::SelectView(int nID)
 	{
 		((CViewStuProgress*)pNewView)->Refresh();
 	}
+	if (pNewView->IsKindOf(RUNTIME_CLASS(CViewBooking1)))
+	{
+		((CViewBooking1*)pNewView)->Refresh();
+	}
 
 	//theApp.WriteInt(_T("ViewType"), m_nCurrType);
 	PostMessage(UM_REDRAW);
