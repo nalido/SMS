@@ -63,7 +63,6 @@ BEGIN_MESSAGE_MAP(CVirtualGridCtrl, CBCGPGridCtrl)
 	//}}AFX_MSG_MAP
 //	ON_WM_MBUTTONDBLCLK()
 ON_WM_LBUTTONDBLCLK()
-ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 
@@ -168,13 +167,22 @@ void CVirtualGridCtrl::OnPreparePrintPages (CPrintInfo* pInfo,
 //
 //	CBCGPGridCtrl::OnMButtonDblClk(nFlags, point);
 //}
-
+void CVirtualGridCtrl::OnSelChanged(const CBCGPGridRange&range, BOOL bSelect)
+{
+	if (m_OnWork_Click != NULL && bSelect)
+	{
+		m_OnWork_Click(this->GetParent());
+	}
+}
 
 void CVirtualGridCtrl::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-	if (m_OnWork_DbClick != NULL)
+	if (IsFocused())
 	{
-		m_OnWork_DbClick(this->GetParent());
+		if (m_OnWork_DbClick != NULL)
+		{
+			m_OnWork_DbClick(this->GetParent());
+		}
 	}
 
 	CBCGPGridCtrl::OnLButtonDblClk(nFlags, point);
@@ -190,12 +198,11 @@ void CVirtualGridCtrl::SetCallBack_Clk(ONWORK onWork) //注册双击鼠标回调函数
 	m_OnWork_Click = onWork;
 }
 
-void CVirtualGridCtrl::OnLButtonDown(UINT nFlags, CPoint point)
-{
 
-	if (m_OnWork_Click != NULL)
-	{
-		m_OnWork_Click(this->GetParent());
-	}
-	CBCGPGridCtrl::OnLButtonDown(nFlags, point);
+
+void CVirtualGridCtrl::GridRefresh(int nCount)
+{
+	RemoveAll();
+	SetVirtualRows(nCount);
+	AdjustLayout();
 }

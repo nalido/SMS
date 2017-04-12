@@ -2,7 +2,6 @@
 
 
 #include "BCGClass\VirtualGridCtrl.h"
-#include "xPublic\MySQLEx.h"
 // CViewBooking1 ¥∞ÃÂ ”Õº
 
 class CViewBooking1 : public CBCGPFormView
@@ -36,7 +35,7 @@ public:
 	CVirtualGridCtrl m_wndGrid;
 	CDStrs m_datas;
 	static void CALLBACK OnGridClick(LPVOID lParam);
-
+	void Refresh();
 };
 
 

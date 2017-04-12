@@ -22,6 +22,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // CVirtualGridCtrl window
 #include "BCGPGridCtrl.h"
+#include "..\xPublic\MySQLEx.h"
+
 class CVirtualGridCtrl : public CBCGPGridCtrl
 {
 	typedef void (CALLBACK *ONWORK)(LPVOID lParam); //回调函数
@@ -65,7 +67,9 @@ public:
 	ONWORK m_OnWork_Click;
 	void SetCallBack_DblClk(ONWORK noWork); //注册双击鼠标回调函数
 	void SetCallBack_Clk(ONWORK noWork);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	virtual void OnSelChanged(const CBCGPGridRange&range, BOOL bSelect);
+
+	void GridRefresh(int nCount);
 };
 
 /////////////////////////////////////////////////////////////////////////////

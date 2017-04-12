@@ -224,7 +224,10 @@ void CALLBACK CViewStuProgress::OnGridDbClick(LPVOID lParam)
 	CViewStuProgress* pThis = (CViewStuProgress*)lParam;
 	
 	CBCGPGridRow* pRow = pThis->m_wndGrid.GetCurSel();
-	int nRow = pRow->GetRowId();
-	CString strFileName = pThis->m_datas[nRow][0];
-	pThis->MessageBox(strFileName);
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CString strFileName = pThis->m_datas[nRow][0];
+		pThis->MessageBox(strFileName);
+	}
 }
