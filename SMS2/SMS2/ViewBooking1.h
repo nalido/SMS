@@ -6,6 +6,7 @@
 #include <opencv\cxcore.h>
 #include <opencv2\core.hpp>
 #include <opencv2\opencv.hpp>
+#include "MyPicCtrl.h"
 // CViewBooking1 ¥∞ÃÂ ”Õº
 
 class CViewBooking1 : public CBCGPFormView
@@ -41,9 +42,10 @@ public:
 	static void CALLBACK OnGridClick(LPVOID lParam);
 	void Refresh();
 
-	CStatic m_SPhoto;
+	CMyPicCtrl m_SPhoto;
 	cv::Mat m_img;
 	afx_msg void OnPaint();
+	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
 };
 
 

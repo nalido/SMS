@@ -5,6 +5,7 @@
 #pragma once
 #include "BCGClass\VirtualGridCtrl.h"
 #include "xPublic\MySQLEx.h"
+#include "xPublic\CObjectBase.h"
 
 class COutputBar : public CBCGPDockingControlBar
 {
@@ -21,7 +22,7 @@ protected:
 
 public:
 	CVirtualGridCtrl m_wndGrid;
-	CDStrs m_datas;
+	xPublic::CObjectBase m_datas;
 	void ListFresh();
 	void AddItem2List4(CString str);
 

@@ -586,7 +586,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 		//检测和创建TCP连接
 		if (!pTcpClient->IsConnected())
 		{
-			if (!pTcpClient->Connect(g_sServerIP, 39200, 2670))
+			if (!pTcpClient->Connect(g_sServerIP, 39200, NULL))
 			{
 				if (bNotify)
 				{
@@ -620,6 +620,40 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 			pThis->m_pSendBuf = NULL;
 			strMsg.Format("数据发送成功");
 			pThis->m_wndOutput.AddItem2List4(strMsg);
+
+
+			BYTE flag = 0;
+			pTcpClient->Receive(&flag, 1);
+			if (flag == 1) //后有图像数据
+			{
+				int wid, hei, imgSize;
+				char FileNum[11] = { 0 };
+				pTcpClient->Receive(&FileNum, 10);
+				pTcpClient->Receive(&wid, 4);
+				pTcpClient->Receive(&hei, 4);
+				pTcpClient->Receive(&imgSize, 4);
+				BYTE* picBuf = new BYTE[imgSize + 1];
+				if (pTcpClient->Receive(picBuf, imgSize))
+				{
+					strMsg.Format("收到客户端图像信息：%dX%d 接收成功", wid, hei);
+
+					pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize); //保存图片，第二次点击时无需再下载
+					IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
+					int lineByte = (wid * 3 + 3) / 4 * 4;
+					cvSetData(pImg, picBuf, lineByte);
+					cv::Mat img = cv::cvarrToMatND(pImg);
+					pThis->GetActiveView()->SendMessageA(WM_USER_MESSAGE, (WPARAM)&img);
+
+					pThis->m_wndOutput.AddItem2List4(strMsg);
+				}
+				else
+				{
+					strMsg.Format("收到客户端图像信息：%dX%d 接收图像数据失败", wid, hei);
+					pThis->m_wndOutput.AddItem2List4(strMsg);
+				}
+
+				delete[] picBuf; picBuf = NULL;
+			}
 		}
 
 		//判断是否发送成功，删除图像缓存
@@ -652,4 +686,20 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 	m_wndOutput.ListFresh();
 
 	CBCGPFrameWnd::OnTimer(nIDEvent);
+}
+
+void CMainFrame::SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize)
+{
+	IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
+	int lineByte = (wid*3 + 3) / 4 * 4;
+	cvSetData(pImg, picBuf, lineByte);
+
+	cv::Mat img = cv::cvarrToMatND(pImg);
+	CString sFileName("");
+	sFileName.Format("%s\\%s.bmp", g_strFilePath, FileNum);
+	::SHCreateDirectory(NULL, CA2W(g_strFilePath));
+	cv::String s = sFileName.GetBuffer();
+	imwrite(s, img);
+	sFileName.ReleaseBuffer();
+	pImg = NULL;
 }

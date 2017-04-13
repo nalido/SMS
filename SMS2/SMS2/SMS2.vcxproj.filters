@@ -96,6 +96,9 @@
     <ClInclude Include="ViewStuProgress.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MyPicCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -165,6 +168,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ViewStuProgress.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MyPicCtrl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

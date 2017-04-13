@@ -74,6 +74,8 @@ public:
 	BOOL m_isSendReady; //是否准备好发送数据
 	static void CALLBACK ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+
+	void SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize);//保存图像
 };
 
 extern CString g_strFilePath;

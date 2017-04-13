@@ -79,8 +79,15 @@ void CViewRegister::OnBnClickedCamera()
 {
 	CString str;
 	GetDlgItem(IDC_CAMERA)->GetWindowTextA(str);
-	if (str == "打开摄像头")
+	if (str == "打开摄像头" || str == "重新采集照片")
 	{
+
+		if (!m_videoCap.isOpened()) m_videoCap.open(0);
+		if (!m_videoCap.isOpened())
+		{
+			MessageBox("Failed to open camera");
+		}
+
 		//init the timer
 		SetTimer(0, 50, NULL);
 		GetDlgItem(IDC_CAMERA)->SetWindowTextA("采集照片");
@@ -90,7 +97,7 @@ void CViewRegister::OnBnClickedCamera()
 		KillTimer(0);
 		m_isCaptured = TRUE;
 		ShowMsg2Output1("拍照成功");
-		GetDlgItem(IDC_CAMERA)->SetWindowTextA("打开摄像头");
+		GetDlgItem(IDC_CAMERA)->SetWindowTextA("重新采集照片");
 	}
 }
 
@@ -103,10 +110,11 @@ void CViewRegister::OnTimer(UINT_PTR nIDEvent)
 	CDC* pDc = m_SPhoto.GetDC();
 	HDC hdc = pDc->GetSafeHdc();
 
-	m_videoCap >> m_cap;
-	if (!m_cap.empty())
+	cv::Mat cap;
+	m_videoCap >> cap;
+	if (!cap.empty())
 	{
-		m_cap = m_cap(Rect(150, 2, 340, 476)); //按照5:7的一寸照片比例截取
+		m_cap = cap(Rect(150, 2, 340, 476)).clone(); //按照5:7的一寸照片比例截取
 		IplImage* frame;
 		frame = &IplImage(m_cap);
 		CvvImage cvvImage;
@@ -235,7 +243,6 @@ void CViewRegister::OnBnClickedBtnSign()
 
 			//数据打包
 			CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-			pFrame->m_isSendReady = FALSE;
 			IplImage ipl_img = m_cap;
 			int len = ipl_img.imageSize + 23;
 			if (pFrame->m_pSendBuf != NULL)
@@ -244,6 +251,7 @@ void CViewRegister::OnBnClickedBtnSign()
 			}
 			else
 			{
+				pFrame->m_isSendReady = FALSE;
 				pFrame->m_pSendBuf = new BYTE[len];//发送完删除
 				pFrame->m_nSendLen = len;
 				pFrame->m_pSendBuf[0] = 1; //发送图像数据
@@ -314,6 +322,8 @@ void CViewRegister::OnBnClickedNewfile()
 		}
 		m_Sta_Num.SetWindowTextA(m_strNumber);
 		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(TRUE);
+		GetDlgItem(IDC_CAMERA)->SetWindowTextA("打开摄像头");
+		OnBnClickedCamera();
 	}
 	else
 	{

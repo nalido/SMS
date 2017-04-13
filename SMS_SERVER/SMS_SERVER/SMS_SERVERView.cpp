@@ -61,19 +61,12 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 
 	int nRow = pdi->item.nRow;	// Row of an item
 	int nCol = pdi->item.nCol;	// Column of an item
-	int ndata = pThis->m_datas.size(); //number of data exist
+	int ndata = pThis->m_arMsg.GetCount(); //number of data exist
 	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
 	{
-		vector<CStrs>::iterator it = pThis->m_datas.begin() + nRow;
-		if (!it->empty())
-		{
-			CString str = pThis->m_datas[nRow][nCol];
-			pdi->item.varValue = str;
-		}
-		else
-		{
-			pdi->item.varValue = "访问内存错误";
-		}
+		SENDFILEPARAM * pParam= pThis->m_arMsg.GetAt(nRow);
+		if (pParam != NULL && nCol == 0)
+			pdi->item.varValue = pParam->strMsg;
 	}
 
 	return TRUE;
@@ -210,9 +203,7 @@ void CSMS_SERVERView::OnTCPAccept(LPVOID lParam, xPublic::CTCPClient *pClient, B
 
 		CString strMsg;
 		strMsg.Format("监听到客户端【%s】的连接", pClient->m_sHostIPPort);
-		CStrs strs;
-		strs.push_back(strMsg);
-		pThis->m_datas.push_back(strs);
+		pThis->m_arMsg.AddTail(strMsg);
 		pThis->ListFresh();
 		pThis->m_cTreeCtrl.Invalidate();
 	}
@@ -241,18 +232,14 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 			{
 				strMsg.Format("收到客户端图像信息：%s %dX%d 接收成功", FileNum, wid, hei);
 				pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize);
-				CStrs strs;
-				strs.push_back(strMsg);
-				pThis->m_datas.push_back(strs);
+				pThis->m_arMsg.AddTail(strMsg);
 				pThis->ListFresh();
 			}
 			else
 			{
 				strMsg.Format("收到客户端图像信息：%s %dX%d 接收图像数据失败", FileNum, wid, hei);
-				pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize);
-				CStrs strs;
-				strs.push_back(strMsg);
-				pThis->m_datas.push_back(strs);
+				//pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize);
+				pThis->m_arMsg.AddTail(strMsg);
 				pThis->ListFresh();
 			}
 
@@ -273,6 +260,58 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 			}
 			pThis->SendSMS(Flag, vFiles);
 		}// end MsgType 2
+		else if (MsgType == 3) //学生图片寻找
+		{
+			char FileNum[11] = { 0 };
+			pClient->Receive(&FileNum, 10);
+			CString strFile;
+			strFile.Format("%s\\%s.bmp", g_strFilePath, FileNum);
+			char* file = strFile.GetBuffer();
+			cv::Mat img = cv::imread(file);
+			strFile.ReleaseBuffer();
+			if (!img.empty())
+			{
+				IplImage ipl_img = img;
+				int len = ipl_img.imageSize + 23;
+				int w = img.cols;
+				int h = img.rows;
+				BYTE* buf = new BYTE[len];
+				buf[0] = 1; //标志位
+				memcpy(buf + 1, FileNum, 10); //档案号
+				memcpy(buf + 11, &img.cols, 4);
+				memcpy(buf + 15, &img.rows, 4);
+				memcpy(buf + 19, &ipl_img.imageSize, 4);
+				memcpy(buf + 23, ipl_img.imageData, ipl_img.imageSize);
+				if (pClient->Send(buf, len))
+				{
+					pThis->m_arMsg.AddTail("图像发送成功");
+					pThis->ListFresh();
+				}
+				else
+				{
+					pThis->m_arMsg.AddTail("图像发送失败");
+					pThis->ListFresh();
+				}
+				if (buf != NULL)
+				{
+					delete[] buf; buf = NULL;
+				}
+			}
+			else
+			{
+				BYTE buf = 0; //标志位
+				if (pClient->Send(&buf, 1))
+				{
+					pThis->m_arMsg.AddTail("未找到图像，数据发送成功");
+					pThis->ListFresh();
+				}
+				else
+				{
+					pThis->m_arMsg.AddTail("未找到图像，数据发送失败");
+					pThis->ListFresh();
+				}
+			}
+		}// end MsgType 3
 	}
 }
 
@@ -292,18 +331,14 @@ void CSMS_SERVERView::SendSMS(BYTE flag, vector<CString>& vFiles)
 		if (g_mysqlCon.ExecuteQuery(strSQL, tmp, strMsg))
 		{
 			datas.push_back(tmp[0]);
-			m_datas.push_back(tmp[0]);
+			m_arMsg.AddTail(tmp[0][0]);
 		}
 		else
 		{
-			CStrs strs;
-			strs.push_back(strMsg);
-			m_datas.push_back(strs);
+			m_arMsg.AddTail(strMsg);
 		}
 	}
-	CStrs strs;
-	strs.push_back("查询通讯信息成功");
-	m_datas.push_back(strs);
+	m_arMsg.AddTail("查询通讯信息成功");
 
 	//发送短信
 	if (flag == 1)
@@ -322,16 +357,12 @@ void CSMS_SERVERView::SendSMS(BYTE flag, vector<CString>& vFiles)
 		hPost.HttpPost(strUrl, strPosData, strResponse);
 		strMsg = strResponse.c_str();
 
-		CStrs strs;
-		strs.push_back(strMsg);
-		m_datas.push_back(strs);
+		m_arMsg.AddTail(strMsg);
 		int pos1, pos2;
 		pos1 = strMsg.Find(',');
 		pos2 = strMsg.Find('\n');
-		CString response = "Response:"+ strMsg.Mid(pos1+1, pos2 - pos1);
-		strs.clear();
-		strs.push_back(response);
-		m_datas.push_back(strs);
+		CString response = "Response:" + strMsg.Mid(pos1 + 1, pos2 - pos1);
+		m_arMsg.AddTail(response);
 	}//end flag 1
 	else if (flag == 2) //退款通知
 	{
@@ -345,13 +376,13 @@ void CSMS_SERVERView::SendSMS(BYTE flag, vector<CString>& vFiles)
 void CSMS_SERVERView::SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize)
 {
 	IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
-	int lineByte = 1920;// (wid + 3) / 4 * 4;
+	int lineByte = (wid*3 + 3) / 4 * 4;
 	cvSetData(pImg, picBuf, lineByte);
 
 	cv::Mat img = cv::cvarrToMatND(pImg);
 	CString sFileName("");
-	sFileName.Format("%s%s.bmp", g_FilePath, FileNum);
-	::SHCreateDirectory(NULL, CA2W(g_FilePath));
+	sFileName.Format("%s%s.bmp", g_strFilePath, FileNum);
+	::SHCreateDirectory(NULL, CA2W(g_strFilePath));
 	cv::String s = sFileName.GetBuffer();
 	imwrite(s, img);
 	sFileName.ReleaseBuffer();
@@ -365,10 +396,25 @@ void CSMS_SERVERView::OnTCPClosed(LPVOID lParam, xPublic::CTCPClient *pClient)
 	{
 		CString strMsg;
 		strMsg.Format("客户端【%s】断开连接", pClient->m_sHostIPPort);
-		CStrs strs;
-		strs.push_back(strMsg);
-		pThis->m_datas.push_back(strs);
+		pThis->m_arMsg.AddTail(strMsg);
 		pThis->ListFresh();
+
+		//遍历树结构删除已关闭的客户端
+		HTREEITEM hItem = NULL;
+		hItem = pThis->m_cTreeCtrl.GetRootItem();
+		while (hItem != NULL)
+		{
+			CTCPClient* pClients = (CTCPClient*)pThis->m_cTreeCtrl.GetItemData(hItem);
+			if (pClient == pClients) //找到该节点
+			{
+				pThis->m_cTreeCtrl.DeleteItem(hItem);
+				break;
+			}
+			else
+			{
+				hItem = pThis->m_cTreeCtrl.GetNextSiblingItem(hItem);
+			}
+		}
 		pThis->m_cTreeCtrl.Invalidate();
 	}
 }
@@ -377,16 +423,15 @@ void CSMS_SERVERView::OnTCPClosed(LPVOID lParam, xPublic::CTCPClient *pClient)
 
 void CSMS_SERVERView::ListFresh()
 {
-	if (m_datas.size() > 5000)
+	try
 	{
-		//m_cs.Lock();
-		std::vector<CStrs>::iterator it = m_datas.begin();
-		m_datas.erase(it);
-		//m_cs.Unlock();
+		m_wndGrid.RemoveAll();
+		m_wndGrid.SetVirtualRows(m_arMsg.GetCount());
+		m_wndGrid.AdjustLayout();
 	}
-
-	m_wndGrid.RemoveAll();
-	m_wndGrid.SetVirtualRows(m_datas.size());// 10000000);
-	m_wndGrid.AdjustLayout();
+	catch (...)
+	{
+		ShowMsg2Output1("刷新虚拟列表出错");
+	}
 
 }

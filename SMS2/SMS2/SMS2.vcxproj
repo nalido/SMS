@@ -199,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BCGClass\VirtualGridCtrl.h" />
+    <ClInclude Include="MyPicCtrl.h" />
     <ClInclude Include="ViewK1Exam.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MSGINFO.h" />
@@ -225,6 +226,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BCGClass\VirtualGridCtrl.cpp" />
+    <ClCompile Include="MyPicCtrl.cpp" />
     <ClCompile Include="ViewK1Exam.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MSGINFO.cpp" />

@@ -7,23 +7,11 @@
 namespace xPublic{
 	typedef struct struct_SENDFILEPARAM//传递给发送图像线程的结构体参数，包括接收缓冲区的指针，服务器的ip
 	{
-		CString		sPicName;
-		CString		sPicName2;
-		BYTE*		pictureBuff;
-		int			pictureLen;	//12.5 新增变量 发送的数据大小，用于二次识别发送数据。
-		int			nDelType;	//0=整个都不删除，1=只删除struct，2=删除struct同时删除byte
-		BYTE		platePos;	//0左，非零为右
-		CTime		snapTime;
-		BYTE		needMove;
+		CString		strMsg;
 
 		struct_SENDFILEPARAM()
 		{
-			pictureBuff = NULL;
-			pictureLen = 0;
-			nDelType = 0;
-			platePos = 0;
-			snapTime = 0;
-			needMove = 0;
+			strMsg = "";
 		};
 	}SENDFILEPARAM;
 
@@ -35,7 +23,7 @@ namespace xPublic{
 
 		void DeleteAll();
 		void AddTail(SENDFILEPARAM *pParam);
-		BOOL AddTail(BYTE *pSrc, int nSrc);
+		BOOL AddTail(CString str);
 		void InsertAt(int index, SENDFILEPARAM *pParam);
 		void DeleteAt(int index, BOOL bDelete = TRUE);
 		SENDFILEPARAM* GetHead();

@@ -32,6 +32,7 @@ BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
 //	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
 	ON_WM_SIZE()
 	ON_WM_PAINT()
+	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 END_MESSAGE_MAP()
 
 
@@ -86,15 +87,41 @@ void CALLBACK CViewBooking1::OnGridClick(LPVOID lParam)
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
-		CString strFileName = pThis->m_datas[nRow][0];
-		ShowMsg2Output1("选择预约对象：档案" + strFileName);
-		strFileName.Format("%s\\%s.bmp", g_strFilePath, strFileName);
-		char* file = strFileName.GetBuffer();
-		pThis->m_img = cv::imread(file);
+		CString strFileName = pThis->m_datas[nRow][0]; //档案号
+		CString strName = pThis->m_datas[nRow][1]; //姓名
 
-		CString strName = pThis->m_datas[nRow][1];
 		pThis->GetDlgItem(IDC_NAME)->SetWindowText(strName);
-		pThis->Invalidate();
+
+		//本地打开照片，若本地无，则查询服务器下载
+		ShowMsg2Output1("选择预约对象：档案" + strFileName);
+		CString strFile;
+		strFile.Format("%s\\%s.bmp", g_strFilePath, strFileName);
+		char* file = strFile.GetBuffer();
+		pThis->m_img = cv::imread(file);
+		strFile.ReleaseBuffer();
+		if (pThis->m_img.empty()) //本地无照片，从服务器下载
+		{
+			//数据打包
+			CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+			if (pFrame->m_pSendBuf != NULL)
+			{
+				pThis->MessageBox("上一个信息还未处理完毕，请稍等重试。");
+			}
+			else
+			{
+				int len = 11; //
+				pFrame->m_isSendReady = FALSE;
+				pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+				pFrame->m_nSendLen = len;
+				pFrame->m_pSendBuf[0] = 3; //请求图像数据
+				char* cID = strFileName.GetBuffer();
+				memcpy(pFrame->m_pSendBuf + 1, cID, 10); //档案号
+				strFileName.ReleaseBuffer();
+				pFrame->m_isSendReady = TRUE;
+			}
+		}
+
+		pThis->m_SPhoto.Invalidate();
 	}
 }
 
@@ -130,6 +157,8 @@ void CViewBooking1::OnInitialUpdate()
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
 	m_wndGrid.SetCallBack_Clk(OnGridClick);
 	Refresh();
+
+	m_SPhoto.InitPicSource(&m_img);
 }
 
 void CViewBooking1::Refresh()
@@ -169,17 +198,29 @@ void CViewBooking1::OnPaint()
 	CPaintDC dc(this); // device context for painting
 	// TODO:  在此处添加消息处理程序代码
 
-	if (!m_img.empty())
-	{
-		CRect rect;
-		m_SPhoto.GetClientRect(&rect);
-		CDC* pDc = m_SPhoto.GetDC();
-		HDC hdc = pDc->GetSafeHdc();
+	//CRect rect;
+	//m_SPhoto.GetClientRect(&rect);
+	//if (!m_img.empty())
+	//{
+	//	CDC* pDc = m_SPhoto.GetDC();
+	//	HDC hdc = pDc->GetSafeHdc();
 
-		IplImage* frame;
-		frame = &IplImage(m_img);
-		CvvImage cvvImage;
-		cvvImage.CopyOf(frame);
-		cvvImage.DrawToHDC(hdc, rect);
-	}
+	//	IplImage* frame;
+	//	frame = &IplImage(m_img);
+	//	CvvImage cvvImage;
+	//	cvvImage.CopyOf(frame);
+	//	cvvImage.DrawToHDC(hdc, rect);
+	//}
+	//else
+	//{
+	//	dc.TextOutA(rect.CenterPoint().x, rect.CenterPoint().y, "无照片");
+	//}
+}
+
+LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
+{
+	cv::Mat* pImg = (cv::Mat*)wp;
+	m_img = pImg->clone();
+	m_SPhoto.Invalidate();
+	return 0;
 }
