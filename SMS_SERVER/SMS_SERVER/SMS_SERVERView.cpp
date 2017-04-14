@@ -215,6 +215,7 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 	CSMS_SERVERView*  pThis = (CSMS_SERVERView *)lParam;
 	if (NULL != pClient)
 	{
+
 		BYTE MsgType = 0;
 		pClient->Receive(&MsgType, 1);
 
@@ -312,6 +313,28 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 				}
 			}
 		}// end MsgType 3
+		else if (MsgType == 'P') //POST 请求 //手机端接口
+		{
+			BYTE data[1024] = { 0 };
+			pClient->Receive(data, 1023);
+			CString strLog;
+			strLog.Format("%s", data);
+			LOG("receive.log", strLog);
+
+			int pos = strLog.Find("HTTP");
+			CString strHttpVersion = strLog.Mid(pos, 8);
+			CString strBuf("");
+			CString strResponse("response=received,200\nkkk");
+			strBuf.Format("%s 200 OK\r\n\
+							Content-Type: application/x-www-form-urlencoded\r\n\
+							Content-Length: %d\r\n\
+							\r\n\
+							%s",
+							strHttpVersion, strlen(strResponse), strResponse);
+			strBuf.Remove('\t'); //去掉上式中的制表符
+			pClient->Send(strBuf.GetBuffer(), strlen(strBuf));
+			strBuf.ReleaseBuffer();
+		}//end MsgType POST
 	}
 }
 
@@ -346,14 +369,15 @@ void CSMS_SERVERView::SendSMS(BYTE flag, vector<CString>& vFiles)
 		CHttpClient hPost;
 		CString strUrl("https://sms.253.com/msg/send"); //发送短信
 		strUrl = "https://sms.253.com/msg/balance"; //查询剩余短信数量
+		strUrl = "http://127.0.0.1:39100";
 		CString strPosData;
 		string strResponse("");
 		strMsg.Format("【东华驾校】尊敬的%s先生：您个人的相关资料已顺利通过审核，\
 			请于2017年6月23日（星期二）上午8点：30分之前来我校参加科目一第105期理\
 			论学习（地址：南京市红山路90号第二教室）。谢谢您的配合！", datas[0][0]);
 		char* cstring = EncodeToUTF8(strMsg); 
-		strPosData.Format("un=N5676872&pw=clERDUIcs@17&phone=%s&msg=%s&rd=1", datas[0][1], cstring);
-		//strPosData.Format("un=N5676872&pw=clERDUIcs@17"); // 查询短信数量格式
+		//strPosData.Format("un=N5676872&pw=clERDUIcs@17&phone=%s&msg=%s&rd=1", datas[0][1], cstring);
+		strPosData.Format("un=33333"); // 查询短信数量格式
 		hPost.HttpPost(strUrl, strPosData, strResponse);
 		strMsg = strResponse.c_str();
 
