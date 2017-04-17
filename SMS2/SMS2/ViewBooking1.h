@@ -53,12 +53,11 @@ public:
 
 	//日历视图
 	//CView* m_pView[91]; // 7*13
-	CDStrs m_WDStat; //课时信息 work day state
-	void UpdateDB(); //查询当前最大可预约时间，如果小于90天，则新建记录
+	CDStrs m_WDStat; //课时信息 work day state/
 	CStatic m_SWeek;
 	CGridCalendar m_wndCalendar;
 	static void CALLBACK OnCalendarClick(LPVOID lParam, BOOL lParam2);
-	void UpdateCalendar();
+	//void UpdateCalendar();
 
 };
 

@@ -367,20 +367,19 @@ void CSMS_SERVERView::SendSMS(BYTE flag, vector<CString>& vFiles)
 	if (flag == 1)
 	{
 		CHttpClient hPost;
-		CString strUrl("https://sms.253.com/msg/send"); //发送短信
-		strUrl = "https://sms.253.com/msg/balance"; //查询剩余短信数量
-		strUrl = "http://127.0.0.1:39100";
+		CString strUrl("http://121.40.160.86:7890/msgapiv2.aspx"); //发送短信
 		CString strPosData;
 		string strResponse("");
 		strMsg.Format("【东华驾校】尊敬的%s先生：您个人的相关资料已顺利通过审核，\
 			请于2017年6月23日（星期二）上午8点：30分之前来我校参加科目一第105期理\
 			论学习（地址：南京市红山路90号第二教室）。谢谢您的配合！", datas[0][0]);
-		char* cstring = EncodeToUTF8(strMsg); 
-		//strPosData.Format("un=N5676872&pw=clERDUIcs@17&phone=%s&msg=%s&rd=1", datas[0][1], cstring);
-		strPosData.Format("un=33333"); // 查询短信数量格式
-		hPost.HttpPost(strUrl, strPosData, strResponse);
+		strMsg.Remove('\t');
+		//char* cstring = EncodeToUTF8(strMsg); 
+		strPosData.Format("action=send&username=dhjx&password=c739fa3c630ca4e65ac9efdc8317df7d&apiid=13952&mobiles=%s&text=%s", datas[0][1], strMsg);
+		char* posdata = EncodeToUTF8(strPosData);
+		hPost.HttpPost(strUrl, posdata, strResponse);
 		strMsg = strResponse.c_str();
-
+		LOG("res.log", strMsg);
 		m_arMsg.AddTail(strMsg);
 		int pos1, pos2;
 		pos1 = strMsg.Find(',');

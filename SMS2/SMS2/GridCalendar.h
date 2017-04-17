@@ -1,5 +1,6 @@
 #pragma once
 #include "BCGPGridCtrl.h"
+#include "xPublic\MySQLEx.h"
 class CGridCalendar :
 	public CBCGPGridCtrl
 {
@@ -18,6 +19,19 @@ public:
 	//ONDRAW m_OnDrawItem;
 	//void SetCustomDrawItem(ONDRAW onDraw);
 	//virtual BOOL OnDrawItem(CDC*pDC, CBCGPGridRow*pItem);
+public:
+	unsigned int m_nStatus[15][7]; // 课时预约状态
+	CTime m_tToday; //当天日期
+	CPoint m_PointToday; //当天日期所在位置
 
+	void InitGrid(int wndWid); //初始化表格样式
+	void DrawItems(); //自定义表格背景， 显示当天预约情况
+	void UpdateGrid(); //刷新表格
+	CTime Str2Time(CString str); //将数据库得到的日期字符串解析出具体日期
+	void GetClassStatus(CDStrs &data); //解析数据库数据得到每天课时预约状态
+	CPoint GetDay0Pos(); //获取字符串表示日期在表中的位置
+	CPoint GetDayPos(CString strDay); //获取字符串表示日期在表中的位置
+	void DrawSelectedItem(CPoint& pos); //设置当前学员的已选课时
+	void DrawSelectedItem(int r, int c);
 };
 

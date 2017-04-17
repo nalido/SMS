@@ -443,7 +443,7 @@ CView* CMainFrame::GetView(int nID)
 	newContext.m_pCurrentFrame = NULL;
 	newContext.m_pCurrentDoc = pCurrentDoc;
 
-	if (!pView->Create(NULL, _T(""), (AFX_WS_DEFAULT_VIEW & ~WS_VISIBLE),
+	if (!pView->Create(NULL, _T(""), (AFX_WS_DEFAULT_VIEW),
 		CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST + nIndex, &newContext))
 	{
 		TRACE1("Failed to create view '%s'\n", pClass->m_lpszClassName);
@@ -493,18 +493,18 @@ void CMainFrame::SelectView(int nID)
 	}
 
 	//特殊窗口的初始化刷新(可以重复初始化的窗口)
-	if (pNewView->IsKindOf(RUNTIME_CLASS(CSystem)))
-	{
-		pNewView->OnInitialUpdate();
-	}
-	if (pNewView->IsKindOf(RUNTIME_CLASS(CViewStuProgress)))
-	{
-		((CViewStuProgress*)pNewView)->Refresh();
-	}
-	if (pNewView->IsKindOf(RUNTIME_CLASS(CViewBooking1)))
-	{
-		((CViewBooking1*)pNewView)->Refresh();
-	}
+	//if (pNewView->IsKindOf(RUNTIME_CLASS(CSystem)))
+	//{
+	//	//pNewView->OnInitialUpdate();
+	//}
+	//if (pNewView->IsKindOf(RUNTIME_CLASS(CViewStuProgress)))
+	//{
+	//	//((CViewStuProgress*)pNewView)->Refresh();
+	//}
+	//if (pNewView->IsKindOf(RUNTIME_CLASS(CViewBooking1)))
+	//{
+	//	//((CViewBooking1*)pNewView)->Refresh();
+	//}
 
 	//theApp.WriteInt(_T("ViewType"), m_nCurrType);
 	PostMessage(UM_REDRAW);
