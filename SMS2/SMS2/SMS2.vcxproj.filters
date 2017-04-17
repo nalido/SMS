@@ -99,6 +99,12 @@
     <ClInclude Include="MyPicCtrl.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="WorkDay.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCalendar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -173,6 +179,12 @@
     <ClCompile Include="MyPicCtrl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="WorkDay.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCalendar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SMS2.rc">
@@ -216,6 +228,9 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\Toolbar.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\bitmap1.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

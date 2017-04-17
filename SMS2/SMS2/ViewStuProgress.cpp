@@ -111,11 +111,13 @@ void CViewStuProgress::OnInitialUpdate()
 	DWORD nStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER;
 	m_wndGrid.Create(nStyle, rectGrid, this, IDC_GRID_STUPRO);
 	m_wndGrid.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
-	m_wndGrid.EnableHeader(TRUE, BCGP_GRID_HEADER_MOVE_ITEMS); //允许表头移动但是不会删除表头
+	m_wndGrid.EnableHeader(TRUE, 0); //不允许表头移动
 	// Set grid tab order (first):
 	m_wndGrid.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 	m_wndGrid.SetReadOnly();
 	m_wndGrid.SetWholeRowSel();
+	m_wndGrid.EnableRowHeader(TRUE);
+	m_wndGrid.EnableLineNumbers();
 
 
 	int nColumn = 0;
@@ -124,7 +126,7 @@ void CViewStuProgress::OnInitialUpdate()
 	m_wndGrid.InsertColumn(nColumn++, _T("性别"), 50);
 	m_wndGrid.InsertColumn(nColumn++, _T("手机号"), 80);
 	m_wndGrid.InsertColumn(nColumn++, _T("申领类别"), 80);
-	int wid = (rectGrid.Width() - 350) / 8;
+	int wid = (rectGrid.Width() - 350 - 20) / 8;
 	m_wndGrid.InsertColumn(nColumn++, _T("政治审核"), wid); //col = 5; step = 1~2
 	m_wndGrid.InsertColumn(nColumn++, _T("科一报考"), wid);
 	m_wndGrid.InsertColumn(nColumn++, _T("科一考试"), wid);
@@ -141,6 +143,7 @@ void CViewStuProgress::OnInitialUpdate()
 	//注册虚拟列表回调函数
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
 	m_wndGrid.SetCallBack_DblClk(OnGridDbClick);
+
 	Refresh();
 }
 

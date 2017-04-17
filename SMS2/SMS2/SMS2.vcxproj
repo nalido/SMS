@@ -199,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BCGClass\VirtualGridCtrl.h" />
+    <ClInclude Include="GridCalendar.h" />
     <ClInclude Include="MyPicCtrl.h" />
     <ClInclude Include="ViewK1Exam.h" />
     <ClInclude Include="MainFrm.h" />
@@ -216,6 +217,7 @@
     <ClInclude Include="ViewK1Check.h" />
     <ClInclude Include="ViewRegister.h" />
     <ClInclude Include="ViewStuProgress.h" />
+    <ClInclude Include="WorkDay.h" />
     <ClInclude Include="xPublic\CObjectBase.h" />
     <ClInclude Include="xPublic\Common.h" />
     <ClInclude Include="xPublic\CvvImage.h" />
@@ -226,6 +228,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BCGClass\VirtualGridCtrl.cpp" />
+    <ClCompile Include="GridCalendar.cpp" />
     <ClCompile Include="MyPicCtrl.cpp" />
     <ClCompile Include="ViewK1Exam.cpp" />
     <ClCompile Include="MainFrm.cpp" />
@@ -247,6 +250,7 @@
     <ClCompile Include="ViewK1Check.cpp" />
     <ClCompile Include="ViewRegister.cpp" />
     <ClCompile Include="ViewStuProgress.cpp" />
+    <ClCompile Include="WorkDay.cpp" />
     <ClCompile Include="xPublic\CObjectBase.cpp" />
     <ClCompile Include="xPublic\Common.cpp" />
     <ClCompile Include="xPublic\CvvImage.cpp" />
@@ -269,6 +273,7 @@
     <Image Include="res\BCGSoft_ribbon\category_small_0.png" />
     <Image Include="res\BCGSoft_ribbon\main.png" />
     <Image Include="res\BCGSoft_ribbon\ribbon_bar.png" />
+    <Image Include="res\bitmap1.bmp" />
     <Image Include="res\SMS2.ico" />
     <Image Include="res\SMS2Doc.ico" />
     <Image Include="res\Toolbar.bmp" />

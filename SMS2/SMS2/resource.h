@@ -23,6 +23,8 @@
 #define IDD_DIALOG2                     173
 #define IDD_K1EXAM                      173
 #define IDD_STUPROGRESS                 174
+#define IDD_WORKDAY                     175
+#define IDB_BITMAP1                     176
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_BTN_NOPASS                  1056
@@ -67,6 +69,18 @@
 #define IDC_SPHOTO                      1089
 #define IDC_SLIST                       1090
 #define IDC_NAME0                       1091
+#define IDC_WEEK                        1092
+#define IDC_HEADER1                     1094
+#define IDC_DATE0                       1101
+#define IDC_DAY0                        1108
+#define IDC_DAY1                        1186
+#define IDC_DATE1                       1187
+#define IDC_DAY2                        1188
+#define IDC_DATE2                       1189
+#define IDC_DAY3                        1190
+#define IDC_DATE3                       1191
+#define IDC_DAY4                        1192
+#define IDC_DATE4                       1193
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -113,9 +127,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        175
+#define _APS_NEXT_RESOURCE_VALUE        177
 #define _APS_NEXT_COMMAND_VALUE         32880
-#define _APS_NEXT_CONTROL_VALUE         1092
+#define _APS_NEXT_CONTROL_VALUE         1109
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

@@ -146,6 +146,9 @@ void CViewRegister::OnInitialUpdate()
 	m_Comb_Gender.AddString("男");
 	m_Comb_Gender.AddString("女");
 
+	m_Date_Sign.SetFormat("yyyy/MM/dd");
+	m_Date_Birth.SetFormat("yyyy/MM/dd");
+
 	GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE); //必须先有档案号
 	GetDlgItem(IDC_NEWFILE)->EnableWindow(TRUE);
 }
@@ -208,7 +211,7 @@ void CViewRegister::OnBnClickedBtnSign()
 	m_Ed_Home.GetWindowTextA(home);
 	m_Comb_CarType.GetWindowTextA(type);
 	m_Comb_Gender.GetWindowTextA(gender);
-	m_Date_Sign.GetWindowTextA(date);
+	m_Date_Sign.GetWindowTextA(date); 
 	m_Date_Birth.GetWindowTextA(birth);
 	if (name.IsEmpty() || type.IsEmpty() || tel.IsEmpty()
 		|| fee.IsEmpty() || id.IsEmpty() || home.IsEmpty()

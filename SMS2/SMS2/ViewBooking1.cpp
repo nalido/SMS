@@ -25,6 +25,7 @@ void CViewBooking1::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_SLIST, m_wndGridLocation);
+	DDX_Control(pDX, IDC_WEEK, m_SWeek);
 	DDX_Control(pDX, IDC_SPHOTO, m_SPhoto);
 }
 
@@ -33,6 +34,7 @@ BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
 	ON_WM_SIZE()
 	ON_WM_PAINT()
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
+//	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -78,6 +80,21 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 	return TRUE;
 }
 // CViewBooking1 消息处理程序
+
+void CALLBACK CViewBooking1::OnCalendarClick(LPVOID lParam, BOOL lParam2)
+{
+	CViewBooking1* pThis = (CViewBooking1*)lParam;
+
+
+}
+
+void CViewBooking1::UpdateCalendar()
+{
+	CBCGPGridRow* pRow = m_wndCalendar.GetRow(1);
+	CBCGPGridItem* pItem = pRow->GetItem(1);
+	pItem->SetBackgroundColor(RGB(0, 117, 194));
+	pItem->SetTextColor(RGB(255, 255, 255));
+}
 
 void CALLBACK CViewBooking1::OnGridClick(LPVOID lParam)
 {
@@ -136,18 +153,22 @@ void CViewBooking1::OnInitialUpdate()
 	DWORD nStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER;
 	m_wndGrid.Create(nStyle, rectGrid, this, IDC_GRID_STUPRO);
 	m_wndGrid.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
-	m_wndGrid.EnableHeader(TRUE, BCGP_GRID_HEADER_MOVE_ITEMS); //允许表头移动但是不会删除表头
+	m_wndGrid.EnableHeader(TRUE, 0); //不允许表头移动
 	// Set grid tab order (first):
 	m_wndGrid.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 	m_wndGrid.SetReadOnly();
 	m_wndGrid.SetWholeRowSel();
 	m_wndGrid.SetSingleSel(); //只能选一个
+	m_wndGrid.EnableRowHeader(TRUE);
+	m_wndGrid.EnableLineNumbers();
+
 
 	int nColumn = 0;
+	int hw = m_wndGrid.GetRowHeaderWidth();
 	m_wndGrid.InsertColumn(nColumn++, _T("档案号"), 70);
 	m_wndGrid.InsertColumn(nColumn++, _T("姓名"), 70);
 	m_wndGrid.InsertColumn(nColumn++, _T("性别"), 50);
-	m_wndGrid.InsertColumn(nColumn++, _T("申领类型"), 80);
+	m_wndGrid.InsertColumn(nColumn++, _T("申领类型"), rectGrid.Width() - hw - 190);
 	for (int i = 0; i < nColumn; i++)
 	{
 		m_wndGrid.SetColumnAlign(i, HDF_CENTER);
@@ -158,7 +179,81 @@ void CViewBooking1::OnInitialUpdate()
 	m_wndGrid.SetCallBack_Clk(OnGridClick);
 	Refresh();
 
-	m_SPhoto.InitPicSource(&m_img);
+	m_SPhoto.InitPicSource(&m_img); //注册图片控件数据源
+
+
+	//创建日期单元格
+	CRect rectWeek;
+	m_SWeek.GetClientRect(&rectWeek);
+	m_SWeek.MapWindowPoints(this, &rectWeek); //转为桌面坐标
+
+	m_wndCalendar.Create(nStyle, rectWeek, this, IDC_GRID_STUPRO+1);
+	//m_wndCalendar.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
+	m_wndCalendar.EnableHeader(TRUE, 0); //不允许表头移动
+	// Set grid tab order (first):
+	m_wndCalendar.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndCalendar.SetReadOnly();
+	//m_wndCalendar.SetWholeRowSel();
+	m_wndCalendar.SetSingleSel(); //只能选一个
+	//m_wndCalendar.EnableRowHeader(TRUE);
+	//m_wndCalendar.EnableLineNumbers();
+	m_wndCalendar.SetCallBack_Clk(OnCalendarClick);
+	CFont font;
+	VERIFY(font.CreateFont(
+		12,                        // nHeight
+		0,                         // nWidth
+		0,                         // nEscapement
+		0,                         // nOrientation
+		FW_LIGHT,                 // nWeight
+		FALSE,                     // bItalic
+		FALSE,                     // bUnderline
+		0,                         // cStrikeOut
+		ANSI_CHARSET,              // nCharSet
+		OUT_DEFAULT_PRECIS,        // nOutPrecision
+		CLIP_DEFAULT_PRECIS,       // nClipPrecision
+		DEFAULT_QUALITY,           // nQuality
+		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
+		_T("Arial")));                 // lpszFacename
+	//m_wndCalendar.SetFont(&font);
+
+	LPCTSTR arrColumns[] = { _T("星期日"), _T("星期一"), _T("星期二"), _T("星期三"), _T("星期四"), _T("星期五"), _T("星期六") };
+	const int nColumns = sizeof (arrColumns) / sizeof (LPCTSTR);
+	int rowheaderW = m_wndCalendar.GetRowHeaderWidth();
+	int nColumnWidth = (rectWeek.Width() - rowheaderW - 35) / 7;
+	for (nColumn = 0; nColumn < nColumns; nColumn++)
+	{
+		m_wndCalendar.InsertColumn(nColumn, arrColumns[nColumn], nColumnWidth);
+		m_wndCalendar.SetHeaderAlign(nColumn, HDF_CENTER);
+		m_wndCalendar.SetColumnAlign(nColumn, HDF_CENTER); 
+	}
+
+	for (int nRow = 0; nRow < 15; nRow++)
+	{
+		CBCGPGridRow* pRow = m_wndCalendar.CreateMultiLineRow(2);
+		pRow->SetVertAlign(BCGP_GRID_ITEM_VCENTER);
+		CString strText;
+		strText.Format("2017/04/17");
+		pRow->GetItem(1)->SetValue((LPCTSTR)strText);
+		m_wndCalendar.AddRow(pRow, FALSE);
+
+		CBCGPGridRow* pRow1 = m_wndCalendar.CreateMultiLineRow(5);
+		pRow1->SetVertAlign(BCGP_GRID_ITEM_VCENTER);
+		strText.Format("可预约数\n\n5");
+		pRow1->GetItem(1)->SetValue((LPCTSTR)strText);
+		m_wndCalendar.AddRow(pRow1, FALSE);
+	}
+	m_wndCalendar.AdjustLayout();
+	UpdateCalendar();
+	//CRuntimeClass* pClass = RUNTIME_CLASS(CWorkDay);
+	//if (pClass != NULL)
+	//{
+	//	m_pWndWorkDay = DYNAMIC_DOWNCAST(CView, pClass->CreateObject());
+	//	if (m_pWndWorkDay != NULL)
+	//	{
+	//		m_pWndWorkDay->Create(NULL, NULL, WS_CHILD | WS_VISIBLE, rectWeek, this, 0, NULL);
+	//	}
+	//}
+	//m_pWndWorkDay->OnInitialUpdate();
 }
 
 void CViewBooking1::Refresh()
@@ -197,24 +292,6 @@ void CViewBooking1::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 	// TODO:  在此处添加消息处理程序代码
-
-	//CRect rect;
-	//m_SPhoto.GetClientRect(&rect);
-	//if (!m_img.empty())
-	//{
-	//	CDC* pDc = m_SPhoto.GetDC();
-	//	HDC hdc = pDc->GetSafeHdc();
-
-	//	IplImage* frame;
-	//	frame = &IplImage(m_img);
-	//	CvvImage cvvImage;
-	//	cvvImage.CopyOf(frame);
-	//	cvvImage.DrawToHDC(hdc, rect);
-	//}
-	//else
-	//{
-	//	dc.TextOutA(rect.CenterPoint().x, rect.CenterPoint().y, "无照片");
-	//}
 }
 
 LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
@@ -223,4 +300,13 @@ LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
 	m_img = pImg->clone();
 	m_SPhoto.Invalidate();
 	return 0;
+}
+
+void CViewBooking1::UpdateDB() //查询当前最大可预约时间，如果小于90天，则新建记录
+{
+	CTime t = CTime::GetCurrentTime();
+	t += CTimeSpan(90, 0, 0, 0);    //该函数第一个参数为相差的天数  
+	int nYear = t.GetYear();
+	int nMonth = t.GetMonth();
+	int nDay = t.GetDay();
 }

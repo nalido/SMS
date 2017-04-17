@@ -92,16 +92,17 @@ BEGIN
     COMBOBOX        IDC_GENDER,198,199,100,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
 END
 
-IDD_BOOKING1 DIALOGEX 0, 0, 756, 409
+IDD_BOOKING1 DIALOGEX 0, 0, 756, 1082
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SLIST,"Static",SS_BLACKFRAME,7,140,191,262
+    CONTROL         "",IDC_SLIST,"Static",SS_BLACKFRAME,7,141,191,254
     CONTROL         "",IDC_SPHOTO,"Static",SS_BLACKFRAME,7,7,92,121
     LTEXT           "姓名：",IDC_NAME0,106,7,92,10
     CTEXT           "",IDC_NAME,106,24,92,10
     LTEXT           "已预约课时：",IDC_NAME3,106,38,92,10
     CTEXT           "0",IDC_NCLASS,106,53,92,10
+    CONTROL         "",IDC_WEEK,"Static",SS_BLACKFRAME,213,7,536,388
 END
 
 IDD_BOOKING2 DIALOGEX 0, 0, 309, 176
@@ -193,6 +194,23 @@ BEGIN
     PUSHBUTTON      "发送预约短信",IDC_SENDBOOKMSG,620,394,70,13
 END
 
+IDD_WORKDAY DIALOGEX 0, 0, 522, 430
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_HEADER1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,0,74,16
+    CONTROL         "",IDC_DAY0,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,32,74,55
+    CONTROL         "",IDC_DATE0,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,16,74,16
+    CONTROL         "",IDC_DAY1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,103,74,55
+    CONTROL         "",IDC_DATE1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,87,74,16
+    CONTROL         "",IDC_DAY2,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,172,74,55
+    CONTROL         "",IDC_DATE2,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,156,74,16
+    CONTROL         "",IDC_DAY3,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,243,74,55
+    CONTROL         "",IDC_DATE3,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,227,74,16
+    CONTROL         "",IDC_DAY4,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,314,74,55
+    CONTROL         "",IDC_DATE4,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,298,74,16
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -226,7 +244,8 @@ BEGIN
         RIGHTMARGIN, 749
         VERTGUIDE, 198
         TOPMARGIN, 7
-        BOTTOMMARGIN, 402
+        BOTTOMMARGIN, 1075
+        HORZGUIDE, 395
     END
 
     IDD_BOOKING2, DIALOG
@@ -305,9 +324,32 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 407
     END
+
+    IDD_WORKDAY, DIALOG
+    BEGIN
+        VERTGUIDE, 74
+        VERTGUIDE, 150
+        VERTGUIDE, 228
+        VERTGUIDE, 304
+        VERTGUIDE, 380
+        VERTGUIDE, 456
+        BOTTOMMARGIN, 369
+        HORZGUIDE, 16
+        HORZGUIDE, 32
+        HORZGUIDE, 87
+        HORZGUIDE, 158
+        HORZGUIDE, 227
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP                  "res\\bitmap1.bmp"
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

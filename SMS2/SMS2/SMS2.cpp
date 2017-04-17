@@ -42,7 +42,11 @@ CSMS2App::CSMS2App()
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2013_GRAY, ID_VIEW_APPLOOK_2013_2);
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2013_DARK_GRAY, ID_VIEW_APPLOOK_2013_3);
 
-	SetVisualTheme(BCGP_VISUAL_THEME_OFFICE_2013_WHITE);
+	CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Green);
+	//CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Orange);
+	//CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Blue);
+	//CBCGPVisualManagerVS2012::SetAccentColor(CBCGPVisualManagerVS2012::VS2012_Blue);
+	SetVisualTheme(BCGP_VISUAL_THEME_OFFICE_2010_BLUE);
 
 
 	// TODO: add construction code here,
@@ -193,3 +197,48 @@ void CAboutDlg::OnBnClickedCompanyUrl()
 	strMsg.Format("¿ª·¢ÉÌ£º»Æ½£±ù\r\nÓÊÏä£ºnalido@yeah.net\r\n");
 	MessageBox(strMsg);
 }
+
+//
+//void CSMS2App::OnBeforeChangeVisualTheme(CBCGPAppOptions& appOptions, CWnd* pMainWnd)
+//{
+//	CBCGPWinApp::OnBeforeChangeVisualTheme(appOptions, pMainWnd);
+//
+//	switch (m_ActiveTheme)
+//	{
+//	case BCGP_VISUAL_THEME_OFFICE_2013_WHITE:
+//		CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Green);
+//		break;
+//
+//	case BCGP_VISUAL_THEME_OFFICE_2013_GRAY:
+//		CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Orange);
+//		break;
+//
+//	case BCGP_VISUAL_THEME_OFFICE_2013_DARK_GRAY:
+//		CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Blue);
+//		break;
+//
+//	case BCGP_VISUAL_THEME_VS_2012_LIGHT:
+//	case BCGP_VISUAL_THEME_VS_2012_DARK:
+//	case BCGP_VISUAL_THEME_VS_2012_BLUE:
+//		CBCGPVisualManagerVS2012::SetAccentColor(CBCGPVisualManagerVS2012::VS2012_Blue);	// Default
+//	}
+//}
+//
+//void CSMS2App::OnAfterChangeVisualTheme(CWnd* pMainWnd)
+//{
+//	CBCGPWinApp::OnAfterChangeVisualTheme(pMainWnd);
+//
+//	CBCGPDockManager::SetDockMode(BCGP_DT_SMART);
+//
+//	CMainFrame* pFrame = DYNAMIC_DOWNCAST(CMainFrame, pMainWnd);
+//	if (pFrame->GetSafeHwnd() == NULL)
+//	{
+//		return;
+//	}
+//
+//	//CSMS2View* pView = DYNAMIC_DOWNCAST(CSMS2View, pFrame->GetActiveView());
+//	//if (pView->GetSafeHwnd())
+//	//{
+//	//	pView->GetManagerCtrl().AdjustLayout(TRUE);
+//	//}
+//}

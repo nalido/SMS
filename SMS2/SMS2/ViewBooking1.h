@@ -7,7 +7,11 @@
 #include <opencv2\core.hpp>
 #include <opencv2\opencv.hpp>
 #include "MyPicCtrl.h"
+#include "WorkDay.h"
+#include "GridCalendar.h"
+#include "xPublic\MySQLEx.h"
 // CViewBooking1 窗体视图
+
 
 class CViewBooking1 : public CBCGPFormView
 {
@@ -46,6 +50,16 @@ public:
 	cv::Mat m_img;
 	afx_msg void OnPaint();
 	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
+
+	//日历视图
+	//CView* m_pView[91]; // 7*13
+	CDStrs m_WDStat; //课时信息 work day state
+	void UpdateDB(); //查询当前最大可预约时间，如果小于90天，则新建记录
+	CStatic m_SWeek;
+	CGridCalendar m_wndCalendar;
+	static void CALLBACK OnCalendarClick(LPVOID lParam, BOOL lParam2);
+	void UpdateCalendar();
+
 };
 
 
