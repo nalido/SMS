@@ -13,6 +13,7 @@
 #include "ViewStuProgress.h"
 #include "School.h"
 #include "System.h"
+#include "Coaches.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -84,6 +85,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_STUPROGRESS, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_COACH, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
@@ -96,17 +98,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 END_MESSAGE_MAP()
 
 // CMainFrame construction/destruction
-enum VIEW_TYPE{
-	VIEW_REGISTER = 0,
-	VIEW_K1CHECK,
-	VIEW_BOOKING1,
-	VIEW_BOOKING2,
-	VIEW_K1EXAM,
-	VIEW_STUPROGRESS,
-	VIEW_SCHOOL,
-	VIEW_SYSTEM,
-	VIEW_NUM
-};
 
 CMainFrame::CMainFrame()
 : m_threadMySQL(this, ThreadMySQLCallback)
@@ -358,6 +349,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_SCHOOLSETTING:
 		SelectView(VIEW_SCHOOL);
 		break;
+	case ID_VIEW_COACH:
+		SelectView(VIEW_COACHES);
+		break;
 	}
 	return TRUE;
 }
@@ -406,7 +400,10 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_K1EXAM:
 		pClass = RUNTIME_CLASS(CViewK1Exam); 
-			break;
+		break;
+	case VIEW_COACHES:
+		pClass = RUNTIME_CLASS(CCoaches);
+		break;
 	case VIEW_STUPROGRESS:
 		pClass = RUNTIME_CLASS(CViewStuProgress); 
 			break;
@@ -460,6 +457,7 @@ CView* CMainFrame::GetView(int nID)
 void CMainFrame::SelectView(int nID)
 {
 	CWaitCursor wait;
+
 
 	CView* pNewView = GetView(nID);
 	if (pNewView == NULL)
@@ -635,7 +633,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 				BYTE* picBuf = new BYTE[imgSize + 1];
 				if (pTcpClient->Receive(picBuf, imgSize))
 				{
-					strMsg.Format("收到客户端图像信息：%dX%d 接收成功", wid, hei);
+					strMsg.Format("收到图像信息：%dX%d 接收成功", wid, hei);
 
 					pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize); //保存图片，第二次点击时无需再下载
 					IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
@@ -648,7 +646,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 				}
 				else
 				{
-					strMsg.Format("收到客户端图像信息：%dX%d 接收图像数据失败", wid, hei);
+					strMsg.Format("收到图像信息：%dX%d 接收图像数据失败", wid, hei);
 					pThis->m_wndOutput.AddItem2List4(strMsg);
 				}
 

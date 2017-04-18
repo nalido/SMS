@@ -4,12 +4,6 @@
 
 
 
-#define COLOR_SELECTED RGB(0, 117, 194)
-#define COLOR_TEXTSEL RGB(255, 255, 255)
-#define COLOR_TEXTNONE RGB(220, 220, 220)
-#define COLOR_LITTLE RGB(250, 132, 132)
-#define COLOR_NONE RGB(190, 190, 190)
-#define COLOR_MANY RGB(147, 235, 149)
 
 CGridCalendar::CGridCalendar()
 {
@@ -248,4 +242,13 @@ void CGridCalendar::DrawSelectedItem(int r, int c)
 	pItem = pRow->GetItem(c);
 	pItem->SetBackgroundColor(COLOR_SELECTED);
 	pItem->SetTextColor(COLOR_TEXTSEL);
+}
+
+CTime CGridCalendar::GetSelectedDay(int r, int c)
+{
+	r = r / 2;
+	int nday = r * 7 + c - m_PointToday.x;
+	if (nday < 0 || nday > 90) return m_tToday - CTimeSpan(1, 0 ,  0, 0); //选择范围之外的时间
+
+	return m_tToday + CTimeSpan(nday, 0, 0, 0);
 }

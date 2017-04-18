@@ -7,7 +7,6 @@
 #include <opencv2\core.hpp>
 #include <opencv2\opencv.hpp>
 #include "MyPicCtrl.h"
-#include "WorkDay.h"
 #include "GridCalendar.h"
 #include "xPublic\MySQLEx.h"
 // CViewBooking1 窗体视图
@@ -59,6 +58,12 @@ public:
 	static void CALLBACK OnCalendarClick(LPVOID lParam, BOOL lParam2);
 	//void UpdateCalendar();
 
+	//当前预约的学员信息
+	CString m_strFileName;
+	CString m_strName;
+	CString m_strGender;
+	CString m_strCarType;
+	CString m_strBooked; //已预约课时数
 };
 
 

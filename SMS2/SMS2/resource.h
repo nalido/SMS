@@ -23,8 +23,9 @@
 #define IDD_DIALOG2                     173
 #define IDD_K1EXAM                      173
 #define IDD_STUPROGRESS                 174
-#define IDD_WORKDAY                     175
-#define IDB_BITMAP1                     176
+#define IDD_CLASSDETAIL                 177
+#define IDD_COACHES                     178
+#define IDD_ADDCOACH                    179
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_BTN_NOPASS                  1056
@@ -36,8 +37,10 @@
 #define IDC_BTN_SIGN                    1065
 #define IDC_BUTTON2                     1066
 #define IDC_NEWFILE                     1066
+#define IDC_ADDCOACH                    1066
 #define IDC_NAME                        1067
 #define IDC_NAME2                       1068
+#define IDC_FILE                        1068
 #define IDC_TEL                         1069
 #define IDC_NAME3                       1069
 #define IDC_FEE                         1070
@@ -68,19 +71,25 @@
 #define IDC_SENDBOOKMSG                 1089
 #define IDC_SPHOTO                      1089
 #define IDC_SLIST                       1090
+#define IDC_TOBOOK                      1090
 #define IDC_NAME0                       1091
 #define IDC_WEEK                        1092
-#define IDC_HEADER1                     1094
-#define IDC_DATE0                       1101
-#define IDC_DAY0                        1108
-#define IDC_DAY1                        1186
-#define IDC_DATE1                       1187
-#define IDC_DAY2                        1188
-#define IDC_DATE2                       1189
-#define IDC_DAY3                        1190
-#define IDC_DATE3                       1191
-#define IDC_DAY4                        1192
-#define IDC_DATE4                       1193
+#define IDC_NAME1                       1093
+#define IDC_NAME4                       1094
+#define IDC_NAME5                       1095
+#define IDC_GRID                        1109
+#define IDC_CLASS1                      1109
+#define IDC_COACHLIST                   1111
+#define IDC_FILE_NUM                    1112
+#define IDC_CLASS2                      1112
+#define IDC_CLASS3                      1113
+#define IDC_DATE_BIRTH                  1114
+#define IDC_CLASS4                      1114
+#define IDC_DATE_ENTER                  1115
+#define IDC_PARTY                       1116
+#define IDC_ADD                         1120
+#define IDC_BUTTON3                     1121
+#define IDC_CONFIRM                     1122
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -122,14 +131,15 @@
 #define ID_VIEW_K1CHECK                 32876
 #define ID_VIEW_K1EXAM                  32877
 #define ID_VIEW_STUPROGRESS             32879
+#define ID_VIEW_COACH                   32880
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        177
-#define _APS_NEXT_COMMAND_VALUE         32880
-#define _APS_NEXT_CONTROL_VALUE         1109
+#define _APS_NEXT_RESOURCE_VALUE        181
+#define _APS_NEXT_COMMAND_VALUE         32881
+#define _APS_NEXT_CONTROL_VALUE         1123
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

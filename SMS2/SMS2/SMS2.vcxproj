@@ -198,7 +198,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddCoach.h" />
     <ClInclude Include="BCGClass\VirtualGridCtrl.h" />
+    <ClInclude Include="ClassDetail.h" />
+    <ClInclude Include="ClassItem.h" />
+    <ClInclude Include="Coaches.h" />
     <ClInclude Include="GridCalendar.h" />
     <ClInclude Include="MyPicCtrl.h" />
     <ClInclude Include="ViewK1Exam.h" />
@@ -217,7 +221,6 @@
     <ClInclude Include="ViewK1Check.h" />
     <ClInclude Include="ViewRegister.h" />
     <ClInclude Include="ViewStuProgress.h" />
-    <ClInclude Include="WorkDay.h" />
     <ClInclude Include="xPublic\CObjectBase.h" />
     <ClInclude Include="xPublic\Common.h" />
     <ClInclude Include="xPublic\CvvImage.h" />
@@ -227,7 +230,11 @@
     <ClInclude Include="xPublic\ThreadBase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddCoach.cpp" />
     <ClCompile Include="BCGClass\VirtualGridCtrl.cpp" />
+    <ClCompile Include="ClassDetail.cpp" />
+    <ClCompile Include="ClassItem.cpp" />
+    <ClCompile Include="Coaches.cpp" />
     <ClCompile Include="GridCalendar.cpp" />
     <ClCompile Include="MyPicCtrl.cpp" />
     <ClCompile Include="ViewK1Exam.cpp" />
@@ -250,7 +257,6 @@
     <ClCompile Include="ViewK1Check.cpp" />
     <ClCompile Include="ViewRegister.cpp" />
     <ClCompile Include="ViewStuProgress.cpp" />
-    <ClCompile Include="WorkDay.cpp" />
     <ClCompile Include="xPublic\CObjectBase.cpp" />
     <ClCompile Include="xPublic\Common.cpp" />
     <ClCompile Include="xPublic\CvvImage.cpp" />
@@ -267,6 +273,7 @@
     <None Include="res\SMS2.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\1.bmp" />
     <Image Include="res\BCGSoft_ribbon\category_large_0.png" />
     <Image Include="res\BCGSoft_ribbon\category_main_large.png" />
     <Image Include="res\BCGSoft_ribbon\category_main_small.png" />

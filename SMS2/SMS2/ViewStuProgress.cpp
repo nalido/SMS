@@ -77,6 +77,7 @@ void CViewStuProgress::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CViewStuProgress, CBCGPFormView)
 	ON_BN_CLICKED(IDC_STUFRESH, &CViewStuProgress::OnBnClickedStufresh)
 	ON_BN_CLICKED(IDC_SENDBOOKMSG, &CViewStuProgress::OnBnClickedSendbookmsg)
+	ON_BN_CLICKED(IDC_TOBOOK, &CViewStuProgress::OnBnClickedTobook)
 END_MESSAGE_MAP()
 
 
@@ -206,7 +207,25 @@ void CViewStuProgress::OnBnClickedSendbookmsg()
 				ShowMsg2Output1("发预约短信，选择了已完成预约的学生档案");
 			}
 
+			/*未完成*/
+			//发送预约短信  
+			//int len = 14; //一次发送一个短信
+			//CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+			//pFrame->m_isSendReady = FALSE;
+			//pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+			//pFrame->m_nSendLen = len;
+			//pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+			//pFrame->m_pSendBuf[1] = 4; //培训预约短信
+			//int n = 1;
+			//memcpy(pFrame->m_pSendBuf + 2, &n, 4); //档案数量
+
 			CString fileNum = m_datas[i][0];
+			//CString strFileNum = fileNum.Right(8);
+			//char* data = strFileNum.GetBuffer();
+			//memcpy(pFrame->m_pSendBuf + 6 + 8 * i, data, 8);
+			//strFileNum.ReleaseBuffer();
+			//pFrame->m_isSendReady = TRUE;
+
 			CString strSQL;
 			strSQL.Format("UPDATE students SET STEP='7' WHERE FILE_NAME='%s'", fileNum);
 			if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
@@ -233,4 +252,10 @@ void CALLBACK CViewStuProgress::OnGridDbClick(LPVOID lParam)
 		CString strFileName = pThis->m_datas[nRow][0];
 		pThis->MessageBox(strFileName);
 	}
+}
+
+void CViewStuProgress::OnBnClickedTobook()
+{
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+	pFrame->SelectView(VIEW_BOOKING1);
 }

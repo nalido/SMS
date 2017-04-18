@@ -40,6 +40,7 @@ public:
 	afx_msg void OnBnClickedStufresh();
 	afx_msg void OnBnClickedSendbookmsg();
 	static void CALLBACK OnGridDbClick(LPVOID lParam);
+	afx_msg void OnBnClickedTobook();
 };
 
 
