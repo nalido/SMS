@@ -92,7 +92,7 @@ void CViewRegister::Dump(CDumpContext& dc) const
 void CViewRegister::OnBnClickedCamera()
 {
 	CString str;
-	GetDlgItem(IDC_CAMERA)->GetWindowTextA(str);
+	GetDlgItem(IDC_CAMERA)->GetWindowText(str);
 	if (str == "打开摄像头" || str == "重新采集照片")
 	{
 
@@ -174,19 +174,25 @@ void CViewRegister::OnPaint()
 	CPaintDC dc(this); // device context for painting
 
 	//双缓存绘制
-	CRect   rect;
+	CRect   rect1, rect0;
 	CDC     MenDC;
 	CBitmap MemMap;
 
-	GetClientRect(&rect);
+	GetDlgItem(IDC_BKBMP)->GetClientRect(&rect0); //贴图原点
+	GetDlgItem(IDC_BKBMP)->MapWindowPoints(this, &rect0);
+	GetDlgItem(IDC_BKBMP1)->GetClientRect(&rect1); //贴图终点
+	GetDlgItem(IDC_BKBMP1)->MapWindowPoints(this, &rect1);
+	//GetClientRect(&rect);
 	MenDC.CreateCompatibleDC(&dc); 
 	MemMap.LoadBitmapA(IDB_BITMAP3);
 	BITMAP bmp;
 	MemMap.GetBitmap(&bmp); //获取bmp参数
 	MenDC.SelectObject(&MemMap);
 
-	//dc.StretchBlt(0, 0, rect.Width(), rect.Height(), &MenDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
-	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MenDC, 0, 0, SRCCOPY);
+	int w = rect1.right - rect0.left;
+	int h = rect1.bottom - rect0.top;
+	dc.StretchBlt(rect0.left, rect0.top, w, h, &MenDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+	//dc.BitBlt(rect0.left, rect0.top, rect.Width(), rect.Height(), &MenDC, 0, 0, SRCCOPY);
 	MenDC.DeleteDC();
 	MemMap.DeleteObject();
 
@@ -236,15 +242,15 @@ void CViewRegister::OnBnClickedBtnSign()
 
 	//m_strNumber = ""; //档案号
 	CString name, type, tel, fee, id, home, birth, date, gender;
-	m_Ed_Name.GetWindowTextA(name);
-	m_Ed_Tel.GetWindowTextA(tel);
-	m_Ed_Fee.GetWindowTextA(fee);
-	m_Ed_ID.GetWindowTextA(id);
-	m_Ed_Home.GetWindowTextA(home);
-	m_Comb_CarType.GetWindowTextA(type);
-	m_Comb_Gender.GetWindowTextA(gender);
-	m_Date_Sign.GetWindowTextA(date); 
-	m_Date_Birth.GetWindowTextA(birth);
+	m_Ed_Name.GetWindowText(name);
+	m_Ed_Tel.GetWindowText(tel);
+	m_Ed_Fee.GetWindowText(fee);
+	m_Ed_ID.GetWindowText(id);
+	m_Ed_Home.GetWindowText(home);
+	m_Comb_CarType.GetWindowText(type);
+	m_Comb_Gender.GetWindowText(gender);
+	m_Date_Sign.GetWindowText(date); 
+	m_Date_Birth.GetWindowText(birth);
 	if (name.IsEmpty() || type.IsEmpty() || tel.IsEmpty()
 		|| fee.IsEmpty() || id.IsEmpty() || home.IsEmpty()
 		|| birth.IsEmpty() || date.IsEmpty() || gender.IsEmpty())

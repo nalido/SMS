@@ -27,7 +27,6 @@
 #define IDD_COACHES                     178
 #define IDD_ADDCOACH                    179
 #define IDB_BITMAP2                     183
-#define IDB_BITMAP1                     185
 #define IDB_BITMAP3                     187
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
@@ -104,6 +103,8 @@
 #define IDC_STATIC7                     1131
 #define IDC_STATIC8                     1132
 #define IDC_STATIC9                     1133
+#define IDC_BKBMP                       1134
+#define IDC_BKBMP1                      1135
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -153,7 +154,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        188
 #define _APS_NEXT_COMMAND_VALUE         32881
-#define _APS_NEXT_CONTROL_VALUE         1134
+#define _APS_NEXT_CONTROL_VALUE         1136
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

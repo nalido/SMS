@@ -60,7 +60,7 @@ END
 // Dialog
 //
 
-IDD_REGISTER DIALOGEX 0, 0, 590, 413
+IDD_REGISTER DIALOGEX 0, 0, 865, 498
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
@@ -90,6 +90,8 @@ BEGIN
     PUSHBUTTON      "新建档案",IDC_NEWFILE,121,56,67,14
     LTEXT           "性别：",IDC_STATIC4,140,181,48,9,0,WS_EX_RIGHT
     COMBOBOX        IDC_GENDER,198,179,100,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_BKBMP,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,0,15,14
+    CONTROL         "",IDC_BKBMP1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,841,484,24,14
 END
 
 IDD_BOOKING1 DIALOGEX 0, 0, 756, 465
@@ -258,16 +260,13 @@ GUIDELINES DESIGNINFO
 BEGIN
     IDD_REGISTER, DIALOG
     BEGIN
-        LEFTMARGIN, 30
-        RIGHTMARGIN, 556
+        RIGHTMARGIN, 821
         VERTGUIDE, 121
         VERTGUIDE, 188
         VERTGUIDE, 198
         VERTGUIDE, 420
         VERTGUIDE, 473
         VERTGUIDE, 498
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 406
         HORZGUIDE, 78
         HORZGUIDE, 142
         HORZGUIDE, 162
@@ -404,9 +403,8 @@ END
 // Bitmap
 //
 
-IDB_BITMAP2             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\2.bmp"
-IDB_BITMAP1             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\4.bmp"
 IDB_BITMAP3             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\3.bmp"
+IDB_BITMAP2             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\2.bmp"
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

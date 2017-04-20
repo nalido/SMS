@@ -50,14 +50,14 @@ void CAddCoach::OnBnClickedAdd()
 
 
 	CString name, tel, filenum, home, birth, date, gender, party;
-	m_SName.GetWindowTextA(name);
-	m_STel.GetWindowTextA(tel);
-	m_SHome.GetWindowTextA(home);
-	m_SParty.GetWindowTextA(party);
-	m_SFilenum.GetWindowTextA(filenum);
-	m_Comb_Gen.GetWindowTextA(gender);
-	m_Date_Sign.GetWindowTextA(date);
-	m_Date_Birth.GetWindowTextA(birth);
+	m_SName.GetWindowText(name);
+	m_STel.GetWindowText(tel);
+	m_SHome.GetWindowText(home);
+	m_SParty.GetWindowText(party);
+	m_SFilenum.GetWindowText(filenum);
+	m_Comb_Gen.GetWindowText(gender);
+	m_Date_Sign.GetWindowText(date);
+	m_Date_Birth.GetWindowText(birth);
 	if (name.IsEmpty() || filenum.IsEmpty() || tel.IsEmpty()
 		|| party.IsEmpty() || home.IsEmpty()
 		|| birth.IsEmpty() || date.IsEmpty() || gender.IsEmpty())
