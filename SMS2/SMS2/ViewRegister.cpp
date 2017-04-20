@@ -180,12 +180,13 @@ void CViewRegister::OnPaint()
 
 	GetClientRect(&rect);
 	MenDC.CreateCompatibleDC(&dc); 
-	MemMap.LoadBitmapA(IDB_BITMAP2);
+	MemMap.LoadBitmapA(IDB_BITMAP3);
 	BITMAP bmp;
 	MemMap.GetBitmap(&bmp); //获取bmp参数
 	MenDC.SelectObject(&MemMap);
 
-	dc.StretchBlt(0, 0, rect.Width(), rect.Height(), &MenDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+	//dc.StretchBlt(0, 0, rect.Width(), rect.Height(), &MenDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MenDC, 0, 0, SRCCOPY);
 	MenDC.DeleteDC();
 	MemMap.DeleteObject();
 

@@ -103,7 +103,7 @@ void CGridCalendar::DrawItems()
 	{
 		int nday = r * 7 + c - m_PointToday.x;
 		if (nday < 0) continue;
-		if (nday > 90) break;
+		if (nday > 89) break;
 
 		CTime tmp = m_tToday + CTimeSpan(nday, 0, 0, 0);
 		pRow = GetRow(r * 2);
@@ -141,7 +141,7 @@ void CGridCalendar::UpdateGrid()
 	CTime t = CTime::GetCurrentTime();
 	strMaxDay0 = t.Format("%Y/%m/%d");
 	//CTime t(2017, 12, 1, 0, 0, 0);
-	t += CTimeSpan(90, 0, 0, 0);    //该函数第一个参数为相差的天数  
+	t += CTimeSpan(89, 0, 0, 0);    //该函数第一个参数为相差的天数  
 	strMaxDay = t.Format("%Y/%m/%d");
 
 	//查询数据库，若最大记录天数小于90天，则增加记录
@@ -247,7 +247,7 @@ CTime CGridCalendar::GetSelectedDay(int r, int c)
 {
 	r = r / 2;
 	int nday = r * 7 + c - m_PointToday.x;
-	if (nday < 0 || nday > 90) return m_tToday - CTimeSpan(1, 0 ,  0, 0); //选择范围之外的时间
+	if (nday < 0 || nday > 89) return m_tToday - CTimeSpan(1, 0 ,  0, 0); //选择范围之外的时间
 
 	return m_tToday + CTimeSpan(nday, 0, 0, 0);
 }

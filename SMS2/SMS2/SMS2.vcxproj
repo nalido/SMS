@@ -275,6 +275,9 @@
   <ItemGroup>
     <Image Include="..\1.bmp" />
     <Image Include="..\2.bmp" />
+    <Image Include="..\3.bmp" />
+    <Image Include="..\4.bmp" />
+    <Image Include="..\bitmap3.bmp" />
     <Image Include="res\1.bmp" />
     <Image Include="res\BCGSoft_ribbon\category_large_0.png" />
     <Image Include="res\BCGSoft_ribbon\category_main_large.png" />

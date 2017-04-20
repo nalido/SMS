@@ -487,6 +487,7 @@ void CMainFrame::SelectView(int nID)
 
 		pActiveView->ShowWindow(SW_HIDE);
 		pNewView->ShowWindow(SW_SHOW);
+		Invalidate();
 
 		SetActiveView(pNewView);
 	}

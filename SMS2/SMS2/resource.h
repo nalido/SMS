@@ -26,8 +26,9 @@
 #define IDD_CLASSDETAIL                 177
 #define IDD_COACHES                     178
 #define IDD_ADDCOACH                    179
-#define IDB_BITMAP1                     181
 #define IDB_BITMAP2                     183
+#define IDB_BITMAP1                     185
+#define IDB_BITMAP3                     187
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_BTN_NOPASS                  1056
@@ -150,7 +151,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        184
+#define _APS_NEXT_RESOURCE_VALUE        188
 #define _APS_NEXT_COMMAND_VALUE         32881
 #define _APS_NEXT_CONTROL_VALUE         1134
 #define _APS_NEXT_SYMED_VALUE           118
