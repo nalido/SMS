@@ -64,17 +64,17 @@ IDD_REGISTER DIALOGEX 0, 0, 590, 413
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "姓名：",IDC_STATIC,140,154,48,9,0,WS_EX_RIGHT
+    LTEXT           "姓名：",IDC_STATIC2,140,154,48,9,0,WS_EX_RIGHT
     CONTROL         "",IDC_PHOTO,"Static",SS_BLACKFRAME,346,152,89,114
     PUSHBUTTON      "打开摄像头",IDC_CAMERA,198,335,93,14
-    LTEXT           "电话：",IDC_STATIC,140,233,48,9,0,WS_EX_RIGHT
-    LTEXT           "申领车型：",IDC_STATIC,315,107,48,9,0,WS_EX_RIGHT
-    LTEXT           "费用：",IDC_STATIC,140,257,48,9,0,WS_EX_RIGHT
-    LTEXT           "身份证号：",IDC_STATIC,140,282,48,9,0,WS_EX_RIGHT
-    LTEXT           "登记住所：",IDC_STATIC,140,307,48,9,0,WS_EX_RIGHT
-    LTEXT           "档案号：",IDC_STATIC,140,84,48,9,0,WS_EX_RIGHT
-    LTEXT           "报名日期：",IDC_STATIC,140,107,48,9,0,WS_EX_RIGHT
-    LTEXT           "出生日期：",IDC_STATIC,140,207,48,9,0,WS_EX_RIGHT
+    LTEXT           "电话：",IDC_STATIC6,140,233,48,9,0,WS_EX_RIGHT
+    LTEXT           "申领车型：",IDC_STATIC3,315,107,48,9,0,WS_EX_RIGHT
+    LTEXT           "费用：",IDC_STATIC7,140,257,48,9,0,WS_EX_RIGHT
+    LTEXT           "身份证号：",IDC_STATIC8,140,282,48,9,0,WS_EX_RIGHT
+    LTEXT           "登记住所：",IDC_STATIC9,140,307,48,9,0,WS_EX_RIGHT
+    LTEXT           "档案号：",IDC_STATIC0,140,84,48,9,0,WS_EX_RIGHT
+    LTEXT           "报名日期：",IDC_STATIC1,140,107,48,9,0,WS_EX_RIGHT
+    LTEXT           "出生日期：",IDC_STATIC5,140,207,48,9,0,WS_EX_RIGHT
     LTEXT           "档案号：",IDC_NUMBER,198,84,96,11
     CONTROL         "",IDC_DATE_SIGNIN,"SysDateTimePick32",DTS_RIGHTALIGN | WS_TABSTOP,198,103,100,15
     EDITTEXT        IDC_NAME,198,152,100,15,ES_AUTOHSCROLL
@@ -88,7 +88,7 @@ BEGIN
     COMBOBOX        IDC_CARTYPE,373,105,100,30,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "注册",IDC_BTN_SIGN,327,335,93,14
     PUSHBUTTON      "新建档案",IDC_NEWFILE,121,56,67,14
-    LTEXT           "性别：",IDC_STATIC,140,181,48,9,0,WS_EX_RIGHT
+    LTEXT           "性别：",IDC_STATIC4,140,181,48,9,0,WS_EX_RIGHT
     COMBOBOX        IDC_GENDER,198,179,100,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
 END
 
@@ -398,6 +398,14 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\1.bmp"
+IDB_BITMAP2             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\2.bmp"
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

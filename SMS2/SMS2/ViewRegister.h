@@ -60,6 +60,10 @@ public:
 	afx_msg void OnBnClickedBtnSign();
 	afx_msg void OnBnClickedNewfile();
 	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+
+	//背景设置
+	CStatic m_staticText[10]; //10个静态文本框
 };
 
 

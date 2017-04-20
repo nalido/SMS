@@ -42,6 +42,19 @@ void CViewRegister::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ID, m_Ed_ID);
 	DDX_Control(pDX, IDC_HOME, m_Ed_Home);
 	DDX_Control(pDX, IDC_FEE, m_Ed_Fee);
+
+
+	//背景设置
+	DDX_Control(pDX, IDC_STATIC0, m_staticText[0]);
+	DDX_Control(pDX, IDC_STATIC1, m_staticText[1]);
+	DDX_Control(pDX, IDC_STATIC2, m_staticText[2]);
+	DDX_Control(pDX, IDC_STATIC3, m_staticText[3]);
+	DDX_Control(pDX, IDC_STATIC4, m_staticText[4]);
+	DDX_Control(pDX, IDC_STATIC5, m_staticText[5]);
+	DDX_Control(pDX, IDC_STATIC6, m_staticText[6]);
+	DDX_Control(pDX, IDC_STATIC7, m_staticText[7]);
+	DDX_Control(pDX, IDC_STATIC8, m_staticText[8]);
+	DDX_Control(pDX, IDC_STATIC9, m_staticText[9]);
 }
 
 BEGIN_MESSAGE_MAP(CViewRegister, CBCGPFormView)
@@ -52,6 +65,7 @@ BEGIN_MESSAGE_MAP(CViewRegister, CBCGPFormView)
 	ON_BN_CLICKED(IDC_BTN_SIGN, &CViewRegister::OnBnClickedBtnSign)
 	ON_BN_CLICKED(IDC_NEWFILE, &CViewRegister::OnBnClickedNewfile)
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -151,12 +165,29 @@ void CViewRegister::OnInitialUpdate()
 
 	GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE); //必须先有档案号
 	GetDlgItem(IDC_NEWFILE)->EnableWindow(TRUE);
+
 }
 
 
 void CViewRegister::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
+
+	//双缓存绘制
+	CRect   rect;
+	CDC     MenDC;
+	CBitmap MemMap;
+
+	GetClientRect(&rect);
+	MenDC.CreateCompatibleDC(&dc); 
+	MemMap.LoadBitmapA(IDB_BITMAP2);
+	BITMAP bmp;
+	MemMap.GetBitmap(&bmp); //获取bmp参数
+	MenDC.SelectObject(&MemMap);
+
+	dc.StretchBlt(0, 0, rect.Width(), rect.Height(), &MenDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+	MenDC.DeleteDC();
+	MemMap.DeleteObject();
 
 	if (m_isCaptured)
 	{
@@ -333,5 +364,26 @@ void CViewRegister::OnBnClickedNewfile()
 		ShowMsg2Output1(_T("查询档案数量数据操作失败!\r\n") + strMsg);
 	}
 
+	CRect rect;
+	m_Sta_Num.GetClientRect(&rect);
+	m_Sta_Num.MapWindowPoints(this, &rect);
+	InvalidateRect(&rect, TRUE); //重绘背景 消除重影
+
 	UpdateData(FALSE); //更新显示
+}
+
+
+HBRUSH CViewRegister::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+
+	if (nCtlColor == CTLCOLOR_STATIC)
+	{
+		pDC->SetBkMode(TRANSPARENT);
+		return HBRUSH(GetStockObject(NULL_BRUSH)); //返回一个空画刷
+	}
+
+
+	HBRUSH hbr = CBCGPFormView::OnCtlColor(pDC, pWnd, nCtlColor);
+	
+	return hbr;
 }

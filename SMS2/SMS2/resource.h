@@ -26,6 +26,8 @@
 #define IDD_CLASSDETAIL                 177
 #define IDD_COACHES                     178
 #define IDD_ADDCOACH                    179
+#define IDB_BITMAP1                     181
+#define IDB_BITMAP2                     183
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_BTN_NOPASS                  1056
@@ -91,6 +93,16 @@
 #define IDC_BUTTON3                     1121
 #define IDC_CONFIRM                     1122
 #define IDC_STUDENT_SEL                 1123
+#define IDC_STATIC0                     1124
+#define IDC_STATIC1                     1125
+#define IDC_STATIC2                     1126
+#define IDC_STATIC3                     1127
+#define IDC_STATIC4                     1128
+#define IDC_STATIC5                     1129
+#define IDC_STATIC6                     1130
+#define IDC_STATIC7                     1131
+#define IDC_STATIC8                     1132
+#define IDC_STATIC9                     1133
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -138,9 +150,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        181
+#define _APS_NEXT_RESOURCE_VALUE        184
 #define _APS_NEXT_COMMAND_VALUE         32881
-#define _APS_NEXT_CONTROL_VALUE         1124
+#define _APS_NEXT_CONTROL_VALUE         1134
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

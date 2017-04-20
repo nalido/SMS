@@ -273,6 +273,8 @@
     <None Include="res\SMS2.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\1.bmp" />
+    <Image Include="..\2.bmp" />
     <Image Include="res\1.bmp" />
     <Image Include="res\BCGSoft_ribbon\category_large_0.png" />
     <Image Include="res\BCGSoft_ribbon\category_main_large.png" />

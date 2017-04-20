@@ -254,6 +254,12 @@
     <Image Include="res\1.bmp">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="..\1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="res\BCGSoft_ribbon\ribbon.xml" />
