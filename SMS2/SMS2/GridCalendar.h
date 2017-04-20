@@ -20,7 +20,7 @@ public:
 	//void SetCustomDrawItem(ONDRAW onDraw);
 	//virtual BOOL OnDrawItem(CDC*pDC, CBCGPGridRow*pItem);
 public:
-	unsigned int m_nStatus[15][7]; // 课时预约状态
+	unsigned int m_nStatus[15][7][4]; // 课时预约状态
 	CTime m_tToday; //当天日期
 	CPoint m_PointToday; //当天日期所在位置
 

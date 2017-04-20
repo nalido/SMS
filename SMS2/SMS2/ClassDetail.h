@@ -24,6 +24,7 @@ public:
 	CString m_strDay;
 	virtual BOOL OnInitDialog();
 
+	int m_nStatus[4]; //¿ÎÊ±Ñ¡Ôñ×´¿ö
 	CClassItem m_ClassItem[4];
 	afx_msg void OnBnClickedConfirm();
 

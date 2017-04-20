@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "SMS2.h"
 #include "ViewStuProgress.h"
+#include "ViewBooking1.h"
 #include "MainFrm.h"
 #include <afxmsg_.h>
 
@@ -256,6 +257,32 @@ void CALLBACK CViewStuProgress::OnGridDbClick(LPVOID lParam)
 
 void CViewStuProgress::OnBnClickedTobook()
 {
+
+
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-	pFrame->SelectView(VIEW_BOOKING1);
+
+	pFrame->GetView(VIEW_BOOKING1); //若预约视图未创建，则创建新视图
+
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel(); 
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+
+		CString strStep = m_datas[nRow][5];
+		int step = atoi(strStep);
+		if (step < 7)
+		{
+			MessageBox("该学员不能进行预约操作！");
+			return;
+		}
+
+		CString strFileName = m_datas[nRow][0];
+		STUDENTINFO stuInfo(m_datas[nRow][1], m_datas[nRow][0], m_datas[nRow][2], m_datas[nRow][4]);
+
+		pFrame->SelectView(VIEW_BOOKING1);
+		CViewBooking1* pView = (CViewBooking1*)pFrame->GetActiveView();
+		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)&stuInfo, (LPARAM)1);
+		pView->Refresh();
+	}
+
 }

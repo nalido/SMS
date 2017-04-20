@@ -90,6 +90,7 @@
 #define IDC_ADD                         1120
 #define IDC_BUTTON3                     1121
 #define IDC_CONFIRM                     1122
+#define IDC_STUDENT_SEL                 1123
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -139,7 +140,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        181
 #define _APS_NEXT_COMMAND_VALUE         32881
-#define _APS_NEXT_CONTROL_VALUE         1123
+#define _APS_NEXT_CONTROL_VALUE         1124
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

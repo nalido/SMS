@@ -5,6 +5,7 @@
 #include "SMS2.h"
 #include "ClassDetail.h"
 #include "afxdialogex.h"
+#include "MainFrm.h"
 
 
 // CClassDetail ¶Ô»°¿ò
@@ -18,6 +19,9 @@ CClassDetail::CClassDetail(CWnd* pParent /*=NULL*/)
 
 	m_strDay = "";
 	m_nSelected = 0;
+
+	for (int i = 0; i < 4; i++)
+		m_nStatus[i] = 0;
 }
 
 CClassDetail::~CClassDetail()
@@ -51,8 +55,8 @@ BOOL CClassDetail::OnInitDialog()
 	for (int i = 0; i < 4; i++)
 	{
 		m_ClassItem[i].m_nClass = i + 1;
-		m_ClassItem[i].m_nTotal = 6;
-		m_ClassItem[i].m_nUsed = i + 4;
+		m_ClassItem[i].m_nTotal = g_nClassTotal;
+		m_ClassItem[i].m_nUsed = m_nStatus[i];
 	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control

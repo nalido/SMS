@@ -7,7 +7,7 @@
 #include "MainFrm.h"
 #include "ClassDetail.h"
 
-
+CString arrClasses[5] = { "0未定义", "Am08:00-10:00", "Am10:00-12:00", "Pm01:00-03:00", "Pm03:00-05:00" };
 // CViewBooking1
 
 IMPLEMENT_DYNCREATE(CViewBooking1, CBCGPFormView)
@@ -48,6 +48,7 @@ BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
 	ON_WM_PAINT()
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 //	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
+ON_BN_CLICKED(IDC_STUDENT_SEL, &CViewBooking1::OnBnClickedStudentSel)
 END_MESSAGE_MAP()
 
 
@@ -86,25 +87,8 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 			if (nCol == 1)
 			{
 				int n = atoi(pThis->m_datas[nRow][nCol]);
-				CString str("");
-				switch (n)
-				{
-				case 1:
-					str.Format("Am08:00-10:00");
-					break;
-				case 2:
-					str.Format("Am10:00-12:00");
-					break;
-				case 3:
-					str.Format("Pm01:00-03:00");
-					break;
-				case 4:
-					str.Format("Pm03:00-05:00");
-					break;
-				default:
-					break;
-				}
-				pdi->item.varValue = str;
+				
+				pdi->item.varValue = arrClasses[n];
 			}
 		}
 		else
@@ -133,16 +117,48 @@ void CALLBACK CViewBooking1::OnCalendarClick(LPVOID lParam, BOOL lParam2)
 		pThis->MessageBox("时间在可预约范围之外！");
 		return;
 	}
-	else strMsg = aDay.Format("%Y/%m/%d");
-
+	
 	CClassDetail dlg;
-	dlg.m_strDay = strMsg;
+	int r = item.m_nRow / 2;
+	int c = item.m_nColumn;
+	dlg.m_nStatus[0] = pThis->m_wndCalendar.m_nStatus[r][c][0];
+	dlg.m_nStatus[1] = pThis->m_wndCalendar.m_nStatus[r][c][1];
+	dlg.m_nStatus[2] = pThis->m_wndCalendar.m_nStatus[r][c][2];
+	dlg.m_nStatus[3] = pThis->m_wndCalendar.m_nStatus[r][c][3];
+	dlg.m_strDay = aDay.Format("%Y/%m/%d");;
 	if (dlg.DoModal() == IDOK)
 	{
 		int selected = dlg.m_nSelected;
+		if (selected != 0)
+		{
+			pThis->AddNewBooking(dlg.m_strDay, selected / 1000);
+			pThis->AddNewBooking(dlg.m_strDay, (selected % 1000 / 100) ? 2 : 0);
+			pThis->AddNewBooking(dlg.m_strDay, (selected % 100 / 10) ? 3 : 0);
+			pThis->AddNewBooking(dlg.m_strDay, (selected % 10) ? 4 : 0);
+			pThis->m_wndCalendar.DrawSelectedItem(r, c);
+		}
 	}
 }
 
+void CViewBooking1::AddNewBooking(CString day, int classID)
+{
+	if (classID == 0) return;
+
+	CString strtmp;
+	strtmp.Format("%d", classID);
+	CStrs strs;
+	strs.push_back(day);
+	strs.push_back(strtmp);
+	strs.push_back("0");
+	m_datas.push_back(strs);
+	m_wndGrid.GridRefresh(m_datas.size());
+
+	//添加数据库
+	if (m_strFileName == "未选择") return;
+	CString strMsg;
+	CString strSQL;
+	strSQL.Format("INSERT INTO bookings(FILE_NAME, BOOKDATE, CLASS_ID, STEP) VALUES ('%s', '%s', '%d', '0')", m_strFileName, day, classID);
+}
 
 void CALLBACK CViewBooking1::OnGridClick(LPVOID lParam)
 {
@@ -152,45 +168,6 @@ void CALLBACK CViewBooking1::OnGridClick(LPVOID lParam)
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
-
-
-		/********************点击列表显示图像***********************/
-		//CString strFileName = pThis->m_datas[nRow][0]; //档案号
-		//CString strName = pThis->m_datas[nRow][1]; //姓名
-
-		//pThis->GetDlgItem(IDC_NAME)->SetWindowText(strName);
-
-		////本地打开照片，若本地无，则查询服务器下载
-		//ShowMsg2Output1("选择预约对象：档案" + strFileName);
-		//CString strFile;
-		//strFile.Format("%s\\%s.bmp", g_strFilePath, strFileName);
-		//char* file = strFile.GetBuffer();
-		//pThis->m_img = cv::imread(file);
-		//strFile.ReleaseBuffer();
-		//if (pThis->m_img.empty()) //本地无照片，从服务器下载
-		//{
-		//	//数据打包
-		//	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-		//	if (pFrame->m_pSendBuf != NULL)
-		//	{
-		//		pThis->MessageBox("上一个信息还未处理完毕，请稍等重试。");
-		//	}
-		//	else
-		//	{
-		//		int len = 11; //
-		//		pFrame->m_isSendReady = FALSE;
-		//		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
-		//		pFrame->m_nSendLen = len;
-		//		pFrame->m_pSendBuf[0] = 3; //请求图像数据
-		//		char* cID = strFileName.GetBuffer();
-		//		memcpy(pFrame->m_pSendBuf + 1, cID, 10); //档案号
-		//		strFileName.ReleaseBuffer();
-		//		pFrame->m_isSendReady = TRUE;
-		//	}
-		//}
-
-		//pThis->m_SPhoto.Invalidate();
-		/***********************************************************/
 	}
 }
 
@@ -289,8 +266,61 @@ void CViewBooking1::OnPaint()
 
 LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
 {
-	cv::Mat* pImg = (cv::Mat*)wp;
-	m_img = pImg->clone();
-	m_SPhoto.Invalidate();
+	int flag = (int)lp;
+	if (flag == 2)
+	{
+		cv::Mat* pImg = (cv::Mat*)wp;
+		m_img = pImg->clone();
+		m_SPhoto.Invalidate();
+	}
+	else if (flag == 1)
+	{
+		STUDENTINFO* pInfo = (STUDENTINFO*)wp;
+		m_strName = pInfo->strName;
+		m_strGender = pInfo->strGender;
+		m_strCarType = pInfo->strCarType;
+		m_strFileName = pInfo->strFileName;
+		UpdateData(FALSE);
+
+
+		//本地打开照片，若本地无，则查询服务器下载
+		ShowMsg2Output1("选择预约对象：档案" + m_strFileName);
+		CString strFile;
+		strFile.Format("%s\\%s.bmp", g_strFilePath, m_strFileName);
+		char* file = strFile.GetBuffer();
+		m_img = cv::imread(file);
+		strFile.ReleaseBuffer();
+		if (m_img.empty()) //本地无照片，从服务器下载
+		{
+			//数据打包
+			CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+			if (pFrame->m_pSendBuf != NULL)
+			{
+				MessageBox("上一个信息还未处理完毕，请稍等重试。");
+			}
+			else
+			{
+				int len = 11; //
+				pFrame->m_isSendReady = FALSE;
+				pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+				pFrame->m_nSendLen = len;
+				pFrame->m_pSendBuf[0] = 3; //请求图像数据
+				char* cID = m_strFileName.GetBuffer();
+				memcpy(pFrame->m_pSendBuf + 1, cID, 10); //档案号
+				m_strFileName.ReleaseBuffer();
+				pFrame->m_isSendReady = TRUE;
+			}
+		}
+		else
+			m_SPhoto.Invalidate();
+	}
+
 	return 0;
+}
+
+
+void CViewBooking1::OnBnClickedStudentSel()
+{
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+	pFrame->SelectView(VIEW_STUPROGRESS);
 }

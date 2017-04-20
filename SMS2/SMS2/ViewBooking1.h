@@ -43,6 +43,7 @@ public:
 	CVirtualGridCtrl m_wndGrid;
 	CDStrs m_datas;
 	static void CALLBACK OnGridClick(LPVOID lParam);
+	void AddNewBooking(CString day, int classID);
 	void Refresh();
 
 	CMyPicCtrl m_SPhoto;
@@ -56,7 +57,6 @@ public:
 	CStatic m_SWeek;
 	CGridCalendar m_wndCalendar;
 	static void CALLBACK OnCalendarClick(LPVOID lParam, BOOL lParam2);
-	//void UpdateCalendar();
 
 	//当前预约的学员信息
 	CString m_strFileName;
@@ -64,6 +64,7 @@ public:
 	CString m_strGender;
 	CString m_strCarType;
 	CString m_strBooked; //已预约课时数
+	afx_msg void OnBnClickedStudentSel();
 };
 
 

@@ -114,24 +114,23 @@ void CGridCalendar::DrawItems()
 		pRow = GetRow(r * 2 + 1);
 		pItem = pRow->GetItem(c);
 		CString strText;
-		strText.Format("可预约数\n\n%d", m_nStatus[r][c]);
+		int m = m_nStatus[r][c][0] + m_nStatus[r][c][1] + m_nStatus[r][c][2] + m_nStatus[r][c][3];
+		int n = g_nClassTotal*4 - m;
+		strText.Format("可预约数\n\n%d", n);
 		pItem->SetValue((LPCTSTR)strText);
-		switch(m_nStatus[r][c])
+		int np = m * 25 / g_nClassTotal; //课时预约比例
+		if (np >= 100)
 		{
-		case 0:
 			pItem->SetBackgroundColor(COLOR_NONE);
 			pItem->SetTextColor(COLOR_TEXTNONE);
-			break;
-		case 1:
-		case 2:
+		}
+		else if (np > 80)
+		{
 			pItem->SetBackgroundColor(COLOR_LITTLE);
-			//pItem->SetTextColor(COLOR_TEXTNONE);
-			break;
-		case 3:
-		case 4:
+		}
+		else
+		{
 			pItem->SetBackgroundColor(COLOR_MANY);
-			//pItem->SetTextColor(COLOR_TEXTSEL);
-			break;
 		}
 	}
 }
@@ -184,19 +183,19 @@ void CGridCalendar::GetClassStatus(CDStrs &data)
 
 	for (int i = 0; i < 15; i++)
 	for (int j = 0; j < 7; j++)
-		m_nStatus[i][j] = 4; //默认状态为全空
+	for (int k = 0; k < 4; k++)
+		m_nStatus[i][j][k] = 0; //默认状态为全空
 
 	vector<CStrs>::iterator it = data.begin();
 	for (; it < data.end(); it++)
 	{
 		CStrs row = *it;
 		CString strDay = row[0];
-		int s1, s2, s3;//早上、下午、晚上的预约数 
-		s1 = atoi(row[1]);
-		s2 = atoi(row[2]);
-		s3 = atoi(row[3]);
 		CPoint pos = GetDayPos(strDay);
-		m_nStatus[pos.y][pos.x] = 4 - s1 - s2;
+		m_nStatus[pos.y][pos.x][0] = atoi(row[1]);
+		m_nStatus[pos.y][pos.x][1] = atoi(row[2]);
+		m_nStatus[pos.y][pos.x][2] = atoi(row[3]);
+		m_nStatus[pos.y][pos.x][3] = atoi(row[4]);
 
 		//TRACE("[%d,%d] %d %d %d => %d\n", pos.y, pos.x, s1, s2, s3, m_nStatus[pos.y][pos.x]);
 	}

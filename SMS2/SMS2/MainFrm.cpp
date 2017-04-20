@@ -23,6 +23,7 @@
 CString g_strFilePath = "E:\\Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
 CString g_sServerIP = "127.0.0.1";
+int g_nClassTotal = 9;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -614,44 +615,47 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 		if (pTcpClient->IsConnected() && pTcpClient->Send(pThis->m_pSendBuf, nPicLen) & !bSendOK)
 		{
 			bSendOK = TRUE;
-			delete[]pThis->m_pSendBuf; //删除数据
-			pThis->m_pSendBuf = NULL;
 			strMsg.Format("数据发送成功");
 			pThis->m_wndOutput.AddItem2List4(strMsg);
 
-
-			BYTE flag = 0;
-			pTcpClient->Receive(&flag, 1);
-			if (flag == 1) //后有图像数据
+			if (pThis->m_pSendBuf[0] == 3)
 			{
-				int wid, hei, imgSize;
-				char FileNum[11] = { 0 };
-				pTcpClient->Receive(&FileNum, 10);
-				pTcpClient->Receive(&wid, 4);
-				pTcpClient->Receive(&hei, 4);
-				pTcpClient->Receive(&imgSize, 4);
-				BYTE* picBuf = new BYTE[imgSize + 1];
-				if (pTcpClient->Receive(picBuf, imgSize))
+				BYTE flag = 0;
+				pTcpClient->Receive(&flag, 1);
+				if (flag == 1) //后有图像数据
 				{
-					strMsg.Format("收到图像信息：%dX%d 接收成功", wid, hei);
+					int wid, hei, imgSize;
+					char FileNum[11] = { 0 };
+					pTcpClient->Receive(&FileNum, 10);
+					pTcpClient->Receive(&wid, 4);
+					pTcpClient->Receive(&hei, 4);
+					pTcpClient->Receive(&imgSize, 4);
+					BYTE* picBuf = new BYTE[imgSize + 1];
+					if (pTcpClient->Receive(picBuf, imgSize))
+					{
+						strMsg.Format("收到图像信息：%dX%d 接收成功", wid, hei);
 
-					pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize); //保存图片，第二次点击时无需再下载
-					IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
-					int lineByte = (wid * 3 + 3) / 4 * 4;
-					cvSetData(pImg, picBuf, lineByte);
-					cv::Mat img = cv::cvarrToMatND(pImg);
-					pThis->GetActiveView()->SendMessageA(WM_USER_MESSAGE, (WPARAM)&img);
+						pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize); //保存图片，第二次点击时无需再下载
+						IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
+						int lineByte = (wid * 3 + 3) / 4 * 4;
+						cvSetData(pImg, picBuf, lineByte);
+						cv::Mat img = cv::cvarrToMatND(pImg);
+						pThis->GetActiveView()->SendMessageA(WM_USER_MESSAGE, (WPARAM)&img, (LPARAM)2);
 
-					pThis->m_wndOutput.AddItem2List4(strMsg);
+						pThis->m_wndOutput.AddItem2List4(strMsg);
+					}
+					else
+					{
+						strMsg.Format("收到图像信息：%dX%d 接收图像数据失败", wid, hei);
+						pThis->m_wndOutput.AddItem2List4(strMsg);
+					}
+
+					delete[] picBuf; picBuf = NULL;
 				}
-				else
-				{
-					strMsg.Format("收到图像信息：%dX%d 接收图像数据失败", wid, hei);
-					pThis->m_wndOutput.AddItem2List4(strMsg);
-				}
+			} //if (pThis->m_pSendBuf[0] == 3)
 
-				delete[] picBuf; picBuf = NULL;
-			}
+			delete[]pThis->m_pSendBuf; //删除数据
+			pThis->m_pSendBuf = NULL;
 		}
 
 		//判断是否发送成功，删除图像缓存

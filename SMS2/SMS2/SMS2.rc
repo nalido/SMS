@@ -98,17 +98,18 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SLIST,"Static",SS_BLACKFRAME,7,141,191,254
     CONTROL         "",IDC_SPHOTO,"Static",SS_BLACKFRAME,7,7,92,121
-    LTEXT           "姓名：",IDC_NAME0,106,39,30,10
-    LTEXT           "名字",IDC_NAME,141,39,57,10
-    LTEXT           "已预约课时：",IDC_NAME3,106,117,48,10
-    CTEXT           "0",IDC_NCLASS,158,117,40,10
+    LTEXT           "姓名：",IDC_NAME0,108,34,30,10
+    LTEXT           "名字",IDC_NAME,141,34,57,10
+    LTEXT           "已预约课时：",IDC_NAME3,108,97,48,10
+    CTEXT           "0",IDC_NCLASS,158,97,40,10
     CONTROL         "",IDC_WEEK,"Static",SS_BLACKFRAME,213,7,536,388
-    LTEXT           "档案号：",IDC_NAME1,106,13,38,10
-    LTEXT           "性别：",IDC_NAME4,106,65,30,10
-    LTEXT           "申领：",IDC_NAME5,106,91,30,10
+    LTEXT           "档案号：",IDC_NAME1,108,13,38,10
+    LTEXT           "性别：",IDC_NAME4,108,55,30,10
+    LTEXT           "申领：",IDC_NAME5,108,76,30,10
     LTEXT           "档案",IDC_FILE,146,13,52,10
-    LTEXT           "性别",IDC_GENDER,141,65,57,10
-    LTEXT           "车型",IDC_CARTYPE,141,91,57,10
+    LTEXT           "性别",IDC_GENDER,141,55,57,10
+    LTEXT           "车型",IDC_CARTYPE,141,76,57,10
+    PUSHBUTTON      "选择学员",IDC_STUDENT_SEL,104,111,94,17
 END
 
 IDD_BOOKING2 DIALOGEX 0, 0, 309, 176
