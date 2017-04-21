@@ -87,6 +87,7 @@ extern void ShowMsg2Output1(CString strMsg); //ÓÃÓÚ×Ó´°¿ÚÏÔÊ¾ĞÅÏ¢µ½output1ÖĞ¡£ Ã
 extern CString g_sServerIP; //·şÎñÆ÷IP
 extern char* EncodeToUTF8(const char* mbcsStr);
 extern int g_nClassTotal; //Ã¿¸ö¿ÎÊ±Ìì¿ÉÒÔÔ¤Ô¼µÄ×ÜÊı
+extern int g_nMaxBooking; //Ã¿¸öÑ§Ô±×î¶àÔ¤Ô¼¿ÎÊı
 
 enum enum_StudentProgress{
 	SP_NEWONE = 0,			//ĞÂÉú¼ÇÂ¼
@@ -104,6 +105,7 @@ enum enum_StudentProgress{
 #define COLOR_SELECTED RGB(0, 117, 194)
 #define COLOR_TEXTSEL RGB(255, 255, 255)
 #define COLOR_TEXTNONE RGB(220, 220, 220)
+#define COLOR_TEXTNORMAL RGB(0, 0, 0)
 #define COLOR_LITTLE RGB(250, 132, 132)
 #define COLOR_NONE RGB(190, 190, 190)
 #define COLOR_MANY RGB(147, 235, 149)

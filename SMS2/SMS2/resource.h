@@ -94,6 +94,8 @@
 #define IDC_CONFIRM                     1122
 #define IDC_STUDENT_SEL                 1123
 #define IDC_STATIC0                     1124
+#define IDC_CONFIRM2                    1124
+#define IDC_REMOVE                      1124
 #define IDC_STATIC1                     1125
 #define IDC_STATIC2                     1126
 #define IDC_STATIC3                     1127

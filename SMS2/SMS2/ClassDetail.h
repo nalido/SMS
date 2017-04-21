@@ -24,7 +24,9 @@ public:
 	CString m_strDay;
 	virtual BOOL OnInitDialog();
 
-	int m_nStatus[4]; //课时选择状况
+	//课时选择状况, [][1]为是否选择， [][0]为课程预约数量
+	int m_nStatus[4][2]; 
+
 	CClassItem m_ClassItem[4];
 	afx_msg void OnBnClickedConfirm();
 

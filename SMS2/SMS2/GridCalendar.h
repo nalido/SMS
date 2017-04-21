@@ -20,7 +20,13 @@ public:
 	//void SetCustomDrawItem(ONDRAW onDraw);
 	//virtual BOOL OnDrawItem(CDC*pDC, CBCGPGridRow*pItem);
 public:
-	unsigned int m_nStatus[15][7][4]; // 课时预约状态
+
+	// 课时预约状态, 
+	//[r][c][0-3]表示每个课程的已预约数量
+	//[r][c][4]表示数据库中是否有当前日期的记录// 省去查重时间
+	//[r][c][5]表示当前学员当前日期预约课时时间段 1000表示选第一节课 1100为前两节
+	unsigned int m_nStatus[15][7][6]; 
+
 	CTime m_tToday; //当天日期
 	CPoint m_PointToday; //当天日期所在位置
 

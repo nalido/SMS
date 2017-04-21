@@ -24,6 +24,7 @@ CString g_strFilePath = "E:\\Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
 CString g_sServerIP = "127.0.0.1";
 int g_nClassTotal = 9;
+int g_nMaxBooking = 15;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6

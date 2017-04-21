@@ -182,7 +182,6 @@ void CViewRegister::OnPaint()
 	GetDlgItem(IDC_BKBMP)->MapWindowPoints(this, &rect0);
 	GetDlgItem(IDC_BKBMP1)->GetClientRect(&rect1); //ÌùÍ¼ÖÕµã
 	GetDlgItem(IDC_BKBMP1)->MapWindowPoints(this, &rect1);
-	//GetClientRect(&rect);
 	MenDC.CreateCompatibleDC(&dc); 
 	MemMap.LoadBitmapA(IDB_BITMAP3);
 	BITMAP bmp;

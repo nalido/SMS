@@ -49,6 +49,8 @@ BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 //	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
 ON_BN_CLICKED(IDC_STUDENT_SEL, &CViewBooking1::OnBnClickedStudentSel)
+ON_BN_CLICKED(IDC_CONFIRM, &CViewBooking1::OnBnClickedConfirm)
+ON_BN_CLICKED(IDC_REMOVE, &CViewBooking1::OnBnClickedRemove)
 END_MESSAGE_MAP()
 
 
@@ -84,6 +86,24 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		if (!it->empty())
 		{
 			pdi->item.varValue = pThis->m_datas[nRow][nCol];
+
+			//预约日期小于今天的灰化
+			CTime aday = pThis->m_wndCalendar.Str2Time(pThis->m_datas[nRow][0]);
+			CTime today = pThis->m_wndCalendar.m_tToday;
+			if (aday < today)
+			{
+				if (pThis->m_datas[nRow][2] != "0") //正常完成预约的灰化
+				{
+					pdi->item.clrBackground = RGB(140, 140, 140);
+				}
+				else //预约后未参加训练的 暗红色显示
+				{
+					pdi->item.clrBackground = RGB(240, 140, 140);
+				}
+				pdi->item.clrText = RGB(220, 220, 220);
+			}
+
+			//上课时间
 			if (nCol == 1)
 			{
 				int n = atoi(pThis->m_datas[nRow][nCol]);
@@ -121,21 +141,55 @@ void CALLBACK CViewBooking1::OnCalendarClick(LPVOID lParam, BOOL lParam2)
 	CClassDetail dlg;
 	int r = item.m_nRow / 2;
 	int c = item.m_nColumn;
-	dlg.m_nStatus[0] = pThis->m_wndCalendar.m_nStatus[r][c][0];
-	dlg.m_nStatus[1] = pThis->m_wndCalendar.m_nStatus[r][c][1];
-	dlg.m_nStatus[2] = pThis->m_wndCalendar.m_nStatus[r][c][2];
-	dlg.m_nStatus[3] = pThis->m_wndCalendar.m_nStatus[r][c][3];
+	dlg.m_nStatus[0][0] = pThis->m_wndCalendar.m_nStatus[r][c][0];
+	dlg.m_nStatus[1][0] = pThis->m_wndCalendar.m_nStatus[r][c][1];
+	dlg.m_nStatus[2][0] = pThis->m_wndCalendar.m_nStatus[r][c][2];
+	dlg.m_nStatus[3][0] = pThis->m_wndCalendar.m_nStatus[r][c][3];
+
+	//传递当前学员的选择情况
+	int ss = pThis->m_wndCalendar.m_nStatus[r][c][5];
+	if (ss / 1000) dlg.m_nStatus[0][1] = 1;
+	if (ss % 1000 / 100) dlg.m_nStatus[1][1] = 1;
+	if (ss % 100 / 10) dlg.m_nStatus[2][1] = 1;
+	if (ss % 10) dlg.m_nStatus[3][1] = 1;
+	CString strLog;
+	strLog.Format("OnClick:\r\ndata:%s\r\nnclass:%d", aDay.Format("%Y/%m/%d"), pThis->m_wndCalendar.m_nStatus[r][c][5]);
+	LOG("booking1Log.log", strLog);
+
 	dlg.m_strDay = aDay.Format("%Y/%m/%d");;
 	if (dlg.DoModal() == IDOK)
 	{
 		int selected = dlg.m_nSelected;
+		//pThis->m_wndCalendar.m_nStatus[r][c][5] += selected;
 		if (selected != 0)
 		{
-			pThis->AddNewBooking(dlg.m_strDay, selected / 1000);
-			pThis->AddNewBooking(dlg.m_strDay, (selected % 1000 / 100) ? 2 : 0);
-			pThis->AddNewBooking(dlg.m_strDay, (selected % 100 / 10) ? 3 : 0);
-			pThis->AddNewBooking(dlg.m_strDay, (selected % 10) ? 4 : 0);
-			pThis->m_wndCalendar.DrawSelectedItem(r, c);
+			pThis->JudgeSelected(selected, 1, dlg.m_strDay, r, c);
+			pThis->JudgeSelected(selected, 2, dlg.m_strDay, r, c);
+			pThis->JudgeSelected(selected, 3, dlg.m_strDay, r, c);
+			pThis->JudgeSelected(selected, 4, dlg.m_strDay, r, c);
+		}
+	}
+}
+
+void CViewBooking1::JudgeSelected(int selected, int nclass, CString aday, int r, int c)
+{
+	int n = 5 - nclass;
+	n = exp(n);
+	int sel = selected / n % 10; 
+	if (sel == 1)
+	{
+		if (m_datas.size() == g_nMaxBooking)
+		{
+			CString str;
+			str.Format("您已预约全部%d节课，不能继续预约", g_nMaxBooking);
+			MessageBox(str);
+		}
+		else
+		{
+			m_wndCalendar.m_nStatus[r][c][nclass - 1] += 1;
+			m_wndCalendar.m_nStatus[r][c][5] += n;
+			AddNewBooking(aday, nclass);
+			m_wndCalendar.DrawSelectedItem(r, c);
 		}
 	}
 }
@@ -144,20 +198,16 @@ void CViewBooking1::AddNewBooking(CString day, int classID)
 {
 	if (classID == 0) return;
 
+
 	CString strtmp;
 	strtmp.Format("%d", classID);
 	CStrs strs;
 	strs.push_back(day);
 	strs.push_back(strtmp);
 	strs.push_back("0");
+	strs.push_back("0"); //最后一位表示未存数据库
 	m_datas.push_back(strs);
 	m_wndGrid.GridRefresh(m_datas.size());
-
-	//添加数据库
-	if (m_strFileName == "未选择") return;
-	CString strMsg;
-	CString strSQL;
-	strSQL.Format("INSERT INTO bookings(FILE_NAME, BOOKDATE, CLASS_ID, STEP) VALUES ('%s', '%s', '%d', '0')", m_strFileName, day, classID);
 }
 
 void CALLBACK CViewBooking1::OnGridClick(LPVOID lParam)
@@ -225,21 +275,60 @@ void CViewBooking1::OnInitialUpdate()
 
 void CViewBooking1::Refresh()
 {
+	m_wndCalendar.UpdateGrid();
+	UpdateBookingList();
+}
+
+void CViewBooking1::UpdateBookingList()
+{
 	CString strMsg("");
 	CString strSQL("");
-	strSQL.Format("SELECT BOOK_DATE, CLASS_ID, STEP FROM bookings WHERE FILE_NAME='%s'", m_strFileName);
+	strSQL.Format("SELECT BOOK_DATE, CLASS_ID, STEP FROM bookings WHERE FILE_NAME='%s' ORDER BY BOOK_DATE", m_strFileName);
 	m_datas.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg))
 	{
 		ShowMsg2Output1("查询预约信息成功");
-		m_strBooked.Format("%d", m_datas.size());
+		int n = m_datas.size();
+		m_strBooked.Format("%d", n);
+		CString state = "1"; //最后一列（第四列）表示已经记录在数据库，避免重复提交数据库
+		for (int i = 0; i < n; i++)
+		{
+			m_datas[i].push_back(state);
+
+			//日历上显示已选的天数
+			CTime aday = m_wndCalendar.Str2Time(m_datas[i][0]);
+			CTime today = m_wndCalendar.m_tToday;
+			if (aday >= today)
+			{
+				CPoint pos = m_wndCalendar.GetDayPos(m_datas[i][0]);
+				int nclass = 5 - atoi(m_datas[i][1]);
+				nclass = exp(nclass);
+				m_wndCalendar.m_nStatus[pos.y][pos.x][5] += nclass;
+				m_wndCalendar.m_nStatus[pos.y][pos.x][4] = 1;
+				m_wndCalendar.DrawSelectedItem(pos);
+
+				//CString str;
+				//str.Format("\r\ndate:%s\r\nclassID:%s\r\npos:%d,%d\r\nnclass:%d\r\n",
+				//	m_datas[i][0], m_datas[i][1], pos.x, pos.y, m_wndCalendar.m_nStatus[pos.y][pos.x][5]);
+				//LOG("booking1Log.log", str);
+				//TRACE0(str);
+			}
+		}
 	}
 	else ShowMsg2Output1(strMsg);
 
 
 	m_wndGrid.GridRefresh(m_datas.size());
-	m_wndCalendar.UpdateGrid();
-	//m_wndCalendar.DrawSelectedItem(3, 3);
+}
+
+int CViewBooking1::exp(int n)
+{
+	int res = 1;
+	for (int i = 0; i < n-1; i++)
+	{
+		res *= 10;
+	}
+	return res;
 }
 
 void CViewBooking1::OnSize(UINT nType, int cx, int cy)
@@ -323,4 +412,119 @@ void CViewBooking1::OnBnClickedStudentSel()
 {
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 	pFrame->SelectView(VIEW_STUPROGRESS);
+}
+
+
+CString arrClassID[5] = { "", "AM1", "AM2", "PM1", "PM2" };
+void CViewBooking1::OnBnClickedConfirm()
+{
+	//添加数据库
+	if (m_strFileName == "未选择") return;
+
+	int n = m_datas.size();
+	if (n > 0)
+	{
+		int cols = m_datas[0].size(); //列数， 最后一列为是否上传数据库的标志位
+		CString strMsg;
+		for (int i = 0; i < n; i++)
+		{
+			if (m_datas[i][cols - 1] == "0") //未上传数据库
+			{
+				CString strSQL;
+				BOOL isOK = TRUE;
+				g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
+				strSQL.Format("INSERT INTO bookings(FILE_NAME, BOOK_DATE, CLASS_ID, STEP) \
+					VALUES ('%s', '%s', '%s', '0')", m_strFileName, m_datas[i][0], m_datas[i][1]);
+				if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+				{
+					m_datas[i][cols - 1] = "1";
+				}
+				else
+				{
+					ShowMsg2Output1(strMsg);
+					g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+					isOK = FALSE;
+					continue;
+				}
+
+				CPoint pos = m_wndCalendar.GetDayPos(m_datas[i][0]);
+				int nClass = atoi(m_datas[i][1]);
+				if (m_wndCalendar.m_nStatus[pos.y][pos.x][4]) //数据库中已有此日期的预约记录，直接更新预约数据
+				{
+					strSQL.Format("UPDATE workdaystat set %s = %s + 1 WHERE WORKDAY = '%s'"
+						, arrClassID[nClass], arrClassID[nClass], m_datas[i][0]);
+					if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+					{
+						ShowMsg2Output1(strMsg);
+						g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+						isOK = FALSE;
+						continue;
+					}
+				}
+				else //无预约记录，添加新记录
+				{
+					strSQL.Format("INSERT INTO workdaystat(WORKDAY, %s) VALUES ('%s', '1')"
+						, arrClassID[nClass], m_datas[i][0]);
+					if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+					{
+						ShowMsg2Output1(strMsg);
+						g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+						isOK = FALSE;
+						continue;
+					}
+					m_wndCalendar.m_nStatus[pos.y][pos.x][4] = 1;
+				}
+				g_mysqlCon.ExecuteSQL("COMMIT", strMsg);
+			}// if (m_datas[i][cols - 1] == "0") //未上传数据库
+		} //end for loop
+		g_mysqlCon.ExecuteSQL("SET AUTOCOMMIT=1", strMsg);
+	}
+
+	UpdateBookingList(); //排序
+}
+
+
+void CViewBooking1::OnBnClickedRemove()
+{
+	int n = m_datas.size();
+	CString strMsg;
+	CString strSQL;
+	for (int i = n - 1; i >= 0; i--)
+	{
+		if (m_wndGrid.IsRowSelected(i))
+		{
+			CTime aday = m_wndCalendar.Str2Time(m_datas[i][0]);
+			CTime today = m_wndCalendar.m_tToday;
+			if (aday < today)
+			{
+				MessageBox("已过去的预约不能取消");
+				continue;
+			}
+
+			int nClass = atoi(m_datas[i][1]);
+			g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
+			strSQL.Format("UPDATE workdaystat set %s = %s - 1 WHERE WORKDAY = '%s'"
+				, arrClassID[nClass], arrClassID[nClass], m_datas[i][0]);
+			if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+			{
+				ShowMsg2Output1(strMsg);
+				g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+				continue;
+			}
+			strSQL.Format("DELETE FROM bookings WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'"
+				, m_strFileName, m_datas[i][0], m_datas[i][1]);
+			if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+			{
+				ShowMsg2Output1(strMsg);
+				g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+				continue;
+			}
+			//删除记录
+			std::vector<CStrs>::iterator it = m_datas.begin() + i;
+			m_datas.erase(it);
+		}
+	}
+
+	//更新图表
+	Refresh();
 }

@@ -65,6 +65,11 @@ public:
 	CString m_strCarType;
 	CString m_strBooked; //已预约课时数
 	afx_msg void OnBnClickedStudentSel();
+	afx_msg void OnBnClickedConfirm(); //确认预约，上传数据库
+	int exp(int n); //计算10的n次方
+	void UpdateBookingList(); //更新预约列表，实现排序
+	void JudgeSelected(int selected, int nclass, CString aday, int r, int c); //判断第nclass课时是否被选择以及是否有效
+	afx_msg void OnBnClickedRemove();
 };
 
 

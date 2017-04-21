@@ -126,11 +126,13 @@ void CGridCalendar::DrawItems()
 		}
 		else if (np > 80)
 		{
-			pItem->SetBackgroundColor(COLOR_LITTLE);
+			pItem->SetBackgroundColor(COLOR_LITTLE); 
+			pItem->SetTextColor(COLOR_TEXTNORMAL);
 		}
 		else
 		{
 			pItem->SetBackgroundColor(COLOR_MANY);
+			pItem->SetTextColor(COLOR_TEXTNORMAL);
 		}
 	}
 }
@@ -183,7 +185,7 @@ void CGridCalendar::GetClassStatus(CDStrs &data)
 
 	for (int i = 0; i < 15; i++)
 	for (int j = 0; j < 7; j++)
-	for (int k = 0; k < 4; k++)
+	for (int k = 0; k < 6; k++)
 		m_nStatus[i][j][k] = 0; //默认状态为全空
 
 	vector<CStrs>::iterator it = data.begin();
@@ -196,6 +198,7 @@ void CGridCalendar::GetClassStatus(CDStrs &data)
 		m_nStatus[pos.y][pos.x][1] = atoi(row[2]);
 		m_nStatus[pos.y][pos.x][2] = atoi(row[3]);
 		m_nStatus[pos.y][pos.x][3] = atoi(row[4]);
+		m_nStatus[pos.y][pos.x][4] = 1;
 
 		//TRACE("[%d,%d] %d %d %d => %d\n", pos.y, pos.x, s1, s2, s3, m_nStatus[pos.y][pos.x]);
 	}
@@ -239,6 +242,11 @@ void CGridCalendar::DrawSelectedItem(int r, int c)
 	CBCGPGridItem* pItem;
 	pRow = GetRow(r * 2 + 1);
 	pItem = pRow->GetItem(c);
+	CString strText;
+	int m = m_nStatus[r][c][0] + m_nStatus[r][c][1] + m_nStatus[r][c][2] + m_nStatus[r][c][3];
+	int n = g_nClassTotal * 4 - m;
+	strText.Format("可预约数\n\n%d", n);
+	pItem->SetValue((LPCTSTR)strText);
 	pItem->SetBackgroundColor(COLOR_SELECTED);
 	pItem->SetTextColor(COLOR_TEXTSEL);
 }

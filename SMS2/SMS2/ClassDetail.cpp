@@ -21,7 +21,10 @@ CClassDetail::CClassDetail(CWnd* pParent /*=NULL*/)
 	m_nSelected = 0;
 
 	for (int i = 0; i < 4; i++)
-		m_nStatus[i] = 0;
+	{
+		m_nStatus[i][0] = 0;
+		m_nStatus[i][1] = 0;
+	}
 }
 
 CClassDetail::~CClassDetail()
@@ -56,7 +59,8 @@ BOOL CClassDetail::OnInitDialog()
 	{
 		m_ClassItem[i].m_nClass = i + 1;
 		m_ClassItem[i].m_nTotal = g_nClassTotal;
-		m_ClassItem[i].m_nUsed = m_nStatus[i];
+		m_ClassItem[i].m_nUsed = m_nStatus[i][0];
+		m_ClassItem[i].m_nSelected = m_nStatus[i][1]? 2 : 0;  //2表示初始状态为已选
 	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control

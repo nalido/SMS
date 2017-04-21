@@ -58,6 +58,7 @@ void CClassItem::OnPaint()
 		dc.SetTextColor(RGB(0, 0, 0));
 	}
 
+
 	dc.SetBkMode(TRANSPARENT); //ÎÄ×Ö±³¾°Í¸Ã÷
 
 	pOldFont = dc.SelectObject(&font1);
@@ -110,6 +111,8 @@ void CClassItem::OnLButtonDblClk(UINT nFlags, CPoint point)
 void CClassItem::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_nUsed >= m_nTotal) return;
+
+	if (m_nSelected == 2) return;
 
 	m_nSelected = 1 - m_nSelected;
 	Invalidate();
