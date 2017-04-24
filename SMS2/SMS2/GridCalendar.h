@@ -40,5 +40,6 @@ public:
 	CTime GetSelectedDay(int r, int c); //获取选择位置的日期
 	void DrawSelectedItem(CPoint& pos); //设置当前学员的已选课时
 	void DrawSelectedItem(int r, int c);
+	void DrawSelectedItems();
 };
 

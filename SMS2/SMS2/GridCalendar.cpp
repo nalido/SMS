@@ -30,6 +30,7 @@ void CGridCalendar::OnSelChanged(const CBCGPGridRange&range, BOOL bSelect)
 	}
 }
 BEGIN_MESSAGE_MAP(CGridCalendar, CBCGPGridCtrl)
+//	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
@@ -251,6 +252,28 @@ void CGridCalendar::DrawSelectedItem(int r, int c)
 	pItem->SetTextColor(COLOR_TEXTSEL);
 }
 
+void CGridCalendar::DrawSelectedItems()
+{
+	for (int r = 0; r < 15; r++)
+	for (int c = 0; c < 7; c++)
+	{
+		int nday = r * 7 + c - m_PointToday.x;
+		if (nday < 0) continue;
+		if (nday > 89) break;
+
+		if (m_nStatus[r][c][5])
+		{
+			CBCGPGridRow* pRow;
+			CBCGPGridItem* pItem;
+			pRow = GetRow(r * 2 + 1);
+			pItem = pRow->GetItem(c);
+			pItem->SetBackgroundColor(COLOR_SELECTED);
+			pItem->SetTextColor(COLOR_TEXTSEL);
+		}
+	}
+}
+
+
 CTime CGridCalendar::GetSelectedDay(int r, int c)
 {
 	r = r / 2;
@@ -259,3 +282,10 @@ CTime CGridCalendar::GetSelectedDay(int r, int c)
 
 	return m_tToday + CTimeSpan(nday, 0, 0, 0);
 }
+
+//void CGridCalendar::OnPaint()
+//{
+//	CPaintDC dc(this); // device context for painting
+//	// TODO:  在此处添加消息处理程序代码
+//
+//}

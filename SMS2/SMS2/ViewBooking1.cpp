@@ -134,7 +134,7 @@ void CALLBACK CViewBooking1::OnCalendarClick(LPVOID lParam, BOOL lParam2)
 	CString strMsg;
 	if (aDay < pThis->m_wndCalendar.m_tToday) 
 	{
-		pThis->MessageBox("时间在可预约范围之外！");
+		ShowMsg2Output1("时间在可预约范围之外！");
 		return;
 	}
 	
@@ -305,7 +305,7 @@ void CViewBooking1::UpdateBookingList()
 				nclass = exp(nclass);
 				m_wndCalendar.m_nStatus[pos.y][pos.x][5] += nclass;
 				m_wndCalendar.m_nStatus[pos.y][pos.x][4] = 1;
-				m_wndCalendar.DrawSelectedItem(pos);
+				//m_wndCalendar.DrawSelectedItem(pos);
 
 				//CString str;
 				//str.Format("\r\ndate:%s\r\nclassID:%s\r\npos:%d,%d\r\nnclass:%d\r\n",
@@ -313,7 +313,8 @@ void CViewBooking1::UpdateBookingList()
 				//LOG("booking1Log.log", str);
 				//TRACE0(str);
 			}
-		}
+		} //end for
+		m_wndCalendar.DrawSelectedItems();
 	}
 	else ShowMsg2Output1(strMsg);
 
@@ -350,7 +351,25 @@ void CViewBooking1::OnSize(UINT nType, int cx, int cy)
 void CViewBooking1::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-	// TODO:  在此处添加消息处理程序代码
+
+	////双缓存绘制
+	//CRect   rect;
+	//CDC     MenDC;
+	//CBitmap MemMap;
+
+	//GetClientRect(&rect);
+	//MenDC.CreateCompatibleDC(&dc);
+	//MemMap.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
+	//MenDC.SelectObject(&MemMap);
+	//MenDC.FillSolidRect(&rect, RGB(255, 255, 255));
+
+	////调用默认的OnPaint(),把图形画在内存DC表上
+	//DefWindowProc(WM_PAINT, (WPARAM)MenDC.m_hDC, (LPARAM)0);
+
+	////输出   
+	//dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MenDC, 0, 0, SRCCOPY);
+	//MenDC.DeleteDC();
+	//MemMap.DeleteObject();
 }
 
 LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)

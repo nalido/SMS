@@ -405,8 +405,8 @@ END
 // Bitmap
 //
 
-IDB_BITMAP3             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\3.bmp"
-IDB_BITMAP2             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\2.bmp"
+IDB_BITMAP3             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\3.bmp"
+IDB_BITMAP2             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\2.bmp"
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 
