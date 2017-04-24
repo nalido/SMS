@@ -11,7 +11,7 @@
 #endif
 
 ////////////////global functions and values///////////////////////
-CString g_FilePath = "E:\\Server_Photos\\";
+CString g_strFilePath = "E:\\Server_Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
 CDStrs g_strMsgLog;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 

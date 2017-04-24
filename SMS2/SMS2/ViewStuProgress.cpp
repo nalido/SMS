@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "SMS2.h"
 #include "ViewStuProgress.h"
+#include "ViewBooking1.h"
 #include "MainFrm.h"
 #include <afxmsg_.h>
 
@@ -77,6 +78,7 @@ void CViewStuProgress::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CViewStuProgress, CBCGPFormView)
 	ON_BN_CLICKED(IDC_STUFRESH, &CViewStuProgress::OnBnClickedStufresh)
 	ON_BN_CLICKED(IDC_SENDBOOKMSG, &CViewStuProgress::OnBnClickedSendbookmsg)
+	ON_BN_CLICKED(IDC_TOBOOK, &CViewStuProgress::OnBnClickedTobook)
 END_MESSAGE_MAP()
 
 
@@ -111,11 +113,13 @@ void CViewStuProgress::OnInitialUpdate()
 	DWORD nStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER;
 	m_wndGrid.Create(nStyle, rectGrid, this, IDC_GRID_STUPRO);
 	m_wndGrid.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
-	m_wndGrid.EnableHeader(TRUE, BCGP_GRID_HEADER_MOVE_ITEMS); //允许表头移动但是不会删除表头
+	m_wndGrid.EnableHeader(TRUE, 0); //不允许表头移动
 	// Set grid tab order (first):
 	m_wndGrid.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 	m_wndGrid.SetReadOnly();
 	m_wndGrid.SetWholeRowSel();
+	m_wndGrid.EnableRowHeader(TRUE);
+	m_wndGrid.EnableLineNumbers();
 
 
 	int nColumn = 0;
@@ -124,7 +128,7 @@ void CViewStuProgress::OnInitialUpdate()
 	m_wndGrid.InsertColumn(nColumn++, _T("性别"), 50);
 	m_wndGrid.InsertColumn(nColumn++, _T("手机号"), 80);
 	m_wndGrid.InsertColumn(nColumn++, _T("申领类别"), 80);
-	int wid = (rectGrid.Width() - 350) / 8;
+	int wid = (rectGrid.Width() - 350 - 20) / 8;
 	m_wndGrid.InsertColumn(nColumn++, _T("政治审核"), wid); //col = 5; step = 1~2
 	m_wndGrid.InsertColumn(nColumn++, _T("科一报考"), wid);
 	m_wndGrid.InsertColumn(nColumn++, _T("科一考试"), wid);
@@ -141,6 +145,7 @@ void CViewStuProgress::OnInitialUpdate()
 	//注册虚拟列表回调函数
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
 	m_wndGrid.SetCallBack_DblClk(OnGridDbClick);
+
 	Refresh();
 }
 
@@ -203,7 +208,25 @@ void CViewStuProgress::OnBnClickedSendbookmsg()
 				ShowMsg2Output1("发预约短信，选择了已完成预约的学生档案");
 			}
 
+			/*未完成*/
+			//发送预约短信  
+			//int len = 14; //一次发送一个短信
+			//CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+			//pFrame->m_isSendReady = FALSE;
+			//pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+			//pFrame->m_nSendLen = len;
+			//pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+			//pFrame->m_pSendBuf[1] = 4; //培训预约短信
+			//int n = 1;
+			//memcpy(pFrame->m_pSendBuf + 2, &n, 4); //档案数量
+
 			CString fileNum = m_datas[i][0];
+			//CString strFileNum = fileNum.Right(8);
+			//char* data = strFileNum.GetBuffer();
+			//memcpy(pFrame->m_pSendBuf + 6 + 8 * i, data, 8);
+			//strFileNum.ReleaseBuffer();
+			//pFrame->m_isSendReady = TRUE;
+
 			CString strSQL;
 			strSQL.Format("UPDATE students SET STEP='7' WHERE FILE_NAME='%s'", fileNum);
 			if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
@@ -230,4 +253,36 @@ void CALLBACK CViewStuProgress::OnGridDbClick(LPVOID lParam)
 		CString strFileName = pThis->m_datas[nRow][0];
 		pThis->MessageBox(strFileName);
 	}
+}
+
+void CViewStuProgress::OnBnClickedTobook()
+{
+
+
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+
+	pFrame->GetView(VIEW_BOOKING1); //若预约视图未创建，则创建新视图
+
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel(); 
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+
+		CString strStep = m_datas[nRow][5];
+		int step = atoi(strStep);
+		if (step < 7)
+		{
+			MessageBox("该学员不能进行预约操作！");
+			return;
+		}
+
+		CString strFileName = m_datas[nRow][0];
+		STUDENTINFO stuInfo(m_datas[nRow][1], m_datas[nRow][0], m_datas[nRow][2], m_datas[nRow][4]);
+
+		pFrame->SelectView(VIEW_BOOKING1);
+		CViewBooking1* pView = (CViewBooking1*)pFrame->GetActiveView();
+		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)&stuInfo, (LPARAM)1);
+		pView->Refresh();
+	}
+
 }

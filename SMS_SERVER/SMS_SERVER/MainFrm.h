@@ -68,7 +68,7 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
-extern CString g_FilePath;
+extern CString g_strFilePath;
 extern xPublic::CMySQLEx g_mysqlCon;
 extern void LOG(CString sFileName, CString str_log, int flag = 1);
 extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。

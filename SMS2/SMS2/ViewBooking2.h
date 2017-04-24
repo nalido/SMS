@@ -4,7 +4,7 @@
 
 // CViewBooking2 窗体视图
 
-class CViewBooking2 : public CBCGPFormView
+class CViewBooking2 : public CBCGPPlannerManagerView
 {
 	DECLARE_DYNCREATE(CViewBooking2)
 
@@ -25,6 +25,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+public:
+	virtual void OnInitialUpdate();
 };
 
 

@@ -75,12 +75,12 @@ int CHttpClient::ExecuteRequest(LPCTSTR strMethod, LPCTSTR strUrl, LPCTSTR strPo
 		////set web server option  
 		//m_pFile->SetOption(INTERNET_OPTION_SECURITY_FLAGS, dwFlags);  
 
-		m_pFile->AddRequestHeaders("Accept: *,*/*");
-		m_pFile->AddRequestHeaders("Accept-Language: zh-cn");
+		//m_pFile->AddRequestHeaders("Accept: *,*/*");
+		//m_pFile->AddRequestHeaders("Accept-Language: zh-cn");
 		//m_pFile->AddRequestHeaders("Host: sms.253.com");
 		m_pFile->AddRequestHeaders("Content-Type: application/x-www-form-urlencoded");
 		//m_pFile->AddRequestHeaders("Content-length: %zu"); //´ýÍêÉÆ
-		m_pFile->AddRequestHeaders("Accept-Encoding: gzip, deflate");
+		//m_pFile->AddRequestHeaders("Accept-Encoding: gzip, deflate");
 
 		m_pFile->SendRequest(NULL, 0, (LPVOID)(LPCTSTR)strPostData, strPostData == NULL ? 0 : _tcslen(strPostData));
 

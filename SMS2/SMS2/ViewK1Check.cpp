@@ -19,17 +19,7 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 	int ndata = pThis->m_datas.size(); //number of data exist
 	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
 	{
-		if (nCol == 0)
-		{
-			CString str;
-			str.Format("%d", nRow);
-			pdi->item.varValue = str;
-
-		}
-		else
-		{
-			pdi->item.varValue = pThis->m_datas[nRow][nCol-1];
-		}
+		pdi->item.varValue = pThis->m_datas[nRow][nCol];
 	}
 
 	return TRUE;
@@ -47,17 +37,7 @@ static BOOL CALLBACK GridCallback2(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 	int ndata = pThis->m_datas_pass.size(); //number of data exist
 	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
 	{
-		if (nCol == 0)
-		{
-			CString str;
-			str.Format("%d", nRow);
-			pdi->item.varValue = str;
-
-		}
-		else
-		{
-			pdi->item.varValue = pThis->m_datas_pass[nRow][nCol - 1];
-		}
+		pdi->item.varValue = pThis->m_datas_pass[nRow][nCol];
 	}
 
 	return TRUE;
@@ -74,17 +54,7 @@ static BOOL CALLBACK GridCallback3(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 	int ndata = pThis->m_datas_nopass.size(); //number of data exist
 	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
 	{
-		if (nCol == 0)
-		{
-			CString str;
-			str.Format("%d", nRow);
-			pdi->item.varValue = str;
-
-		}
-		else
-		{
-			pdi->item.varValue = pThis->m_datas_nopass[nRow][nCol - 1];
-		}
+		pdi->item.varValue = pThis->m_datas_nopass[nRow][nCol];
 	}
 
 	return TRUE;
@@ -191,29 +161,25 @@ void CViewK1Check::InitList(CVirtualGridCtrl* pGrid, CRect& rect)
 	DWORD nStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER;
 	pGrid->Create(nStyle, rect, this, (UINT)-3);
 	pGrid->SetCustomColors(-1, -1, -1, -1, -1, RGB(0, 0, 0)); //黑色边框
-	pGrid->EnableHeader(TRUE, BCGP_GRID_HEADER_MOVE_ITEMS); //允许表头移动但是不会删除表头
+	pGrid->EnableHeader(TRUE, 0); //不允许表头移动
 	// Set grid tab order (first):
 	pGrid->SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 	pGrid->SetReadOnly();
 	pGrid->SetWholeRowSel();
-	pGrid->InsertColumn(0, _T("序号"), 50);
-	pGrid->InsertColumn(1, _T("姓名"), 70);
-	pGrid->InsertColumn(2, _T("性别"), 50);
-	pGrid->InsertColumn(3, _T("手机"), 80);
-	pGrid->InsertColumn(4, _T("申领"), 80);
-	pGrid->InsertColumn(5, _T("档案号"), rect.Width() - 330);
-	pGrid->SetColumnAlign(0, HDF_CENTER);
-	pGrid->SetColumnAlign(1, HDF_CENTER);
-	pGrid->SetColumnAlign(2, HDF_CENTER);
-	pGrid->SetColumnAlign(3, HDF_CENTER);
-	pGrid->SetColumnAlign(4, HDF_CENTER);
-	pGrid->SetColumnAlign(5, HDF_CENTER);
-	pGrid->SetHeaderAlign(0, HDF_CENTER);
-	pGrid->SetHeaderAlign(1, HDF_CENTER);
-	pGrid->SetHeaderAlign(2, HDF_CENTER);
-	pGrid->SetHeaderAlign(3, HDF_CENTER);
-	pGrid->SetHeaderAlign(4, HDF_CENTER);
-	pGrid->SetHeaderAlign(5, HDF_CENTER);
+	pGrid->EnableRowHeader(TRUE);
+	pGrid->EnableLineNumbers();
+
+	int hw = pGrid->GetRowHeaderWidth();
+	LPCTSTR arrColumns[] = { _T("姓名"), _T("性别"), _T("手机"), _T("申领"), _T("档案号")};
+	int w[5] = { 70, 50, 80, 80, 0};
+	w[4] = rect.Width() - hw - 280;
+	const int nColumns = sizeof (arrColumns) / sizeof (LPCTSTR);
+	for (int nColumn = 0; nColumn < nColumns; nColumn++)
+	{
+		pGrid->InsertColumn(nColumn, arrColumns[nColumn], w[nColumn]);
+		pGrid->SetColumnAlign(nColumn, HDF_CENTER);
+		pGrid->SetHeaderAlign(nColumn, HDF_CENTER);
+	}
 }
 
 void CViewK1Check::Refresh(BOOL isInit)

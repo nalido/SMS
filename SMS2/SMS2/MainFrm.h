@@ -8,6 +8,8 @@
 #include "xPublic\MySQLEx.h"
 #include "xPublic\TCPClient.h"
 
+
+
 class CMainFrame : public CBCGPFrameWnd
 {
 	
@@ -54,9 +56,9 @@ protected:
 	BOOL CreateRibbonBar ();
 	void ShowOptions(int nPage);
 
-	CView* GetView(int nID);
 	CArray<CView*, CView*>	m_arViews;
 public:
+	CView* GetView(int nID);
 	void SelectView(int nID);
 	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
 	afx_msg void OnClose();
@@ -74,6 +76,8 @@ public:
 	BOOL m_isSendReady; //是否准备好发送数据
 	static void CALLBACK ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+
+	void SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize);//保存图像
 };
 
 extern CString g_strFilePath;
@@ -82,6 +86,8 @@ extern void LOG(CString sFileName, CString str_log, int flag = 1);
 extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。 没有使用虚拟列表技术，只用于显示当前窗口的信息
 extern CString g_sServerIP; //服务器IP
 extern char* EncodeToUTF8(const char* mbcsStr);
+extern int g_nClassTotal; //每个课时天可以预约的总数
+extern int g_nMaxBooking; //每个学员最多预约课数
 
 enum enum_StudentProgress{
 	SP_NEWONE = 0,			//新生记录
@@ -94,3 +100,49 @@ enum enum_StudentProgress{
 	SP_K2K3BOOKING,			//路训预约	
 	SP_K2K3BOOKED			//预约完成
 };
+
+
+#define COLOR_SELECTED RGB(0, 117, 194)
+#define COLOR_TEXTSEL RGB(255, 255, 255)
+#define COLOR_TEXTNONE RGB(220, 220, 220)
+#define COLOR_TEXTNORMAL RGB(0, 0, 0)
+#define COLOR_LITTLE RGB(250, 132, 132)
+#define COLOR_NONE RGB(190, 190, 190)
+#define COLOR_MANY RGB(147, 235, 149)
+
+enum VIEW_TYPE{
+	VIEW_REGISTER = 0,
+	VIEW_K1CHECK,
+	VIEW_BOOKING1,
+	VIEW_BOOKING2,
+	VIEW_K1EXAM,
+	VIEW_STUPROGRESS,
+	VIEW_COACHES,
+	VIEW_SCHOOL,
+	VIEW_SYSTEM,
+	VIEW_NUM
+};
+
+typedef struct struct_STUDENTINFO
+{
+	CString strName; //学员名字
+	CString strFileName; //学员档案名
+	CString strGender; //学员性别
+	CString strCarType; //申领车型
+
+	struct_STUDENTINFO()
+	{
+		strName = "";
+		strFileName = "";
+		strGender = "";
+		strCarType = "";
+	}
+
+	struct_STUDENTINFO(CString name, CString filename, CString gender, CString cartype)
+	{
+		strName = name;
+		strFileName = filename;
+		strGender = gender;
+		strCarType = cartype;
+	}
+}STUDENTINFO;

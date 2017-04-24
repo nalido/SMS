@@ -7,6 +7,7 @@
 #include "xPublic\netSocket.h"
 #include "BCGClass\VirtualGridCtrl.h"
 #include "xPublic\MySQLEx.h"
+#include "xPublic\CObjectBase.h"
 
 class CSMS_SERVERView : public CBCGPFormView
 {
@@ -63,8 +64,7 @@ public:
 	//virtualGrid
 	CStatic m_wndGridLocation;
 	CVirtualGridCtrl m_wndGrid;
-	CDStrs m_datas; 
-	::CCriticalSection	m_cs;
+	xPublic::CObjectBase m_arMsg; 
 	void ListFresh();
 
 	//±£´æÍ¼Æ¬

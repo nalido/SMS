@@ -42,6 +42,19 @@ void CViewRegister::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ID, m_Ed_ID);
 	DDX_Control(pDX, IDC_HOME, m_Ed_Home);
 	DDX_Control(pDX, IDC_FEE, m_Ed_Fee);
+
+
+	//背景设置
+	DDX_Control(pDX, IDC_STATIC0, m_staticText[0]);
+	DDX_Control(pDX, IDC_STATIC1, m_staticText[1]);
+	DDX_Control(pDX, IDC_STATIC2, m_staticText[2]);
+	DDX_Control(pDX, IDC_STATIC3, m_staticText[3]);
+	DDX_Control(pDX, IDC_STATIC4, m_staticText[4]);
+	DDX_Control(pDX, IDC_STATIC5, m_staticText[5]);
+	DDX_Control(pDX, IDC_STATIC6, m_staticText[6]);
+	DDX_Control(pDX, IDC_STATIC7, m_staticText[7]);
+	DDX_Control(pDX, IDC_STATIC8, m_staticText[8]);
+	DDX_Control(pDX, IDC_STATIC9, m_staticText[9]);
 }
 
 BEGIN_MESSAGE_MAP(CViewRegister, CBCGPFormView)
@@ -52,6 +65,7 @@ BEGIN_MESSAGE_MAP(CViewRegister, CBCGPFormView)
 	ON_BN_CLICKED(IDC_BTN_SIGN, &CViewRegister::OnBnClickedBtnSign)
 	ON_BN_CLICKED(IDC_NEWFILE, &CViewRegister::OnBnClickedNewfile)
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -78,9 +92,16 @@ void CViewRegister::Dump(CDumpContext& dc) const
 void CViewRegister::OnBnClickedCamera()
 {
 	CString str;
-	GetDlgItem(IDC_CAMERA)->GetWindowTextA(str);
-	if (str == "打开摄像头")
+	GetDlgItem(IDC_CAMERA)->GetWindowText(str);
+	if (str == "打开摄像头" || str == "重新采集照片")
 	{
+
+		if (!m_videoCap.isOpened()) m_videoCap.open(0);
+		if (!m_videoCap.isOpened())
+		{
+			MessageBox("Failed to open camera");
+		}
+
 		//init the timer
 		SetTimer(0, 50, NULL);
 		GetDlgItem(IDC_CAMERA)->SetWindowTextA("采集照片");
@@ -90,7 +111,7 @@ void CViewRegister::OnBnClickedCamera()
 		KillTimer(0);
 		m_isCaptured = TRUE;
 		ShowMsg2Output1("拍照成功");
-		GetDlgItem(IDC_CAMERA)->SetWindowTextA("打开摄像头");
+		GetDlgItem(IDC_CAMERA)->SetWindowTextA("重新采集照片");
 	}
 }
 
@@ -103,10 +124,11 @@ void CViewRegister::OnTimer(UINT_PTR nIDEvent)
 	CDC* pDc = m_SPhoto.GetDC();
 	HDC hdc = pDc->GetSafeHdc();
 
-	m_videoCap >> m_cap;
-	if (!m_cap.empty())
+	cv::Mat cap;
+	m_videoCap >> cap;
+	if (!cap.empty())
 	{
-		m_cap = m_cap(Rect(150, 2, 340, 476)); //按照5:7的一寸照片比例截取
+		m_cap = cap(Rect(150, 2, 340, 476)).clone(); //按照5:7的一寸照片比例截取
 		IplImage* frame;
 		frame = &IplImage(m_cap);
 		CvvImage cvvImage;
@@ -138,14 +160,40 @@ void CViewRegister::OnInitialUpdate()
 	m_Comb_Gender.AddString("男");
 	m_Comb_Gender.AddString("女");
 
+	m_Date_Sign.SetFormat("yyyy/MM/dd");
+	m_Date_Birth.SetFormat("yyyy/MM/dd");
+
 	GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE); //必须先有档案号
 	GetDlgItem(IDC_NEWFILE)->EnableWindow(TRUE);
+
 }
 
 
 void CViewRegister::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
+
+	//双缓存绘制
+	CRect   rect1, rect0;
+	CDC     MenDC;
+	CBitmap MemMap;
+
+	GetDlgItem(IDC_BKBMP)->GetClientRect(&rect0); //贴图原点
+	GetDlgItem(IDC_BKBMP)->MapWindowPoints(this, &rect0);
+	GetDlgItem(IDC_BKBMP1)->GetClientRect(&rect1); //贴图终点
+	GetDlgItem(IDC_BKBMP1)->MapWindowPoints(this, &rect1);
+	MenDC.CreateCompatibleDC(&dc); 
+	MemMap.LoadBitmapA(IDB_BITMAP3);
+	BITMAP bmp;
+	MemMap.GetBitmap(&bmp); //获取bmp参数
+	MenDC.SelectObject(&MemMap);
+
+	int w = rect1.right - rect0.left;
+	int h = rect1.bottom - rect0.top;
+	dc.StretchBlt(rect0.left, rect0.top, w, h, &MenDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+	//dc.BitBlt(rect0.left, rect0.top, rect.Width(), rect.Height(), &MenDC, 0, 0, SRCCOPY);
+	MenDC.DeleteDC();
+	MemMap.DeleteObject();
 
 	if (m_isCaptured)
 	{
@@ -193,15 +241,15 @@ void CViewRegister::OnBnClickedBtnSign()
 
 	//m_strNumber = ""; //档案号
 	CString name, type, tel, fee, id, home, birth, date, gender;
-	m_Ed_Name.GetWindowTextA(name);
-	m_Ed_Tel.GetWindowTextA(tel);
-	m_Ed_Fee.GetWindowTextA(fee);
-	m_Ed_ID.GetWindowTextA(id);
-	m_Ed_Home.GetWindowTextA(home);
-	m_Comb_CarType.GetWindowTextA(type);
-	m_Comb_Gender.GetWindowTextA(gender);
-	m_Date_Sign.GetWindowTextA(date);
-	m_Date_Birth.GetWindowTextA(birth);
+	m_Ed_Name.GetWindowText(name);
+	m_Ed_Tel.GetWindowText(tel);
+	m_Ed_Fee.GetWindowText(fee);
+	m_Ed_ID.GetWindowText(id);
+	m_Ed_Home.GetWindowText(home);
+	m_Comb_CarType.GetWindowText(type);
+	m_Comb_Gender.GetWindowText(gender);
+	m_Date_Sign.GetWindowText(date); 
+	m_Date_Birth.GetWindowText(birth);
 	if (name.IsEmpty() || type.IsEmpty() || tel.IsEmpty()
 		|| fee.IsEmpty() || id.IsEmpty() || home.IsEmpty()
 		|| birth.IsEmpty() || date.IsEmpty() || gender.IsEmpty())
@@ -235,7 +283,6 @@ void CViewRegister::OnBnClickedBtnSign()
 
 			//数据打包
 			CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-			pFrame->m_isSendReady = FALSE;
 			IplImage ipl_img = m_cap;
 			int len = ipl_img.imageSize + 23;
 			if (pFrame->m_pSendBuf != NULL)
@@ -244,6 +291,7 @@ void CViewRegister::OnBnClickedBtnSign()
 			}
 			else
 			{
+				pFrame->m_isSendReady = FALSE;
 				pFrame->m_pSendBuf = new BYTE[len];//发送完删除
 				pFrame->m_nSendLen = len;
 				pFrame->m_pSendBuf[0] = 1; //发送图像数据
@@ -314,11 +362,34 @@ void CViewRegister::OnBnClickedNewfile()
 		}
 		m_Sta_Num.SetWindowTextA(m_strNumber);
 		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(TRUE);
+		GetDlgItem(IDC_CAMERA)->SetWindowTextA("打开摄像头");
+		OnBnClickedCamera();
 	}
 	else
 	{
 		ShowMsg2Output1(_T("查询档案数量数据操作失败!\r\n") + strMsg);
 	}
 
+	CRect rect;
+	m_Sta_Num.GetClientRect(&rect);
+	m_Sta_Num.MapWindowPoints(this, &rect);
+	InvalidateRect(&rect, TRUE); //重绘背景 消除重影
+
 	UpdateData(FALSE); //更新显示
+}
+
+
+HBRUSH CViewRegister::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+
+	if (nCtlColor == CTLCOLOR_STATIC)
+	{
+		pDC->SetBkMode(TRANSPARENT);
+		return HBRUSH(GetStockObject(NULL_BRUSH)); //返回一个空画刷
+	}
+
+
+	HBRUSH hbr = CBCGPFormView::OnCtlColor(pDC, pWnd, nCtlColor);
+	
+	return hbr;
 }

@@ -23,6 +23,11 @@
 #define IDD_DIALOG2                     173
 #define IDD_K1EXAM                      173
 #define IDD_STUPROGRESS                 174
+#define IDD_CLASSDETAIL                 177
+#define IDD_COACHES                     178
+#define IDD_ADDCOACH                    179
+#define IDB_BITMAP2                     183
+#define IDB_BITMAP3                     187
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_BTN_NOPASS                  1056
@@ -34,8 +39,10 @@
 #define IDC_BTN_SIGN                    1065
 #define IDC_BUTTON2                     1066
 #define IDC_NEWFILE                     1066
+#define IDC_ADDCOACH                    1066
 #define IDC_NAME                        1067
 #define IDC_NAME2                       1068
+#define IDC_FILE                        1068
 #define IDC_TEL                         1069
 #define IDC_NAME3                       1069
 #define IDC_FEE                         1070
@@ -66,7 +73,40 @@
 #define IDC_SENDBOOKMSG                 1089
 #define IDC_SPHOTO                      1089
 #define IDC_SLIST                       1090
+#define IDC_TOBOOK                      1090
 #define IDC_NAME0                       1091
+#define IDC_WEEK                        1092
+#define IDC_NAME1                       1093
+#define IDC_NAME4                       1094
+#define IDC_NAME5                       1095
+#define IDC_GRID                        1109
+#define IDC_CLASS1                      1109
+#define IDC_COACHLIST                   1111
+#define IDC_FILE_NUM                    1112
+#define IDC_CLASS2                      1112
+#define IDC_CLASS3                      1113
+#define IDC_DATE_BIRTH                  1114
+#define IDC_CLASS4                      1114
+#define IDC_DATE_ENTER                  1115
+#define IDC_PARTY                       1116
+#define IDC_ADD                         1120
+#define IDC_BUTTON3                     1121
+#define IDC_CONFIRM                     1122
+#define IDC_STUDENT_SEL                 1123
+#define IDC_STATIC0                     1124
+#define IDC_CONFIRM2                    1124
+#define IDC_REMOVE                      1124
+#define IDC_STATIC1                     1125
+#define IDC_STATIC2                     1126
+#define IDC_STATIC3                     1127
+#define IDC_STATIC4                     1128
+#define IDC_STATIC5                     1129
+#define IDC_STATIC6                     1130
+#define IDC_STATIC7                     1131
+#define IDC_STATIC8                     1132
+#define IDC_STATIC9                     1133
+#define IDC_BKBMP                       1134
+#define IDC_BKBMP1                      1135
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -108,14 +148,15 @@
 #define ID_VIEW_K1CHECK                 32876
 #define ID_VIEW_K1EXAM                  32877
 #define ID_VIEW_STUPROGRESS             32879
+#define ID_VIEW_COACH                   32880
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        175
-#define _APS_NEXT_COMMAND_VALUE         32880
-#define _APS_NEXT_CONTROL_VALUE         1092
+#define _APS_NEXT_RESOURCE_VALUE        188
+#define _APS_NEXT_COMMAND_VALUE         32881
+#define _APS_NEXT_CONTROL_VALUE         1136
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

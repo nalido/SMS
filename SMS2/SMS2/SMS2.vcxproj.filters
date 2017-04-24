@@ -96,6 +96,24 @@
     <ClInclude Include="ViewStuProgress.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MyPicCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCalendar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassDetail.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Coaches.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AddCoach.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassItem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -167,6 +185,24 @@
     <ClCompile Include="ViewStuProgress.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MyPicCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCalendar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassDetail.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Coaches.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AddCoach.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassItem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SMS2.rc">
@@ -210,6 +246,27 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\Toolbar.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\bitmap1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\bitmap3.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

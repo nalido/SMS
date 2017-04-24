@@ -19,18 +19,12 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 
 	int nRow = pdi->item.nRow;	// Row of an item
 	int nCol = pdi->item.nCol;	// Column of an item
-	int ndata = pThis->m_datas.size(); //number of data exist
+	int ndata = pThis->m_datas.GetCount(); //number of data exist
 	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
 	{
-		pdi->item.varValue = pThis->m_datas[nRow][nCol];
-		//if (pThis->m_datas[nRow][nCol] == "nalido")
-		//{
-		//	pdi->item.clrText = COLORREF(RGB(255, 0, 0));
-		//}
-		//if (pThis->m_datas[nRow][nCol] == "snow")
-		//{
-		//	pdi->item.clrBackground = COLORREF(RGB(0, 110, 0));
-		//}
+		xPublic::SENDFILEPARAM * pParam = pThis->m_datas.GetAt(nRow);
+		if (pParam != NULL && nCol == 0)
+			pdi->item.varValue = pParam->strMsg;
 	}
 
 	return TRUE;
@@ -127,14 +121,8 @@ int COutputBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void COutputBar::ListFresh()
 {
-	if (m_datas.size() > 5000)
-	{
-		std::vector<CStrs>::iterator it = m_datas.begin();
-		m_datas.erase(it);
-	}
-
 	m_wndGrid.RemoveAll();
-	int nCount = m_datas.size();
+	int nCount = m_datas.GetCount();
 	m_wndGrid.SetVirtualRows(nCount);
 	m_wndGrid.AdjustLayout();
 
@@ -147,9 +135,7 @@ void COutputBar::ListFresh()
 
 void COutputBar::AddItem2List4(CString str)
 {
-	CStrs strs;
-	strs.push_back(str);
-	m_datas.push_back(strs);
+	m_datas.AddTail(str);
 }
 
 void COutputBar::OnSize(UINT nType, int cx, int cy) 

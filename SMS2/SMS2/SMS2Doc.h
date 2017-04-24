@@ -14,6 +14,7 @@ protected: // create from serialization only
 // Attributes
 public:
 
+
 // Operations
 public:
 
@@ -35,6 +36,9 @@ protected:
 // Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
+
+public:
+
 };
 
 

@@ -13,6 +13,7 @@
 #include "ViewStuProgress.h"
 #include "School.h"
 #include "System.h"
+#include "Coaches.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,6 +23,8 @@
 CString g_strFilePath = "E:\\Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
 CString g_sServerIP = "127.0.0.1";
+int g_nClassTotal = 9;
+int g_nMaxBooking = 15;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -84,6 +87,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_STUPROGRESS, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_COACH, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
@@ -96,17 +100,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 END_MESSAGE_MAP()
 
 // CMainFrame construction/destruction
-enum VIEW_TYPE{
-	VIEW_REGISTER = 0,
-	VIEW_K1CHECK,
-	VIEW_BOOKING1,
-	VIEW_BOOKING2,
-	VIEW_K1EXAM,
-	VIEW_STUPROGRESS,
-	VIEW_SCHOOL,
-	VIEW_SYSTEM,
-	VIEW_NUM
-};
 
 CMainFrame::CMainFrame()
 : m_threadMySQL(this, ThreadMySQLCallback)
@@ -358,6 +351,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_SCHOOLSETTING:
 		SelectView(VIEW_SCHOOL);
 		break;
+	case ID_VIEW_COACH:
+		SelectView(VIEW_COACHES);
+		break;
 	}
 	return TRUE;
 }
@@ -406,7 +402,10 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_K1EXAM:
 		pClass = RUNTIME_CLASS(CViewK1Exam); 
-			break;
+		break;
+	case VIEW_COACHES:
+		pClass = RUNTIME_CLASS(CCoaches);
+		break;
 	case VIEW_STUPROGRESS:
 		pClass = RUNTIME_CLASS(CViewStuProgress); 
 			break;
@@ -443,7 +442,7 @@ CView* CMainFrame::GetView(int nID)
 	newContext.m_pCurrentFrame = NULL;
 	newContext.m_pCurrentDoc = pCurrentDoc;
 
-	if (!pView->Create(NULL, _T(""), (AFX_WS_DEFAULT_VIEW & ~WS_VISIBLE),
+	if (!pView->Create(NULL, _T(""), (AFX_WS_DEFAULT_VIEW),
 		CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST + nIndex, &newContext))
 	{
 		TRACE1("Failed to create view '%s'\n", pClass->m_lpszClassName);
@@ -460,6 +459,7 @@ CView* CMainFrame::GetView(int nID)
 void CMainFrame::SelectView(int nID)
 {
 	CWaitCursor wait;
+
 
 	CView* pNewView = GetView(nID);
 	if (pNewView == NULL)
@@ -488,23 +488,24 @@ void CMainFrame::SelectView(int nID)
 
 		pActiveView->ShowWindow(SW_HIDE);
 		pNewView->ShowWindow(SW_SHOW);
+		Invalidate();
 
 		SetActiveView(pNewView);
 	}
 
 	//特殊窗口的初始化刷新(可以重复初始化的窗口)
-	if (pNewView->IsKindOf(RUNTIME_CLASS(CSystem)))
-	{
-		pNewView->OnInitialUpdate();
-	}
-	if (pNewView->IsKindOf(RUNTIME_CLASS(CViewStuProgress)))
-	{
-		((CViewStuProgress*)pNewView)->Refresh();
-	}
-	if (pNewView->IsKindOf(RUNTIME_CLASS(CViewBooking1)))
-	{
-		((CViewBooking1*)pNewView)->Refresh();
-	}
+	//if (pNewView->IsKindOf(RUNTIME_CLASS(CSystem)))
+	//{
+	//	//pNewView->OnInitialUpdate();
+	//}
+	//if (pNewView->IsKindOf(RUNTIME_CLASS(CViewStuProgress)))
+	//{
+	//	//((CViewStuProgress*)pNewView)->Refresh();
+	//}
+	//if (pNewView->IsKindOf(RUNTIME_CLASS(CViewBooking1)))
+	//{
+	//	//((CViewBooking1*)pNewView)->Refresh();
+	//}
 
 	//theApp.WriteInt(_T("ViewType"), m_nCurrType);
 	PostMessage(UM_REDRAW);
@@ -586,7 +587,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 		//检测和创建TCP连接
 		if (!pTcpClient->IsConnected())
 		{
-			if (!pTcpClient->Connect(g_sServerIP, 39200, 2670))
+			if (!pTcpClient->Connect(g_sServerIP, 39200, NULL))
 			{
 				if (bNotify)
 				{
@@ -616,10 +617,47 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 		if (pTcpClient->IsConnected() && pTcpClient->Send(pThis->m_pSendBuf, nPicLen) & !bSendOK)
 		{
 			bSendOK = TRUE;
-			delete[]pThis->m_pSendBuf; //删除数据
-			pThis->m_pSendBuf = NULL;
 			strMsg.Format("数据发送成功");
 			pThis->m_wndOutput.AddItem2List4(strMsg);
+
+			if (pThis->m_pSendBuf[0] == 3)
+			{
+				BYTE flag = 0;
+				pTcpClient->Receive(&flag, 1);
+				if (flag == 1) //后有图像数据
+				{
+					int wid, hei, imgSize;
+					char FileNum[11] = { 0 };
+					pTcpClient->Receive(&FileNum, 10);
+					pTcpClient->Receive(&wid, 4);
+					pTcpClient->Receive(&hei, 4);
+					pTcpClient->Receive(&imgSize, 4);
+					BYTE* picBuf = new BYTE[imgSize + 1];
+					if (pTcpClient->Receive(picBuf, imgSize))
+					{
+						strMsg.Format("收到图像信息：%dX%d 接收成功", wid, hei);
+
+						pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize); //保存图片，第二次点击时无需再下载
+						IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
+						int lineByte = (wid * 3 + 3) / 4 * 4;
+						cvSetData(pImg, picBuf, lineByte);
+						cv::Mat img = cv::cvarrToMatND(pImg);
+						pThis->GetActiveView()->SendMessageA(WM_USER_MESSAGE, (WPARAM)&img, (LPARAM)2);
+
+						pThis->m_wndOutput.AddItem2List4(strMsg);
+					}
+					else
+					{
+						strMsg.Format("收到图像信息：%dX%d 接收图像数据失败", wid, hei);
+						pThis->m_wndOutput.AddItem2List4(strMsg);
+					}
+
+					delete[] picBuf; picBuf = NULL;
+				}
+			} //if (pThis->m_pSendBuf[0] == 3)
+
+			delete[]pThis->m_pSendBuf; //删除数据
+			pThis->m_pSendBuf = NULL;
 		}
 
 		//判断是否发送成功，删除图像缓存
@@ -652,4 +690,20 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 	m_wndOutput.ListFresh();
 
 	CBCGPFrameWnd::OnTimer(nIDEvent);
+}
+
+void CMainFrame::SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize)
+{
+	IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
+	int lineByte = (wid*3 + 3) / 4 * 4;
+	cvSetData(pImg, picBuf, lineByte);
+
+	cv::Mat img = cv::cvarrToMatND(pImg);
+	CString sFileName("");
+	sFileName.Format("%s\\%s.bmp", g_strFilePath, FileNum);
+	::SHCreateDirectory(NULL, CA2W(g_strFilePath));
+	cv::String s = sFileName.GetBuffer();
+	imwrite(s, img);
+	sFileName.ReleaseBuffer();
+	pImg = NULL;
 }
