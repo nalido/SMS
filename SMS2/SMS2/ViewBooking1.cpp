@@ -505,7 +505,8 @@ void CViewBooking1::OnBnClickedConfirm()
 
 void CViewBooking1::OnBnClickedRemove()
 {
-	int n = m_datas.size();
+	int n = m_datas.size(); 
+	int cols = m_datas[0].size(); //列数， 最后一列为是否上传数据库的标志位
 	CString strMsg;
 	CString strSQL;
 	for (int i = n - 1; i >= 0; i--)
@@ -521,15 +522,21 @@ void CViewBooking1::OnBnClickedRemove()
 			}
 
 			int nClass = atoi(m_datas[i][1]);
-			g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
-			strSQL.Format("UPDATE workdaystat set %s = %s - 1 WHERE WORKDAY = '%s'"
-				, arrClassID[nClass], arrClassID[nClass], m_datas[i][0]);
-			if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+
+			if (m_datas[i][cols - 1] == "1") //已经上传数据库
 			{
-				ShowMsg2Output1(strMsg);
-				g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
-				continue;
+				g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
+				strSQL.Format("UPDATE workdaystat set %s = %s - 1 WHERE WORKDAY = '%s'"
+					, arrClassID[nClass], arrClassID[nClass], m_datas[i][0]);
+				if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+				{
+					ShowMsg2Output1(strMsg);
+					g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+					continue;
+				}
 			}
+
+			//执行删除吃操作，若数据库中没有此记录，删除操作不影响原有数据
 			strSQL.Format("DELETE FROM bookings WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'"
 				, m_strFileName, m_datas[i][0], m_datas[i][1]);
 			if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
@@ -538,12 +545,20 @@ void CViewBooking1::OnBnClickedRemove()
 				g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
 				continue;
 			}
-			//删除记录
+
+			//删除本地记录
+			CPoint pos = m_wndCalendar.GetDayPos(m_datas[i][0]);
+			m_wndCalendar.m_nStatus[pos.y][pos.x][nClass - 1] --;
+			int nn = 5 - nClass;
+			nn = exp(nn);
+			m_wndCalendar.m_nStatus[pos.y][pos.x][5] -= nn;
+			m_wndCalendar.SetItemState(pos, 0);
+
 			std::vector<CStrs>::iterator it = m_datas.begin() + i;
 			m_datas.erase(it);
 		}
 	}
 
 	//更新图表
-	Refresh();
+	m_wndGrid.GridRefresh(m_datas.size());
 }

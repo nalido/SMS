@@ -273,6 +273,43 @@ void CGridCalendar::DrawSelectedItems()
 	}
 }
 
+void CGridCalendar::SetItemState(CPoint pos, int flag)
+{
+	if (flag == 1) //选中状态
+	{
+		DrawSelectedItem(pos);
+	}
+	else if (flag == 0) //未选中状态
+	{
+		CBCGPGridRow* pRow;
+		CBCGPGridItem* pItem;
+		int r = pos.y * 2 + 1;
+		int c = pos.x;
+		pRow = GetRow(pos.y * 2 + 1);
+		pItem = pRow->GetItem(pos.x);
+		int m = m_nStatus[r][c][0] + m_nStatus[r][c][1] + m_nStatus[r][c][2] + m_nStatus[r][c][3];
+		int n = g_nClassTotal * 4 - m;
+		CString strText;
+		strText.Format("可预约数\n\n%d", n);
+		pItem->SetValue((LPCTSTR)strText);
+		int np = m * 25 / g_nClassTotal; //课时预约比例
+		if (np >= 100)
+		{
+			pItem->SetBackgroundColor(COLOR_NONE);
+			pItem->SetTextColor(COLOR_TEXTNONE);
+		}
+		else if (np > 80)
+		{
+			pItem->SetBackgroundColor(COLOR_LITTLE);
+			pItem->SetTextColor(COLOR_TEXTNORMAL);
+		}
+		else
+		{
+			pItem->SetBackgroundColor(COLOR_MANY);
+			pItem->SetTextColor(COLOR_TEXTNORMAL);
+		}
+	}
+}
 
 CTime CGridCalendar::GetSelectedDay(int r, int c)
 {

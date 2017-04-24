@@ -53,7 +53,7 @@ public:
 
 	//日历视图
 	//CView* m_pView[91]; // 7*13
-	CDStrs m_WDStat; //课时信息 work day state/
+	//CDStrs m_WDStat; //课时信息 work day state/
 	CStatic m_SWeek;
 	CGridCalendar m_wndCalendar;
 	static void CALLBACK OnCalendarClick(LPVOID lParam, BOOL lParam2);

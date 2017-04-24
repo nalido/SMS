@@ -26,8 +26,9 @@ public:
 	//[r][c][4]表示数据库中是否有当前日期的记录// 省去查重时间
 	//[r][c][5]表示当前学员当前日期预约课时时间段 1000表示选第一节课 1100为前两节
 	unsigned int m_nStatus[15][7][6]; 
-
-	CTime m_tToday; //当天日期
+	
+	//当天日期
+	CTime m_tToday; 
 	CPoint m_PointToday; //当天日期所在位置
 
 	void InitGrid(int wndWid); //初始化表格样式
@@ -41,5 +42,8 @@ public:
 	void DrawSelectedItem(CPoint& pos); //设置当前学员的已选课时
 	void DrawSelectedItem(int r, int c);
 	void DrawSelectedItems();
+
+	/*设置pos位置的单元格状态 flag 1:选择状态， 0：default 未选择状态*/
+	void SetItemState(CPoint pos, int flag = 0); 
 };
 
