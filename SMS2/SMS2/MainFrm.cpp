@@ -493,19 +493,8 @@ void CMainFrame::SelectView(int nID)
 		SetActiveView(pNewView);
 	}
 
-	//特殊窗口的初始化刷新(可以重复初始化的窗口)
-	//if (pNewView->IsKindOf(RUNTIME_CLASS(CSystem)))
-	//{
-	//	//pNewView->OnInitialUpdate();
-	//}
-	//if (pNewView->IsKindOf(RUNTIME_CLASS(CViewStuProgress)))
-	//{
-	//	//((CViewStuProgress*)pNewView)->Refresh();
-	//}
-	//if (pNewView->IsKindOf(RUNTIME_CLASS(CViewBooking1)))
-	//{
-	//	//((CViewBooking1*)pNewView)->Refresh();
-	//}
+	//窗口的数据初始化刷新
+	pNewView->SendMessage(WM_USER_UPDATE_VIEW, (WPARAM)1);
 
 	//theApp.WriteInt(_T("ViewType"), m_nCurrType);
 	PostMessage(UM_REDRAW);

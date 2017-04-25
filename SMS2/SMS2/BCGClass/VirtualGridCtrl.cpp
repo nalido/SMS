@@ -206,3 +206,16 @@ void CVirtualGridCtrl::GridRefresh(int nCount)
 	SetVirtualRows(nCount);
 	AdjustLayout();
 }
+
+int CVirtualGridCtrl::GetLastColWidth(int* wids, int cols, int rw)
+{
+	int hw = GetRowHeaderWidth() * 2 / 3; //ÐÐÍ·¿í¶È
+
+	int sum = 0;
+	for (int i = 0; i < cols; i++)
+	{
+		sum += wids[i];
+	}
+
+	return rw - hw - sum;
+}

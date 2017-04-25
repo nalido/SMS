@@ -30,6 +30,7 @@
 #define IDB_BITMAP3                     187
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
+#define IDC_SEL_DAY                     1055
 #define IDC_BTN_NOPASS                  1056
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
@@ -107,6 +108,10 @@
 #define IDC_STATIC9                     1133
 #define IDC_BKBMP                       1134
 #define IDC_BKBMP1                      1135
+#define IDC_GRID1                       1136
+#define IDC_GRID2                       1137
+#define IDC_GRID3                       1138
+#define IDC_PRINT                       1141
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -149,14 +154,15 @@
 #define ID_VIEW_K1EXAM                  32877
 #define ID_VIEW_STUPROGRESS             32879
 #define ID_VIEW_COACH                   32880
+#define ID_OFFICE2003                   32881
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        188
-#define _APS_NEXT_COMMAND_VALUE         32881
-#define _APS_NEXT_CONTROL_VALUE         1136
+#define _APS_NEXT_COMMAND_VALUE         32882
+#define _APS_NEXT_CONTROL_VALUE         1142
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

@@ -91,7 +91,7 @@ namespace xPublic{
 		}
 	}SHEETINFO;
 
-	class CMyPrint
+	class CMyPrint : public CStatic
 	{
 	public:
 		CMyPrint();

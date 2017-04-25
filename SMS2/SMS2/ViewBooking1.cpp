@@ -283,7 +283,7 @@ void CViewBooking1::UpdateBookingList()
 {
 	CString strMsg("");
 	CString strSQL("");
-	strSQL.Format("SELECT BOOK_DATE, CLASS_ID, STEP FROM bookings WHERE FILE_NAME='%s' ORDER BY BOOK_DATE", m_strFileName);
+	strSQL.Format("SELECT BOOK_DATE, CLASS_ID, FLAG FROM bookings WHERE FILE_NAME='%s' ORDER BY BOOK_DATE", m_strFileName);
 	m_datas.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg))
 	{
@@ -452,7 +452,7 @@ void CViewBooking1::OnBnClickedConfirm()
 				CString strSQL;
 				BOOL isOK = TRUE;
 				g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
-				strSQL.Format("INSERT INTO bookings(FILE_NAME, BOOK_DATE, CLASS_ID, STEP) \
+				strSQL.Format("INSERT INTO bookings(FILE_NAME, BOOK_DATE, CLASS_ID, FLAG) \
 					VALUES ('%s', '%s', '%s', '0')", m_strFileName, m_datas[i][0], m_datas[i][1]);
 				if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 				{
