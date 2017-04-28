@@ -86,7 +86,7 @@ extern void LOG(CString sFileName, CString str_log, int flag = 1);
 extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。 没有使用虚拟列表技术，只用于显示当前窗口的信息
 extern CString g_sServerIP; //服务器IP
 extern char* EncodeToUTF8(const char* mbcsStr);
-extern int g_nClassTotal; //每个课时天可以预约的总数
+extern int g_nClassTotal; //每个课时每天可以预约的总数
 extern int g_nMaxBooking; //每个学员最多预约课数
 
 enum enum_StudentProgress{

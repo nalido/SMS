@@ -58,10 +58,11 @@ void CViewRegister::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CViewRegister, CBCGPFormView)
-	ON_BN_CLICKED(IDC_CAMERA, &CViewRegister::OnBnClickedCamera)
-	ON_WM_TIMER()
 	ON_WM_PAINT()
-	ON_WM_SIZE()
+	ON_BN_CLICKED(IDC_CAMERA, &CViewRegister::OnBnClickedCamera)
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
+	ON_WM_TIMER()
+//	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BTN_SIGN, &CViewRegister::OnBnClickedBtnSign)
 	ON_BN_CLICKED(IDC_NEWFILE, &CViewRegister::OnBnClickedNewfile)
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
@@ -139,18 +140,25 @@ void CViewRegister::OnTimer(UINT_PTR nIDEvent)
 	CBCGPFormView::OnTimer(nIDEvent);
 }
 
+LRESULT CViewRegister::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	//Invalidate();
+	//UpdateWindow();
+
+	return 0;
+}
 
 void CViewRegister::OnInitialUpdate()
 {
 	CBCGPFormView::OnInitialUpdate();
 
-	/******初始化一个摄像头捕捉器******/
+	///******初始化一个摄像头捕捉器******/
 
-	if (!m_videoCap.isOpened()) m_videoCap.open(0);
-	if (!m_videoCap.isOpened())
-	{
-		MessageBox("Failed to open camera");
-	}
+	//if (!m_videoCap.isOpened()) m_videoCap.open(0);
+	//if (!m_videoCap.isOpened())
+	//{
+	//	MessageBox("Failed to open camera");
+	//}
 
 	m_Comb_CarType.AddString("C1手动挡");
 	m_Comb_CarType.AddString("C2自动挡");
@@ -165,7 +173,6 @@ void CViewRegister::OnInitialUpdate()
 
 	GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE); //必须先有档案号
 	GetDlgItem(IDC_NEWFILE)->EnableWindow(TRUE);
-
 }
 
 
@@ -213,21 +220,21 @@ void CViewRegister::OnPaint()
 }
 
 
-void CViewRegister::OnSize(UINT nType, int cx, int cy)
-{
-	CBCGPFormView::OnSize(nType, cx, cy);
-
-	//int margin = 200; //控件外边距
-	//if (m_SPhoto) //控制控件位置
-	//{
-	//	CRect rct;
-	//	m_SPhoto.GetClientRect(&rct);
-	//	m_SPhoto.MapWindowPoints(this, &rct);
-	//	rct.MoveToX(cx - rct.Width() - margin);
-
-	//	m_SPhoto.MoveWindow(rct);
-	//}
-}
+//void CViewRegister::OnSize(UINT nType, int cx, int cy)
+//{
+//	CBCGPFormView::OnSize(nType, cx, cy);
+//
+//	//int margin = 200; //控件外边距
+//	//if (m_SPhoto) //控制控件位置
+//	//{
+//	//	CRect rct;
+//	//	m_SPhoto.GetClientRect(&rct);
+//	//	m_SPhoto.MapWindowPoints(this, &rct);
+//	//	rct.MoveToX(cx - rct.Width() - margin);
+//
+//	//	m_SPhoto.MoveWindow(rct);
+//	//}
+//}
 
 
 void CViewRegister::OnBnClickedBtnSign()

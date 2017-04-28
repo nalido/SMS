@@ -209,6 +209,7 @@
     <ClInclude Include="Coaches.h" />
     <ClInclude Include="GridCalendar.h" />
     <ClInclude Include="MyPicCtrl.h" />
+    <ClInclude Include="SheetCtrl.h" />
     <ClInclude Include="ViewK1Exam.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MSGINFO.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="Coaches.cpp" />
     <ClCompile Include="GridCalendar.cpp" />
     <ClCompile Include="MyPicCtrl.cpp" />
+    <ClCompile Include="SheetCtrl.cpp" />
     <ClCompile Include="ViewK1Exam.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MSGINFO.cpp" />

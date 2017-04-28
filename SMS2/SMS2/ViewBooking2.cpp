@@ -5,6 +5,7 @@
 #include "SMS2.h"
 #include "ViewBooking2.h"
 #include "MainFrm.h"
+#include "xPublic\MyPrint.h"
 
 
 // CViewBooking2
@@ -28,13 +29,21 @@ void CViewBooking2::DoDataExchange(CDataExchange* pDX)
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_GRID1, m_wndGridLocation1);
 	DDX_Control(pDX, IDC_GRID2, m_wndGridLocation2);
-	DDX_Control(pDX, IDC_GRID3, m_wndGridLocation3);
-	DDX_Control(pDX, IDC_PRINT, m_wndPrint);
+	DDX_Control(pDX, IDC_ORDERS, m_wndGridLocation3);
+	DDX_Control(pDX, IDC_PRINT, m_wndPrint); 
+	DDX_Control(pDX, IDC_DATE, m_wndDate);
+	DDX_Control(pDX, IDC_CARS, m_Combo_Cars);
 }
 
 BEGIN_MESSAGE_MAP(CViewBooking2, CBCGPFormView)
 	ON_BN_CLICKED(IDC_SEL_DAY, &CViewBooking2::OnBnClickedSelDay)
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
+	ON_BN_CLICKED(IDC_DO_PRINT, &CViewBooking2::OnBnClickedDoPrint)
+//	ON_STN_CLICKED(IDC_GRID1, &CViewBooking2::OnStnClickedGrid1)
+	ON_WM_PAINT()
+	ON_BN_CLICKED(IDC_ORDER, &CViewBooking2::OnBnClickedOrder)
+	ON_BN_CLICKED(IDC_RESET_PRINT, &CViewBooking2::OnBnClickedResetPrint)
+	ON_CBN_SELCHANGE(IDC_CARS, &CViewBooking2::OnCbnSelchangeCars)
 END_MESSAGE_MAP()
 
 
@@ -71,7 +80,13 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		std::vector<CStrs>::iterator it = pThis->m_datas1.begin() + nRow;
 		if (!it->empty())
 		{
-			pdi->item.varValue = pThis->m_datas1[nRow][nCol];
+			if (nCol == 2) //课程时间
+			{
+				int nClass = atoi(pThis->m_datas1[nRow][nCol]) - 1;
+				pdi->item.varValue = pThis->m_wndPrint.m_printData.GetClassTime(nClass);
+			}
+			else
+				pdi->item.varValue = pThis->m_datas1[nRow][nCol];
 		}
 		else
 		{
@@ -107,6 +122,44 @@ static BOOL CALLBACK Grid2Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 	return TRUE;
 }
 
+static BOOL CALLBACK Grid3Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
+{
+	ASSERT(pdi != NULL);
+
+	CViewBooking2* pThis = (CViewBooking2*)lp;
+
+	int nRow = pdi->item.nRow;	// Row of an item
+	int nCol = pdi->item.nCol;	// Column of an item
+	int ndata = pThis->m_orderIndex.size(); //number of data exist
+	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
+	{
+		std::vector<Indexes>::iterator it = pThis->m_orderIndex.begin() + nRow;
+		if (!it->empty() && nCol<pThis->m_orderIndex[nRow].size())
+		{
+			int index = (*it)[nCol];
+			switch (nCol)
+			{
+			case 0:
+				pdi->item.varValue = pThis->m_datas3[index][0];
+				break;
+			case 1:
+				pdi->item.varValue = pThis->m_datas2[index][0];
+				break;
+			default:
+				pdi->item.varValue = pThis->m_datas1[index][0];
+				break;
+			}
+		}
+		else
+		{
+			pdi->item.varValue = "";
+		}
+	}
+
+	return TRUE;
+}
+
+
 
 void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 {
@@ -116,6 +169,72 @@ void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
+		CSheetCtrl* pPrint = &pThis->m_wndPrint;
+
+		int nStudent = pPrint->m_printData.m_students.size();
+		int i = 0;
+		for (; i < nStudent; i++)
+		{
+			if (pThis->m_order[2 + i] == nRow) //点击第二次为取消重复的选择
+			{
+				pThis->m_order.erase(pThis->m_order.begin() + 2 + i);
+				pPrint->m_printData.RemoveStudentAt(i);
+				pThis->m_wndPrint.Invalidate();
+				nStudent--;
+				return;
+			}
+		}
+
+		if (nStudent < 3) //最多三个学员
+		{
+			if (pThis->m_order.size() <= 2 + nStudent) pThis->m_order.push_back(nRow);
+			else pThis->m_order[2 + nStudent] = nRow;
+
+			//CString strMsg;
+			//TRACE("=============\r\n");
+			//for (int n = 0; n < pThis->m_order.size(); n++)
+			//	TRACE("[%d]%d\r\n", n, pThis->m_order[n]);
+			//TRACE("=============\r\n");
+
+
+			CString name = pThis->m_datas1[nRow][0];
+			CString date = pThis->m_isToday ? pThis->m_tToday.Format("%y/%m/%d") : pThis->m_tTomorrow.Format("%y/%m/%d");
+			int classStep = atoi(pThis->m_datas1[nRow][3]); 
+			int classID = atoi(pThis->m_datas1[nRow][2]);
+			xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
+			pPrint->m_printData.AddStudent(student);
+			//pThis->m_wndPrint.m_sheetInfo.strCoachID = pThis->m_datas1[nRow][2];
+			pThis->m_wndPrint.Invalidate();
+		}
+	}
+}
+
+void CALLBACK CViewBooking2::OnOrdersClick(LPVOID lParam)
+{
+	CViewBooking2* pThis = (CViewBooking2*)lParam;
+
+	CBCGPGridRow* pRow = pThis->m_wndGrid3.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		Indexes indexes = pThis->m_orderIndex[nRow];
+		pThis->m_wndPrint.m_sheetInfo.strCarID = pThis->m_datas3[indexes[0]][0];
+		pThis->m_wndPrint.m_sheetInfo.strCoach = pThis->m_datas2[indexes[1]][0];
+		pThis->m_wndPrint.m_sheetInfo.strCoachID = pThis->m_datas2[indexes[1]][2];
+
+		int nStudent = indexes.size() - 2;
+		for (int i = 0; i < nStudent; i++)
+		{
+			int stuRow = indexes[i + 2];
+			CString name = pThis->m_datas1[stuRow][0];
+			CString date = pThis->m_isToday ? pThis->m_tToday.Format("%y/%m/%d") : pThis->m_tTomorrow.Format("%y/%m/%d");
+			int classStep = atoi(pThis->m_datas1[stuRow][3]);
+			int classID = atoi(pThis->m_datas1[stuRow][2]);
+			xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
+			pThis->m_wndPrint.m_printData.AddStudent(student);
+		}
+
+		pThis->m_wndPrint.Invalidate();
 	}
 }
 
@@ -127,19 +246,15 @@ void CALLBACK CViewBooking2::OnGrid2Click(LPVOID lParam)
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
+		CString strCoach = pThis->m_datas2[nRow][0];
+		pThis->m_wndPrint.m_sheetInfo.strCoach = strCoach;
+		pThis->m_wndPrint.m_sheetInfo.strCoachID = pThis->m_datas2[nRow][2];
+		pThis->m_wndPrint.Invalidate();
+
+		pThis->m_order[1] = nRow;
 	}
 }
 
-void CALLBACK CViewBooking2::OnGrid3DbClick(LPVOID lParam)
-{
-	CViewBooking2* pThis = (CViewBooking2*)lParam;
-
-	CBCGPGridRow* pRow = pThis->m_wndGrid3.GetCurSel();
-	if (pRow != NULL)
-	{
-		int nRow = pRow->GetRowId();
-	}
-}
 
 void CViewBooking2::OnInitialUpdate()
 {
@@ -166,8 +281,8 @@ void CViewBooking2::OnInitialUpdate()
 
 
 	int hw = m_wndGrid1.GetRowHeaderWidth();
-	LPCTSTR arrColumns[] = { _T("姓名"), _T("性别"), _T("申领"), _T("课时") };
-	int w[4] = { 70, 50, 80, 0 };
+	LPCTSTR arrColumns[] = { _T("姓名"), _T("申领"), _T("预约时间"), _T("课时") };
+	int w[4] = { 70, 80, 100, 0 };
 	w[3] = m_wndGrid1.GetLastColWidth(w, 4, rectGrid.Width());
 	for (int nColumn = 0; nColumn < 4; nColumn++)
 	{
@@ -196,10 +311,11 @@ void CViewBooking2::OnInitialUpdate()
 
 
 	hw = m_wndGrid2.GetRowHeaderWidth();
-	LPCTSTR arrColumns2[] = { _T("姓名"), _T("性别"), _T("绩效") };
-	int w2[3] = { 70, 50, 0 };
-	w2[2] = m_wndGrid2.GetLastColWidth(w2, 3, rectGrid.Width());
-	for (int nColumn = 0; nColumn < 3; nColumn++)
+	LPCTSTR arrColumns2[] = { _T("姓名"), _T("性别"), _T("工号"), _T("绩效") };
+	int nColumns = 4;
+	int w2[4] = { 70, 50, 80, 0 };
+	w2[3] = m_wndGrid2.GetLastColWidth(w2, nColumns, rectGrid.Width());
+	for (int nColumn = 0; nColumn < nColumns; nColumn++)
 	{
 		m_wndGrid2.InsertColumn(nColumn, arrColumns2[nColumn], w2[nColumn]);
 		m_wndGrid2.SetColumnAlign(nColumn, HDF_CENTER);
@@ -210,81 +326,33 @@ void CViewBooking2::OnInitialUpdate()
 	m_wndGrid2.SetCallBack_Clk(OnGrid2Click);
 
 
-	//Grid3
+	//派工单总览
 	m_wndGridLocation3.GetClientRect(&rectGrid);
 	m_wndGridLocation3.MapWindowPoints(this, &rectGrid); //转为桌面坐标
 	m_wndGrid3.Create(nStyle, rectGrid, this, IDC_GRID_STUPRO);
 	m_wndGrid3.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
 	m_wndGrid3.EnableHeader(TRUE, 0); //不允许表头移动
-	//// Set grid tab order (first):
-	//m_wndGrid3.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	// Set grid tab order (first):
+	m_wndGrid3.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 	m_wndGrid3.SetReadOnly();
 	m_wndGrid3.SetWholeRowSel();
 	m_wndGrid3.SetSingleSel(); //只能选一个
-	m_wndGrid3.EnableRowHeader(0,0,0);
+	m_wndGrid3.EnableRowHeader(TRUE);
+	m_wndGrid3.EnableLineNumbers();
 
-	//CBCGPGridColors theme;
-	//CBCGPVisualManager::GetInstance()->OnSetGridColorTheme(&m_wndGrid3, theme);
-	////m_wndGrid3.SendMessage(BCGM_ONSETCONTROLVMMODE, 1);
-	//m_wndGrid3.SetColorTheme(theme);
 
-	hw = m_wndGrid3.GetRowHeaderWidth()*2/3;
-	m_wndGrid3.InsertColumn(0, "派工单", rectGrid.Width() - hw);
-	m_wndGrid3.SetColumnAlign(0, HDF_CENTER);
-	m_wndGrid3.SetHeaderAlign(0, HDF_CENTER);
-
-	CStrs strs;
-	strs.push_back("000");
-	strs.push_back("教练员名字");
-	strs.push_back("00");
-	strs.push_back("学员1");
-	strs.push_back("学员2");
-	strs.push_back("学员3");
-	m_wndGrid3.AddCaptionRow("车辆编号");
-	CBCGPGridRow* pRow = m_wndGrid3.CreateMultiLineRow(2);
-	pRow->SetVertAlign(BCGP_GRID_ITEM_VCENTER);
-	pRow->GetItem(0)->SetValue((LPCTSTR)strs[0]);
-	m_wndGrid3.AddRow(pRow, FALSE);
-
-	m_wndGrid3.AddCaptionRow("教练员");
-	pRow = m_wndGrid3.CreateMultiLineRow(2);
-	pRow->SetVertAlign(BCGP_GRID_ITEM_VCENTER);
-	pRow->GetItem(0)->SetValue((LPCTSTR)strs[1]);
-	m_wndGrid3.AddRow(pRow, FALSE);
-
-	m_wndGrid3.AddCaptionRow("授教日期");
-	pRow = m_wndGrid3.CreateMultiLineRow(2);
-	pRow->SetVertAlign(BCGP_GRID_ITEM_VCENTER);
-	pRow->GetItem(0)->SetValue((LPCTSTR)strs[2]);
-	m_wndGrid3.AddRow(pRow, FALSE);
-
-	m_wndGrid3.AddCaptionRow("授教时段");
-	pRow = m_wndGrid3.CreateMultiLineRow(2);
-	pRow->SetVertAlign(BCGP_GRID_ITEM_VCENTER);
-	pRow->GetItem(0)->SetValue((LPCTSTR)strs[2]);
-	m_wndGrid3.AddRow(pRow, FALSE);
-
-	m_wndGrid3.AddCaptionRow("授教课时");
-	pRow = m_wndGrid3.CreateMultiLineRow(2);
-	pRow->SetVertAlign(BCGP_GRID_ITEM_VCENTER);
-	pRow->GetItem(0)->SetValue((LPCTSTR)strs[2]);
-	m_wndGrid3.AddRow(pRow, FALSE);
-
-	m_wndGrid3.AddCaptionRow("同车学员");
-	pRow = m_wndGrid3.CreateMultiLineRow(2);
-	pRow->SetVertAlign(BCGP_GRID_ITEM_VCENTER);
-	pRow->GetItem(0)->SetValue((LPCTSTR)strs[3]);
-	m_wndGrid3.AddRow(pRow, FALSE);
-	pRow = m_wndGrid3.CreateMultiLineRow(2);
-	pRow->SetVertAlign(BCGP_GRID_ITEM_VCENTER);
-	pRow->GetItem(0)->SetValue((LPCTSTR)strs[4]);
-	m_wndGrid3.AddRow(pRow, FALSE);
-	pRow = m_wndGrid3.CreateMultiLineRow(2);
-	pRow->SetVertAlign(BCGP_GRID_ITEM_VCENTER);
-	pRow->GetItem(0)->SetValue((LPCTSTR)strs[5]);
-	m_wndGrid3.AddRow(pRow, FALSE);
+	hw = m_wndGrid3.GetRowHeaderWidth();
+	LPCTSTR arrColumns3[] = { _T("车辆编号"), _T("教练员"), _T("学生1"), _T("学生2"), _T("学生3") };
+	int w3[5] = { 70, 50, 50, 50, 50 };
+	for (int nColumn = 0; nColumn < 5; nColumn++)
+	{
+		m_wndGrid3.InsertColumn(nColumn, arrColumns3[nColumn], w3[nColumn]);
+		m_wndGrid3.SetColumnAlign(nColumn, HDF_CENTER);
+		m_wndGrid3.SetHeaderAlign(nColumn, HDF_CENTER);
+	}
 	//注册虚拟列表回调函数
-	m_wndGrid3.SetCallBack_DblClk(OnGrid2Click);
+	m_wndGrid3.EnableVirtualMode(Grid3Callback, (LPARAM)this);
+	m_wndGrid3.SetCallBack_Clk(OnOrdersClick);
 
 
 	//派工日期 默认为明天
@@ -292,19 +360,28 @@ void CViewBooking2::OnInitialUpdate()
 	CString strDate;
 	m_tToday = CTime::GetCurrentTime();
 	m_tTomorrow = m_tToday + CTimeSpan(1, 0, 0, 0);
-	strDate.Format("当前派工日期：%s(点击转到今天派工)", m_tTomorrow.Format("%Y/%m/%d"));
+	strDate.Format("<< 前一天", m_tTomorrow.Format("%Y/%m/%d"));
 	GetDlgItem(IDC_SEL_DAY)->SetWindowTextA(strDate);
+	m_wndDate.GetClientRect(&m_rectDate);
+	m_wndDate.MapWindowPoints(this, &m_rectDate);
+
+	//派工单初始化
+	m_wndPrint.m_sheetInfo.strData = m_tToday.Format("%Y年%m月%d日制");
+	m_order.push_back(-1); //车辆编号索引
+	m_order.push_back(-1); //教练信息索引
 }
 
 void CViewBooking2::Refresh()
 {
 	CString strMsg("");
 	CString strSQL("");
+
+	//查询待预约学生信息
 	CString strDate("");
 	strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d");
-	strSQL.Format("SELECT students.SNAME, students.GENDER, students.CAR_TYPE, bookings.CLASS_ID\
+	strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM\
 				   FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
-				   WHERE BOOK_DATE='%s' AND FLAG='0'", strDate);
+				   WHERE BOOK_DATE='%s' AND FLAG='0' ORDER BY bookings.CLASS_ID, students.CLASS_NUM", strDate);
 	m_datas1.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg))
 	{
@@ -313,6 +390,40 @@ void CViewBooking2::Refresh()
 	else ShowMsg2Output1(strMsg);
 
 	m_wndGrid1.GridRefresh(m_datas1.size());
+
+	//查询待可预约教练员信息
+	int year = m_tToday.GetYear();
+	CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
+	//半年内 超过3次请假为不合格, 超过半年按6次算
+	int th = 3;
+	if (midYear < m_tToday) th = 6;
+	strSQL.Format("select coachinfo.SName, coachinfo.GENDER, coachinfo.FILE_NUM, coachstat.PERFORMANCE from \
+				  coachstat INNER JOIN coachinfo ON coachinfo.FILE_NUM=coachstat.FILE_NUM \
+				  WHERE coachstat.LEAVE_N<'%d' ORDER BY coachstat.PERFORMANCE DESC", th);
+	m_datas2.clear();
+	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg))
+	{
+		ShowMsg2Output1("查询教练员信息成功");
+	}
+	else ShowMsg2Output1(strMsg);
+
+	m_wndGrid2.GridRefresh(m_datas2.size());
+
+	//查询可用车辆信息
+	strSQL.Format("select CAR_ID from carinfo WHERE STATE<'5'");
+	m_datas3.clear();
+	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas3, strMsg))
+	{
+		ShowMsg2Output1("查询可用车辆信息成功");
+	}
+	else ShowMsg2Output1(strMsg);
+
+	int nCount = m_datas3.size();
+	m_Combo_Cars.ResetContent();
+	for (int i = 0; i < nCount; i++)
+	{
+		m_Combo_Cars.AddString(m_datas3[i][0]);
+	}
 }
 
 void CViewBooking2::OnBnClickedSelDay()
@@ -322,13 +433,17 @@ void CViewBooking2::OnBnClickedSelDay()
 
 	if (m_isToday)
 	{
-		strDate.Format("当前派工日期：%s(点击转到明天派工)", m_tToday.Format("%Y/%m/%d"));
+		strDate.Format("后一天 >>");
 	}
 	else
 	{
-		strDate.Format("当前派工日期：%s(点击转到今天派工)", m_tTomorrow.Format("%Y/%m/%d"));
+		strDate.Format("<< 前一天");
 	}
 	GetDlgItem(IDC_SEL_DAY)->SetWindowTextA(strDate);
+
+	InvalidateRect(m_rectDate);
+	OnBnClickedResetPrint();
+	Refresh();
 }
 
 
@@ -342,4 +457,108 @@ LRESULT CViewBooking2::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 	}
 
 	return 0;
+}
+
+void CViewBooking2::OnBnClickedDoPrint()
+{
+	xPublic::CMyPrint printx;
+	xPublic::CLASSINFO classInfo;
+	xPublic::PRINTERINFO printInfo;
+	xPublic::SHEETINFO sheetInfo;
+
+	xPublic::STUDENTINFO studentInfo1("王小二", "17/3/18", 2, 1, 15);
+	printx.AddStudent(studentInfo1);
+	xPublic::STUDENTINFO studentInfo2("王小三", "17/3/18", 3, 7, 15);
+	printx.AddStudent(studentInfo2);
+
+	printx.PrinterInit(&sheetInfo, &classInfo);
+	CString strMsg("");
+	printx.Printx(1, strMsg);
+}
+
+
+//void CViewBooking2::OnStnClickedGrid1()
+//{
+//	// TODO:  在此添加控件通知处理程序代码
+//}
+
+CString WeekDays[9] = { "", "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日" };
+void CViewBooking2::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	// TODO:  在此处添加消息处理程序代码
+
+	m_wndDate.GetClientRect(&m_rectDate);
+	m_wndDate.MapWindowPoints(this, &m_rectDate);
+
+	CFont font, font1;
+	font.CreateFontA(30, 0, 0, 0, FW_BLACK, 0, 0, 0, 0,
+		0, 0, 0, VARIABLE_PITCH | FF_SWISS, "宋体"); 
+	font1.CreateFontA(20, 0, 0, 0, FW_BLACK, 0, 0, 0, 0,
+		0, 0, 0, VARIABLE_PITCH | FF_SWISS, "宋体");
+
+	CFont* old = dc.SelectObject(&font);
+	dc.SetBkMode(TRANSPARENT);
+	if (m_isToday)
+		dc.TextOutA(m_rectDate.left, m_rectDate.bottom - 30, m_tToday.Format("%Y/%m/%d"));
+	else
+		dc.TextOutA(m_rectDate.left, m_rectDate.bottom - 30, m_tTomorrow.Format("%Y/%m/%d"));
+
+	dc.SelectObject(&font1);
+	int index = m_tToday.GetDayOfWeek();
+	if (m_isToday)
+		dc.TextOutA(m_rectDate.left + 170, m_rectDate.bottom - 20, WeekDays[index]);
+	else
+		dc.TextOutA(m_rectDate.left + 170, m_rectDate.bottom - 20, WeekDays[index + 1]);
+
+	dc.SelectObject(old);
+}
+
+
+void CViewBooking2::OnBnClickedOrder()
+{
+	int n = m_order.size();
+	for (int i = 0; i < n; i++)
+	{
+		if (m_order[i] == -1)
+		{
+			MessageBox("派工单未完成！");
+
+			CString strMsg;
+			TRACE("=============\r\n");
+			for (int n = 0; n < m_order.size(); n++)
+				TRACE("[%d]%d\r\n", n, m_order[n]);
+			TRACE("=============\r\n");
+			return;
+		}
+	}
+
+	m_orderIndex.push_back(m_order);
+	m_wndGrid3.GridRefresh(m_orderIndex.size());
+
+	OnBnClickedResetPrint();
+}
+
+
+void CViewBooking2::OnBnClickedResetPrint()
+{
+	m_order.clear();
+	m_order.push_back(-1);
+	m_order.push_back(-1);
+
+	m_wndPrint.m_printData.Reset();
+	m_wndPrint.Invalidate();
+}
+
+
+void CViewBooking2::OnCbnSelchangeCars()
+{
+	CString strCarID;
+	int pos = m_Combo_Cars.GetCurSel();
+	m_Combo_Cars.GetLBText(pos, strCarID);
+	m_wndPrint.m_sheetInfo.strCarID = strCarID;
+
+	m_wndPrint.Invalidate();
+
+	m_order[0] = pos;
 }

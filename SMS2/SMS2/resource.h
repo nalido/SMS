@@ -41,11 +41,15 @@
 #define IDC_BUTTON2                     1066
 #define IDC_NEWFILE                     1066
 #define IDC_ADDCOACH                    1066
+#define IDC_DO_PRINT                    1066
 #define IDC_NAME                        1067
+#define IDC_ORDER                       1067
 #define IDC_NAME2                       1068
 #define IDC_FILE                        1068
+#define IDC_RESET_PRINT                 1068
 #define IDC_TEL                         1069
 #define IDC_NAME3                       1069
+#define IDC__TMP_ORDER                  1069
 #define IDC_FEE                         1070
 #define IDC_NCLASS                      1070
 #define IDC_ID                          1071
@@ -67,6 +71,7 @@
 #define IDC_FILEPATH                    1083
 #define IDC_CHANGEPATH                  1084
 #define IDC_SMSINFO                     1084
+#define IDC_NEW_STUDENT                 1084
 #define IDC_CHANGEBACK                  1085
 #define IDC_BUTTON1085                  1085
 #define IDC_STUPROGRESS                 1087
@@ -112,6 +117,9 @@
 #define IDC_GRID2                       1137
 #define IDC_GRID3                       1138
 #define IDC_PRINT                       1141
+#define IDC_ORDERS                      1142
+#define IDC_DATE                        1143
+#define IDC_CARS                        1144
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -162,7 +170,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        188
 #define _APS_NEXT_COMMAND_VALUE         32882
-#define _APS_NEXT_CONTROL_VALUE         1142
+#define _APS_NEXT_CONTROL_VALUE         1145
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

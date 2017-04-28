@@ -92,6 +92,7 @@ BEGIN_MESSAGE_MAP(CViewK1Check, CBCGPFormView)
 	ON_BN_CLICKED(IDC_BTN_SMS1, &CViewK1Check::OnBnClickedBtnSms1)
 	ON_BN_CLICKED(IDC_BTN_SMS2, &CViewK1Check::OnBnClickedBtnSms2)
 	ON_BN_CLICKED(IDC_BTN_FRESH2, &CViewK1Check::OnBnClickedBtnFresh2)
+	ON_BN_CLICKED(IDC_NEW_STUDENT, &CViewK1Check::OnBnClickedNewStudent)
 END_MESSAGE_MAP()
 
 
@@ -466,4 +467,11 @@ void CViewK1Check::OnBnClickedBtnSms2()
 void CViewK1Check::OnBnClickedBtnFresh2()
 {
 	Refresh(TRUE);
+}
+
+
+void CViewK1Check::OnBnClickedNewStudent()
+{
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+	pFrame->SelectView(VIEW_BOOKING1);
 }

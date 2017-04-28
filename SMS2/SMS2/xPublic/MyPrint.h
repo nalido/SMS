@@ -82,7 +82,7 @@ namespace xPublic{
 			strTitle = "未定义";
 			strClassType = "科一";
 			strCoach = "未定义";
-			strCarID = "000";
+			strCarID = "---";
 			strCoachID = "未定义";
 			strMsg1 = "杜绝陋习\"吃拿卡要\"，维护权益从我做起！";
 			strMsg2 = "   特别提示：根据规定在有效期内，凡授训超出30个课时的，每1课时需补缴50元！";
@@ -91,7 +91,7 @@ namespace xPublic{
 		}
 	}SHEETINFO;
 
-	class CMyPrint : public CStatic
+	class CMyPrint
 	{
 	public:
 		CMyPrint();
@@ -104,11 +104,16 @@ namespace xPublic{
 		PRINTERINFO m_printerInfo;
 		SHEETINFO* m_sheetInfo;
 		//STUDENTINFO* m_studentInfo;
-		std::vector<STUDENTINFO*> m_students;
+		std::vector<STUDENTINFO> m_students;
 		CLASSINFO* m_classInfo;
 
 		//添加学员信息
-		void AddStudent(STUDENTINFO* student);
+		void AddStudent(STUDENTINFO student);
+		//移除学员信息
+		void RemoveStudentAt(int index);
+		CString GetClassTime(int n);
+		//重置表单，清空学员信息
+		void Reset();
 
 		//初始化设备，设置纸张格式等
 		void PrinterInit(SHEETINFO* SheetInfo, CLASSINFO* ClassInfo); //只打印一张单子
@@ -117,6 +122,7 @@ namespace xPublic{
 		//打印单张表单内容
 		void PrintTrainSheet(int page);
 		void PrintTrainSheet2(int page);
+		void DrawTrainSheet();
 
 		//自定义绘图 单位为mm
 		void RectangleEx(int x1, int y1, int x2, int y2);
