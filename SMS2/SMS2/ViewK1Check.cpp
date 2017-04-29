@@ -473,5 +473,5 @@ void CViewK1Check::OnBnClickedBtnFresh2()
 void CViewK1Check::OnBnClickedNewStudent()
 {
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-	pFrame->SelectView(VIEW_BOOKING1);
+	pFrame->SelectView(VIEW_REGISTER);
 }
