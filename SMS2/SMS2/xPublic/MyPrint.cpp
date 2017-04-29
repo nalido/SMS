@@ -199,11 +199,8 @@ namespace xPublic{
 		int tableR = W - 22; //打印单内表格的右横坐标
 		RectangleEx(20, 45, W-20, H-25);// 画表格外框
 
-		//表头信息
-		CFont *font = m_dcPrinter.SelectObject(&font_13mm);
-		TextEx(44, 52, m_sheetInfo->strTitle);
 
-		m_dcPrinter.SelectObject(&font_8mm);
+		CFont *font = m_dcPrinter.SelectObject(&font_8mm);
 		TextEx(tableR-60, 60, "车辆编号："+m_sheetInfo->strCarID);
 
 		m_dcPrinter.SelectObject(&font_6mm);
@@ -240,13 +237,6 @@ namespace xPublic{
 		int yc4 = 22 + 3 * tableW + 1;
 		TextEx(yc4, 101, "用时、进度");
 
-		//绘制进度扇形
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 99 + 9 * 1 + 1, yc4 + 7, 99 + 9 * 1 + 8), 3, 15);
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 109, yc4 + 7, 116), m_students[0]);
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 99 + 9 * 2 + 1, yc4 + 7, 99 + 9 * 2 + 8), 15, 15);
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 118, yc4 + 7, 125), m_students[1]);
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 99 + 9 * 3 + 1, yc4 + 7, 99 + 9 * 3 + 8), 0, 15);
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 127, yc4 + 7, 134), m_students[2]);
 
 		//col 5
 		int yc5 = 22 + 4 * tableW + 4;
@@ -261,8 +251,25 @@ namespace xPublic{
 		TextEx(yc6, 101, "自我评价");
 		LineEx(yc6+1, 115, yc6 + 15, 115, 1, 9, 3); //画3条横线
 
+		//课程内容表格
+		RectangleEx(22, 155, tableR, 241);
+		LineEx(22, 169, tableR, 169, 1, 9, 8); //画8条横线
+
+		m_dcPrinter.SelectObject(&font_7mm);
+		TextEx(24, 159, "授教内容：");
+		TextEx(tableR - 57, H - 34, m_sheetInfo->strData);
+		m_dcPrinter.SelectObject(&font_8mm);
+		TextEx(32, 250, "辛苦了！ 谢谢配合！");
+
+
 		//输出动态信息：学员信息、授教内容
-		if (m_students.size() > 0)
+		m_dcPrinter.SelectObject(&font_4mm);
+		if (m_students.size() == 0)
+		{
+			m_classInfo->nClassID = 0;
+			m_classInfo->arrClassText.clear();
+		}
+		else if (m_students.size() > 0)
 		{
 			for (int i = 0; i < m_students.size(); i++)
 			{
@@ -277,17 +284,40 @@ namespace xPublic{
 				//用时进度
 				FillPieEx(RGB(0, 0, 0), CRect(yc4, 109 + 9 * i, yc4 + 7, 116 + 9 * i), &m_students[i]);
 			}
+
+			//授课内容
+			int nText = m_classInfo->arrClassText.size();
+			if (nText == 0) //初始化 从配置文件读取授课内容
+			{
+				if (m_classInfo->nClassID > 0)
+				{
+					CString strClassID;
+					strClassID.Format("CLASS%d", m_classInfo->nClassID);
+					int nItem = xPublic::GETINT2(strClassID, "nItem", 0);
+					m_sheetInfo->strTitle = xPublic::GETSTR2(strClassID, "title", "未定义");
+					CString strItemID;
+					for (int i = 1; i <= nItem; i++)
+					{
+						strItemID.Format("item%d", i);
+						CString strClassText = xPublic::GETSTR2(strClassID, strItemID, "");
+						m_classInfo->arrClassText.push_back(strClassText);
+					}
+					nText = nItem;
+				}
+			}
+			if (nText > 0)
+			{
+				m_dcPrinter.SelectObject(&font_6mm);
+				for (int i = 0; i< nText; i++)
+				{
+					TextEx(24, 170 + 9 * i, m_classInfo->arrClassText[i]);
+				}
+			}
 		}
 
-		//课程内容表格
-		RectangleEx(22, 155, tableR, 241);
-		LineEx(22, 169, tableR, 169, 1, 9, 8); //画8条横线
-
-		m_dcPrinter.SelectObject(&font_7mm);
-		TextEx(24, 159, "授教内容：");
-		TextEx(tableR-57, H-34, m_sheetInfo->strData);
-		m_dcPrinter.SelectObject(&font_8mm);
-		TextEx(32, 250, "辛苦了！ 谢谢配合！");
+		//表头信息
+		m_dcPrinter.SelectObject(&font_13mm);
+		TextEx(44, 52, m_sheetInfo->strTitle);
 
 		// 恢复以前的画笔
 		m_dcPrinter.SelectObject(font);
@@ -323,11 +353,8 @@ namespace xPublic{
 		//RectangleEx(20, 45, W - 20, H - 25);// 画表格外框
 		RectangleEx(0, 0, W, H);
 
-		//表头信息
-		CFont *font = m_dcPrinter.SelectObject(&font_13mm);
-		TextEx(24, 7, m_sheetInfo->strTitle);
 
-		m_dcPrinter.SelectObject(&font_8mm);
+		CFont *font = m_dcPrinter.SelectObject(&font_8mm);
 		TextEx(tableR - 55, 15, "车辆编号：" + m_sheetInfo->strCarID);
 
 		m_dcPrinter.SelectObject(&font_6mm);
@@ -378,9 +405,26 @@ namespace xPublic{
 		TextEx(yc6, 56, "自我评价");
 		LineEx(yc6 + 1, 70, yc6 + 15, 70, 1, 9, 3); //画3条横线
 
+		//课程内容表格
+		RectangleEx(2, 110, tableR, 196);
+		LineEx(2, 124, tableR, 124, 1, 9, 8); //画8条横线
+
+		m_dcPrinter.SelectObject(&font_7mm);
+		TextEx(4, 114, "授教内容：");
+		TextEx(tableR - 58, H - 9, m_sheetInfo->strData);
+		m_dcPrinter.SelectObject(&font_8mm);
+		TextEx(2, 205, "辛苦了！ 谢谢配合！");
+
 		//输出动态信息：学员信息、授教内容
-		if (m_students.size() > 0)
+		m_dcPrinter.SelectObject(&font_4mm);
+		if (m_students.size() == 0)
 		{
+			m_classInfo->nClassID = 0;
+			m_classInfo->arrClassText.clear();
+		}
+		else if (m_students.size() > 0)
+		{
+			//学生信息
 			for (int i = 0; i < m_students.size(); i++)
 			{
 				//姓名
@@ -394,17 +438,40 @@ namespace xPublic{
 				//用时进度
 				FillPieEx(RGB(0, 0, 0), CRect(yc4, 64 + 9 * i, yc4 + 7, 71 + 9 * i), &m_students[i]);
 			}
+
+			//授课内容
+			int nText = m_classInfo->arrClassText.size();
+			if (nText == 0) //初始化 从配置文件读取授课内容
+			{
+				if (m_classInfo->nClassID > 0)
+				{
+					CString strClassID;
+					strClassID.Format("CLASS%d", m_classInfo->nClassID);
+					int nItem = xPublic::GETINT2(strClassID, "nItem", 0);
+					m_sheetInfo->strTitle = xPublic::GETSTR2(strClassID, "title", "未定义");
+					CString strItemID;
+					for (int i = 1; i <= nItem; i++)
+					{
+						strItemID.Format("item%d", i);
+						CString strClassText = xPublic::GETSTR2(strClassID, strItemID, "");
+						m_classInfo->arrClassText.push_back(strClassText);
+					}
+					nText = nItem;
+				}
+			}
+			if (nText > 0)
+			{
+				m_dcPrinter.SelectObject(&font_7mm);
+				for (int i = 0; i< nText; i++)
+				{
+					TextEx(4, 125 + 9 * i, m_classInfo->arrClassText[i]);
+				}
+			}
 		}
 
-		//课程内容表格
-		RectangleEx(2, 110, tableR, 196);
-		LineEx(2, 124, tableR, 124, 1, 9, 8); //画8条横线
-
-		m_dcPrinter.SelectObject(&font_7mm);
-		TextEx(4, 114, "授教内容：");
-		TextEx(tableR - 58, H - 9, m_sheetInfo->strData);
-		m_dcPrinter.SelectObject(&font_8mm);
-		TextEx(2, 205, "辛苦了！ 谢谢配合！");
+		//表头信息
+		m_dcPrinter.SelectObject(&font_13mm);
+		TextEx(24, 7, m_sheetInfo->strTitle);
 
 		// 恢复以前的画笔
 		m_dcPrinter.SelectObject(font);
@@ -534,6 +601,11 @@ namespace xPublic{
 	void CMyPrint::Reset()
 	{
 		m_students.clear();
+
+		m_classInfo->arrClassText.clear();
+		m_classInfo->nClassID = 0;
+
+		m_sheetInfo->strTitle = "未定义";
 		m_sheetInfo->strCarID = "---";
 		m_sheetInfo->strCoach = "---";
 		m_sheetInfo->strCoachID = "---";

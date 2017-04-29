@@ -92,7 +92,7 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 			CTime today = pThis->m_wndCalendar.m_tToday;
 			if (aday < today)
 			{
-				if (pThis->m_datas[nRow][2] != "0") //正常完成预约的灰化
+				if (pThis->m_datas[nRow][2] == "2") //正常完成预约的灰化
 				{
 					pdi->item.clrBackground = RGB(140, 140, 140);
 				}
@@ -421,6 +421,8 @@ LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
 		}
 		else
 			m_SPhoto.Invalidate();
+
+		Refresh();
 	}
 
 	return 0;

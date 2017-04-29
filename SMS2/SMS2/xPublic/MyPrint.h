@@ -1,6 +1,7 @@
 #pragma once
 #include "..\\stdafx.h"
 #include <vector>
+#include "MySQLEx.h"
 
 namespace xPublic{
 	typedef struct struct_PRINTERINFO //打印机属性信息，纸张信息
@@ -57,10 +58,12 @@ namespace xPublic{
 	typedef struct struct_CLASSINFO //课程内容
 	{
 		int nClassID; //课时编号
+		CStrs arrClassText; //课时授课内容
 
 		struct_CLASSINFO()
 		{
 			nClassID = 0;
+			arrClassText.clear();
 		}
 	}CLASSINFO;
 
@@ -98,7 +101,7 @@ namespace xPublic{
 		~CMyPrint();
 
 		HDC m_hdcPrinter; //打印机设备句柄
-		CDC m_dcPrinter; //图形设备环境， 使用时与打印机设备关联，在上面绘图就相当于往打印机要打出的纸上绘图
+		CDC m_dcPrinter; //程序控件的设备环境
 		BOOL m_isInit; //设备是否初始化完成
 		int m_nMaxPage; //最大打印页码范围
 		PRINTERINFO m_printerInfo;
@@ -130,5 +133,6 @@ namespace xPublic{
 		void TextEx(int x, int y, CString str);
 		void DrawTextExx(CString str, CRect& rect); //自动分行的文字输出
 		void FillPieEx(COLORREF color, CRect& rect, STUDENTINFO* student); //填充扇形，扇形面积为nUsed/nTotal
+
 	};
 }//xPublic

@@ -52,6 +52,13 @@ public:
 	Indexes m_order; //记录当前派工预览的数据索引
 	Indextable m_orderIndex; //派工单总览的信息索引
 	static void CALLBACK OnOrdersClick(LPVOID lParam);
+	BOOL m_canChangeOrder; //是否可以修改派工
+	int m_nChangingOrderIndex; //正在修改的派工序号
+	afx_msg void OnBnClickedOrderChange();
+
+	//type 0 普通模式下的重置，清空所有状态 
+	//type 1 点击确定派工后的重置，保留学员选中状态
+	void RestOrder(int type = 0);
 
 	void Refresh();
 
@@ -68,7 +75,8 @@ public:
 //	afx_msg void OnStnClickedGrid1();
 	afx_msg void OnPaint();
 	afx_msg void OnBnClickedOrder();
-	afx_msg void OnBnClickedResetPrint();
+
+	afx_msg void OnBnClickedResetPrint(); 
 
 	CComboBox m_Combo_Cars;
 	afx_msg void OnCbnSelchangeCars();

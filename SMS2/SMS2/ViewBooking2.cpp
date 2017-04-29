@@ -18,6 +18,7 @@ CViewBooking2::CViewBooking2()
 	EnableVisualManagerStyle();
 
 	m_isToday = FALSE;
+	m_canChangeOrder = TRUE;
 }
 
 CViewBooking2::~CViewBooking2()
@@ -44,6 +45,7 @@ BEGIN_MESSAGE_MAP(CViewBooking2, CBCGPFormView)
 	ON_BN_CLICKED(IDC_ORDER, &CViewBooking2::OnBnClickedOrder)
 	ON_BN_CLICKED(IDC_RESET_PRINT, &CViewBooking2::OnBnClickedResetPrint)
 	ON_CBN_SELCHANGE(IDC_CARS, &CViewBooking2::OnCbnSelchangeCars)
+	ON_BN_CLICKED(IDC_ORDER_CHANGE, &CViewBooking2::OnBnClickedOrderChange)
 END_MESSAGE_MAP()
 
 
@@ -87,6 +89,17 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 			}
 			else
 				pdi->item.varValue = pThis->m_datas1[nRow][nCol];
+
+			//颜色控制
+			int cols = pThis->m_datas1[nRow].size() - 1;
+			if (pThis->m_datas1[nRow][cols] == "0") //未派工
+			{
+				pdi->item.clrBackground = RGB(255,255,255);
+			}
+			else if (pThis->m_datas1[nRow][cols] == "1") //已派工
+			{
+				pdi->item.clrBackground = COLOR_MANY;
+			}
 		}
 		else
 		{
@@ -165,6 +178,13 @@ void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 {
 	CViewBooking2* pThis = (CViewBooking2*)lParam;
 
+
+	if (!pThis->m_canChangeOrder)
+	{
+		pThis->MessageBox("非法操作！请重置派工单或者点击修改按钮修改此派工单");
+		return;
+	}
+
 	CBCGPGridRow* pRow = pThis->m_wndGrid1.GetCurSel();
 	if (pRow != NULL)
 	{
@@ -181,12 +201,17 @@ void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 				pPrint->m_printData.RemoveStudentAt(i);
 				pThis->m_wndPrint.Invalidate();
 				nStudent--;
+
+				pThis->m_datas1[nRow][5] = "0"; //未派工
+				pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2);
 				return;
 			}
 		}
 
 		if (nStudent < 3) //最多三个学员
 		{
+			if (pThis->m_datas1[nRow][5] == "1") return; //已经派工的不能重复派工
+
 			if (pThis->m_order.size() <= 2 + nStudent) pThis->m_order.push_back(nRow);
 			else pThis->m_order[2 + nStudent] = nRow;
 
@@ -201,10 +226,21 @@ void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 			CString date = pThis->m_isToday ? pThis->m_tToday.Format("%y/%m/%d") : pThis->m_tTomorrow.Format("%y/%m/%d");
 			int classStep = atoi(pThis->m_datas1[nRow][3]); 
 			int classID = atoi(pThis->m_datas1[nRow][2]);
+
+			//第一个加入的学员决定派工单的授课内容
+			if (pPrint->m_classInfo.nClassID == 0)
+			{
+				CString classType = pThis->m_datas1[nRow][4];
+				CString cn;
+				cn.Format("c%d", classStep + 1);
+				pPrint->m_classInfo.nClassID =  xPublic::GETINT2(classType, cn, 0);
+			}
 			xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
 			pPrint->m_printData.AddStudent(student);
-			//pThis->m_wndPrint.m_sheetInfo.strCoachID = pThis->m_datas1[nRow][2];
 			pThis->m_wndPrint.Invalidate();
+
+			pThis->m_datas1[nRow][5] = "1"; //已派工
+			pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2);
 		}
 	}
 }
@@ -217,10 +253,19 @@ void CALLBACK CViewBooking2::OnOrdersClick(LPVOID lParam)
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
+		pThis->m_nChangingOrderIndex = nRow;
+		pThis->RestOrder(!pThis->m_canChangeOrder);
 		Indexes indexes = pThis->m_orderIndex[nRow];
-		pThis->m_wndPrint.m_sheetInfo.strCarID = pThis->m_datas3[indexes[0]][0];
-		pThis->m_wndPrint.m_sheetInfo.strCoach = pThis->m_datas2[indexes[1]][0];
-		pThis->m_wndPrint.m_sheetInfo.strCoachID = pThis->m_datas2[indexes[1]][2];
+		pThis->m_order.clear();
+		pThis->m_order = indexes;
+
+		CSheetCtrl* pPrint = &pThis->m_wndPrint;
+		pPrint->m_printData.Reset();
+		pPrint->Invalidate();
+
+		pPrint->m_sheetInfo.strCarID = pThis->m_datas3[indexes[0]][0];
+		pPrint->m_sheetInfo.strCoach = pThis->m_datas2[indexes[1]][0];
+		pPrint->m_sheetInfo.strCoachID = pThis->m_datas2[indexes[1]][2];
 
 		int nStudent = indexes.size() - 2;
 		for (int i = 0; i < nStudent; i++)
@@ -230,11 +275,24 @@ void CALLBACK CViewBooking2::OnOrdersClick(LPVOID lParam)
 			CString date = pThis->m_isToday ? pThis->m_tToday.Format("%y/%m/%d") : pThis->m_tTomorrow.Format("%y/%m/%d");
 			int classStep = atoi(pThis->m_datas1[stuRow][3]);
 			int classID = atoi(pThis->m_datas1[stuRow][2]);
+
+			//第一个加入的学员决定派工单的授课内容
+			if (pPrint->m_classInfo.nClassID == 0)
+			{
+				CString classType = pThis->m_datas1[nRow][4];
+				CString cn;
+				cn.Format("c%d", classStep + 1);
+				pPrint->m_classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
+			}
+
 			xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
-			pThis->m_wndPrint.m_printData.AddStudent(student);
+			pPrint->m_printData.AddStudent(student);
 		}
 
-		pThis->m_wndPrint.Invalidate();
+		pPrint->Invalidate();
+
+		pThis->GetDlgItem(IDC_ORDER_CHANGE)->EnableWindow(TRUE);
+		pThis->m_canChangeOrder = FALSE;
 	}
 }
 
@@ -242,10 +300,18 @@ void CALLBACK CViewBooking2::OnGrid2Click(LPVOID lParam)
 {
 	CViewBooking2* pThis = (CViewBooking2*)lParam;
 
+	if (!pThis->m_canChangeOrder)
+	{
+		pThis->MessageBox("非法操作！请重置派工单或者点击修改按钮修改此派工单");
+		return;
+	}
+
 	CBCGPGridRow* pRow = pThis->m_wndGrid2.GetCurSel();
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
+
+
 		CString strCoach = pThis->m_datas2[nRow][0];
 		pThis->m_wndPrint.m_sheetInfo.strCoach = strCoach;
 		pThis->m_wndPrint.m_sheetInfo.strCoachID = pThis->m_datas2[nRow][2];
@@ -281,10 +347,10 @@ void CViewBooking2::OnInitialUpdate()
 
 
 	int hw = m_wndGrid1.GetRowHeaderWidth();
-	LPCTSTR arrColumns[] = { _T("姓名"), _T("申领"), _T("预约时间"), _T("课时") };
-	int w[4] = { 70, 80, 100, 0 };
-	w[3] = m_wndGrid1.GetLastColWidth(w, 4, rectGrid.Width());
-	for (int nColumn = 0; nColumn < 4; nColumn++)
+	LPCTSTR arrColumns[] = { _T("姓名"), _T("申领"), _T("预约时间"), _T("课时"), _T("培训类型") };
+	int w[5] = { 70, 80, 100, 50, 0 };
+	w[4] = m_wndGrid1.GetLastColWidth(w, 5, rectGrid.Width());
+	for (int nColumn = 0; nColumn < 5; nColumn++)
 	{
 		m_wndGrid1.InsertColumn(nColumn, arrColumns[nColumn], w[nColumn]);
 		m_wndGrid1.SetColumnAlign(nColumn, HDF_CENTER);
@@ -357,11 +423,10 @@ void CViewBooking2::OnInitialUpdate()
 
 	//派工日期 默认为明天
 	m_isToday = FALSE;
-	CString strDate;
+	m_canChangeOrder = TRUE;
+	GetDlgItem(IDC_ORDER_CHANGE)->EnableWindow(FALSE);
 	m_tToday = CTime::GetCurrentTime();
 	m_tTomorrow = m_tToday + CTimeSpan(1, 0, 0, 0);
-	strDate.Format("<< 前一天", m_tTomorrow.Format("%Y/%m/%d"));
-	GetDlgItem(IDC_SEL_DAY)->SetWindowTextA(strDate);
 	m_wndDate.GetClientRect(&m_rectDate);
 	m_wndDate.MapWindowPoints(this, &m_rectDate);
 
@@ -379,7 +444,7 @@ void CViewBooking2::Refresh()
 	//查询待预约学生信息
 	CString strDate("");
 	strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d");
-	strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM\
+	strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, students.CLASS_TYPE, bookings.FLAG\
 				   FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
 				   WHERE BOOK_DATE='%s' AND FLAG='0' ORDER BY bookings.CLASS_ID, students.CLASS_NUM", strDate);
 	m_datas1.clear();
@@ -404,6 +469,11 @@ void CViewBooking2::Refresh()
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg))
 	{
 		ShowMsg2Output1("查询教练员信息成功");
+		int n = m_datas2.size();
+		for (int i = 0; i < n; i++)
+		{
+			m_datas2[i].push_back("0"); //最后一列为已安排课时数，每个教练早上下午晚上各有一次机会
+		}
 	}
 	else ShowMsg2Output1(strMsg);
 
@@ -451,9 +521,17 @@ LRESULT CViewBooking2::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 {
 	int flag = (int)wParam;
 
-	if (flag == 1) //update data
+	if (flag == 1) //update data from database
 	{
 		Refresh();
+	}
+	else if (flag == 2) //updata grid1
+	{
+		m_wndGrid1.GridRefresh(m_datas1.size());
+	}
+	else if (flag == 3) //updata grid2
+	{
+		m_wndGrid2.GridRefresh(m_datas2.size());
 	}
 
 	return 0;
@@ -462,18 +540,20 @@ LRESULT CViewBooking2::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 void CViewBooking2::OnBnClickedDoPrint()
 {
 	xPublic::CMyPrint printx;
-	xPublic::CLASSINFO classInfo;
-	xPublic::PRINTERINFO printInfo;
-	xPublic::SHEETINFO sheetInfo;
+	//xPublic::CLASSINFO classInfo;
+	//xPublic::PRINTERINFO printInfo;
+	//xPublic::SHEETINFO sheetInfo;
 
-	xPublic::STUDENTINFO studentInfo1("王小二", "17/3/18", 2, 1, 15);
-	printx.AddStudent(studentInfo1);
-	xPublic::STUDENTINFO studentInfo2("王小三", "17/3/18", 3, 7, 15);
-	printx.AddStudent(studentInfo2);
-
-	printx.PrinterInit(&sheetInfo, &classInfo);
+	//xPublic::STUDENTINFO studentInfo1("王小二", "17/3/18", 2, 1, 15);
+	//printx.AddStudent(studentInfo1);
+	//xPublic::STUDENTINFO studentInfo2("王小三", "17/3/18", 3, 7, 15);
+	//printx.AddStudent(studentInfo2);
+	
+	printx.PrinterInit(m_wndPrint.m_printData.m_sheetInfo, m_wndPrint.m_printData.m_classInfo);
+	printx.m_students = m_wndPrint.m_printData.m_students;
 	CString strMsg("");
 	printx.Printx(1, strMsg);
+	TRACE(strMsg);
 }
 
 
@@ -518,6 +598,13 @@ void CViewBooking2::OnPaint()
 void CViewBooking2::OnBnClickedOrder()
 {
 	int n = m_order.size();
+
+	if (n < 3) //没有学生
+	{
+		MessageBox("未选定学员！");
+		return;
+	}
+
 	for (int i = 0; i < n; i++)
 	{
 		if (m_order[i] == -1)
@@ -533,18 +620,45 @@ void CViewBooking2::OnBnClickedOrder()
 		}
 	}
 
+	//检测派工单的合法性
+
+
+
 	m_orderIndex.push_back(m_order);
 	m_wndGrid3.GridRefresh(m_orderIndex.size());
 
-	OnBnClickedResetPrint();
+
+	RestOrder(1);
+
+	m_wndPrint.m_printData.Reset();
+	m_wndPrint.Invalidate();
 }
 
-
-void CViewBooking2::OnBnClickedResetPrint()
+void CViewBooking2::RestOrder(int type)
 {
+	m_canChangeOrder = TRUE;
+	GetDlgItem(IDC_ORDER_CHANGE)->EnableWindow(FALSE);
+
+	if (type == 0)
+	{
+		int nstudent = m_order.size();
+		if (nstudent > 2) //有学员被选中，需要取消选中状态
+		{
+			for (int i = 2; i < nstudent; i++)
+				m_datas1[m_order[i]][5] = "0";
+		}
+		m_wndGrid1.GridRefresh(m_datas1.size());
+	}
+
 	m_order.clear();
 	m_order.push_back(-1);
 	m_order.push_back(-1);
+
+}
+
+void CViewBooking2::OnBnClickedResetPrint()
+{
+	RestOrder(!m_canChangeOrder);
 
 	m_wndPrint.m_printData.Reset();
 	m_wndPrint.Invalidate();
@@ -553,6 +667,12 @@ void CViewBooking2::OnBnClickedResetPrint()
 
 void CViewBooking2::OnCbnSelchangeCars()
 {
+	if (!m_canChangeOrder)
+	{
+		MessageBox("非法操作！\r\n请重置派工单或者点击修改按钮修改此派工单");
+		return;
+	}
+
 	CString strCarID;
 	int pos = m_Combo_Cars.GetCurSel();
 	m_Combo_Cars.GetLBText(pos, strCarID);
@@ -561,4 +681,22 @@ void CViewBooking2::OnCbnSelchangeCars()
 	m_wndPrint.Invalidate();
 
 	m_order[0] = pos;
+}
+
+
+void CViewBooking2::OnBnClickedOrderChange()
+{
+	CString strMsg;
+	strMsg.Format("是否确定要修改第%d条派工？（确定后无法撤销）", m_nChangingOrderIndex+1);
+	if (MessageBox(strMsg, "警告",MB_OKCANCEL) != IDOK) return;
+
+	m_canChangeOrder = TRUE;
+	GetDlgItem(IDC_ORDER_CHANGE)->EnableWindow(FALSE);
+
+	if (m_nChangingOrderIndex < m_orderIndex.size())
+	{
+		Indextable::iterator it = m_orderIndex.begin() + m_nChangingOrderIndex;
+		m_orderIndex.erase(it);
+		m_wndGrid3.GridRefresh(m_orderIndex.size());
+	}
 }

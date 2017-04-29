@@ -52,6 +52,7 @@
 #define IDC__TMP_ORDER                  1069
 #define IDC_FEE                         1070
 #define IDC_NCLASS                      1070
+#define IDC__ORDER_CHANGE               1070
 #define IDC_ID                          1071
 #define IDC_HOME                        1072
 #define IDC_BIRTH                       1073
@@ -120,6 +121,7 @@
 #define IDC_ORDERS                      1142
 #define IDC_DATE                        1143
 #define IDC_CARS                        1144
+#define IDC_ORDER_CHANGE                1145
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -170,7 +172,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        189
 #define _APS_NEXT_COMMAND_VALUE         32882
-#define _APS_NEXT_CONTROL_VALUE         1145
+#define _APS_NEXT_CONTROL_VALUE         1146
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

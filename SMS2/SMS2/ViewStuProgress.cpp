@@ -282,7 +282,6 @@ void CViewStuProgress::OnBnClickedTobook()
 		pFrame->SelectView(VIEW_BOOKING1);
 		CViewBooking1* pView = (CViewBooking1*)pFrame->GetActiveView();
 		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)&stuInfo, (LPARAM)1);
-		pView->Refresh();
 	}
 
 }
