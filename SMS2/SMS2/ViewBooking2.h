@@ -50,7 +50,7 @@ public:
 	CVirtualGridCtrl m_wndGrid3;
 	CDStrs m_datas3; //车辆编号信息
 	Indexes m_order; //记录当前派工预览的数据索引
-	Indextable m_orderIndex; //派工单总览的信息索引
+	Indextable m_orderIndexes; //派工单总览的信息索引
 	static void CALLBACK OnOrdersClick(LPVOID lParam);
 	BOOL m_canChangeOrder; //是否可以修改派工
 	int m_nChangingOrderIndex; //正在修改的派工序号
@@ -59,6 +59,15 @@ public:
 	//type 0 普通模式下的重置，清空所有状态 
 	//type 1 点击确定派工后的重置，保留学员选中状态
 	void RestOrder(int type = 0);
+
+	//选中第一个学员后对剩下学员进行刷选，以颜色区分, 以授教内容分类
+	std::vector<BYTE> m_arrClassIndex;
+
+	//判断选择的学生是否可以加入派工单
+	BOOL CanBeSelected(int nRow); 
+
+	//获取列表中所有学员的授教内容序号
+	void GetClassIndex();
 
 	void Refresh();
 

@@ -91,12 +91,18 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 				pdi->item.varValue = pThis->m_datas1[nRow][nCol];
 
 			//颜色控制
-			int cols = pThis->m_datas1[nRow].size() - 1;
-			if (pThis->m_datas1[nRow][cols] == "0") //未派工
+			//int cols = pThis->m_datas1[nRow].size() - 1;
+			if (pThis->m_datas1[nRow][5] == "0") //未派工
 			{
 				pdi->item.clrBackground = RGB(255,255,255);
+
+				pdi->item.clrText = RGB(0, 0, 0);
+				if (!pThis->CanBeSelected(nRow)) 
+				{
+					pdi->item.clrText = COLOR_TEXTNONE;
+				}
 			}
-			else if (pThis->m_datas1[nRow][cols] == "1") //已派工
+			else if (pThis->m_datas1[nRow][5] == "1") //已派工
 			{
 				pdi->item.clrBackground = COLOR_MANY;
 			}
@@ -143,11 +149,11 @@ static BOOL CALLBACK Grid3Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 
 	int nRow = pdi->item.nRow;	// Row of an item
 	int nCol = pdi->item.nCol;	// Column of an item
-	int ndata = pThis->m_orderIndex.size(); //number of data exist
+	int ndata = pThis->m_orderIndexes.size(); //number of data exist
 	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
 	{
-		std::vector<Indexes>::iterator it = pThis->m_orderIndex.begin() + nRow;
-		if (!it->empty() && nCol<pThis->m_orderIndex[nRow].size())
+		std::vector<Indexes>::iterator it = pThis->m_orderIndexes.begin() + nRow;
+		if (!it->empty() && nCol<pThis->m_orderIndexes[nRow].size())
 		{
 			int index = (*it)[nCol];
 			switch (nCol)
@@ -210,7 +216,11 @@ void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 
 		if (nStudent < 3) //最多三个学员
 		{
-			if (pThis->m_datas1[nRow][5] == "1") return; //已经派工的不能重复派工
+			//已经派工的不能重复派工
+			if (pThis->m_datas1[nRow][5] == "1") return; 
+
+			//不是同一节课的不能派工
+			if (!pThis->CanBeSelected(nRow)) return;
 
 			if (pThis->m_order.size() <= 2 + nStudent) pThis->m_order.push_back(nRow);
 			else pThis->m_order[2 + nStudent] = nRow;
@@ -225,7 +235,7 @@ void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 			CString name = pThis->m_datas1[nRow][0];
 			CString date = pThis->m_isToday ? pThis->m_tToday.Format("%y/%m/%d") : pThis->m_tTomorrow.Format("%y/%m/%d");
 			int classStep = atoi(pThis->m_datas1[nRow][3]); 
-			int classID = atoi(pThis->m_datas1[nRow][2]);
+			int classID = atoi(pThis->m_datas1[nRow][2]) - 1;
 
 			//第一个加入的学员决定派工单的授课内容
 			if (pPrint->m_classInfo.nClassID == 0)
@@ -255,7 +265,7 @@ void CALLBACK CViewBooking2::OnOrdersClick(LPVOID lParam)
 		int nRow = pRow->GetRowId();
 		pThis->m_nChangingOrderIndex = nRow;
 		pThis->RestOrder(!pThis->m_canChangeOrder);
-		Indexes indexes = pThis->m_orderIndex[nRow];
+		Indexes indexes = pThis->m_orderIndexes[nRow];
 		pThis->m_order.clear();
 		pThis->m_order = indexes;
 
@@ -347,8 +357,8 @@ void CViewBooking2::OnInitialUpdate()
 
 
 	int hw = m_wndGrid1.GetRowHeaderWidth();
-	LPCTSTR arrColumns[] = { _T("姓名"), _T("申领"), _T("预约时间"), _T("课时"), _T("培训类型") };
-	int w[5] = { 70, 80, 100, 50, 0 };
+	LPCTSTR arrColumns[] = { _T("姓名"), _T("申领"), _T("预约时间"), _T("已用课时"), _T("培训类型") };
+	int w[5] = { 60, 70, 100, 70, 0 };
 	w[4] = m_wndGrid1.GetLastColWidth(w, 5, rectGrid.Width());
 	for (int nColumn = 0; nColumn < 5; nColumn++)
 	{
@@ -443,10 +453,10 @@ void CViewBooking2::Refresh()
 
 	//查询待预约学生信息
 	CString strDate("");
-	strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d");
-	strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, students.CLASS_TYPE, bookings.FLAG\
+	strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d"); //AND FLAG='0'
+	strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME\
 				   FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
-				   WHERE BOOK_DATE='%s' AND FLAG='0' ORDER BY bookings.CLASS_ID, students.CLASS_NUM", strDate);
+				   WHERE BOOK_DATE='%s' ORDER BY bookings.CLASS_ID, students.CLASS_NUM", strDate);
 	m_datas1.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg))
 	{
@@ -455,6 +465,10 @@ void CViewBooking2::Refresh()
 	else ShowMsg2Output1(strMsg);
 
 	m_wndGrid1.GridRefresh(m_datas1.size());
+
+	//学员分类
+	GetClassIndex();
+
 
 	//查询待可预约教练员信息
 	int year = m_tToday.GetYear();
@@ -498,6 +512,13 @@ void CViewBooking2::Refresh()
 
 void CViewBooking2::OnBnClickedSelDay()
 {
+	if (m_orderIndexes.size() > 0) //派工单工作区有数据未保存
+	{
+		MessageBox("当前派工尚未保存，请保存后再选择");
+		return;
+	}
+
+
 	m_isToday = !m_isToday;
 	CString strDate;
 
@@ -523,7 +544,8 @@ LRESULT CViewBooking2::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 
 	if (flag == 1) //update data from database
 	{
-		Refresh();
+		if (m_datas1.size() == 0) //只在刚打开界面时初始化，之后保持工作状态
+			Refresh();
 	}
 	else if (flag == 2) //updata grid1
 	{
@@ -613,8 +635,8 @@ void CViewBooking2::OnBnClickedOrder()
 
 			CString strMsg;
 			TRACE("=============\r\n");
-			for (int n = 0; n < m_order.size(); n++)
-				TRACE("[%d]%d\r\n", n, m_order[n]);
+			for (int nn = 0; nn < m_order.size(); nn++)
+				TRACE("[%d]%d\r\n", nn, m_order[nn]);
 			TRACE("=============\r\n");
 			return;
 		}
@@ -622,16 +644,66 @@ void CViewBooking2::OnBnClickedOrder()
 
 	//检测派工单的合法性
 
+	//上传数据库
+	int nstu = n - 2;
+	for (int i = 0; i < nstu; i++)
+	{
+		CString strStudent = m_datas1[m_order[2 + i]][6];
+		CString strCoach = m_datas2[m_order[1]][2];
+		CString strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d");
+		CString strCar = m_datas3[m_order[0]][0];
+		CString strClassID = m_datas1[m_order[2 + i]][2];
 
+		CString strMsg, strSQL;
+		strSQL.Format("UPDATE bookings SET FLAG='1', ORDER_DATE='%s', ORDER_COACH='%s', ORDER_CAR='%s' \
+					  WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
+					  m_tToday.Format("%Y/%m/%d"), strCoach, strCar, strStudent, strDate, strClassID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+	}
 
-	m_orderIndex.push_back(m_order);
-	m_wndGrid3.GridRefresh(m_orderIndex.size());
+	m_orderIndexes.push_back(m_order);
+	m_wndGrid3.GridRefresh(m_orderIndexes.size());
 
 
 	RestOrder(1);
 
 	m_wndPrint.m_printData.Reset();
 	m_wndPrint.Invalidate();
+}
+
+BOOL CViewBooking2::CanBeSelected(int nRow)
+{
+	if (m_order.size() > 2) //已有选中学生
+	{
+		//课程内容不同的不能选
+		int selected = m_arrClassIndex[m_order[2]];
+		if (m_arrClassIndex[nRow] != selected)
+		{
+			return FALSE;
+		}
+
+		//课程时间不同的不能选
+		int classID = (atoi(m_datas1[nRow][2]) - 1) / 2;
+		int selectedID = (atoi(m_datas1[m_order[2]][2]) - 1) / 2;
+		if (classID != selectedID) return FALSE;
+	}
+	return TRUE;
+}
+
+void CViewBooking2::GetClassIndex()
+{
+	int size = m_datas1.size();
+	m_arrClassIndex.clear();
+	for (int i = 0; i < size; i++)
+	{
+		int classStep = atoi(m_datas1[i][3]);
+		CString classType = m_datas1[i][4];
+		CString cn;
+		cn.Format("c%d", classStep + 1);
+		int classIndex = xPublic::GETINT2(classType, cn, 0);
+		m_arrClassIndex.push_back(classIndex);
+	}
 }
 
 void CViewBooking2::RestOrder(int type)
@@ -647,13 +719,13 @@ void CViewBooking2::RestOrder(int type)
 			for (int i = 2; i < nstudent; i++)
 				m_datas1[m_order[i]][5] = "0";
 		}
-		m_wndGrid1.GridRefresh(m_datas1.size());
 	}
 
 	m_order.clear();
 	m_order.push_back(-1);
 	m_order.push_back(-1);
 
+	m_wndGrid1.GridRefresh(m_datas1.size());
 }
 
 void CViewBooking2::OnBnClickedResetPrint()
@@ -693,10 +765,10 @@ void CViewBooking2::OnBnClickedOrderChange()
 	m_canChangeOrder = TRUE;
 	GetDlgItem(IDC_ORDER_CHANGE)->EnableWindow(FALSE);
 
-	if (m_nChangingOrderIndex < m_orderIndex.size())
+	if (m_nChangingOrderIndex < m_orderIndexes.size())
 	{
-		Indextable::iterator it = m_orderIndex.begin() + m_nChangingOrderIndex;
-		m_orderIndex.erase(it);
-		m_wndGrid3.GridRefresh(m_orderIndex.size());
+		Indextable::iterator it = m_orderIndexes.begin() + m_nChangingOrderIndex;
+		m_orderIndexes.erase(it);
+		m_wndGrid3.GridRefresh(m_orderIndexes.size());
 	}
 }

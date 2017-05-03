@@ -52,8 +52,8 @@
 #define IDC__TMP_ORDER                  1069
 #define IDC_FEE                         1070
 #define IDC_NCLASS                      1070
-#define IDC__ORDER_CHANGE               1070
 #define IDC_ID                          1071
+#define IDC_NAME6                       1071
 #define IDC_HOME                        1072
 #define IDC_BIRTH                       1073
 #define IDC_BUTTON1073                  1073
