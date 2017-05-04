@@ -85,7 +85,23 @@ void CAddCoach::OnBnClickedAdd()
 			LOG("SQLERROR.log", strSQL);
 			LOG("SQLERROR.log", g_mysqlCon.GetError());
 		}
+
+
+		strSQL.Format("INSERT INTO coachstat (FILE_NUM) VALUES('%s')", filenum);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	}
 
 	OnOK();
+}
+
+
+BOOL CAddCoach::OnInitDialog()
+{
+	CBCGPDialog::OnInitDialog();
+
+	m_Comb_Gen.AddString("男");
+	m_Comb_Gen.AddString("女");
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// 异常:  OCX 属性页应返回 FALSE
 }

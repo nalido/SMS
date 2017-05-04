@@ -30,4 +30,5 @@ public:
 	CDateTimeCtrl m_Date_Birth;
 	
 	afx_msg void OnBnClickedAdd();
+	virtual BOOL OnInitDialog();
 };

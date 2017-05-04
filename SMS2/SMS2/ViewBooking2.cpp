@@ -929,5 +929,138 @@ void CViewBooking2::OnBnClickedOrderQuery()
 
 void CViewBooking2::OnBnClickedAutoOrder()
 {
+	//下载已派工数据
+	CString strMsg, strSQL, strDate;
+	strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d");
+	strSQL.Format("SELECT * FROM bookings WHERE BOOK_DATE='%s' AND FLAG='1'", strDate);
+
+	CDStrs datas;
+	if (!g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg))
+	{
+		MessageBox("数据库查询出错！");
+		return;
+	}
+
+
+	int iCar = 0; //最小车辆未派工序号
+	int nCar = m_datas3.size();
+	BYTE* carStat = new BYTE[nCar * 2 + 1]; //偶数位 早上的状态， 奇数位：下午的状态
+	memset(carStat, 0, nCar * 2 + 1);
+	int iCoa = 0; //最小未派工教练序号
+	int nCoa = m_datas2.size();
+	BYTE* coaStat = new BYTE[nCoa * 2 + 1];
+	memset(coaStat, 0, nCoa * 2 + 1);
+	int iStu = 0; //最小未派工学员序号
+	int nStu = m_datas1.size();
 	
+	int size = datas.size();
+	for (int i = 0; i < size; i++)
+	{
+		CStrs order = datas[i];
+
+		int index = (atoi(order[2])-1) / 2; //上午或者下午
+
+		CString strCar = order[6];
+		for (int r = 0; r < nCar; r++)
+		{
+			if (m_datas3[r][0] == strCar)
+			{
+				carStat[r*2 + index] = 1;
+				break;
+			}
+		}
+
+		CString strCoa = order[5];
+		for (int r = 0; r < nCoa; r++)
+		{
+			if (m_datas2[r][2] == strCoa)
+			{
+				coaStat[r * 2 + index] = 1;
+				break;
+			}
+		}
+	}
+
+	//开始自动派工
+	for (; iStu < nStu; iStu++)
+	{
+		if (m_datas1[iStu][5] == "1") //已派工
+		{
+			continue;
+		}
+
+		//清空指令缓存
+		RestOrder(!m_canChangeOrder);
+
+		//选定第一个学生
+		m_datas1[iStu][5] = "1";
+		m_order.push_back(iStu);
+
+		//确定上下午
+		CString strClassID = m_datas1[iStu][2];
+		int classIndex = (atoi(strClassID)-1) / 2;
+
+		//添加车辆
+		for (; iCar < nCar; iCar++)
+		{
+			if (carStat[iCar * 2 + classIndex] == 1) continue; //车辆已派工
+
+			carStat[iCar * 2 + classIndex] = 1;
+			m_order[0] = iCar;
+			break;
+		}
+		if (m_order[0] == -1) //未找到有效车辆
+		{
+			MessageBox("可派工车辆不足！停止自动派工。");
+			RestOrder(!m_canChangeOrder);
+			return;
+		}
+
+		//添加教练
+		for (; iCoa < nCoa; iCoa++)
+		{
+			if (coaStat[iCoa * 2 + classIndex] == 1) continue; //教练已派工
+
+			coaStat[iCoa * 2 + classIndex] = 1;
+			m_order[1] = iCoa;
+			break;
+		}
+		if (m_order[1] == -1) //未找到有效教练员
+		{
+			MessageBox("无可派工教练员！停止自动派工。");
+			RestOrder(!m_canChangeOrder);
+			return;
+		}
+
+		//添加第二个学员
+		for (int t = iStu + 1; t < nStu; t++)
+		{
+			if (m_datas1[t][5] == "1") continue; //已派工
+
+			//不是同一节课的不能派工
+			if (!CanBeSelected(t)) continue;
+
+			m_datas1[t][5] = "1";
+			m_order.push_back(t);
+			break;
+		}
+
+		//确认派工
+		CString strLog;
+		LOG("AutoOrder.log", "new order:");
+		for (int nn = 0; nn < m_order.size(); nn++)
+		{
+			strLog.Format("[%d]%d\r\n", nn, m_order[nn]);
+			LOG("AutoOrder.log", strLog, 0);
+		}
+		OnBnClickedOrder();
+
+
+		
+	}
+
+	if (coaStat != NULL)
+		delete[] coaStat; coaStat = NULL;
+	if (carStat != NULL)
+		delete[] carStat; carStat = NULL;
 }

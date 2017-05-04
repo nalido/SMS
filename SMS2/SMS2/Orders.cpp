@@ -83,12 +83,12 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		std::vector<CStrs>::iterator it = pThis->m_datas1.begin() + nRow;
 		if (!it->empty())
 		{
-			if (nCol == 1) //课程时间
+			if (nCol == 2) //课程时间
 			{
 				int nClass = atoi(pThis->m_datas1[nRow][nCol]) - 1;
 				pdi->item.varValue = GetClassTime(nClass);
 			}
-			else if (nCol == 5) //预约完成情况
+			else if (nCol == 6) //预约完成情况
 			{
 				if (pThis->m_datas1[nRow][nCol] == "1")
 					pdi->item.varValue = "已派工，等待训练";
@@ -99,15 +99,15 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 				pdi->item.varValue = pThis->m_datas1[nRow][nCol];
 
 			//颜色控制
-			CString strOrderDate = pThis->m_datas1[nRow][0];
-			if (strOrderDate < pThis->m_strToday)
+			CString strBookDate = pThis->m_datas1[nRow][1];
+			if (strBookDate < pThis->m_strToday)
 			{
-				if (pThis->m_datas1[nRow][5] < "2") //未完成训练
+				if (pThis->m_datas1[nRow][6] < "2") //未完成训练
 				{
 					pdi->item.clrBackground = COLOR_LITTLE;
-					if (nCol == 5) pdi->item.varValue = "已派工，缺席训练";
+					if (nCol == 6) pdi->item.varValue = "已派工，缺席训练";
 				}
-				else if (pThis->m_datas1[nRow][5] == "2") //已完成训练
+				else if (pThis->m_datas1[nRow][6] == "2") //已完成训练
 				{
 					pdi->item.clrBackground = COLOR_MANY;
 				}
@@ -142,15 +142,15 @@ BOOL COrders::OnInitDialog()
 	m_wndGrid1.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 	m_wndGrid1.SetReadOnly();
 	m_wndGrid1.SetWholeRowSel();
-	m_wndGrid1.SetSingleSel(); //只能选一个
+	//m_wndGrid1.SetSingleSel(); //只能选一个
 	m_wndGrid1.EnableRowHeader(TRUE);
 	m_wndGrid1.EnableLineNumbers();
 
 
-	LPCTSTR arrColumns[] = { _T("派工日期"), _T("训练时间"), _T("车辆编号"), _T("教练"), _T("学生"), _T("完成情况") };
+	LPCTSTR arrColumns[] = { _T("派工日期"), _T("训练日期"), _T("训练时间"), _T("车辆编号"), _T("教练"), _T("学生"), _T("完成情况") };
 	int hw = m_wndGrid1.GetRowHeaderWidth() * 2 / 3; //行头宽度
-	int w = (rectGrid.Width()-hw) / 6;
-	for (int nColumn = 0; nColumn < 6; nColumn++)
+	int w = (rectGrid.Width()-hw) / 7;
+	for (int nColumn = 0; nColumn < 7; nColumn++)
 	{
 		m_wndGrid1.InsertColumn(nColumn, arrColumns[nColumn], w);
 		m_wndGrid1.SetColumnAlign(nColumn, HDF_CENTER);
@@ -178,13 +178,13 @@ void COrders::OnBnClickedQuery()
 	m_Date_End.GetWindowText(dateE);
 
 	CString strMsg, strSQL;//bookings.ORDER_COACH
-	strSQL.Format("SELECT bookings.ORDER_DATE, bookings.CLASS_ID, bookings.ORDER_CAR, coachinfo.SName\
+	strSQL.Format("SELECT bookings.ORDER_DATE, bookings.BOOK_DATE, bookings.CLASS_ID, bookings.ORDER_CAR, coachinfo.SName\
 				  	, students.SNAME, bookings.FLAG, bookings.FILE_NAME\
 					FROM bookings \
 					inner join students ON bookings.FILE_NAME = students.FILE_NAME \
 					inner join coachinfo ON bookings.ORDER_COACH = coachinfo.FILE_NUM\
 					WHERE ORDER_DATE>='%s' AND ORDER_DATE<='%s' \
-					ORDER BY bookings.ORDER_DATE, bookings.CLASS_ID, bookings.ORDER_CAR",
+					ORDER BY bookings.ORDER_DATE, bookings.BOOK_DATE, bookings.CLASS_ID, bookings.ORDER_CAR",
 					dateS, dateE);
 	m_datas1.clear();
 	g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg);
@@ -196,24 +196,33 @@ void COrders::OnBnClickedQuery()
 
 void COrders::OnBnClickedReset()
 {
-	CBCGPGridRow* pRow = m_wndGrid1.GetCurSel();
-	if (pRow != NULL)
+	//CBCGPGridRow* pRow = m_wndGrid1.GetCurSel();
+	//if (pRow != NULL)
+	int rows = m_datas1.size() - 1;
+	for (int nRow = rows; nRow >= 0; nRow --)
 	{
-		int nRow = pRow->GetRowId();
+		//int nRow = pRow->GetRowId();
+		if (!m_wndGrid1.IsRowSelected(nRow)) continue;
 
-		CString strStudent = m_datas1[nRow][6];
-		CString strClassID = m_datas1[nRow][1];
-		CString strOrderDate = m_datas1[nRow][0];
+		CString strBookDate = m_datas1[nRow][1];
+		if (strBookDate < m_strToday)
+		{
+			MessageBox("今天之前的派工无法取消，请手动添加临时派工");
+			return;
+		}
+
+		CString strStudent = m_datas1[nRow][7];
+		CString strClassID = m_datas1[nRow][2];
 
 		CString strMsg, strSQL;
 		strSQL.Format("UPDATE bookings SET FLAG='0', ORDER_DATE='0', ORDER_COACH='0', ORDER_CAR='0' \
-					    WHERE FILE_NAME='%s' AND ORDER_DATE='%s' AND CLASS_ID='%s'",
-						strStudent, strOrderDate, strClassID);
+					    WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
+						strStudent, strBookDate, strClassID);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
 
 		CDStrs::iterator it = m_datas1.begin() + nRow;
 		m_datas1.erase(it);
-		m_wndGrid1.GridRefresh(m_datas1.size());
 	}
+	m_wndGrid1.GridRefresh(m_datas1.size());
 }
