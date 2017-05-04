@@ -294,7 +294,7 @@ void CALLBACK CViewBooking2::OnOrdersClick(LPVOID lParam)
 
 		CSheetCtrl* pPrint = &pThis->m_wndPrint;
 		pPrint->m_printData.Reset();
-		pPrint->Invalidate();
+		//pPrint->Invalidate();
 
 		pPrint->m_sheetInfo.strCarID = pThis->m_datas3[indexes[0]][0];
 		pPrint->m_sheetInfo.strCoach = pThis->m_datas2[indexes[1]][0];
@@ -562,23 +562,44 @@ void CViewBooking2::Refresh(int nID)
 				for (int i = 0; i < nStudent; i++)
 				{
 					int stuRow = indexes[i + 2];
-					m_datas1[stuRow][5] == "0";
+					
+					if (m_datas1[stuRow][5] == "1") //同一张派工单里的学员都要复位
+					{
+						CString strStudent = m_datas1[stuRow][6];
+						CString strClassID = m_datas1[stuRow][2];
+						CString strBookDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d");
+
+						CString strMsg, strSQL;
+						strSQL.Format("UPDATE bookings SET FLAG='0', ORDER_DATE='0', ORDER_COACH='0', ORDER_CAR='0' \
+									  	WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
+										strStudent, strBookDate, strClassID);
+						g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+						ShowMsg2Output1(strMsg);
+						m_datas1[stuRow][5] = "0";
+					}
 				}
 				Indextable::iterator it = m_orderIndexes.begin() + nRow;
 				m_orderIndexes.erase(it);
 			}
 		}
 		m_wndGrid3.GridRefresh(m_orderIndexes.size());
+		m_wndGrid1.GridRefresh(m_datas1.size());
 	}
 }
 
 void CViewBooking2::OnBnClickedSelDay()
 {
-	//if (m_orderIndexes.size() > 0) //派工单工作区有数据未保存
-	//{
-	//	MessageBox("当前派工尚未保存，请保存后再选择");
-	//	return;
-	//}
+	if (m_orderIndexes.size() > 0) //派工单工作区有数据未保存
+	{
+		if (MessageBox("是否清空当前派工单总览，进入新的派工作业？\r\n（请确认当前派工单是否已经打印）", "提示", MB_OKCANCEL) == IDOK)
+		{
+			OnBnClickedResetPrint();
+			m_orderIndexes.clear();
+			m_wndGrid3.GridRefresh(m_orderIndexes.size());
+		}
+		else
+			return;
+	}
 
 
 	m_isToday = !m_isToday;
@@ -982,6 +1003,8 @@ void CViewBooking2::OnBnClickedAutoOrder()
 	}
 
 	//开始自动派工
+	//清空指令缓存
+	RestOrder(!m_canChangeOrder);
 	for (; iStu < nStu; iStu++)
 	{
 		if (m_datas1[iStu][5] == "1") //已派工
@@ -989,8 +1012,6 @@ void CViewBooking2::OnBnClickedAutoOrder()
 			continue;
 		}
 
-		//清空指令缓存
-		RestOrder(!m_canChangeOrder);
 
 		//选定第一个学生
 		m_datas1[iStu][5] = "1";
@@ -1001,35 +1022,67 @@ void CViewBooking2::OnBnClickedAutoOrder()
 		int classIndex = (atoi(strClassID)-1) / 2;
 
 		//添加车辆
-		for (; iCar < nCar; iCar++)
+		for (; iCar < nCar; )
 		{
-			if (carStat[iCar * 2 + classIndex] == 1) continue; //车辆已派工
+			if (carStat[iCar * 2 + classIndex] == 1)
+			{
+				iCar++;  
+				continue; //车辆已派工
+			}
 
 			carStat[iCar * 2 + classIndex] = 1;
 			m_order[0] = iCar;
+			iCar++;
 			break;
 		}
-		if (m_order[0] == -1) //未找到有效车辆
+		if (m_order[0] == -1) //按顺序未找到有效车辆，则重头选择可用车辆
 		{
-			MessageBox("可派工车辆不足！停止自动派工。");
-			RestOrder(!m_canChangeOrder);
-			return;
+			for (int tm = 0; tm < nCar; tm++)
+			{
+				if (carStat[tm * 2 + classIndex] == 1) continue; //车辆已派工
+
+				carStat[tm * 2 + classIndex] = 1;
+				m_order[0] = tm;
+				break;
+			}
+			if (m_order[0] == -1) //第二遍仍为找到有效值，说明量不足
+			{
+				MessageBox("可派工车辆不足！停止自动派工。");
+				RestOrder(!m_canChangeOrder);
+				return;
+			}
 		}
 
 		//添加教练
-		for (; iCoa < nCoa; iCoa++)
+		for (; iCoa < nCoa; )
 		{
-			if (coaStat[iCoa * 2 + classIndex] == 1) continue; //教练已派工
+			if (coaStat[iCoa * 2 + classIndex] == 1)
+			{
+				iCoa++;
+				continue; //教练已派工
+			}
 
 			coaStat[iCoa * 2 + classIndex] = 1;
-			m_order[1] = iCoa;
+			m_order[1] = iCoa; 
+			iCoa++;
 			break;
 		}
-		if (m_order[1] == -1) //未找到有效教练员
+		if (m_order[1] == -1) //按顺序未找到有效教练员，则重头选择可用教练，第二次优先选择KPI高的教练
 		{
-			MessageBox("无可派工教练员！停止自动派工。");
-			RestOrder(!m_canChangeOrder);
-			return;
+			for (int tm = 0; tm < nCoa; tm++)
+			{
+				if (coaStat[tm * 2 + classIndex] == 1) continue; //教练已派工
+
+				coaStat[tm * 2 + classIndex] = 1;
+				m_order[1] = tm;
+				break;
+			}
+			if (m_order[1] == -1)
+			{
+				MessageBox("无可派工教练员！停止自动派工。");
+				RestOrder(!m_canChangeOrder);
+				return;
+			}
 		}
 
 		//添加第二个学员

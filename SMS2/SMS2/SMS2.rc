@@ -297,6 +297,7 @@ BEGIN
     LTEXT           "起始时间：",IDC_STATIC,13,16,41,10
     LTEXT           "终止时间：",IDC_STATIC,133,16,41,10
     PUSHBUTTON      "重新派工",IDC_RESET,329,13,56,15
+    PUSHBUTTON      "打印派工单",IDC_PRINT,403,13,56,15
 END
 
 

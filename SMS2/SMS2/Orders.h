@@ -27,6 +27,7 @@ public:
 	CStatic m_wndGridLocation1;
 	CVirtualGridCtrl m_wndGrid1;
 	CDStrs m_datas1;
+	std::vector<int> m_dataPrint; //记录是否已经打印过
 
 	//
 	CDateTimeCtrl m_Date_Start;
@@ -36,4 +37,5 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedQuery();
 	afx_msg void OnBnClickedReset();
+	afx_msg void OnBnClickedPrint();
 };

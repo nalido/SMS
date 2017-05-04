@@ -38,6 +38,7 @@
 #define IDC_BUTTON4                     1056
 #define IDC_RESET                       1056
 #define IDC_BUTTON5                     1057
+#define IDC_RESET2                      1057
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061

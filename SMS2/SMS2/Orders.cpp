@@ -37,6 +37,7 @@ void COrders::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(COrders, CBCGPDialog)
 	ON_BN_CLICKED(IDC_QUERY, &COrders::OnBnClickedQuery)
 	ON_BN_CLICKED(IDC_RESET, &COrders::OnBnClickedReset)
+	ON_BN_CLICKED(IDC_PRINT, &COrders::OnBnClickedPrint)
 END_MESSAGE_MAP()
 
 
@@ -110,6 +111,13 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 				else if (pThis->m_datas1[nRow][6] == "2") //ÒÑÍê³ÉÑµÁ·
 				{
 					pdi->item.clrBackground = COLOR_MANY;
+				}
+			}
+			else
+			{
+				if (pThis->m_dataPrint[nRow] == 1)
+				{
+					pdi->item.clrText = COLOR_MANY;
 				}
 			}
 		}
@@ -190,7 +198,15 @@ void COrders::OnBnClickedQuery()
 	g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg);
 	ShowMsg2Output1(strMsg);
 
-	m_wndGrid1.GridRefresh(m_datas1.size());
+	int size = m_datas1.size();
+
+	m_dataPrint.clear();
+	for (int i = 0; i < size; i++)
+	{
+		m_dataPrint.push_back(0);
+	}
+
+	m_wndGrid1.GridRefresh(size);
 }
 
 
@@ -225,4 +241,40 @@ void COrders::OnBnClickedReset()
 		m_datas1.erase(it);
 	}
 	m_wndGrid1.GridRefresh(m_datas1.size());
+}
+
+
+void COrders::OnBnClickedPrint()
+{
+	CBCGPGridRow* pRow = m_wndGrid1.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+
+		m_dataPrint[nRow] = 1;
+		xPublic::CMyPrint printx;
+
+
+		CString strCar = m_datas1[nRow][3];
+		CString strBookDate = m_datas1[nRow][1];
+		int  nClass = (atoi(m_datas1[nRow][2]) - 1) / 2;
+
+		int rows = m_datas1.size();
+		for (int i = 0; i < rows; i++)
+		{
+			CString strCar1 = m_datas1[i][3];
+			CString strBookDate1 = m_datas1[i][1];
+			int nClass1 = (atoi(m_datas1[i][2]) - 1) / 2;
+			if (i != nRow && strCar == strCar1 && strBookDate == strBookDate1 && nClass == nClass1)
+			{
+				CString strMsg;
+				strMsg.Format("%d-%d", nRow, i);
+				ShowMsg2Output1(strMsg);
+				m_dataPrint[i] = 1;
+				continue;
+			}
+		}
+
+		m_wndGrid1.GridRefresh(m_datas1.size());
+	}
 }
