@@ -51,9 +51,5 @@ void CSheetCtrl::OnPaint()
 
 		m_printData.m_isInit = TRUE;
 	}
-	else
-	{
-		m_printData.DrawTrainSheet();
-		//m_printData.PrintTrainSheet(1);
-	}
+	m_printData.DrawTrainSheet();
 }

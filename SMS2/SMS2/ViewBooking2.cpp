@@ -6,6 +6,8 @@
 #include "ViewBooking2.h"
 #include "MainFrm.h"
 #include "xPublic\MyPrint.h"
+#include "OrderDetail.h"
+#include "Orders.h"
 
 
 // CViewBooking2
@@ -46,6 +48,8 @@ BEGIN_MESSAGE_MAP(CViewBooking2, CBCGPFormView)
 	ON_BN_CLICKED(IDC_RESET_PRINT, &CViewBooking2::OnBnClickedResetPrint)
 	ON_CBN_SELCHANGE(IDC_CARS, &CViewBooking2::OnCbnSelchangeCars)
 	ON_BN_CLICKED(IDC_ORDER_CHANGE, &CViewBooking2::OnBnClickedOrderChange)
+	ON_BN_CLICKED(IDC_ORDER_QUERY, &CViewBooking2::OnBnClickedOrderQuery)
+	ON_BN_CLICKED(IDC_AUTO_ORDER, &CViewBooking2::OnBnClickedAutoOrder)
 END_MESSAGE_MAP()
 
 
@@ -179,6 +183,25 @@ static BOOL CALLBACK Grid3Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 }
 
 
+void CALLBACK CViewBooking2::OnGrid1DbClick(LPVOID lParam)
+{
+	CViewBooking2* pThis = (CViewBooking2*)lParam;
+
+	CBCGPGridRow* pRow = pThis->m_wndGrid1.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+
+		CString student = pThis->m_datas1[nRow][6];
+		CString classID = pThis->m_datas1[nRow][2];
+		CString bookDate = pThis->m_isToday ? pThis->m_tToday.Format("%Y/%m/%d") : pThis->m_tTomorrow.Format("%Y/%m/%d");
+
+		COrders dlg;
+		dlg.m_strToday = pThis->m_tToday.Format("%Y/%m/%d");
+		dlg.DoModal();
+	}
+}
+
 
 void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 {
@@ -284,7 +307,7 @@ void CALLBACK CViewBooking2::OnOrdersClick(LPVOID lParam)
 			CString name = pThis->m_datas1[stuRow][0];
 			CString date = pThis->m_isToday ? pThis->m_tToday.Format("%y/%m/%d") : pThis->m_tTomorrow.Format("%y/%m/%d");
 			int classStep = atoi(pThis->m_datas1[stuRow][3]);
-			int classID = atoi(pThis->m_datas1[stuRow][2]);
+			int classID = atoi(pThis->m_datas1[stuRow][2]) - 1;
 
 			//第一个加入的学员决定派工单的授课内容
 			if (pPrint->m_classInfo.nClassID == 0)
@@ -369,7 +392,7 @@ void CViewBooking2::OnInitialUpdate()
 	//注册虚拟列表回调函数
 	m_wndGrid1.EnableVirtualMode(Grid1Callback, (LPARAM)this);
 	m_wndGrid1.SetCallBack_Clk(OnGrid1Click);
-
+	m_wndGrid1.SetCallBack_DblClk(OnGrid1DbClick);
 
 	//Grid2
 	m_wndGridLocation2.GetClientRect(&rectGrid);
@@ -561,21 +584,82 @@ LRESULT CViewBooking2::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 
 void CViewBooking2::OnBnClickedDoPrint()
 {
-	xPublic::CMyPrint printx;
-	//xPublic::CLASSINFO classInfo;
-	//xPublic::PRINTERINFO printInfo;
-	//xPublic::SHEETINFO sheetInfo;
+	int printType = 0; //打印类型
 
-	//xPublic::STUDENTINFO studentInfo1("王小二", "17/3/18", 2, 1, 15);
-	//printx.AddStudent(studentInfo1);
-	//xPublic::STUDENTINFO studentInfo2("王小三", "17/3/18", 3, 7, 15);
-	//printx.AddStudent(studentInfo2);
+	CString strMsg;
+	strMsg.Format("是否打印全部派工？（点击是打印全部，否打印当前选择）");
+	switch (MessageBox(strMsg, "打印类型选择", MB_YESNOCANCEL))
+	{
+	case IDYES:
+		printType = 2;
+		break;
+	case IDNO:
+		printType = 1;
+		break;
+	case IDCANCEL:
+	default:
+		return;
+	}
+
+	xPublic::CMyPrint printx;
+	xPublic::CLASSINFO classInfo;
+	//xPublic::PRINTERINFO printInfo;
+	xPublic::SHEETINFO sheetInfo;
+
 	
-	printx.PrinterInit(m_wndPrint.m_printData.m_sheetInfo, m_wndPrint.m_printData.m_classInfo);
-	printx.m_students = m_wndPrint.m_printData.m_students;
-	CString strMsg("");
-	printx.Printx(1, strMsg);
-	TRACE(strMsg);
+	//打印单个
+	if (printType == 1)
+	{
+		printx.PrinterInit(m_wndPrint.m_printData.m_sheetInfo, m_wndPrint.m_printData.m_classInfo);
+		printx.m_students = m_wndPrint.m_printData.m_students;
+		CString strMsg("");
+		printx.Printx(1, strMsg);
+		TRACE(strMsg);
+		OnBnClickedOrder();
+	}
+	else if (printType == 2)
+	{
+		//打印多个
+		printx.PrinterInit(&sheetInfo, &classInfo);
+		int size = m_orderIndexes.size() - 1;
+		for (int nRow = size; nRow >= 0; nRow--)
+		{
+			Indexes indexes = m_orderIndexes[nRow];
+
+			printx.Reset();
+
+			sheetInfo.strCarID = m_datas3[indexes[0]][0];
+			sheetInfo.strCoach = m_datas2[indexes[1]][0];
+			sheetInfo.strCoachID = m_datas2[indexes[1]][2];
+
+			int nStudent = indexes.size() - 2;
+			for (int i = 0; i < nStudent; i++)
+			{
+				int stuRow = indexes[i + 2];
+				CString name = m_datas1[stuRow][0];
+				CString date = m_isToday ? m_tToday.Format("%y/%m/%d") : m_tTomorrow.Format("%y/%m/%d");
+				int classStep = atoi(m_datas1[stuRow][3]);
+				int classID = atoi(m_datas1[stuRow][2]) - 1;
+
+				//第一个加入的学员决定派工单的授课内容
+				if (classInfo.nClassID == 0)
+				{
+					CString classType = m_datas1[nRow][4];
+					CString cn;
+					cn.Format("c%d", classStep + 1);
+					classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
+				}
+
+				xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
+				printx.AddStudent(student);
+			}
+			printx.m_printerInfo.nCopy = 1;
+			printx.Printx(1, strMsg);
+			TRACE(strMsg);
+		}
+	}
+
+	//
 }
 
 
@@ -765,10 +849,45 @@ void CViewBooking2::OnBnClickedOrderChange()
 	m_canChangeOrder = TRUE;
 	GetDlgItem(IDC_ORDER_CHANGE)->EnableWindow(FALSE);
 
+	//更新数据库
+	int n = m_order.size();
+	int nstu = n - 2;
+	for (int i = 0; i < nstu; i++)
+	{
+		CString strStudent = m_datas1[m_order[2 + i]][6];
+		CString strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d");
+		CString strClassID = m_datas1[m_order[2 + i]][2];
+
+		CString strMsg, strSQL;
+		strSQL.Format("UPDATE bookings SET FLAG='0', ORDER_DATE='0', ORDER_COACH='0', ORDER_CAR='0' \
+					  					  WHERE FILE_NAME='%s' AND ORDER_DATE='%s' AND CLASS_ID='%s'",
+										  strStudent, strDate, strClassID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+	}
+
+
+
 	if (m_nChangingOrderIndex < m_orderIndexes.size())
 	{
 		Indextable::iterator it = m_orderIndexes.begin() + m_nChangingOrderIndex;
 		m_orderIndexes.erase(it);
 		m_wndGrid3.GridRefresh(m_orderIndexes.size());
 	}
+}
+
+
+void CViewBooking2::OnBnClickedOrderQuery()
+{
+	COrders dlg;
+	dlg.m_strToday = m_tToday.Format("%Y/%m/%d");
+	dlg.DoModal();
+
+	Refresh();
+}
+
+
+void CViewBooking2::OnBnClickedAutoOrder()
+{
+	
 }

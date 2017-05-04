@@ -117,6 +117,12 @@
     <ClInclude Include="SheetCtrl.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="OrderDetail.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Orders.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -207,6 +213,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SheetCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OrderDetail.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Orders.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

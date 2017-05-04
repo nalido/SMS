@@ -41,6 +41,7 @@ public:
 	CVirtualGridCtrl m_wndGrid1;
 	CDStrs m_datas1;
 	static void CALLBACK OnGrid1Click(LPVOID lParam);
+	static void CALLBACK OnGrid1DbClick(LPVOID lParam);
 	CStatic m_wndGridLocation2;
 	CVirtualGridCtrl m_wndGrid2;
 	CDStrs m_datas2;
@@ -89,6 +90,8 @@ public:
 
 	CComboBox m_Combo_Cars;
 	afx_msg void OnCbnSelchangeCars();
+	afx_msg void OnBnClickedOrderQuery();
+	afx_msg void OnBnClickedAutoOrder();
 };
 
 
