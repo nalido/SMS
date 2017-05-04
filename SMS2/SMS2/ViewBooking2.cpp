@@ -304,6 +304,7 @@ void CALLBACK CViewBooking2::OnOrdersClick(LPVOID lParam)
 		for (int i = 0; i < nStudent; i++)
 		{
 			int stuRow = indexes[i + 2];
+
 			CString name = pThis->m_datas1[stuRow][0];
 			CString date = pThis->m_isToday ? pThis->m_tToday.Format("%y/%m/%d") : pThis->m_tTomorrow.Format("%y/%m/%d");
 			int classStep = atoi(pThis->m_datas1[stuRow][3]);
@@ -469,77 +470,115 @@ void CViewBooking2::OnInitialUpdate()
 	m_order.push_back(-1); //教练信息索引
 }
 
-void CViewBooking2::Refresh()
+void CViewBooking2::Refresh(int nID)
 {
 	CString strMsg("");
 	CString strSQL("");
 
-	//查询待预约学生信息
-	CString strDate("");
-	strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d"); //AND FLAG='0'
-	strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME\
-				   FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
-				   WHERE BOOK_DATE='%s' ORDER BY bookings.CLASS_ID, students.CLASS_NUM", strDate);
-	m_datas1.clear();
-	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg))
+	if (nID == 0 || nID == 1)//查询待预约学生信息
 	{
-		ShowMsg2Output1("查询学生信息成功");
-	}
-	else ShowMsg2Output1(strMsg);
-
-	m_wndGrid1.GridRefresh(m_datas1.size());
-
-	//学员分类
-	GetClassIndex();
-
-
-	//查询待可预约教练员信息
-	int year = m_tToday.GetYear();
-	CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
-	//半年内 超过3次请假为不合格, 超过半年按6次算
-	int th = 3;
-	if (midYear < m_tToday) th = 6;
-	strSQL.Format("select coachinfo.SName, coachinfo.GENDER, coachinfo.FILE_NUM, coachstat.PERFORMANCE from \
-				  coachstat INNER JOIN coachinfo ON coachinfo.FILE_NUM=coachstat.FILE_NUM \
-				  WHERE coachstat.LEAVE_N<'%d' ORDER BY coachstat.PERFORMANCE DESC", th);
-	m_datas2.clear();
-	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg))
-	{
-		ShowMsg2Output1("查询教练员信息成功");
-		int n = m_datas2.size();
-		for (int i = 0; i < n; i++)
+		CString strDate("");
+		strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d"); //AND FLAG='0'
+		strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME\
+					  	FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
+						WHERE BOOK_DATE='%s' ORDER BY bookings.CLASS_ID, students.CLASS_NUM", strDate);
+		m_datas1.clear();
+		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg))
 		{
-			m_datas2[i].push_back("0"); //最后一列为已安排课时数，每个教练早上下午晚上各有一次机会
+			ShowMsg2Output1("查询学生信息成功");
+		}
+		else ShowMsg2Output1(strMsg);
+
+		m_wndGrid1.GridRefresh(m_datas1.size());
+
+		//学员分类
+		GetClassIndex();
+	}
+
+	if (nID == 0 || nID == 2)//查询待可预约教练员信息
+	{
+		int year = m_tToday.GetYear();
+		CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
+		//半年内 超过3次请假为不合格, 超过半年按6次算
+		int th = 3;
+		if (midYear < m_tToday) th = 6;
+		strSQL.Format("select coachinfo.SName, coachinfo.GENDER, coachinfo.FILE_NUM, coachstat.PERFORMANCE from \
+					  	coachstat INNER JOIN coachinfo ON coachinfo.FILE_NUM=coachstat.FILE_NUM \
+						WHERE coachstat.LEAVE_N<'%d' ORDER BY coachstat.PERFORMANCE DESC", th);
+		m_datas2.clear();
+		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg))
+		{
+			ShowMsg2Output1("查询教练员信息成功");
+			int n = m_datas2.size();
+			for (int i = 0; i < n; i++)
+			{
+				m_datas2[i].push_back("0"); //最后一列为已安排课时数，每个教练早上下午晚上各有一次机会
+			}
+		}
+		else ShowMsg2Output1(strMsg);
+
+		m_wndGrid2.GridRefresh(m_datas2.size());
+	}
+
+	if (nID == 0 || nID == 3)//查询可用车辆信息
+	{
+		strSQL.Format("select CAR_ID from carinfo WHERE STATE<'5'");
+		m_datas3.clear();
+		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas3, strMsg))
+		{
+			ShowMsg2Output1("查询可用车辆信息成功");
+		}
+		else ShowMsg2Output1(strMsg);
+
+		int nCount = m_datas3.size();
+		m_Combo_Cars.ResetContent();
+		for (int i = 0; i < nCount; i++)
+		{
+			m_Combo_Cars.AddString(m_datas3[i][0]);
 		}
 	}
-	else ShowMsg2Output1(strMsg);
 
-	m_wndGrid2.GridRefresh(m_datas2.size());
-
-	//查询可用车辆信息
-	strSQL.Format("select CAR_ID from carinfo WHERE STATE<'5'");
-	m_datas3.clear();
-	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas3, strMsg))
+	if (nID == 4) //查询派工单的合法性
 	{
-		ShowMsg2Output1("查询可用车辆信息成功");
-	}
-	else ShowMsg2Output1(strMsg);
+		OnBnClickedResetPrint();
+		int size = m_orderIndexes.size() - 1;
+		for (int nRow = size; nRow >= 0; nRow--)
+		{
+			Indexes indexes = m_orderIndexes[nRow];
 
-	int nCount = m_datas3.size();
-	m_Combo_Cars.ResetContent();
-	for (int i = 0; i < nCount; i++)
-	{
-		m_Combo_Cars.AddString(m_datas3[i][0]);
+			int nStudent = indexes.size() - 2;
+			BOOL invalid = FALSE; //当前指令是否作废
+			for (int i = 0; i < nStudent; i++)
+			{
+				int stuRow = indexes[i + 2];
+				if (m_datas1[stuRow][5] == "0")
+				{
+					invalid = TRUE;
+					break;
+				}
+			}
+			if (invalid) //删除作废指令, 恢复学员选中状态
+			{
+				for (int i = 0; i < nStudent; i++)
+				{
+					int stuRow = indexes[i + 2];
+					m_datas1[stuRow][5] == "0";
+				}
+				Indextable::iterator it = m_orderIndexes.begin() + nRow;
+				m_orderIndexes.erase(it);
+			}
+		}
+		m_wndGrid3.GridRefresh(m_orderIndexes.size());
 	}
 }
 
 void CViewBooking2::OnBnClickedSelDay()
 {
-	if (m_orderIndexes.size() > 0) //派工单工作区有数据未保存
-	{
-		MessageBox("当前派工尚未保存，请保存后再选择");
-		return;
-	}
+	//if (m_orderIndexes.size() > 0) //派工单工作区有数据未保存
+	//{
+	//	MessageBox("当前派工尚未保存，请保存后再选择");
+	//	return;
+	//}
 
 
 	m_isToday = !m_isToday;
@@ -567,7 +606,7 @@ LRESULT CViewBooking2::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 
 	if (flag == 1) //update data from database
 	{
-		if (m_datas1.size() == 0) //只在刚打开界面时初始化，之后保持工作状态
+		//if (m_datas1.size() == 0) //只在刚打开界面时初始化，之后保持工作状态
 			Refresh();
 	}
 	else if (flag == 2) //updata grid1
@@ -884,6 +923,7 @@ void CViewBooking2::OnBnClickedOrderQuery()
 	dlg.DoModal();
 
 	Refresh();
+	Refresh(4);
 }
 
 

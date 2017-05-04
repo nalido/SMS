@@ -70,7 +70,7 @@ public:
 	//获取列表中所有学员的授教内容序号
 	void GetClassIndex();
 
-	void Refresh();
+	void Refresh(int nID = 0);
 
 	//派工日期选择 设置为只能选择今天或者明天
 	CTime m_tToday, m_tTomorrow;
