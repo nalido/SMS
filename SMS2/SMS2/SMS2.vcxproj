@@ -212,6 +212,7 @@
     <ClInclude Include="OrderDetail.h" />
     <ClInclude Include="Orders.h" />
     <ClInclude Include="SheetCtrl.h" />
+    <ClInclude Include="TmpOrder.h" />
     <ClInclude Include="ViewK1Exam.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MSGINFO.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="OrderDetail.cpp" />
     <ClCompile Include="Orders.cpp" />
     <ClCompile Include="SheetCtrl.cpp" />
+    <ClCompile Include="TmpOrder.cpp" />
     <ClCompile Include="ViewK1Exam.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MSGINFO.cpp" />

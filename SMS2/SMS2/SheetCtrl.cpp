@@ -14,7 +14,6 @@ BEGIN_MESSAGE_MAP(CSheetCtrl, CStatic)
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
-
 void CSheetCtrl::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
@@ -44,7 +43,6 @@ void CSheetCtrl::OnPaint()
 		m_printData.m_printerInfo.fmmDpix = mmdpix;
 		m_printData.m_printerInfo.fmmDpiy = mmdpiy;
 		m_printData.m_dcPrinter.Attach(hdc);
-
 
 		m_printData.m_classInfo = &m_classInfo;
 		m_printData.m_sheetInfo = &m_sheetInfo;

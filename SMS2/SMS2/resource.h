@@ -30,6 +30,7 @@
 #define IDB_BITMAP3                     187
 #define IDD_ORDERDETAIL                 189
 #define IDD_ORDERS                      190
+#define IDD_TMPORDER                    191
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -38,7 +39,6 @@
 #define IDC_BUTTON4                     1056
 #define IDC_RESET                       1056
 #define IDC_BUTTON5                     1057
-#define IDC_RESET2                      1057
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
@@ -126,6 +126,7 @@
 #define IDC_GRID3                       1138
 #define IDC_PRINT                       1141
 #define IDC_ORDERS                      1142
+#define IDC_PREPRINT                    1142
 #define IDC_DATE                        1143
 #define IDC_CARS                        1144
 #define IDC_ORDER_CHANGE                1145
@@ -134,6 +135,11 @@
 #define IDC_DATETIMEPICKER1             1147
 #define IDC_AUTO_ORDER                  1147
 #define IDC_DATETIMEPICKER2             1148
+#define IDC_CHECK1                      1149
+#define IDC_COMBO1                      1150
+#define IDC_COMBO2                      1151
+#define IDC_COMBO3                      1152
+#define IDC_COMBO4                      1153
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -182,9 +188,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        191
+#define _APS_NEXT_RESOURCE_VALUE        192
 #define _APS_NEXT_COMMAND_VALUE         32882
-#define _APS_NEXT_CONTROL_VALUE         1148
+#define _APS_NEXT_CONTROL_VALUE         1151
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

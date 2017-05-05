@@ -134,5 +134,6 @@ namespace xPublic{
 		void DrawTextExx(CString str, CRect& rect); //自动分行的文字输出
 		void FillPieEx(COLORREF color, CRect& rect, STUDENTINFO* student); //填充扇形，扇形面积为nUsed/nTotal
 
+		void operator=(CMyPrint& print); //重载运算符
 	};
 }//xPublic

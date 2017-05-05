@@ -45,6 +45,13 @@ namespace xPublic{
 		}
 	}
 
+	void CMyPrint::operator=(CMyPrint& print)
+	{
+		m_classInfo = print.m_classInfo;
+		m_sheetInfo = print.m_sheetInfo;
+		m_students = print.m_students;
+	}
+
 	void CMyPrint::PrinterInit(SHEETINFO* SheetInfo, CLASSINFO* ClassInfo)
 	{
 		m_nMaxPage = 1;
@@ -602,12 +609,18 @@ namespace xPublic{
 	{
 		m_students.clear();
 
-		m_classInfo->arrClassText.clear();
-		m_classInfo->nClassID = 0;
+		if (m_classInfo != NULL)
+		{
+			m_classInfo->arrClassText.clear();
+			m_classInfo->nClassID = 0;
+		}
 
-		m_sheetInfo->strTitle = "未定义";
-		m_sheetInfo->strCarID = "---";
-		m_sheetInfo->strCoach = "---";
-		m_sheetInfo->strCoachID = "---";
+		if (m_sheetInfo != NULL)
+		{
+			m_sheetInfo->strTitle = "未定义";
+			m_sheetInfo->strCarID = "---";
+			m_sheetInfo->strCoach = "---";
+			m_sheetInfo->strCoachID = "---";
+		}
 	}
 }//xPublic

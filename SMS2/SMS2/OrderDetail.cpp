@@ -52,7 +52,12 @@ BOOL COrderDetail::OnInitDialog()
 
 void COrderDetail::OnBnClickedPrint()
 {
-	m_wndPrint.Invalidate();
+	xPublic::CMyPrint printx;
+	printx.PrinterInit(&m_wndPrint.m_sheetInfo, &m_wndPrint.m_classInfo);
+	printx.m_students = m_wndPrint.m_printData.m_students;
+	CString strMsg;
+	printx.Printx(1, strMsg);
+	OnOK(); //´òÓ¡ÍêÍË³ö
 }
 
 

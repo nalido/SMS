@@ -267,6 +267,8 @@ void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 				CString cn;
 				cn.Format("c%d", classStep + 1);
 				pPrint->m_classInfo.nClassID =  xPublic::GETINT2(classType, cn, 0);
+
+				pPrint->m_sheetInfo.strClassType = classType;
 			}
 			xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
 			pPrint->m_printData.AddStudent(student);
@@ -662,9 +664,6 @@ void CViewBooking2::OnBnClickedDoPrint()
 	}
 
 	xPublic::CMyPrint printx;
-	xPublic::CLASSINFO classInfo;
-	//xPublic::PRINTERINFO printInfo;
-	xPublic::SHEETINFO sheetInfo;
 
 	
 	//打印单个
@@ -680,6 +679,9 @@ void CViewBooking2::OnBnClickedDoPrint()
 	else if (printType == 2)
 	{
 		//打印多个
+		xPublic::CLASSINFO classInfo;
+		xPublic::SHEETINFO sheetInfo;
+		sheetInfo.strData = m_tToday.Format("%Y年%m月%d日制");
 		printx.PrinterInit(&sheetInfo, &classInfo);
 		int size = m_orderIndexes.size() - 1;
 		for (int nRow = size; nRow >= 0; nRow--)
@@ -797,11 +799,15 @@ void CViewBooking2::OnBnClickedOrder()
 		CString strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d");
 		CString strCar = m_datas3[m_order[0]][0];
 		CString strClassID = m_datas1[m_order[2 + i]][2];
+		CString strClassNum = m_datas1[m_order[2 + i]][3];
+		CString strClassType = m_datas1[m_order[2 + i]][4];
 
 		CString strMsg, strSQL;
-		strSQL.Format("UPDATE bookings SET FLAG='1', ORDER_DATE='%s', ORDER_COACH='%s', ORDER_CAR='%s' \
+		strSQL.Format("UPDATE bookings SET FLAG='1', ORDER_DATE='%s', ORDER_COACH='%s', ORDER_CAR='%s', \
+					  CLASS_NUM='%s', CLASS_TYPE='%s'\
 					  WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
-					  m_tToday.Format("%Y/%m/%d"), strCoach, strCar, strStudent, strDate, strClassID);
+					  m_tToday.Format("%Y/%m/%d"), strCoach, strCar, strClassNum, strClassType
+					  , strStudent, strDate, strClassID);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
 	}
@@ -1107,9 +1113,6 @@ void CViewBooking2::OnBnClickedAutoOrder()
 			LOG("AutoOrder.log", strLog, 0);
 		}
 		OnBnClickedOrder();
-
-
-		
 	}
 
 	if (coaStat != NULL)

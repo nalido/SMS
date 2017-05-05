@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 #include "MainFrm.h"
-#include "xPublic\MyPrint.h"
+#include "OrderDetail.h"
 
 // COrders 对话框
 
@@ -30,14 +30,18 @@ void COrders::DoDataExchange(CDataExchange* pDX)
 	CBCGPDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_GRID1, m_wndGridLocation1);
 	DDX_Control(pDX, IDC_DATETIMEPICKER1, m_Date_Start);
-	DDX_Control(pDX, IDC_DATETIMEPICKER2, m_Date_End);
+	DDX_Control(pDX, IDC_DATETIMEPICKER2, m_Date_End); 
+	DDX_Check(pDX, IDC_CHECK1, m_enableMultiSel);
 }
 
 
 BEGIN_MESSAGE_MAP(COrders, CBCGPDialog)
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_QUERY, &COrders::OnBnClickedQuery)
 	ON_BN_CLICKED(IDC_RESET, &COrders::OnBnClickedReset)
 	ON_BN_CLICKED(IDC_PRINT, &COrders::OnBnClickedPrint)
+	ON_BN_CLICKED(IDC_CHECK1, &COrders::OnBnClickedCheck1)
+	ON_BN_CLICKED(IDC_PREPRINT, &COrders::OnBnClickedPreprint)
 END_MESSAGE_MAP()
 
 
@@ -119,6 +123,13 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 				{
 					pdi->item.clrText = COLOR_MANY;
 				}
+
+				if (pThis->m_index[0] == nRow
+					|| pThis->m_index[1] == nRow
+					|| pThis->m_index[2] == nRow)
+				{
+					pdi->item.clrText = COLOR_LITTLE;
+				}
 			}
 		}
 		else
@@ -137,6 +148,9 @@ BOOL COrders::OnInitDialog()
 
 	UpdateData(TRUE);
 
+	m_index[0] = -1;
+	m_index[1] = -1;
+	m_index[2] = -1;
 
 	//grid
 	CRect rectGrid;
@@ -166,6 +180,7 @@ BOOL COrders::OnInitDialog()
 	}
 	//注册虚拟列表回调函数
 	m_wndGrid1.EnableVirtualMode(Grid1Callback, (LPARAM)this);
+	m_wndGrid1.SetCallBack_Clk(OnGrid1Click);
 
 
 
@@ -185,9 +200,10 @@ void COrders::OnBnClickedQuery()
 	m_Date_Start.GetWindowText(dateS);
 	m_Date_End.GetWindowText(dateE);
 
-	CString strMsg, strSQL;//bookings.ORDER_COACH
+	CString strMsg, strSQL;
 	strSQL.Format("SELECT bookings.ORDER_DATE, bookings.BOOK_DATE, bookings.CLASS_ID, bookings.ORDER_CAR, coachinfo.SName\
-				  	, students.SNAME, bookings.FLAG, bookings.FILE_NAME\
+				  	, students.SNAME, bookings.FLAG, bookings.FILE_NAME, \
+					bookings.ORDER_COACH, bookings.CLASS_NUM, bookings.CLASS_TYPE\
 					FROM bookings \
 					inner join students ON bookings.FILE_NAME = students.FILE_NAME \
 					inner join coachinfo ON bookings.ORDER_COACH = coachinfo.FILE_NUM\
@@ -212,68 +228,282 @@ void COrders::OnBnClickedQuery()
 
 void COrders::OnBnClickedReset()
 {
-	//CBCGPGridRow* pRow = m_wndGrid1.GetCurSel();
-	//if (pRow != NULL)
-	int rows = m_datas1.size() - 1;
-	for (int nRow = rows; nRow >= 0; nRow --)
+	if (m_enableMultiSel)
 	{
-		//int nRow = pRow->GetRowId();
-		if (!m_wndGrid1.IsRowSelected(nRow)) continue;
-
-		CString strBookDate = m_datas1[nRow][1];
-		if (strBookDate < m_strToday)
+		//CBCGPGridRow* pRow = m_wndGrid1.GetCurSel();
+		//if (pRow != NULL)
+		int rows = m_datas1.size() - 1;
+		for (int nRow = rows; nRow >= 0; nRow--)
 		{
-			MessageBox("今天之前的派工无法取消，请手动添加临时派工");
-			return;
+			//int nRow = pRow->GetRowId();
+			if (!m_wndGrid1.IsRowSelected(nRow)) continue;
+
+			ResetStudent(nRow);
+		}
+	}
+	else
+	{
+		int nRow = m_index[0];
+		int nRow1 = m_index[1];
+		int nRow2 = m_index[2];
+		if (nRow >= 0)
+		{
+			ResetStudent(nRow);
+		}
+		if (nRow1 >= 0)
+		{
+			ResetStudent(nRow1);
+		}
+		if (nRow2 >= 0)
+		{
+			ResetStudent(nRow2);
 		}
 
-		CString strStudent = m_datas1[nRow][7];
-		CString strClassID = m_datas1[nRow][2];
-
-		CString strMsg, strSQL;
-		strSQL.Format("UPDATE bookings SET FLAG='0', ORDER_DATE='0', ORDER_COACH='0', ORDER_CAR='0' \
-					    WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
-						strStudent, strBookDate, strClassID);
-		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
-		ShowMsg2Output1(strMsg);
-
-		CDStrs::iterator it = m_datas1.begin() + nRow;
-		m_datas1.erase(it);
+		m_index[0] = -1;
+		m_index[1] = -1;
+		m_index[2] = -1;
 	}
 	m_wndGrid1.GridRefresh(m_datas1.size());
 }
 
+void COrders::ResetStudent(int nRow)
+{
+	CString strBookDate = m_datas1[nRow][1];
+	if (strBookDate < m_strToday)
+	{
+		MessageBox("今天之前的派工无法取消，请手动添加临时派工");
+		return;
+	}
+
+	CString strStudent = m_datas1[nRow][7];
+	CString strClassID = m_datas1[nRow][2];
+
+	CString strMsg, strSQL;
+	strSQL.Format("UPDATE bookings SET FLAG='0', ORDER_DATE='0', ORDER_COACH='0', ORDER_CAR='0' \
+				  					    WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
+										strStudent, strBookDate, strClassID);
+	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	ShowMsg2Output1(strMsg);
+
+	CDStrs::iterator it = m_datas1.begin() + nRow;
+	m_datas1.erase(it);
+}
 
 void COrders::OnBnClickedPrint()
 {
-	CBCGPGridRow* pRow = m_wndGrid1.GetCurSel();
+	int nRow = m_index[0];
+	if (nRow >= 0)
+	{
+		m_dataPrint[nRow] = 1;
+		int row2 = m_index[1], row3 = m_index[2];
+		if (row2 >= 0) m_dataPrint[row2] = 1;
+		if (row3 >= 0) m_dataPrint[row3] = 1;
+
+		m_index[0] = -1;
+		m_index[1] = -1;
+		m_index[2] = -1;
+
+		m_printx.PrinterInit(&m_sheetInfo, &m_classInfo);
+		CString strMsg; 
+		m_printx.Printx(1, strMsg);
+	}
+	//CBCGPGridRow* pRow = m_wndGrid1.GetCurSel();
+	//if (pRow != NULL)
+	//{
+	//	//int nRow = pRow->GetRowId();
+
+	//	m_dataPrint[nRow] = 1;
+	//	xPublic::CMyPrint printx;
+	//	xPublic::CLASSINFO classInfo;
+	//	xPublic::SHEETINFO sheetInfo;
+
+
+	//	//表单信息
+	//	CString strCar = m_datas1[nRow][3];
+	//	sheetInfo.strCarID = strCar;
+	//	sheetInfo.strCoach = m_datas1[nRow][4];
+	//	sheetInfo.strCoachID = m_datas1[nRow][8];
+
+	//	CString str = m_datas1[nRow][0]; //派工日期
+	//	//解析字符串得到日期
+	//	int pos1, pos2;
+	//	pos1 = str.Find('/');
+	//	pos2 = str.ReverseFind('/');
+	//	int nYear = atoi(str.Left(pos1));
+	//	int nMonth = atoi(str.Mid(pos1 + 1, pos2));
+	//	int nDay = atoi(str.Mid(pos2 + 1));
+	//	CTime tOrderDay(nYear, nMonth, nDay, 0, 0, 0);
+
+	//	sheetInfo.strData = tOrderDay.Format("%Y年%m月%d日制");
+	//	//课程信息
+	//	CString classType = m_datas1[nRow][10]; 
+	//	int classStep = atoi(m_datas1[nRow][9]);
+	//	CString cn;
+	//	cn.Format("c%d", classStep);
+	//	classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
+	//	//学员信息
+	//	CString strBookDate = m_datas1[nRow][1];
+	//	CString name = m_datas1[nRow][5];
+	//	int classID = atoi(m_datas1[nRow][2]) - 1;
+	//	int  nClass = (classID) / 2;
+	//	xPublic::STUDENTINFO student(name, strBookDate, classID, classStep, g_nMaxBooking);
+	//	printx.AddStudent(student);
+
+	//	//寻找同个派工单的学员
+	//	int rows = m_datas1.size();
+	//	for (int i = 0; i < rows; i++)
+	//	{
+	//		CString strCar1 = m_datas1[i][3];
+	//		CString strBookDate1 = m_datas1[i][1];
+	//		int classID1 = atoi(m_datas1[i][2]) - 1;
+	//		int nClass1 = (classID1) / 2;
+	//		if (i != nRow && strCar == strCar1 && strBookDate == strBookDate1 && nClass == nClass1)
+	//		{
+	//			CString name1 = m_datas1[i][5];
+	//			int classStep1 = atoi(m_datas1[i][9]);
+	//			xPublic::STUDENTINFO student1(name1, strBookDate, classID1, classStep1, g_nMaxBooking);
+	//			printx.AddStudent(student1);
+	//			m_dataPrint[i] = 1;
+	//			continue;
+	//		}
+	//	}
+
+	//	COrderDetail dlgDetail;
+	//	dlgDetail.m_wndPrint.m_classInfo = classInfo;
+	//	dlgDetail.m_wndPrint.m_sheetInfo = sheetInfo;
+	//	dlgDetail.m_wndPrint.m_printData.m_students = printx.m_students;
+	//	dlgDetail.DoModal();
+
+	//	//printx.PrinterInit(&sheetInfo, &classInfo);
+	//	//CString strMsg;
+	//	//printx.Printx(1, strMsg);
+
+	//	m_wndGrid1.GridRefresh(m_datas1.size());
+	//}
+}
+
+
+void CALLBACK COrders::OnGrid1Click(LPVOID lParam)
+{
+	COrders* pThis = (COrders*)lParam;
+
+
+	pThis->m_index[0] = -1;
+	pThis->m_index[1] = -1;
+	pThis->m_index[2] = -1;
+
+	CBCGPGridRow* pRow = pThis->m_wndGrid1.GetCurSel();
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
 
-		m_dataPrint[nRow] = 1;
-		xPublic::CMyPrint printx;
+		pThis->m_printx.m_students.clear();
+		pThis->m_index[0] = nRow;
+		//pThis->m_dataPrint[nRow] = 1;
+		//xPublic::CMyPrint printx;
+		//xPublic::CLASSINFO classInfo;
+		//xPublic::SHEETINFO sheetInfo;
 
 
-		CString strCar = m_datas1[nRow][3];
-		CString strBookDate = m_datas1[nRow][1];
-		int  nClass = (atoi(m_datas1[nRow][2]) - 1) / 2;
+		//表单信息
+		CString strCar = pThis->m_datas1[nRow][3];
+		pThis->m_sheetInfo.strCarID = strCar;
+		pThis->m_sheetInfo.strCoach = pThis->m_datas1[nRow][4];
+		pThis->m_sheetInfo.strCoachID = pThis->m_datas1[nRow][8];
 
-		int rows = m_datas1.size();
+		CString str = pThis->m_datas1[nRow][0]; //派工日期
+		//解析字符串得到日期
+		int pos1, pos2;
+		pos1 = str.Find('/');
+		pos2 = str.ReverseFind('/');
+		int nYear = atoi(str.Left(pos1));
+		int nMonth = atoi(str.Mid(pos1 + 1, pos2));
+		int nDay = atoi(str.Mid(pos2 + 1));
+		CTime tOrderDay(nYear, nMonth, nDay, 0, 0, 0);
+
+		pThis->m_sheetInfo.strData = tOrderDay.Format("%Y年%m月%d日制");
+		//课程信息
+		CString classType = pThis->m_datas1[nRow][10];
+		pThis->m_sheetInfo.strClassType = classType;
+		int classStep = atoi(pThis->m_datas1[nRow][9]) + 1;
+		CString cn;
+		cn.Format("c%d", classStep);
+		pThis->m_classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
+		//学员信息
+		CString strBookDate = pThis->m_datas1[nRow][1];
+		CString name = pThis->m_datas1[nRow][5];
+		int classID = atoi(pThis->m_datas1[nRow][2]) - 1;
+		int  nClass = (classID) / 2;
+		xPublic::STUDENTINFO student(name, strBookDate.Right(8), classID, classStep, g_nMaxBooking);
+		pThis->m_printx.AddStudent(student);
+
+		//寻找同个派工单的学员
+		int rows = pThis->m_datas1.size();
+		int nstu = 0;
 		for (int i = 0; i < rows; i++)
 		{
-			CString strCar1 = m_datas1[i][3];
-			CString strBookDate1 = m_datas1[i][1];
-			int nClass1 = (atoi(m_datas1[i][2]) - 1) / 2;
+			CString strCar1 = pThis->m_datas1[i][3];
+			CString strBookDate1 = pThis->m_datas1[i][1];
+			int classID1 = atoi(pThis->m_datas1[i][2]) - 1;
+			int nClass1 = (classID1) / 2;
 			if (i != nRow && strCar == strCar1 && strBookDate == strBookDate1 && nClass == nClass1)
 			{
-				CString strMsg;
-				strMsg.Format("%d-%d", nRow, i);
-				ShowMsg2Output1(strMsg);
-				m_dataPrint[i] = 1;
+				CString name1 = pThis->m_datas1[i][5];
+				int classStep1 = atoi(pThis->m_datas1[i][9]) + 1;
+				xPublic::STUDENTINFO student1(name1, strBookDate.Right(8), classID1, classStep1, g_nMaxBooking);
+				pThis->m_printx.AddStudent(student1);
+				//pThis->m_dataPrint[i] = 1;
+				pThis->m_index[nstu + 1] = i; nstu++;
 				continue;
 			}
 		}
+
+		//COrderDetail dlgDetail;
+		//dlgDetail.m_wndPrint.m_classInfo = pThis->m_classInfo;
+		//dlgDetail.m_wndPrint.m_sheetInfo = pThis->m_sheetInfo;
+		//dlgDetail.m_wndPrint.m_printData.m_students = pThis->m_printx.m_students;
+		//dlgDetail.DoModal();
+
+		//printx.PrinterInit(&sheetInfo, &classInfo);
+		//CString strMsg;
+		//printx.Printx(1, strMsg);
+
+		if(!pThis->m_enableMultiSel) pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2);
+	}
+}
+
+LRESULT COrders::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int flag = (int)wParam;
+
+	m_wndGrid1.GridRefresh(m_datas1.size());
+	
+	return 0;
+}
+
+
+void COrders::OnBnClickedCheck1()
+{
+	UpdateData(TRUE);
+}
+
+
+void COrders::OnBnClickedPreprint()
+{
+	COrderDetail dlgDetail;
+	dlgDetail.m_wndPrint.m_classInfo = m_classInfo;
+	dlgDetail.m_wndPrint.m_sheetInfo = m_sheetInfo;
+	dlgDetail.m_wndPrint.m_printData.m_students = m_printx.m_students;
+	if (dlgDetail.DoModal() == IDOK)
+	{
+		int row1 = m_index[0], row2 = m_index[1], row3 = m_index[2];
+		if (row1 >= 0) m_dataPrint[row1] = 1;
+		if (row2 >= 0) m_dataPrint[row2] = 1;
+		if (row3 >= 0) m_dataPrint[row3] = 1;
+
+		m_index[0] = -1;
+		m_index[1] = -1;
+		m_index[2] = -1;
 
 		m_wndGrid1.GridRefresh(m_datas1.size());
 	}
