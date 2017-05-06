@@ -8,6 +8,7 @@
 #include "xPublic\MyPrint.h"
 #include "OrderDetail.h"
 #include "Orders.h"
+#include "TmpOrder.h"
 
 
 // CViewBooking2
@@ -50,6 +51,7 @@ BEGIN_MESSAGE_MAP(CViewBooking2, CBCGPFormView)
 	ON_BN_CLICKED(IDC_ORDER_CHANGE, &CViewBooking2::OnBnClickedOrderChange)
 	ON_BN_CLICKED(IDC_ORDER_QUERY, &CViewBooking2::OnBnClickedOrderQuery)
 	ON_BN_CLICKED(IDC_AUTO_ORDER, &CViewBooking2::OnBnClickedAutoOrder)
+	ON_BN_CLICKED(IDC__TMP_ORDER, &CViewBooking2::OnBnClickedTmpOrder)
 END_MESSAGE_MAP()
 
 
@@ -467,7 +469,7 @@ void CViewBooking2::OnInitialUpdate()
 	m_wndDate.MapWindowPoints(this, &m_rectDate);
 
 	//派工单初始化
-	m_wndPrint.m_sheetInfo.strData = m_tToday.Format("%Y年%m月%d日制");
+	m_wndPrint.m_sheetInfo.strDate = m_tToday.Format("%Y年%m月%d日制");
 	m_order.push_back(-1); //车辆编号索引
 	m_order.push_back(-1); //教练信息索引
 }
@@ -681,7 +683,7 @@ void CViewBooking2::OnBnClickedDoPrint()
 		//打印多个
 		xPublic::CLASSINFO classInfo;
 		xPublic::SHEETINFO sheetInfo;
-		sheetInfo.strData = m_tToday.Format("%Y年%m月%d日制");
+		sheetInfo.strDate = m_tToday.Format("%Y年%m月%d日制");
 		printx.PrinterInit(&sheetInfo, &classInfo);
 		int size = m_orderIndexes.size() - 1;
 		for (int nRow = size; nRow >= 0; nRow--)
@@ -1119,4 +1121,15 @@ void CViewBooking2::OnBnClickedAutoOrder()
 		delete[] coaStat; coaStat = NULL;
 	if (carStat != NULL)
 		delete[] carStat; carStat = NULL;
+}
+
+
+void CViewBooking2::OnBnClickedTmpOrder()
+{
+	CTmpOrder dlg;
+	dlg.m_datasCar = m_datas3;
+	dlg.m_datasCoach = m_datas2;
+	dlg.DoModal();
+
+	Refresh(1);
 }

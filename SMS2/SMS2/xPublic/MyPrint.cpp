@@ -264,7 +264,7 @@ namespace xPublic{
 
 		m_dcPrinter.SelectObject(&font_7mm);
 		TextEx(24, 159, "ÊÚ½ÌÄÚÈÝ£º");
-		TextEx(tableR - 57, H - 34, m_sheetInfo->strData);
+		TextEx(tableR - 57, H - 34, m_sheetInfo->strDate);
 		m_dcPrinter.SelectObject(&font_8mm);
 		TextEx(32, 250, "ÐÁ¿àÁË£¡ Ð»Ð»ÅäºÏ£¡");
 
@@ -418,7 +418,7 @@ namespace xPublic{
 
 		m_dcPrinter.SelectObject(&font_7mm);
 		TextEx(4, 114, "ÊÚ½ÌÄÚÈÝ£º");
-		TextEx(tableR - 58, H - 9, m_sheetInfo->strData);
+		TextEx(tableR - 58, H - 9, m_sheetInfo->strDate);
 		m_dcPrinter.SelectObject(&font_8mm);
 		TextEx(2, 205, "ÐÁ¿àÁË£¡ Ð»Ð»ÅäºÏ£¡");
 

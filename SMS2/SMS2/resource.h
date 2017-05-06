@@ -2,6 +2,7 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 SMS2.rc 使用
 //
+#define IDOK2                           3
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDD_SMS2_FORM                   101
@@ -136,10 +137,13 @@
 #define IDC_AUTO_ORDER                  1147
 #define IDC_DATETIMEPICKER2             1148
 #define IDC_CHECK1                      1149
-#define IDC_COMBO1                      1150
-#define IDC_COMBO2                      1151
-#define IDC_COMBO3                      1152
-#define IDC_COMBO4                      1153
+#define IDC_COMBO_TYPE                  1150
+#define IDC_COMBO_CAR                   1151
+#define IDC_COMBO_COACH                 1152
+#define IDC_COMBO_TIME                  1153
+#define IDC_COMBO_STU                   1154
+#define IDC_COACH                       1155
+#define IDC_STU                         1156
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -190,7 +194,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        192
 #define _APS_NEXT_COMMAND_VALUE         32882
-#define _APS_NEXT_CONTROL_VALUE         1151
+#define _APS_NEXT_CONTROL_VALUE         1157
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

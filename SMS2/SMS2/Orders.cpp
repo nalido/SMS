@@ -334,7 +334,7 @@ void COrders::OnBnClickedPrint()
 	//	int nDay = atoi(str.Mid(pos2 + 1));
 	//	CTime tOrderDay(nYear, nMonth, nDay, 0, 0, 0);
 
-	//	sheetInfo.strData = tOrderDay.Format("%Y年%m月%d日制");
+	//	sheetInfo.strDate = tOrderDay.Format("%Y年%m月%d日制");
 	//	//课程信息
 	//	CString classType = m_datas1[nRow][10]; 
 	//	int classStep = atoi(m_datas1[nRow][9]);
@@ -421,13 +421,13 @@ void CALLBACK COrders::OnGrid1Click(LPVOID lParam)
 		int nDay = atoi(str.Mid(pos2 + 1));
 		CTime tOrderDay(nYear, nMonth, nDay, 0, 0, 0);
 
-		pThis->m_sheetInfo.strData = tOrderDay.Format("%Y年%m月%d日制");
+		pThis->m_sheetInfo.strDate = tOrderDay.Format("%Y年%m月%d日制");
 		//课程信息
 		CString classType = pThis->m_datas1[nRow][10];
 		pThis->m_sheetInfo.strClassType = classType;
-		int classStep = atoi(pThis->m_datas1[nRow][9]) + 1;
+		int classStep = atoi(pThis->m_datas1[nRow][9]);
 		CString cn;
-		cn.Format("c%d", classStep);
+		cn.Format("c%d", classStep + 1);
 		pThis->m_classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
 		//学员信息
 		CString strBookDate = pThis->m_datas1[nRow][1];

@@ -92,6 +92,7 @@ public:
 	afx_msg void OnCbnSelchangeCars();
 	afx_msg void OnBnClickedOrderQuery();
 	afx_msg void OnBnClickedAutoOrder();
+	afx_msg void OnBnClickedTmpOrder();
 };
 
 

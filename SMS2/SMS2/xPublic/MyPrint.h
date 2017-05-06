@@ -77,7 +77,7 @@ namespace xPublic{
 		CString strMsg1; //表单固定提示内容
 		CString strMsg2;
 		CString strMsg3;
-		CString strData; //表单时间
+		CString strDate; //表单时间
 
 
 		struct_SHEETINFO()
@@ -90,7 +90,7 @@ namespace xPublic{
 			strMsg1 = "杜绝陋习\"吃拿卡要\"，维护权益从我做起！";
 			strMsg2 = "   特别提示：根据规定在有效期内，凡授训超出30个课时的，每1课时需补缴50元！";
 			strMsg3 = "辛苦了！ 谢谢配合！";
-			strData = "2017年03月27日制";
+			strDate = "2017年03月27日制";
 		}
 	}SHEETINFO;
 
