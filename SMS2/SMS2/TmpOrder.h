@@ -40,7 +40,10 @@ public:
 	CString m_strCoachID;
 	CString m_strStuID;
 	CString m_strNClass;
-	CString m_strDate;
+	CString m_strBookDate;
+	CString m_strClassID;
+	CString m_strOrderDate;
+	BOOL m_isDataReady; //是否已经获取好数据
 
 	CDStrs m_datasCar;
 	CDStrs m_datasCoach;
@@ -54,4 +57,8 @@ public:
 	afx_msg void OnCbnEditchangeComboStu();
 	afx_msg void OnCbnSelchangeComboStu();
 	afx_msg void OnBnClickedPrint();
+
+	afx_msg void OnBnClickedOk();
+	afx_msg void OnCbnSelchangeComboType();
 };
+

@@ -40,7 +40,7 @@ void CTmpOrder::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_COMBO_COACH, m_strCoach);
 	DDX_Text(pDX, IDC_COMBO_STU, m_strStu);
 	DDX_Text(pDX, IDC_COMBO_TIME, m_strTime);
-	DDX_Text(pDX, IDC_DATE, m_strDate);
+	DDX_Text(pDX, IDC_DATE, m_strBookDate);
 	DDX_Text(pDX, IDC_COACH, m_strCoachID);
 	DDX_Text(pDX, IDC_STU, m_strStuID);
 	DDX_Text(pDX, IDC_NCLASS, m_strNClass);
@@ -53,6 +53,8 @@ BEGIN_MESSAGE_MAP(CTmpOrder, CBCGPDialog)
 	ON_CBN_EDITCHANGE(IDC_COMBO_STU, &CTmpOrder::OnCbnEditchangeComboStu)
 	ON_CBN_SELCHANGE(IDC_COMBO_STU, &CTmpOrder::OnCbnSelchangeComboStu)
 	ON_BN_CLICKED(IDC_PRINT, &CTmpOrder::OnBnClickedPrint)
+	ON_BN_CLICKED(IDOK, &CTmpOrder::OnBnClickedOk)
+	ON_CBN_SELCHANGE(IDC_COMBO_TYPE, &CTmpOrder::OnCbnSelchangeComboType)
 END_MESSAGE_MAP()
 
 
@@ -62,6 +64,8 @@ END_MESSAGE_MAP()
 BOOL CTmpOrder::OnInitDialog()
 {
 	CBCGPDialog::OnInitDialog();
+
+	m_isDataReady = FALSE;
 
 	m_Comb_Type.AddString("科目一");
 	m_Comb_Type.AddString("科目二");
@@ -80,7 +84,6 @@ BOOL CTmpOrder::OnInitDialog()
 
 	m_Date.SetFormat("yyyy/MM/dd");
 
-	Refresh();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常:  OCX 属性页应返回 FALSE
@@ -90,9 +93,11 @@ void CTmpOrder::Refresh()
 {
 	CString strMsg, strSQL;
 
+	if (m_strType.IsEmpty()) return;
 	//全部可用学员信息
 	strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, students.CLASS_NUM, students.FILE_NAME\
-				  	FROM students WHERE STEP>='7' AND STEP<'1000' ORDER BY SNAME");
+				  	FROM students WHERE STEP>='7' AND STEP<'1000' AND CLASS_TYPE='%s' ORDER BY SNAME",
+					m_strType);
 	m_datasStu.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datasStu, strMsg))
 	{
@@ -100,6 +105,7 @@ void CTmpOrder::Refresh()
 	}
 	else ShowMsg2Output1(strMsg);
 
+	m_Comb_Stu.ResetContent();
 	for (int i = 0; i < m_datasStu.size(); i++)
 	{
 		m_Comb_Stu.AddString(m_datasStu[i][0]);
@@ -206,8 +212,10 @@ void CTmpOrder::OnCbnSelchangeComboStu()
 
 void CTmpOrder::OnBnClickedPrint()
 {
+	m_isDataReady = FALSE;
+
 	UpdateData(TRUE);
-	if (m_strCar.IsEmpty() || m_strCoach.IsEmpty() || m_strDate.IsEmpty() ||
+	if (m_strCar.IsEmpty() || m_strCoach.IsEmpty() || m_strBookDate.IsEmpty() ||
 		m_strNClass.IsEmpty() || m_strStu.IsEmpty() || m_strStuID=="查无此人" ||
 		m_strTime.IsEmpty() || m_strType.IsEmpty() || m_strCoachID=="查无此人")
 	{
@@ -235,17 +243,19 @@ void CTmpOrder::OnBnClickedPrint()
 
 	//学员信息
 	int classID = m_Comb_Time.GetCurSel();
-	xPublic::STUDENTINFO student(m_strStu, m_strDate.Right(8), classID, classStep, g_nMaxBooking);
+	xPublic::STUDENTINFO student(m_strStu, m_strBookDate.Right(8), classID, classStep, g_nMaxBooking);
 	printx.AddStudent(student);
 
 	//上传数据库
-	CString strMsg, strSQL;
 	CString strClassID;
 	strClassID.Format("%d", classID + 1);
+	m_strClassID = strClassID;
+	m_strOrderDate = t.Format("%Y/%m/%d");
+	CString strMsg, strSQL;
 	//删除重复数据
 	strSQL.Format("Delete From bookings \
 					WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
-					m_strStuID, m_strDate, strClassID);
+					m_strStuID, m_strBookDate, strClassID);
 	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	ShowMsg2Output1(strMsg);
 
@@ -253,11 +263,80 @@ void CTmpOrder::OnBnClickedPrint()
 	strSQL.Format("INSERT INTO bookings (FLAG, ORDER_DATE, ORDER_COACH, ORDER_CAR, CLASS_NUM, CLASS_TYPE,\
 				  	FILE_NAME, BOOK_DATE, CLASS_ID) VALUES(1, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
 					t.Format("%Y/%m/%d"), m_strCoachID, m_strCar, m_strNClass, m_strType
-					, m_strStuID, m_strDate, strClassID);
+					, m_strStuID, m_strBookDate, strClassID);
 	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	ShowMsg2Output1(strMsg);
 
 	//打印
 	printx.PrinterInit(&sheetInfo, &classInfo);
 	printx.Printx(1, strMsg);
+
+	m_isDataReady = TRUE;
+
+	OnOK();
+}
+
+
+void CTmpOrder::OnBnClickedOk()
+{
+	if (m_isDataReady == FALSE)
+	{
+		UpdateData(TRUE);
+		if (m_strCar.IsEmpty() || m_strCoach.IsEmpty() || m_strBookDate.IsEmpty() ||
+			m_strNClass.IsEmpty() || m_strStu.IsEmpty() || m_strStuID == "查无此人" ||
+			m_strTime.IsEmpty() || m_strType.IsEmpty() || m_strCoachID == "查无此人")
+		{
+			MessageBox("派工单信息未完善!");
+			return;
+		}
+
+		int classID = m_Comb_Time.GetCurSel();
+		CString strClassID;
+		strClassID.Format("%d", classID + 1);
+		m_strClassID = strClassID;
+		CTime t = CTime::GetCurrentTime();
+		m_strOrderDate = t.Format("%Y/%m/%d");
+	}
+
+
+	//上传数据库
+	CString strMsg, strSQL;
+	//删除重复数据
+	strSQL.Format("Delete From bookings \
+				  	WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
+					m_strStuID, m_strBookDate, m_strClassID);
+	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	ShowMsg2Output1(strMsg);
+
+	//添加新记录
+	strSQL.Format("INSERT INTO bookings (FLAG, ORDER_DATE, ORDER_COACH, ORDER_CAR, CLASS_NUM, CLASS_TYPE,\
+				  	FILE_NAME, BOOK_DATE, CLASS_ID) VALUES(1, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+					m_strOrderDate, m_strCoachID, m_strCar, m_strNClass, m_strType
+					, m_strStuID, m_strBookDate, m_strClassID);
+	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	ShowMsg2Output1(strMsg);
+
+	OnOK();
+}
+
+
+void CTmpOrder::OnCbnSelchangeComboType()
+{
+	UpdateData(TRUE);
+
+	int pos = m_Comb_Type.GetCurSel(); 
+	switch (pos)
+	{
+	case 0:
+		m_strType = "科目一";
+		break;
+	case 1:
+		m_strType = "科目二";
+		break;
+	case 2:
+		m_strType = "科目三";
+		break;
+	}
+
+	Refresh();
 }

@@ -2,7 +2,6 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 SMS2.rc 使用
 //
-#define IDOK2                           3
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDD_SMS2_FORM                   101
