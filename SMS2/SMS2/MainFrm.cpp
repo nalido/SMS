@@ -14,6 +14,7 @@
 #include "School.h"
 #include "System.h"
 #include "Coaches.h"
+#include "ViewOrderRsp.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,6 +26,7 @@ xPublic::CMySQLEx g_mysqlCon;
 CString g_sServerIP = "127.0.0.1";
 int g_nClassTotal = 9;
 int g_nMaxBooking = 15;
+int g_nSubForLeave = 8;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -72,6 +74,34 @@ char* EncodeToUTF8(const char* mbcsStr)
 	return utf8Str;
 
 }
+
+CString GetClassTime(int n) //根据时段编号获得具体时间
+{
+	CString res("");
+	switch (n)
+	{
+	case 0:
+		res = "A8:00-10:00";
+		break;
+	case 1:
+		res = "A10:00-12:00";
+		break;
+	case 2:
+		res = "P2:00 - 4:00";
+		break;
+	case 3:
+		res = "P4:00 - 6:00";
+		break;
+	case 4:
+		res = "P6:00 - 8:00";
+		break;
+	default:
+		res = "未定义";
+		break;
+	}
+	return res;
+}
+
 ///////////////////////////////end of global functions//////////////
 
 // CMainFrame
@@ -90,6 +120,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_COACH, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_ORDER_RSP, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
@@ -331,8 +362,11 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 		SelectView(VIEW_BOOKING1);
 		break;
 	case ID_VIEW_BOOKING2:
-		SelectView(VIEW_BOOKING2);
-		break;
+		SelectView(VIEW_BOOKING2); 
+			break;
+	case ID_VIEW_ORDER_RSP:
+		SelectView(VIEW_ORDER_RSP);
+			break;
 	case ID_VIEW_REGISTER:
 		SelectView(VIEW_REGISTER);
 		break;
@@ -396,6 +430,9 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_BOOKING2:
 		pClass = RUNTIME_CLASS(CViewBooking2);
+		break;
+	case VIEW_ORDER_RSP:
+		pClass = RUNTIME_CLASS(CViewOrderRsp);
 		break;
 	case VIEW_K1CHECK:
 		pClass = RUNTIME_CLASS(CViewK1Check);

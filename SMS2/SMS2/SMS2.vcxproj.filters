@@ -126,6 +126,12 @@
     <ClInclude Include="TmpOrder.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ViewOrderRsp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Response.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -225,6 +231,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TmpOrder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewOrderRsp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Response.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -31,6 +31,8 @@
 #define IDD_ORDERDETAIL                 189
 #define IDD_ORDERS                      190
 #define IDD_TMPORDER                    191
+#define IDD_ORDERS_RSP                  192
+#define IDD_RESPONSE                    193
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -51,19 +53,26 @@
 #define IDC_DO_PRINT                    1066
 #define IDC_NAME                        1067
 #define IDC_ORDER                       1067
+#define IDC_CHUQIN                      1067
 #define IDC_NAME2                       1068
 #define IDC_FILE                        1068
 #define IDC_RESET_PRINT                 1068
+#define IDC_QUEQIN                      1068
 #define IDC_TEL                         1069
 #define IDC_NAME3                       1069
 #define IDC__TMP_ORDER                  1069
+#define IDC_WORKTIME                    1069
 #define IDC_FEE                         1070
 #define IDC_NCLASS                      1070
+#define IDC_JIXIAO                      1070
 #define IDC_ID                          1071
 #define IDC_NAME6                       1071
+#define IDC_JIXIAO2                     1071
+#define IDC_KPI                         1071
 #define IDC_HOME                        1072
 #define IDC_BIRTH                       1073
 #define IDC_BUTTON1073                  1073
+#define IDC_SAVE                        1073
 #define IDC_LIST                        1074
 #define IDC_GENDER                      1075
 #define IDC_LIST2                       1075
@@ -143,6 +152,12 @@
 #define IDC_COMBO_STU                   1154
 #define IDC_COACH                       1155
 #define IDC_STU                         1156
+#define IDC_RADIO1                      1158
+#define IDC_RADIO2                      1159
+#define IDC_SERVICE_SCORE               1160
+#define IDC_SELF_SCORE                  1161
+#define IDC_NSUBFORLEAVE                1161
+#define IDC_RADIO3                      1162
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -186,14 +201,15 @@
 #define ID_VIEW_STUPROGRESS             32879
 #define ID_VIEW_COACH                   32880
 #define ID_OFFICE2003                   32881
+#define ID_VIEW_ORDER_RSP               32882
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        192
-#define _APS_NEXT_COMMAND_VALUE         32882
-#define _APS_NEXT_CONTROL_VALUE         1157
+#define _APS_NEXT_RESOURCE_VALUE        194
+#define _APS_NEXT_COMMAND_VALUE         32883
+#define _APS_NEXT_CONTROL_VALUE         1162
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

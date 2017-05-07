@@ -178,7 +178,7 @@ void CViewBooking1::JudgeSelected(int selected, int nclass, CString aday, int r,
 	int sel = selected / n % 10; 
 	if (sel == 1)
 	{
-		if (m_datas.size() == g_nMaxBooking)
+		if (m_datas.size() >= g_nMaxBooking)
 		{
 			CString str;
 			str.Format("您已预约全部%d节课，不能继续预约", g_nMaxBooking);
@@ -207,7 +207,11 @@ void CViewBooking1::AddNewBooking(CString day, int classID)
 	strs.push_back("0");
 	strs.push_back("0"); //最后一位表示未存数据库
 	m_datas.push_back(strs);
-	m_wndGrid.GridRefresh(m_datas.size());
+	int size = m_datas.size();
+	m_wndGrid.GridRefresh(size);
+
+	m_strBooked.Format("%d", size);
+	UpdateData(FALSE);
 }
 
 void CALLBACK CViewBooking1::OnGridClick(LPVOID lParam)
@@ -423,6 +427,9 @@ LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
 			m_SPhoto.Invalidate();
 
 		Refresh();
+
+
+		UpdateData(FALSE);
 	}
 
 	return 0;
@@ -447,11 +454,11 @@ void CViewBooking1::OnBnClickedConfirm()
 	{
 		int cols = m_datas[0].size(); //列数， 最后一列为是否上传数据库的标志位
 		CString strMsg;
+		CString strSQL;
 		for (int i = 0; i < n; i++)
 		{
 			if (m_datas[i][cols - 1] == "0") //未上传数据库
 			{
-				CString strSQL;
 				BOOL isOK = TRUE;
 				g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
 				strSQL.Format("INSERT INTO bookings(FILE_NAME, BOOK_DATE, CLASS_ID, FLAG) \
@@ -499,6 +506,13 @@ void CViewBooking1::OnBnClickedConfirm()
 			}// if (m_datas[i][cols - 1] == "0") //未上传数据库
 		} //end for loop
 		g_mysqlCon.ExecuteSQL("SET AUTOCOMMIT=1", strMsg);
+
+		//更新已预约课时数
+		strSQL.Format("UPDATE students SET BOOK_NUM=(\
+					  SELECT COUNT(FILE_NAME) FROM bookings WHERE FILE_NAME='%s')\
+					   WHERE FILE_NAME='%s'", m_strFileName, m_strFileName);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
 	}
 
 	UpdateBookingList(); //排序

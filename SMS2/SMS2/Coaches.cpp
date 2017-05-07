@@ -98,17 +98,14 @@ void CCoaches::OnInitialUpdate()
 
 	int nColumn = 0;
 	int hw = m_wndCoaches.GetRowHeaderWidth();
+	LPCTSTR arrColumns[] = { _T("姓名"), _T("性别"), _T("出生日期"), _T("面貌"), _T("手机")
+		, _T("家庭住址"), _T("进厂日期"), _T("档案号") };
+	const int nColumns = sizeof (arrColumns) / sizeof (LPCTSTR);
 	int w = rect.Width() - hw;
-	m_wndCoaches.InsertColumn(nColumn, _T("姓名"), 70); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("性别"), 50); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("出生日期"), 70); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("面貌"), 50); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("手机"), 80); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("家庭住址"), 100); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("进厂日期"), 70); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn++, _T("档案号"), w);
-	for (int i = 0; i < nColumn; i++)
+	int nColumnWidth = w / nColumns;
+	for (int i = 0; i < nColumns; i++)
 	{
+		m_wndCoaches.InsertColumn(i, arrColumns[i], nColumnWidth);
 		m_wndCoaches.SetColumnAlign(i, HDF_CENTER);
 		m_wndCoaches.SetHeaderAlign(i, HDF_CENTER);
 	}

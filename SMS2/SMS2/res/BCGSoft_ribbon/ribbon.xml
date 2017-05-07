@@ -260,11 +260,11 @@
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>ID_VIEW_PRINTB</NAME>
-									<VALUE>32871</VALUE>
+									<NAME>ID_VIEW_ORDER_RSP</NAME>
+									<VALUE>32882</VALUE>
 								</ID>
-								<TEXT>打印</TEXT>
-								<INDEX_LARGE>4</INDEX_LARGE>
+								<TEXT>派工反馈</TEXT>
+								<INDEX_LARGE>13</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>

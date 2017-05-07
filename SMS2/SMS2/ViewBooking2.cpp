@@ -483,7 +483,8 @@ void CViewBooking2::Refresh(int nID)
 	{
 		CString strDate("");
 		strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d"); //AND FLAG='0'
-		strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME\
+		strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, \
+						students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME \
 					  	FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
 						WHERE BOOK_DATE='%s' ORDER BY bookings.CLASS_ID, students.CLASS_NUM", strDate);
 		m_datas1.clear();

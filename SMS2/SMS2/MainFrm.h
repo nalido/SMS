@@ -88,6 +88,7 @@ extern CString g_sServerIP; //服务器IP
 extern char* EncodeToUTF8(const char* mbcsStr);
 extern int g_nClassTotal; //每个课时每天可以预约的总数
 extern int g_nMaxBooking; //每个学员最多预约课数
+extern int g_nSubForLeave; //教练缺勤一次减去的学员数量
 
 enum enum_StudentProgress{
 	SP_NEWONE = 0,			//新生记录
@@ -109,6 +110,9 @@ enum enum_StudentProgress{
 #define COLOR_LITTLE RGB(250, 132, 132)
 #define COLOR_NONE RGB(190, 190, 190)
 #define COLOR_MANY RGB(147, 235, 149)
+#define COLOR_COMPLETE RGB(149, 200, 146)
+#define COLOR_DOING RGB(195, 218, 195)
+#define COLOR_DONE RGB(149, 200, 146)
 
 enum VIEW_TYPE{
 	VIEW_MAIN = 0,
@@ -116,6 +120,7 @@ enum VIEW_TYPE{
 	VIEW_K1CHECK,
 	VIEW_BOOKING1,
 	VIEW_BOOKING2,
+	VIEW_ORDER_RSP,
 	VIEW_K1EXAM,
 	VIEW_STUPROGRESS,
 	VIEW_COACHES,
@@ -147,3 +152,7 @@ typedef struct struct_STUDENTINFO
 		strCarType = cartype;
 	}
 }STUDENTINFO;
+
+
+extern CString GetClassTime(int n); //根据时段编号获得具体时间
+

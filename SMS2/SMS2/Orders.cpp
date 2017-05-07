@@ -47,33 +47,6 @@ END_MESSAGE_MAP()
 
 // COrders 消息处理程序
 
-CString GetClassTime(int n) //根据时段编号获得具体时间
-{
-	CString res("");
-	switch (n)
-	{
-	case 0:
-		res = "A8:00-10:00";
-		break;
-	case 1:
-		res = "A10:00-12:00";
-		break;
-	case 2:
-		res = "P2:00 - 4:00";
-		break;
-	case 3:
-		res = "P4:00 - 6:00";
-		break;
-	case 4:
-		res = "P6:00 - 8:00";
-		break;
-	default:
-		res = "未定义";
-		break;
-	}
-	return res;
-}
-
 static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 {
 	ASSERT(pdi != NULL);
@@ -99,6 +72,10 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 					pdi->item.varValue = "已派工，等待训练";
 				else if (pThis->m_datas1[nRow][nCol] == "2")
 					pdi->item.varValue = "已完成训练";
+				else if (pThis->m_datas1[nRow][nCol] == "-1")
+					pdi->item.varValue = "学员缺勤";
+				else if (pThis->m_datas1[nRow][nCol] == "-2")
+					pdi->item.varValue = "教练缺勤";
 			}
 			else
 				pdi->item.varValue = pThis->m_datas1[nRow][nCol];
@@ -110,9 +87,9 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 				if (pThis->m_datas1[nRow][6] < "2") //未完成训练
 				{
 					pdi->item.clrBackground = COLOR_LITTLE;
-					if (nCol == 6) pdi->item.varValue = "已派工，缺席训练";
+					if (nCol == 6) pdi->item.varValue = "未完成训练";
 				}
-				else if (pThis->m_datas1[nRow][6] == "2") //已完成训练
+				else if (pThis->m_datas1[nRow][6] >= "2") //已完成训练
 				{
 					pdi->item.clrBackground = COLOR_MANY;
 				}

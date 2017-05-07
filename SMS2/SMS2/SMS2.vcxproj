@@ -210,6 +210,8 @@
     <ClInclude Include="GridCalendar.h" />
     <ClInclude Include="MyPicCtrl.h" />
     <ClInclude Include="OrderDetail.h" />
+    <ClInclude Include="Response.h" />
+    <ClInclude Include="ViewOrderRsp.h" />
     <ClInclude Include="Orders.h" />
     <ClInclude Include="SheetCtrl.h" />
     <ClInclude Include="TmpOrder.h" />
@@ -246,6 +248,8 @@
     <ClCompile Include="GridCalendar.cpp" />
     <ClCompile Include="MyPicCtrl.cpp" />
     <ClCompile Include="OrderDetail.cpp" />
+    <ClCompile Include="Response.cpp" />
+    <ClCompile Include="ViewOrderRsp.cpp" />
     <ClCompile Include="Orders.cpp" />
     <ClCompile Include="SheetCtrl.cpp" />
     <ClCompile Include="TmpOrder.cpp" />

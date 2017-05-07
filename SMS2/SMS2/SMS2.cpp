@@ -82,6 +82,7 @@ BOOL CSMS2App::InitInstance()
 	//系统配置初始化
 	xPublic::GetWorkPath("StudentsManagementSystem");
 	g_strFilePath = xPublic::GETSTR2("Option", "PicSavePath", _T("E:\\Photos\\"));
+	g_nSubForLeave = xPublic::GETINT2("Coach", "SubForLeave", 8);
 
 	// Initialize OLE libraries
 	if (!AfxOleInit())

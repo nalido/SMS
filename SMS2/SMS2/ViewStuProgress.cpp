@@ -35,12 +35,12 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 					int tmp = rCol * 2 - 1;
 					if (tmp < step)
 					{
-						pdi->item.clrBackground = RGB(149, 200, 146);
+						pdi->item.clrBackground = COLOR_COMPLETE;
 						pdi->item.varValue = "完成";
 					}
 					if (tmp == step)
 					{
-						pdi->item.clrBackground = RGB(195, 218, 195);
+						pdi->item.clrBackground = COLOR_DOING;
 						pdi->item.varValue = "进行中";
 					}
 				}
