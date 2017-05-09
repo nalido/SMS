@@ -132,6 +132,12 @@
     <ClInclude Include="Response.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DlgCoachCheck.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewDevices.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -239,6 +245,12 @@
     <ClCompile Include="Response.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DlgCoachCheck.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewDevices.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SMS2.rc">
@@ -309,6 +321,15 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\tool15.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\tool14.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\保养.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

@@ -34,6 +34,14 @@ public:
 	static void CALLBACK OnGridClick(LPVOID lParam);
 	void Refresh();
 	afx_msg void OnBnClickedAddcoach();
+	afx_msg void OnBnClickedChuqin();
+	afx_msg void OnBnClickedQueqin();
+	afx_msg void OnBnClickedWorktime();
+	afx_msg void OnBnClickedJixiao();
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
+
+	int m_nMaxLeave; //教练可缺勤的最大次数
+	afx_msg void OnBnClickedKpi();
 };
 
 

@@ -33,6 +33,9 @@
 #define IDD_TMPORDER                    191
 #define IDD_ORDERS_RSP                  192
 #define IDD_RESPONSE                    193
+#define IDD_COACH_CHECK                 194
+#define IDD_DEVICES                     195
+#define IDB_BITMAP1                     199
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -40,6 +43,7 @@
 #define IDC_BTN_NOPASS                  1056
 #define IDC_BUTTON4                     1056
 #define IDC_RESET                       1056
+#define IDC_SETTODAY                    1056
 #define IDC_BUTTON5                     1057
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
@@ -74,6 +78,7 @@
 #define IDC_BUTTON1073                  1073
 #define IDC_SAVE                        1073
 #define IDC_LIST                        1074
+#define IDC_SAVE2                       1074
 #define IDC_GENDER                      1075
 #define IDC_LIST2                       1075
 #define IDC_BTN_PASS                    1076
@@ -155,9 +160,20 @@
 #define IDC_RADIO1                      1158
 #define IDC_RADIO2                      1159
 #define IDC_SERVICE_SCORE               1160
+#define IDC_RADIO4                      1160
 #define IDC_SELF_SCORE                  1161
 #define IDC_NSUBFORLEAVE                1161
 #define IDC_RADIO3                      1162
+#define IDC_COMBO1                      1162
+#define IDC_MIN_WORK_TIME               1162
+#define IDC_COMBO2                      1163
+#define IDC_COMBO3                      1164
+#define IDC_COMBO4                      1165
+#define IDC_COMBO5                      1166
+#define IDC_COMBO6                      1167
+#define IDC_MSG1                        1168
+#define IDC_MSG2                        1169
+#define IDC_MSG3                        1170
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -207,9 +223,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        194
+#define _APS_NEXT_RESOURCE_VALUE        200
 #define _APS_NEXT_COMMAND_VALUE         32883
-#define _APS_NEXT_CONTROL_VALUE         1162
+#define _APS_NEXT_CONTROL_VALUE         1171
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

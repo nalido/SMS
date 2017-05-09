@@ -25,10 +25,12 @@ void CSchool::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_NSUBFORLEAVE, m_strSubForLeave);
+	DDX_Text(pDX, IDC_MIN_WORK_TIME, m_strMinWorkTime);
 }
 
 BEGIN_MESSAGE_MAP(CSchool, CBCGPFormView)
 	ON_BN_CLICKED(IDC_SAVE, &CSchool::OnBnClickedSave)
+	ON_BN_CLICKED(IDC_SAVE2, &CSchool::OnBnClickedSave2)
 END_MESSAGE_MAP()
 
 
@@ -57,6 +59,7 @@ void CSchool::OnInitialUpdate()
 	CBCGPFormView::OnInitialUpdate();
 
 	m_strSubForLeave.Format("%d", g_nSubForLeave);
+	m_strMinWorkTime.Format("%d", g_nMinWorkTime);
 	UpdateData(FALSE);
 }
 
@@ -74,5 +77,22 @@ void CSchool::OnBnClickedSave()
 	}
 
 	g_nSubForLeave = atoi(m_strSubForLeave);
+	xPublic::WRIINT2("Coach", "SubForLeave", g_nSubForLeave);
+}
+
+
+void CSchool::OnBnClickedSave2()
+{
+	UpdateData();
+	int tmp = atoi(m_strMinWorkTime);
+	if (tmp == 0 || m_strMinWorkTime.IsEmpty())
+	{
+		MessageBox("输入不合法！");
+		m_strMinWorkTime.Format("%d", g_nMinWorkTime);
+		UpdateData(FALSE);
+		return;
+	}
+
+	g_nMinWorkTime = atoi(m_strMinWorkTime);
 	xPublic::WRIINT2("Coach", "SubForLeave", g_nSubForLeave);
 }

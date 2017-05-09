@@ -207,10 +207,12 @@
     <ClInclude Include="ClassDetail.h" />
     <ClInclude Include="ClassItem.h" />
     <ClInclude Include="Coaches.h" />
+    <ClInclude Include="DlgCoachCheck.h" />
     <ClInclude Include="GridCalendar.h" />
     <ClInclude Include="MyPicCtrl.h" />
     <ClInclude Include="OrderDetail.h" />
     <ClInclude Include="Response.h" />
+    <ClInclude Include="ViewDevices.h" />
     <ClInclude Include="ViewOrderRsp.h" />
     <ClInclude Include="Orders.h" />
     <ClInclude Include="SheetCtrl.h" />
@@ -245,10 +247,12 @@
     <ClCompile Include="ClassDetail.cpp" />
     <ClCompile Include="ClassItem.cpp" />
     <ClCompile Include="Coaches.cpp" />
+    <ClCompile Include="DlgCoachCheck.cpp" />
     <ClCompile Include="GridCalendar.cpp" />
     <ClCompile Include="MyPicCtrl.cpp" />
     <ClCompile Include="OrderDetail.cpp" />
     <ClCompile Include="Response.cpp" />
+    <ClCompile Include="ViewDevices.cpp" />
     <ClCompile Include="ViewOrderRsp.cpp" />
     <ClCompile Include="Orders.cpp" />
     <ClCompile Include="SheetCtrl.cpp" />
@@ -306,8 +310,11 @@
     <Image Include="res\bitmap1.bmp" />
     <Image Include="res\SMS2.ico" />
     <Image Include="res\SMS2Doc.ico" />
+    <Image Include="res\tool14.bmp" />
+    <Image Include="res\tool15.png" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\Workspace.bmp" />
+    <Image Include="res\保养.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="res\BCGSoft_ribbon\ribbon.xml" />

@@ -225,11 +225,30 @@ void CViewOrderRsp::UpdateCoach(int nRow, int flag)
 	else if (flag == 2) //正常出勤，学员缺勤，出勤表添加一条记录， 绩效不变, 工时随绩效改变
 	{
 		strSQL.Format("INSERT INTO coachCheck (COACH_ID, CHECK_DATE, TYPE, WORK_TIME, CLASS_ID)\
-					  					  VALUES('%s', '%s', 1, 2, '%s')", strCoachID, m_strToday, strClassID);
+					  VALUES('%s', '%s', 1, 2, '%s')", strCoachID, m_strToday, strClassID);
 	}
 
 	g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg);
 	ShowMsg2Output1(strMsg);
+
+	if (flag == 1) //旷工一次就更新教练的缺勤次数
+	{
+		strSQL.Format("UPDATE coachstat SET LEAVE_N=\
+					  (SELECT COUNT(COACH_ID) FROM coachCheck WHERE COACH_ID='%s' AND TYPE='0')\
+					  WHERE FILE_NUM='%s'", strCoachID, strCoachID);
+
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+	}
+	else if (flag == 0) //正常完成一次，增加一次本月已上课时数
+	{
+		strSQL.Format("UPDATE coachstat SET CLASS_NUM=\
+					  	(SELECT COUNT(COACH_ID) FROM coachCheck WHERE COACH_ID='%s' AND TYPE='1')\
+						WHERE FILE_NUM='%s'", strCoachID, strCoachID);
+
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+	}
 }
 
 void CViewOrderRsp::UpdateStudent(int nRow, int flag)
@@ -249,7 +268,7 @@ void CViewOrderRsp::UpdateStudent(int nRow, int flag)
 		ShowMsg2Output1(strMsg);
 
 
-		strSQL.Format("UPDATE students SET CLASS_NUM = CLASS_NUM + 1");
+		strSQL.Format("UPDATE students SET CLASS_NUM = CLASS_NUM + 1 WHERE FILE_NAME='%s'", strStuID);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
 	}

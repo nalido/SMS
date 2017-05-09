@@ -15,6 +15,7 @@
 #include "System.h"
 #include "Coaches.h"
 #include "ViewOrderRsp.h"
+#include "ViewDevices.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,6 +28,7 @@ CString g_sServerIP = "127.0.0.1";
 int g_nClassTotal = 9;
 int g_nMaxBooking = 15;
 int g_nSubForLeave = 8;
+int g_nMinWorkTime = 176;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -118,6 +120,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_COACH, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_DEVICE, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_ORDER_RSP, OnViewSelected)
@@ -388,6 +391,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_COACH:
 		SelectView(VIEW_COACHES);
 		break;
+	case ID_VIEW_DEVICE:
+		SelectView(VIEW_DEVICES);
+		break;
 	}
 	return TRUE;
 }
@@ -442,6 +448,9 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_COACHES:
 		pClass = RUNTIME_CLASS(CCoaches);
+		break;
+	case VIEW_DEVICES:
+		pClass = RUNTIME_CLASS(CViewDevices);
 		break;
 	case VIEW_STUPROGRESS:
 		pClass = RUNTIME_CLASS(CViewStuProgress); 

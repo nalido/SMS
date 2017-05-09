@@ -108,7 +108,7 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 					pdi->item.clrText = COLOR_TEXTNONE;
 				}
 			}
-			else if (pThis->m_datas1[nRow][5] == "1") //已派工
+			else if (pThis->m_datas1[nRow][5] >= "1") //已派工
 			{
 				pdi->item.clrBackground = COLOR_MANY;
 			}

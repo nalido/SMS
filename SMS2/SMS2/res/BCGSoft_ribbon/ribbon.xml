@@ -51,7 +51,7 @@
 			<ELEMENTS>
 				<ELEMENT>
 					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<TEXT>Style</TEXT>
+					<TEXT>主题风格</TEXT>
 					<KEYS>s</KEYS>
 					<DEFAULT_COMMAND>FALSE</DEFAULT_COMMAND>
 					<ELEMENTS>

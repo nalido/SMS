@@ -89,6 +89,7 @@ extern char* EncodeToUTF8(const char* mbcsStr);
 extern int g_nClassTotal; //每个课时每天可以预约的总数
 extern int g_nMaxBooking; //每个学员最多预约课数
 extern int g_nSubForLeave; //教练缺勤一次减去的学员数量
+extern int g_nMinWorkTime; //教练一个月最少工时
 
 enum enum_StudentProgress{
 	SP_NEWONE = 0,			//新生记录
@@ -124,6 +125,7 @@ enum VIEW_TYPE{
 	VIEW_K1EXAM,
 	VIEW_STUPROGRESS,
 	VIEW_COACHES,
+	VIEW_DEVICES,
 	VIEW_SCHOOL,
 	VIEW_SYSTEM,
 	VIEW_NUM

@@ -83,6 +83,7 @@ BOOL CSMS2App::InitInstance()
 	xPublic::GetWorkPath("StudentsManagementSystem");
 	g_strFilePath = xPublic::GETSTR2("Option", "PicSavePath", _T("E:\\Photos\\"));
 	g_nSubForLeave = xPublic::GETINT2("Coach", "SubForLeave", 8);
+	g_nMinWorkTime = xPublic::GETINT2("Coach", "MinWorkTime", 8);
 
 	// Initialize OLE libraries
 	if (!AfxOleInit())
