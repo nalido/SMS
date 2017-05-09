@@ -69,7 +69,11 @@ public:
 	void SetCallBack_Clk(ONWORK noWork);
 	virtual void OnSelChanged(const CBCGPGridRange&range, BOOL bSelect);
 
+	//列表刷新数据显示
 	void GridRefresh(int nCount);
+
+	//获取最后一列宽度
+	int GetLastColWidth(int* wids, int cols, int rw);
 };
 
 /////////////////////////////////////////////////////////////////////////////

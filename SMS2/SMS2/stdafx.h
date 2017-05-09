@@ -77,5 +77,6 @@
 #define	APP_TITLE _T("东华驾校学员管理系统")
 #define UM_REDRAW (WM_USER + 101)
 #define WM_USER_MESSAGE		(WM_USER + 2001)//自定义消息
+#define WM_USER_UPDATE_VIEW		(WM_USER + 2002)//自定义消息, 刷新视图数据
 
 #include "xPublic\Common.h"

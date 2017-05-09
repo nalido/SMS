@@ -55,6 +55,7 @@ public:
 	afx_msg void OnBnClickedBtnSms1();
 	afx_msg void OnBnClickedBtnSms2();
 	afx_msg void OnBnClickedBtnFresh2();
+	afx_msg void OnBnClickedNewStudent();
 };
 
 

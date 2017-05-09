@@ -51,10 +51,18 @@
 			<ELEMENTS>
 				<ELEMENT>
 					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<TEXT>Style</TEXT>
+					<TEXT>主题风格</TEXT>
 					<KEYS>s</KEYS>
 					<DEFAULT_COMMAND>FALSE</DEFAULT_COMMAND>
 					<ELEMENTS>
+						<ELEMENT>
+							<ELEMENT_NAME>Button</ELEMENT_NAME>
+							<ID>
+								<NAME>ID_VIEW_APPLOOK_2003</NAME>
+								<VALUE>32828</VALUE>
+							</ID>
+							<TEXT>Office 200&amp;3</TEXT>
+						</ELEMENT>
 						<ELEMENT>
 							<ELEMENT_NAME>Button</ELEMENT_NAME>
 							<ID>
@@ -246,17 +254,17 @@
 									<NAME>ID_VIEW_BOOKING2</NAME>
 									<VALUE>32867</VALUE>
 								</ID>
-								<TEXT>科二预约</TEXT>
+								<TEXT>派工</TEXT>
 								<INDEX_LARGE>10</INDEX_LARGE>
 							</ELEMENT>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>ID_VIEW_PRINTB</NAME>
-									<VALUE>32871</VALUE>
+									<NAME>ID_VIEW_ORDER_RSP</NAME>
+									<VALUE>32882</VALUE>
 								</ID>
-								<TEXT>打印</TEXT>
-								<INDEX_LARGE>4</INDEX_LARGE>
+								<TEXT>派工反馈</TEXT>
+								<INDEX_LARGE>13</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>

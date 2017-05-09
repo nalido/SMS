@@ -68,15 +68,12 @@ void CAddCoach::OnBnClickedAdd()
 	else
 	{
 		CString strMsg("");
-		CString strMsg1("");
 		CString strSQL("");
-		CString strSQL1("");
 		strSQL.Format("INSERT INTO coachinfo \
 			(SNAME, GENDER, BIRTH, PARTY_STAT, TEL, HOME, SIGN_DATE, FILE_NUM) \
 			VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
 			name, gender, birth, party, tel, home, date, filenum);
-		strSQL1.Format("ALTER TABLE coachstat ADD COLUMN %s int(2)", name);
-		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg) && g_mysqlCon.ExecuteSQL(strSQL1, strMsg1))
+		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 		{
 			MessageBox("教练员添加成功！");
 			ShowMsg2Output1(name + "教练员添加成功！");
@@ -85,12 +82,26 @@ void CAddCoach::OnBnClickedAdd()
 		{
 			MessageBox("教练员添加错误！");
 			ShowMsg2Output1("教练员添加操作错误：" + strSQL);
-			ShowMsg2Output1("教练员添加操作错误：" + strSQL1);
 			LOG("SQLERROR.log", strSQL);
-			LOG("SQLERROR.log", strSQL1);
 			LOG("SQLERROR.log", g_mysqlCon.GetError());
 		}
+
+
+		strSQL.Format("INSERT INTO coachstat (FILE_NUM) VALUES('%s')", filenum);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	}
 
 	OnOK();
+}
+
+
+BOOL CAddCoach::OnInitDialog()
+{
+	CBCGPDialog::OnInitDialog();
+
+	m_Comb_Gen.AddString("男");
+	m_Comb_Gen.AddString("女");
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// 异常:  OCX 属性页应返回 FALSE
 }

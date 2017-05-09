@@ -25,6 +25,13 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
+
+public:
+	CString m_strSubForLeave; //教练缺勤一次减去的绩效
+	CString m_strMinWorkTime; //教练一个月最少工时
+	virtual void OnInitialUpdate();
+	afx_msg void OnBnClickedSave();
+	afx_msg void OnBnClickedSave2();
 };
 
 

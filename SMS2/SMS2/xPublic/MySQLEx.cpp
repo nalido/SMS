@@ -88,6 +88,7 @@ namespace xPublic{
 	
 	BOOL CMySQLEx::ExecuteQuery(LPCTSTR lpszSQL, CDStrs& Fields, CString& Msg)
 	{
+		Msg = "ExecuteQuery Successed";
 		if (!m_isInit)
 		{
 			Msg = "No connection exist.";
@@ -156,6 +157,7 @@ namespace xPublic{
 	
 	BOOL CMySQLEx::ExecuteSQL(LPCTSTR lpszSQL, CString& Msg)
 	{
+		Msg = "ExecuteSQL successed";
 		if (!m_isInit)
 		{
 			Msg = "No connection exist.";

@@ -33,6 +33,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedCamera();
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
 
 	CStatic m_SPhoto;
@@ -56,7 +57,7 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	virtual void OnInitialUpdate();
 	afx_msg void OnPaint();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+//	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedBtnSign();
 	afx_msg void OnBnClickedNewfile();
 	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);

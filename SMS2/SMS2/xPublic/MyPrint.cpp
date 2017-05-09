@@ -4,7 +4,7 @@
 
 namespace xPublic{
 
-	CString GetClassTime(int n) //根据时段编号获得具体时间
+	CString CMyPrint::GetClassTime(int n) //根据时段编号获得具体时间
 	{
 		CString res("");
 		switch (n)
@@ -43,6 +43,13 @@ namespace xPublic{
 		{
 			m_dcPrinter.Detach();//释放DC
 		}
+	}
+
+	void CMyPrint::operator=(CMyPrint& print)
+	{
+		m_classInfo = print.m_classInfo;
+		m_sheetInfo = print.m_sheetInfo;
+		m_students = print.m_students;
 	}
 
 	void CMyPrint::PrinterInit(SHEETINFO* SheetInfo, CLASSINFO* ClassInfo)
@@ -175,7 +182,7 @@ namespace xPublic{
 	void CMyPrint::PrintTrainSheet(int page)
 	{
 		CPen pen, *pOldPen;// 定义笔对象和指针  
-		pen.CreatePen(PS_SOLID, 10, RGB(0, 0, 0));
+		pen.CreatePen(PS_SOLID, m_printerInfo.fmmDpiy*0.5, RGB(0, 0, 0));
 		pOldPen = m_dcPrinter.SelectObject(&pen); 
 
 		CFont font_3mm, font_4mm, font_6mm, font_7mm, font_8mm, font_13mm; //从小到大
@@ -199,11 +206,8 @@ namespace xPublic{
 		int tableR = W - 22; //打印单内表格的右横坐标
 		RectangleEx(20, 45, W-20, H-25);// 画表格外框
 
-		//表头信息
-		CFont *font = m_dcPrinter.SelectObject(&font_13mm);
-		TextEx(44, 52, m_sheetInfo->strTitle);
 
-		m_dcPrinter.SelectObject(&font_8mm);
+		CFont *font = m_dcPrinter.SelectObject(&font_8mm);
 		TextEx(tableR-60, 60, "车辆编号："+m_sheetInfo->strCarID);
 
 		m_dcPrinter.SelectObject(&font_6mm);
@@ -240,13 +244,6 @@ namespace xPublic{
 		int yc4 = 22 + 3 * tableW + 1;
 		TextEx(yc4, 101, "用时、进度");
 
-		//绘制进度扇形
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 99 + 9 * 1 + 1, yc4 + 7, 99 + 9 * 1 + 8), 3, 15);
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 109, yc4 + 7, 116), m_students[0]);
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 99 + 9 * 2 + 1, yc4 + 7, 99 + 9 * 2 + 8), 15, 15);
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 118, yc4 + 7, 125), m_students[1]);
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 99 + 9 * 3 + 1, yc4 + 7, 99 + 9 * 3 + 8), 0, 15);
-		//FillPieEx(RGB(0, 0, 0), CRect(yc4, 127, yc4 + 7, 134), m_students[2]);
 
 		//col 5
 		int yc5 = 22 + 4 * tableW + 4;
@@ -261,33 +258,227 @@ namespace xPublic{
 		TextEx(yc6, 101, "自我评价");
 		LineEx(yc6+1, 115, yc6 + 15, 115, 1, 9, 3); //画3条横线
 
-		//输出动态信息：学员信息、授教内容
-		if (m_students.size() > 0)
-		{
-			for (int i = 0; i < m_students.size(); i++)
-			{
-				//姓名
-				TextEx(26, 110 + 9 * i, m_students[i]->strName);
-				//约定日期
-				TextEx(yc2, 110 + 9 * i, m_students[i]->strDate);
-				//时段
-				m_dcPrinter.SelectObject(&font_3mm);
-				TextEx(yc3 - 4, 111 + 9 * i, GetClassTime(m_students[i]->nClassTime));
-				m_dcPrinter.SelectObject(&font_4mm);
-				//用时进度
-				FillPieEx(RGB(0, 0, 0), CRect(yc4, 109 + 9 * i, yc4 + 7, 116 + 9 * i), m_students[i]);
-			}
-		}
-
 		//课程内容表格
 		RectangleEx(22, 155, tableR, 241);
 		LineEx(22, 169, tableR, 169, 1, 9, 8); //画8条横线
 
 		m_dcPrinter.SelectObject(&font_7mm);
 		TextEx(24, 159, "授教内容：");
-		TextEx(tableR-57, H-34, m_sheetInfo->strData);
+		TextEx(tableR - 57, H - 34, m_sheetInfo->strDate);
 		m_dcPrinter.SelectObject(&font_8mm);
 		TextEx(32, 250, "辛苦了！ 谢谢配合！");
+
+
+		//输出动态信息：学员信息、授教内容
+		m_dcPrinter.SelectObject(&font_4mm);
+		if (m_students.size() == 0)
+		{
+			m_classInfo->nClassID = 0;
+			m_classInfo->arrClassText.clear();
+		}
+		else if (m_students.size() > 0)
+		{
+			for (int i = 0; i < m_students.size(); i++)
+			{
+				//姓名
+				TextEx(26, 110 + 9 * i, m_students[i].strName);
+				//约定日期
+				TextEx(yc2, 110 + 9 * i, m_students[i].strDate);
+				//时段
+				m_dcPrinter.SelectObject(&font_3mm);
+				TextEx(yc3 - 4, 111 + 9 * i, GetClassTime(m_students[i].nClassTime));
+				m_dcPrinter.SelectObject(&font_4mm);
+				//用时进度
+				FillPieEx(RGB(0, 0, 0), CRect(yc4, 109 + 9 * i, yc4 + 7, 116 + 9 * i), &m_students[i]);
+			}
+
+			//授课内容
+			int nText = m_classInfo->arrClassText.size();
+			if (nText == 0) //初始化 从配置文件读取授课内容
+			{
+				if (m_classInfo->nClassID > 0)
+				{
+					CString strClassID;
+					strClassID.Format("CLASS%d", m_classInfo->nClassID);
+					int nItem = xPublic::GETINT2(strClassID, "nItem", 0);
+					m_sheetInfo->strTitle = xPublic::GETSTR2(strClassID, "title", "未定义");
+					CString strItemID;
+					for (int i = 1; i <= nItem; i++)
+					{
+						strItemID.Format("item%d", i);
+						CString strClassText = xPublic::GETSTR2(strClassID, strItemID, "");
+						m_classInfo->arrClassText.push_back(strClassText);
+					}
+					nText = nItem;
+				}
+			}
+			if (nText > 0)
+			{
+				m_dcPrinter.SelectObject(&font_6mm);
+				for (int i = 0; i< nText; i++)
+				{
+					TextEx(24, 170 + 9 * i, m_classInfo->arrClassText[i]);
+				}
+			}
+		}
+
+		//表头信息
+		m_dcPrinter.SelectObject(&font_13mm);
+		TextEx(44, 52, m_sheetInfo->strTitle);
+
+		// 恢复以前的画笔
+		m_dcPrinter.SelectObject(font);
+		m_dcPrinter.SelectObject(pOldPen);
+	}
+
+
+	void CMyPrint::DrawTrainSheet()
+	{
+		CPen pen, *pOldPen;// 定义笔对象和指针  
+		pen.CreatePen(PS_SOLID, m_printerInfo.fmmDpiy*0.5, RGB(0, 0, 0));
+		pOldPen = m_dcPrinter.SelectObject(&pen);
+
+		CFont font_3mm, font_4mm, font_6mm, font_7mm, font_8mm, font_13mm; //从小到大
+		font_3mm.CreateFontA(m_printerInfo.fmmDpiy * 3, 0, 0, 0, FW_BLACK, 0, 0, 0, 0,
+			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "宋体"); //字体高度3mm
+		font_4mm.CreateFontA(m_printerInfo.fmmDpiy * 4, 0, 0, 0, FW_BLACK, 0, 0, 0, 0,
+			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "宋体"); //字体高度4mm
+		font_6mm.CreateFontA(m_printerInfo.fmmDpiy * 6, 0, 0, 0, FW_BLACK, 0, 0, 0, 0,
+			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "宋体"); //字体高度6mm
+		font_7mm.CreateFontA(m_printerInfo.fmmDpiy * 7, 0, 0, 0, FW_BLACK, 0, 0, 0, 0,
+			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "宋体"); //字体高度7mm
+		font_8mm.CreateFontA(m_printerInfo.fmmDpiy * 8, 0, 0, 0, FW_BLACK, 0, 0, 0, 0,
+			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "宋体"); //字体高度8mm
+		font_13mm.CreateFontA(m_printerInfo.fmmDpiy * 13, 0, 0, 0, FW_BLACK, 0, 0, 0, 0,
+			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "宋体"); //字体高度13mm
+		m_dcPrinter.SetBkMode(TRANSPARENT); //文字背景透明
+
+		//绘图
+		float W = m_printerInfo.fPrinterScreenx;
+		float H = m_printerInfo.fPrinterScreeny;
+		int tableR = W - 2; //打印单内表格的右横坐标
+		//RectangleEx(20, 45, W - 20, H - 25);// 画表格外框
+		RectangleEx(0, 0, W, H);
+
+
+		CFont *font = m_dcPrinter.SelectObject(&font_8mm);
+		TextEx(tableR - 55, 15, "车辆编号：" + m_sheetInfo->strCarID);
+
+		m_dcPrinter.SelectObject(&font_6mm);
+		TextEx(tableR - 95, 32, m_sheetInfo->strClassType + "教练员：" + m_sheetInfo->strCoach
+			+ "  工号：" + m_sheetInfo->strCoachID);
+
+
+		m_dcPrinter.SelectObject(&font_7mm);
+		CRect rect(CPoint(2, 93), CPoint(tableR, 108));
+		DrawTextExx(m_sheetInfo->strMsg2, rect); //drawText之后不能直接进行TextOut，不知道为什么。
+
+
+		//学员信息表格
+		RectangleEx(2, 40, tableR, 90);
+		LineEx(2, 54, tableR, 54, 1, 9, 4); //画4条横线
+		float tableW = (tableR - 2) / 7; //表格列宽
+		LineEx(2 + tableW, 54, 2 + tableW, 90, 2, tableW, 6); //画6条竖线
+
+		TextEx(4, 44, m_sheetInfo->strMsg1);
+		m_dcPrinter.SelectObject(&font_4mm);
+		//col 1
+		int yc1 = 2 + 5;
+		TextEx(7, 56, "姓 名");
+
+		//col 2
+		int yc2 = 2 + tableW + 3;
+		TextEx(yc2, 56, "约定日期");
+
+		//col 3
+		int yc3 = 2 + 2 * tableW + 6;
+		TextEx(yc3, 56, "时 段");
+
+		//col 4
+		int yc4 = 2 + 3 * tableW + 1;
+		TextEx(yc4, 56, "用时、进度");
+
+
+		//col 5
+		int yc5 = 2 + 4 * tableW + 4;
+		TextEx(yc5, 56, "服务评价");
+		LineEx(yc5 + 1, 70, yc5 + 11, 70, 1, 9, 3); //画3条横线
+		TextEx(yc5 + 11, 66, "分");
+		TextEx(yc5 + 11, 75, "分");
+		TextEx(yc5 + 11, 84, "分");
+
+		//col 6
+		int yc6 = 2 + 5 * tableW + 4;
+		TextEx(yc6, 56, "自我评价");
+		LineEx(yc6 + 1, 70, yc6 + 15, 70, 1, 9, 3); //画3条横线
+
+		//课程内容表格
+		RectangleEx(2, 110, tableR, 196);
+		LineEx(2, 124, tableR, 124, 1, 9, 8); //画8条横线
+
+		m_dcPrinter.SelectObject(&font_7mm);
+		TextEx(4, 114, "授教内容：");
+		TextEx(tableR - 58, H - 9, m_sheetInfo->strDate);
+		m_dcPrinter.SelectObject(&font_8mm);
+		TextEx(2, 205, "辛苦了！ 谢谢配合！");
+
+		//输出动态信息：学员信息、授教内容
+		m_dcPrinter.SelectObject(&font_4mm);
+		if (m_students.size() == 0)
+		{
+			m_classInfo->nClassID = 0;
+			m_classInfo->arrClassText.clear();
+		}
+		else if (m_students.size() > 0)
+		{
+			//学生信息
+			for (int i = 0; i < m_students.size(); i++)
+			{
+				//姓名
+				TextEx(6, 65 + 9 * i, m_students[i].strName);
+				//约定日期
+				TextEx(yc2-1, 65 + 9 * i, m_students[i].strDate);
+				//时段
+				m_dcPrinter.SelectObject(&font_3mm);
+				TextEx(yc3 - 5, 66 + 9 * i, GetClassTime(m_students[i].nClassTime));
+				m_dcPrinter.SelectObject(&font_4mm);
+				//用时进度
+				FillPieEx(RGB(0, 0, 0), CRect(yc4, 64 + 9 * i, yc4 + 7, 71 + 9 * i), &m_students[i]);
+			}
+
+			//授课内容
+			int nText = m_classInfo->arrClassText.size();
+			if (nText == 0) //初始化 从配置文件读取授课内容
+			{
+				if (m_classInfo->nClassID > 0)
+				{
+					CString strClassID;
+					strClassID.Format("CLASS%d", m_classInfo->nClassID);
+					int nItem = xPublic::GETINT2(strClassID, "nItem", 0);
+					m_sheetInfo->strTitle = xPublic::GETSTR2(strClassID, "title", "未定义");
+					CString strItemID;
+					for (int i = 1; i <= nItem; i++)
+					{
+						strItemID.Format("item%d", i);
+						CString strClassText = xPublic::GETSTR2(strClassID, strItemID, "");
+						m_classInfo->arrClassText.push_back(strClassText);
+					}
+					nText = nItem;
+				}
+			}
+			if (nText > 0)
+			{
+				m_dcPrinter.SelectObject(&font_7mm);
+				for (int i = 0; i< nText; i++)
+				{
+					TextEx(4, 125 + 9 * i, m_classInfo->arrClassText[i]);
+				}
+			}
+		}
+
+		//表头信息
+		m_dcPrinter.SelectObject(&font_13mm);
+		TextEx(24, 7, m_sheetInfo->strTitle);
 
 		// 恢复以前的画笔
 		m_dcPrinter.SelectObject(font);
@@ -403,8 +594,33 @@ namespace xPublic{
 		m_dcPrinter.SelectObject(pOldPen);
 	}
 
-	void CMyPrint::AddStudent(STUDENTINFO* student)
+	void CMyPrint::AddStudent(STUDENTINFO student)
 	{
 		m_students.push_back(student);
+	}
+
+	void CMyPrint::RemoveStudentAt(int index)
+	{
+		std::vector<STUDENTINFO>::iterator it = m_students.begin() + index;
+		m_students.erase(it);
+	}
+
+	void CMyPrint::Reset()
+	{
+		m_students.clear();
+
+		if (m_classInfo != NULL)
+		{
+			m_classInfo->arrClassText.clear();
+			m_classInfo->nClassID = 0;
+		}
+
+		if (m_sheetInfo != NULL)
+		{
+			m_sheetInfo->strTitle = "未定义";
+			m_sheetInfo->strCarID = "---";
+			m_sheetInfo->strCoach = "---";
+			m_sheetInfo->strCoachID = "---";
+		}
 	}
 }//xPublic

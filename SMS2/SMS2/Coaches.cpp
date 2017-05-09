@@ -5,6 +5,7 @@
 #include "SMS2.h"
 #include "Coaches.h"
 #include "AddCoach.h"
+#include "DlgCoachCheck.h"
 
 
 // CCoaches
@@ -29,6 +30,12 @@ void CCoaches::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CCoaches, CBCGPFormView)
 	ON_BN_CLICKED(IDC_ADDCOACH, &CCoaches::OnBnClickedAddcoach)
+	ON_BN_CLICKED(IDC_CHUQIN, &CCoaches::OnBnClickedChuqin)
+	ON_BN_CLICKED(IDC_QUEQIN, &CCoaches::OnBnClickedQueqin)
+	ON_BN_CLICKED(IDC_WORKTIME, &CCoaches::OnBnClickedWorktime)
+	ON_BN_CLICKED(IDC_JIXIAO, &CCoaches::OnBnClickedJixiao)
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
+	ON_BN_CLICKED(IDC_KPI, &CCoaches::OnBnClickedKpi)
 END_MESSAGE_MAP()
 
 
@@ -69,6 +76,15 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		else
 		{
 			pdi->item.varValue = "访问内存出错";
+			return TRUE;
+		}
+
+		//颜色控制
+		int nLeave = atoi(pThis->m_arCoaches[nRow][9]);
+		if (nLeave >= pThis->m_nMaxLeave)
+		{
+			pdi->item.clrBackground = COLOR_NONE;
+			pdi->item.clrText = COLOR_TEXTNONE;
 		}
 	}
 
@@ -98,17 +114,14 @@ void CCoaches::OnInitialUpdate()
 
 	int nColumn = 0;
 	int hw = m_wndCoaches.GetRowHeaderWidth();
+	LPCTSTR arrColumns[] = { _T("姓名"), _T("性别"), _T("出生日期"), _T("面貌"), _T("手机")
+		, _T("家庭住址"), _T("进厂日期"), _T("档案号"), _T("KPI"), _T("缺勤数"), _T("本月工时") };
+	const int nColumns = sizeof (arrColumns) / sizeof (LPCTSTR);
 	int w = rect.Width() - hw;
-	m_wndCoaches.InsertColumn(nColumn, _T("姓名"), 70); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("性别"), 50); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("出生日期"), 70); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("面貌"), 50); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("手机"), 80); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("家庭住址"), 100); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn, _T("进厂日期"), 70); w -= m_wndCoaches.GetColumnWidth(nColumn++);
-	m_wndCoaches.InsertColumn(nColumn++, _T("档案号"), w);
-	for (int i = 0; i < nColumn; i++)
+	int nColumnWidth = w / nColumns;
+	for (int i = 0; i < nColumns; i++)
 	{
+		m_wndCoaches.InsertColumn(i, arrColumns[i], nColumnWidth);
 		m_wndCoaches.SetColumnAlign(i, HDF_CENTER);
 		m_wndCoaches.SetHeaderAlign(i, HDF_CENTER);
 	}
@@ -122,7 +135,7 @@ void CCoaches::Refresh()
 {
 	CString strMsg("");
 	CString strSQL("");
-	strSQL.Format("SELECT * FROM coachinfo");
+	strSQL.Format("SELECT * FROM coachinfo INNER JOIN coachstat ON coachinfo.FILE_NUM=coachstat.FILE_NUM ORDER BY coachstat.PERFORMANCE DESC");
 	m_arCoaches.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_arCoaches, strMsg))
 	{
@@ -131,6 +144,13 @@ void CCoaches::Refresh()
 	else ShowMsg2Output1(strMsg);
 
 	m_wndCoaches.GridRefresh(m_arCoaches.size());
+
+	CTime t = CTime::GetCurrentTime();
+	int year = t.GetYear();
+	CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
+	//半年内 超过3次请假为不合格, 超过半年按6次算
+	m_nMaxLeave = 3;
+	if (midYear < t) m_nMaxLeave = 6;
 }
 
 void CCoaches::OnBnClickedAddcoach()
@@ -139,5 +159,97 @@ void CCoaches::OnBnClickedAddcoach()
 	if (dlg.DoModal() == IDOK)
 	{
 		Refresh();
+	}
+}
+
+
+void CCoaches::OnBnClickedChuqin()
+{
+	CBCGPGridRow* pRow = m_wndCoaches.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CDlgCoachCheck dlg;
+		dlg.m_nCheckType = CHECK_CHUQIN;
+		dlg.m_strCoachID = m_arCoaches[nRow][7];
+		dlg.m_strCoach = m_arCoaches[nRow][0];
+		dlg.DoModal();
+	}
+}
+
+
+void CCoaches::OnBnClickedQueqin()
+{
+	CBCGPGridRow* pRow = m_wndCoaches.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CDlgCoachCheck dlg;
+		dlg.m_nCheckType = CHECK_QUEQIN;
+		dlg.m_strCoachID = m_arCoaches[nRow][7];
+		dlg.m_strCoach = m_arCoaches[nRow][0];
+		dlg.DoModal();
+	}
+}
+
+
+void CCoaches::OnBnClickedWorktime()
+{
+	CBCGPGridRow* pRow = m_wndCoaches.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CDlgCoachCheck dlg;
+		dlg.m_nCheckType = CHECK_WORKTIME;
+		dlg.m_strCoachID = m_arCoaches[nRow][7];
+		dlg.m_strCoach = m_arCoaches[nRow][0];
+		dlg.DoModal();
+	}
+}
+
+
+void CCoaches::OnBnClickedJixiao()
+{
+	CBCGPGridRow* pRow = m_wndCoaches.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CDlgCoachCheck dlg;
+		dlg.m_nCheckType = CHECK_JIXIAO;
+		dlg.m_strCoachID = m_arCoaches[nRow][7];
+		dlg.m_strCoach = m_arCoaches[nRow][0];
+		dlg.DoModal();
+	}
+}
+
+
+LRESULT CCoaches::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int type = (int)wParam;
+
+	switch (type)
+	{
+	case 1:
+		Refresh();
+		break;
+	case 2:
+		
+		break;
+	}
+
+	return 0;
+}
+
+void CCoaches::OnBnClickedKpi()
+{
+	CBCGPGridRow* pRow = m_wndCoaches.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CDlgCoachCheck dlg;
+		dlg.m_nCheckType = CHECK_KPI;
+		dlg.m_strCoachID = m_arCoaches[nRow][7];
+		dlg.m_strCoach = m_arCoaches[nRow][0];
+		dlg.DoModal();
 	}
 }
