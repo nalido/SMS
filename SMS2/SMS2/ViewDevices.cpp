@@ -140,8 +140,10 @@ void CViewDevices::OnPaint()
 		{
 			Point p1(recti.left, recti.top);
 			Point p2(recti.left, recti.bottom);
-			LinearGradientBrush lgb(p1, p2, Color::Transparent, Color::BurlyWood);
+			LinearGradientBrush lgb(p1, p2, Color(249, 238, 224), Color::BurlyWood);
 			graph.FillRectangle(&lgb, recti.left, recti.top, recti.Width(), recti.Height());
+			Pen pen(Color(188, 157, 115));
+			graph.DrawRectangle(&pen, recti.left, recti.top, recti.Width(), recti.Height());
 		}
 		CStringW strW = CT2CW(pth[i]);
 		Image img(strW.GetBuffer(0));

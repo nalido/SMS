@@ -44,4 +44,5 @@ public:
 	afx_msg void OnBnClickedNewitem();
 	afx_msg void OnBnClickedSave();
 	void AddNewRowToDB(CStrs strs);
+	afx_msg void OnBnClickedDelitem();
 };
