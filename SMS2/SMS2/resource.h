@@ -36,6 +36,8 @@
 #define IDD_COACH_CHECK                 194
 #define IDD_DEVICES                     195
 #define IDD_DEVICE_DETAIL               200
+#define IDD_DIALOG3                     201
+#define IDD_DEVICE_DETAIL2              201
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -49,7 +51,6 @@
 #define IDC_BUTTON5                     1057
 #define IDC_DELITEM                     1057
 #define IDC_PHOTO                       1058
-#define IDC_CHANGEITEM                  1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
 #define IDC_CARTYPE                     1063
@@ -239,7 +240,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        201
+#define _APS_NEXT_RESOURCE_VALUE        202
 #define _APS_NEXT_COMMAND_VALUE         32883
 #define _APS_NEXT_CONTROL_VALUE         1183
 #define _APS_NEXT_SYMED_VALUE           118

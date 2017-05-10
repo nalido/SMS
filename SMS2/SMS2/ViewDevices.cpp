@@ -6,6 +6,7 @@
 #include "ViewDevices.h"
 #include "MainFrm.h"
 #include "DlgDevice.h"
+#include "DlgDevice2.h"
 
 
 // CViewDevices
@@ -278,6 +279,28 @@ void CViewDevices::OnLButtonDown(UINT nFlags, CPoint point)
 		{
 				  CDlgDevice dlg;
 				  dlg.m_nQueryType = QUERY_CLAIMS;
+				  dlg.DoModal();
+				  break;
+		}
+
+		case 2:
+		{
+				  CDlgDevice2 dlg;
+				  dlg.m_nQueryType = QUERY_OIL;
+				  dlg.DoModal();
+				  break;
+		}
+		case 3:
+		{
+				  CDlgDevice2 dlg;
+				  dlg.m_nQueryType = QUERY_MAINTENANCE;
+				  dlg.DoModal();
+				  break;
+		}
+		case 4:
+		{
+				  CDlgDevice2 dlg;
+				  dlg.m_nQueryType = QUERY_MOT;
 				  dlg.DoModal();
 				  break;
 		}
