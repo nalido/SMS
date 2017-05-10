@@ -170,6 +170,7 @@ void CDlgDevice::OnBnClickedUpdate()
 
 void CDlgDevice::OnBnClickedNewitem()
 {
+	GetNewData();
 	GetDlgItem(IDC_SAVE)->EnableWindow(TRUE);
 	m_wndGrid.SetReadOnly(0);
 	CStrs strs;
@@ -182,22 +183,28 @@ void CDlgDevice::OnBnClickedNewitem()
 	m_wndGrid.GridRefresh(m_datas.size());
 }
 
-
-void CDlgDevice::OnBnClickedSave()
+void CDlgDevice::GetNewData()
 {
 	int nRows = m_datas.size();
-	if (m_nOldRows >= nRows) return;
+	if (m_nOldRows >= nRows) return; //没有新行
+
+	//先推出之前临时创建的空行
+	for (int nRow = m_nOldRows; nRow < nRows; nRow++)
+	{
+		m_datas.pop_back();
+	}
 
 	for (int nRow = m_nOldRows; nRow < nRows; nRow++)
 	{
 		CBCGPGridRow* pRow = m_wndGrid.GetRow(nRow);
 
 		BOOL isValid = FALSE; //一行数据至少有一个非空才有效
+		CStrs strs;
 		for (int i = 0; i < m_nColumns; i++)
 		{
 			CBCGPGridItem* pItem = pRow->GetItem(i);
 			CString d = pItem->GetValue();
-			m_datas[nRow][i] = d;
+			strs.push_back(d);
 			if (!d.IsEmpty())
 			{
 				isValid = TRUE;
@@ -205,11 +212,28 @@ void CDlgDevice::OnBnClickedSave()
 		}
 
 		if (isValid)
-			AddNewRowToDB(m_datas[nRow]);
+			m_datas.push_back(strs);
 	}
 
+	//不更新m_nOldRows，作为新老数据的分界点
+}
 
+void CDlgDevice::OnBnClickedSave()
+{
+	m_wndGrid.SetReadOnly();
+	m_wndGrid.SetWholeRowSel();
 	GetDlgItem(IDC_SAVE)->EnableWindow(FALSE);
+
+	GetNewData();
+	int nRows = m_datas.size();
+	if (m_nOldRows >= nRows) return; //没有新数据
+
+	for (int nRow = m_nOldRows; nRow < nRows; nRow++)
+	{
+		AddNewRowToDB(m_datas[nRow]);
+	}
+
+	Refresh();
 }
 
 void CDlgDevice::AddNewRowToDB(CStrs strs)
@@ -240,5 +264,50 @@ void CDlgDevice::AddNewRowToDB(CStrs strs)
 
 void CDlgDevice::OnBnClickedDelitem()
 {
-	// TODO:  在此添加控件通知处理程序代码
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow == NULL) return;
+
+	GetNewData();
+	int nRow = pRow->GetRowId();
+	if (nRow >= m_nOldRows) //有未保存的数据
+	{
+	}
+	else //删除已保存的数据， 需要同时删除数据库内容
+	{
+		DelRowFromDB(m_datas[nRow]);
+		m_nOldRows--; //老数据行数减一
+	}
+
+	//for (int i = 0; i < m_nColumns; i++)
+	//	pRow->GetItem(i)->SetValue("");
+	CDStrs::iterator it = m_datas.begin() + nRow;
+	m_datas.erase(it);
+	m_wndGrid.GridRefresh(m_datas.size());
+}
+
+void CDlgDevice::DelRowFromDB(CStrs strs)
+{
+	CString strMsg, strSQL;
+	switch (m_nQueryType)
+	{
+	case QUERY_DEVICES:
+		strSQL.Format("DELETE FROM cars WHERE CAR_NAME='%s' AND TYPE='%s' \
+						AND BUY_DAY='%s' AND PLATE_NUM='%s'",
+						strs[0], strs[1], strs[2], strs[3]);
+		break;
+	case QUERY_INSURANCES:
+		strSQL.Format("DELETE FROM insurances WHERE ITEM_NAME='%s' AND PLATE_NUM='%s' AND \
+					  ITEM_NUM='%s' AND CHEJIA_NUM='%s' AND FEE='%s' AND DUE_DATE='%s' AND \
+					  COMPANY='%s'",
+						strs[0], strs[1], strs[2], strs[3], strs[4], strs[5], strs[6]);
+		break;
+	case QUERY_CLAIMS:
+		strSQL.Format("DELETE FROM claims WHERE PLATE_NUM='%s' AND CLAIM_DATE='%s' AND FEE='%s' AND \
+					  CAR_LOSS='%s' AND OTHER_LOSS='%s'",
+						strs[0], strs[1], strs[2], strs[3], strs[4]);
+		break;
+	}
+
+	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	ShowMsg2Output1(strMsg);
 }

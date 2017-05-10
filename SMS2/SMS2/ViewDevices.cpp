@@ -253,7 +253,10 @@ void CViewDevices::OnLButtonDown(UINT nFlags, CPoint point)
 	{
 		m_nSelected = -1;
 	}
-	else
+
+	Invalidate();
+
+	if (isSelected)
 	{
 		switch (m_nSelected)
 		{
@@ -281,7 +284,6 @@ void CViewDevices::OnLButtonDown(UINT nFlags, CPoint point)
 		}
 	}
 
-	Invalidate();
 	CBCGPFormView::OnLButtonDown(nFlags, point);
 }
 

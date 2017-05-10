@@ -44,5 +44,7 @@ public:
 	afx_msg void OnBnClickedNewitem();
 	afx_msg void OnBnClickedSave();
 	void AddNewRowToDB(CStrs strs);
+	void DelRowFromDB(CStrs strs);
+	void GetNewData(); //获取用户输入的新数据
 	afx_msg void OnBnClickedDelitem();
 };
