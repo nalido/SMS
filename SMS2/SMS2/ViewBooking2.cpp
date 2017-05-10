@@ -108,7 +108,7 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 					pdi->item.clrText = COLOR_TEXTNONE;
 				}
 			}
-			else if (pThis->m_datas1[nRow][5] >= "1") //已派工
+			else  //已派工
 			{
 				pdi->item.clrBackground = COLOR_MANY;
 			}
@@ -242,7 +242,7 @@ void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 		if (nStudent < 3) //最多三个学员
 		{
 			//已经派工的不能重复派工
-			if (pThis->m_datas1[nRow][5] == "1") return; 
+			if (pThis->m_datas1[nRow][5] != "0") return; 
 
 			//不是同一节课的不能派工
 			if (!pThis->CanBeSelected(nRow)) return;
