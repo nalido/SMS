@@ -181,14 +181,10 @@ void CViewDevices::OnLButtonDown(UINT nFlags, CPoint point)
 			isSelected = TRUE;
 			m_nSelected = nID;
 			m_SDevice[nID].ShowWindow(1);
-			//InvalidateRect(rect);
 			if (lastSel != nID && lastSel != -1)
 			{
 				m_SDevice[lastSel].ShowWindow(0);
-				//Invalidate();
 			}
-			CDlgDevice dlg;
-			dlg.DoModal();
 			break;
 		}
 	}
@@ -198,6 +194,33 @@ void CViewDevices::OnLButtonDown(UINT nFlags, CPoint point)
 		if (lastSel != -1)
 			m_SDevice[lastSel].ShowWindow(0);
 		m_nSelected = -1;
+	}
+	else
+	{
+		switch (m_nSelected)
+		{
+		case 0:
+		{
+				  CDlgDevice dlg;
+				  dlg.m_nQueryType = QUERY_DEVICES;
+				  dlg.DoModal();
+				  break;
+		}
+		case 1:
+		{
+				  CDlgDevice dlg;
+				  dlg.m_nQueryType = QUERY_INSURANCES;
+				  dlg.DoModal();
+				  break;
+		}
+		case 5:
+		{
+				  CDlgDevice dlg;
+				  dlg.m_nQueryType = QUERY_CLAIMS;
+				  dlg.DoModal();
+				  break;
+		}
+		}
 	}
 	CBCGPFormView::OnLButtonDown(nFlags, point);
 }
