@@ -45,7 +45,7 @@ void CViewDevices::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CViewDevices, CBCGPFormView)
 	ON_WM_PAINT()
-	ON_WM_CTLCOLOR()
+//	ON_WM_CTLCOLOR()
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 //	ON_STN_CLICKED(IDC_DEVICE, &CViewDevices::OnStnClickedDevice)
 ON_WM_LBUTTONDOWN()
@@ -74,8 +74,11 @@ void CViewDevices::Dump(CDumpContext& dc) const
 // CViewDevices 消息处理程序
 
 
-CString pth[] = { "res\\设备1.png", "res\\保险2.png", "res\\汽油.png",
+CString pth[] = { "res\\设备1.png", "res\\保险2.png", "res\\汽油1.png",
 "res\\保养1.png", "res\\年检1.png", "res\\理赔1.png" };
+CString name[] = { "设备台账表", "保险明细", "油料管理",
+"保养记录", "年检记录", "理赔记录" };
+
 void CViewDevices::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
@@ -114,7 +117,7 @@ void CViewDevices::OnPaint()
 	//m_imgDevice.Draw(dc.m_hDC, rect);
 
 	///GDI+
-	Graphics graph(MemDC.m_hDC);
+	Graphics graph(MemDC.m_hDC); 
 
 	//填充背景色
 	if (m_canEraseBkgnd == TRUE)
@@ -135,8 +138,10 @@ void CViewDevices::OnPaint()
 
 		if (m_nSelected == i)
 		{
-			SolidBrush brush2(Color(120, 150, 110));
-			graph.FillRectangle(&brush2, recti.left, recti.top, recti.Width(), recti.Height());
+			Point p1(recti.left, recti.top);
+			Point p2(recti.left, recti.bottom);
+			LinearGradientBrush lgb(p1, p2, Color::Transparent, Color::BurlyWood);
+			graph.FillRectangle(&lgb, recti.left, recti.top, recti.Width(), recti.Height());
 		}
 		CStringW strW = CT2CW(pth[i]);
 		Image img(strW.GetBuffer(0));
@@ -159,7 +164,7 @@ void CViewDevices::OnPaint()
 		m_SText[i].GetClientRect(&rectT);
 		m_SText[i].MapWindowPoints(this, &rectT);
 
-		MemDC.TextOutA(rectT.CenterPoint().x, rectT.CenterPoint().y, "设备台账表");
+		MemDC.TextOutA(rectT.CenterPoint().x, rectT.CenterPoint().y, name[i]);
 	}
 
 	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, 0, 0, SRCCOPY);
@@ -201,23 +206,23 @@ void CViewDevices::DrawIcon(CImage& img, int nID)
 	img_Device.Destroy();
 }
 
-HBRUSH CViewDevices::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	HBRUSH hbr = CBCGPFormView::OnCtlColor(pDC, pWnd, nCtlColor);
-
-	if (nCtlColor == CTLCOLOR_STATIC || nCtlColor == CTLCOLOR_BTN)
-	{
-		CFont font1;
-		font1.CreateFontA(20, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0,
-			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "微软雅黑");
-		pDC->SelectObject(&font1);
-		font1.DeleteObject();
-		pDC->SetBkMode(TRANSPARENT);
-	}
-
-	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
-	return hbr;
-}
+//HBRUSH CViewDevices::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+//{
+//	HBRUSH hbr = CBCGPFormView::OnCtlColor(pDC, pWnd, nCtlColor);
+//
+//	if (nCtlColor == CTLCOLOR_STATIC || nCtlColor == CTLCOLOR_BTN)
+//	{
+//		CFont font1;
+//		font1.CreateFontA(20, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0,
+//			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "微软雅黑");
+//		pDC->SelectObject(&font1);
+//		font1.DeleteObject();
+//		pDC->SetBkMode(TRANSPARENT);
+//	}
+//
+//	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
+//	return hbr;
+//}
 
 
 
@@ -238,47 +243,40 @@ void CViewDevices::OnLButtonDown(UINT nFlags, CPoint point)
 
 			isSelected = TRUE;
 			m_nSelected = nID;
-			//m_SDevice[nID].ShowWindow(1);
-			if (lastSel != nID && lastSel != -1)
-			{
-				//m_SDevice[lastSel].ShowWindow(0);
-			}
 			break;
 		}
 	}
 
 	if (!isSelected)
 	{
-		if (lastSel != -1)
-			//m_SDevice[lastSel].ShowWindow(0);
 		m_nSelected = -1;
 	}
 	else
 	{
-		//switch (m_nSelected)
-		//{
-		//case 0:
-		//{
-		//		  CDlgDevice dlg;
-		//		  dlg.m_nQueryType = QUERY_DEVICES;
-		//		  dlg.DoModal();
-		//		  break;
-		//}
-		//case 1:
-		//{
-		//		  CDlgDevice dlg;
-		//		  dlg.m_nQueryType = QUERY_INSURANCES;
-		//		  dlg.DoModal();
-		//		  break;
-		//}
-		//case 5:
-		//{
-		//		  CDlgDevice dlg;
-		//		  dlg.m_nQueryType = QUERY_CLAIMS;
-		//		  dlg.DoModal();
-		//		  break;
-		//}
-		//}
+		switch (m_nSelected)
+		{
+		case 0:
+		{
+				  CDlgDevice dlg;
+				  dlg.m_nQueryType = QUERY_DEVICES;
+				  dlg.DoModal();
+				  break;
+		}
+		case 1:
+		{
+				  CDlgDevice dlg;
+				  dlg.m_nQueryType = QUERY_INSURANCES;
+				  dlg.DoModal();
+				  break;
+		}
+		case 5:
+		{
+				  CDlgDevice dlg;
+				  dlg.m_nQueryType = QUERY_CLAIMS;
+				  dlg.DoModal();
+				  break;
+		}
+		}
 	}
 
 	Invalidate();

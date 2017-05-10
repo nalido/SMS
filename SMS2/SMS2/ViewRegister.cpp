@@ -367,6 +367,11 @@ void CViewRegister::OnBnClickedNewfile()
 				m_strNumber.Format("DJ%d", nfiles);
 			}
 		}
+		else
+		{
+			nfiles = 1;
+			m_strNumber.Format("DJ%s%04d", strMonth, nfiles);
+		}
 		m_Sta_Num.SetWindowTextA(m_strNumber);
 		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(TRUE);
 		GetDlgItem(IDC_CAMERA)->SetWindowTextA("´ò¿ªÉãÏñÍ·");

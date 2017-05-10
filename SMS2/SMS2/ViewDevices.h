@@ -35,7 +35,7 @@ public:
 	CStatic m_SText[6];
 	ATL::CImage m_imgDevice;
 	int m_nSelected; //鼠标选中的位置
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+//	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	virtual void OnInitialUpdate();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);

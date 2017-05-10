@@ -33,6 +33,7 @@ BEGIN_MESSAGE_MAP(CDlgDevice, CBCGPDialog)
 	ON_BN_CLICKED(IDC_UPDATE, &CDlgDevice::OnBnClickedUpdate)
 	ON_BN_CLICKED(IDC_NEWITEM, &CDlgDevice::OnBnClickedNewitem)
 	ON_BN_CLICKED(IDC_SAVE, &CDlgDevice::OnBnClickedSave)
+	ON_BN_CLICKED(IDC_DELITEM, &CDlgDevice::OnBnClickedDelitem)
 END_MESSAGE_MAP()
 
 
@@ -235,4 +236,9 @@ void CDlgDevice::AddNewRowToDB(CStrs strs)
 
 	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	ShowMsg2Output1(strMsg);
+}
+
+void CDlgDevice::OnBnClickedDelitem()
+{
+	// TODO:  在此添加控件通知处理程序代码
 }

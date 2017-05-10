@@ -51,7 +51,6 @@
 #define IDC_PHOTO                       1058
 #define IDC_CHANGEITEM                  1058
 #define IDC_CAMERA                      1059
-#define IDC_CHANGEITEM2                 1059
 #define IDC_DATE_SIGNIN                 1061
 #define IDC_CARTYPE                     1063
 #define IDC_NUMBER                      1064
