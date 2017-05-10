@@ -182,24 +182,24 @@ void CViewRegister::OnPaint()
 
 	//双缓存绘制
 	CRect   rect1, rect0;
-	CDC     MenDC;
+	CDC     MemDC;
 	CBitmap MemMap;
 
 	GetDlgItem(IDC_BKBMP)->GetClientRect(&rect0); //贴图原点
 	GetDlgItem(IDC_BKBMP)->MapWindowPoints(this, &rect0);
 	GetDlgItem(IDC_BKBMP1)->GetClientRect(&rect1); //贴图终点
 	GetDlgItem(IDC_BKBMP1)->MapWindowPoints(this, &rect1);
-	MenDC.CreateCompatibleDC(&dc); 
+	MemDC.CreateCompatibleDC(&dc); 
 	MemMap.LoadBitmapA(IDB_BITMAP3);
 	BITMAP bmp;
 	MemMap.GetBitmap(&bmp); //获取bmp参数
-	MenDC.SelectObject(&MemMap);
+	MemDC.SelectObject(&MemMap);
 
 	int w = rect1.right - rect0.left;
 	int h = rect1.bottom - rect0.top;
-	dc.StretchBlt(rect0.left, rect0.top, w, h, &MenDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
-	//dc.BitBlt(rect0.left, rect0.top, rect.Width(), rect.Height(), &MenDC, 0, 0, SRCCOPY);
-	MenDC.DeleteDC();
+	dc.StretchBlt(rect0.left, rect0.top, w, h, &MemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+	//dc.BitBlt(rect0.left, rect0.top, rect.Width(), rect.Height(), &MemDC, 0, 0, SRCCOPY);
+	MemDC.DeleteDC();
 	MemMap.DeleteObject();
 
 	if (m_isCaptured)

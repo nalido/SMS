@@ -42,19 +42,19 @@ void CMyPicCtrl::OnPaint()
 
 	//À´ª∫¥ÊªÊ÷∆
 	CRect   rect;
-	CDC     MenDC;
+	CDC     MemDC;
 	CBitmap MemMap;
 
 	GetClientRect(&rect);
-	MenDC.CreateCompatibleDC(&dc);
+	MemDC.CreateCompatibleDC(&dc);
 	MemMap.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
-	MenDC.SelectObject(&MemMap);
-	MenDC.FillSolidRect(&rect, RGB(255, 255, 255));
+	MemDC.SelectObject(&MemMap);
+	MemDC.FillSolidRect(&rect, RGB(255, 255, 255));
 
 
 	if (!m_pPic->empty())
 	{
-		HDC hdc = MenDC.GetSafeHdc();
+		HDC hdc = MemDC.GetSafeHdc();
 		IplImage* frame;
 		frame = &IplImage(*m_pPic);
 		CvvImage cvvImage;
@@ -63,11 +63,11 @@ void CMyPicCtrl::OnPaint()
 	}
 	else
 	{
-		MenDC.TextOutA(rect.CenterPoint().x, rect.CenterPoint().y, "Œﬁ’’∆¨");
+		MemDC.TextOutA(rect.CenterPoint().x, rect.CenterPoint().y, "Œﬁ’’∆¨");
 	}
 
 	// ‰≥ˆ   
-	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MenDC, 0, 0, SRCCOPY);
-	MenDC.DeleteDC();
+	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, 0, 0, SRCCOPY);
+	MemDC.DeleteDC();
 	MemMap.DeleteObject();
 }

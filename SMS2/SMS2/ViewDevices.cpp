@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "SMS2.h"
 #include "ViewDevices.h"
+#include "MainFrm.h"
+#include "DlgDevice.h"
 
 
 // CViewDevices
@@ -13,7 +15,9 @@ IMPLEMENT_DYNCREATE(CViewDevices, CBCGPFormView)
 CViewDevices::CViewDevices()
 	: CBCGPFormView(CViewDevices::IDD)
 {
+	EnableVisualManagerStyle();
 
+	m_nSelected = -1;
 }
 
 CViewDevices::~CViewDevices()
@@ -23,10 +27,26 @@ CViewDevices::~CViewDevices()
 void CViewDevices::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPFormView::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_DEVICE, m_SDevice[0]);
+	DDX_Control(pDX, IDC_DEVICE2, m_SDevice[1]);
+	DDX_Control(pDX, IDC_DEVICE3, m_SDevice[2]);
+	DDX_Control(pDX, IDC_DEVICE4, m_SDevice[3]);
+	DDX_Control(pDX, IDC_DEVICE5, m_SDevice[4]);
+	DDX_Control(pDX, IDC_DEVICE6, m_SDevice[5]);
+
+	DDX_Control(pDX, IDC_TEXT1, m_SText[0]);
+	DDX_Control(pDX, IDC_TEXT2, m_SText[1]);
+	DDX_Control(pDX, IDC_TEXT3, m_SText[2]);
+	DDX_Control(pDX, IDC_TEXT4, m_SText[3]);
+	DDX_Control(pDX, IDC_TEXT5, m_SText[4]);
+	DDX_Control(pDX, IDC_TEXT6, m_SText[5]);
 }
 
 BEGIN_MESSAGE_MAP(CViewDevices, CBCGPFormView)
 	ON_WM_PAINT()
+	ON_WM_CTLCOLOR()
+//	ON_STN_CLICKED(IDC_DEVICE, &CViewDevices::OnStnClickedDevice)
+ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 
@@ -53,6 +73,137 @@ void CViewDevices::Dump(CDumpContext& dc) const
 void CViewDevices::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
-	// TODO:  在此处添加消息处理程序代码
-	// 不为绘图消息调用 CBCGPFormView::OnPaint()
+
+
+	CRect rect;
+	GetClientRect(&rect);
+	MapWindowPoints(this, &rect);
+
+	//CDC     MemDC;
+	//HBITMAP hbitmap;
+	//CBitmap bitmp;
+	//MemDC.CreateCompatibleDC(&dc);
+
+	//bitmp.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
+	//MemDC.SelectObject(&bitmp);
+
+	if (m_nSelected != -1)
+	{
+		CRect r;
+		m_SDevice[m_nSelected].GetClientRect(&r);
+		m_SDevice[m_nSelected].MapWindowPoints(this, &r);
+
+		CBrush brush;
+		brush.CreateSolidBrush(RGB(120, 240, 100));
+		dc.FillRect(r, &brush);
+	}
+
+	if (m_imgDevice.IsNull())
+	{
+		m_imgDevice.Create(rect.Width(), rect.Height(), 32, m_imgDevice.createAlphaChannel);
+		for (int i = 0; i < 6; i++)
+			DrawIcon(m_imgDevice, i);
+	}
+
+	m_imgDevice.Draw(dc.m_hDC, rect);
+	//dc.TransparentBlt(0, 0, rect.Width(), rect.Height(), &MemDC, 0, 0, rect.Width(), rect.Height(), RGB(0,0,0));
+	//
+	//bitmp.DeleteObject();
+	//MemDC.DeleteDC();
+}
+
+void CViewDevices::DrawIcon(CImage& img, int nID)
+{
+	CString pth[] = { "res\\设备1.png", "res\\保险2.png", "res\\汽油.png",
+		"res\\保养1.png", "res\\年检1.png", "res\\理赔1.png" };
+	CRect rect;
+	m_SDevice[nID].GetClientRect(&rect);
+	m_SDevice[nID].MapWindowPoints(this, &rect);
+	CImage img_Device;
+	img_Device.Load(pth[nID]);
+	if (img_Device.IsNull())
+	{
+		TRACE("加载图片资源失败");
+		return;
+	}
+
+	if (img_Device.GetBPP() == 32) //确认图片包含alpha通道
+	{
+		for (int i = 0; i < img_Device.GetWidth(); i++)
+		for (int j = 0; j < img_Device.GetHeight(); j++)
+		{
+			BYTE* pByte = (BYTE*)img_Device.GetPixelAddress(i, j);
+			pByte[0] = pByte[0] * pByte[3] / 255;
+			pByte[1] = pByte[1] * pByte[3] / 255;
+			pByte[2] = pByte[2] * pByte[3] / 255;
+		}
+	}
+
+	img_Device.Draw(img.GetDC(), rect.left, rect.top, rect.Width(), rect.Height());
+	img.ReleaseDC();
+	img_Device.Destroy();
+}
+
+HBRUSH CViewDevices::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CBCGPFormView::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	if (nCtlColor == CTLCOLOR_STATIC || nCtlColor == CTLCOLOR_BTN)
+	{
+		CFont font1;
+		font1.CreateFontA(20, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0,
+			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "微软雅黑");
+		pDC->SelectObject(&font1);
+		font1.DeleteObject();
+	}
+
+	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
+	return hbr;
+}
+
+
+
+void CViewDevices::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	BOOL isSelected = FALSE;
+	int lastSel = m_nSelected;
+	for (int nID = 0; nID < 6; nID++)
+	{
+		CRect rect;
+		m_SDevice[nID].GetClientRect(&rect);
+		m_SDevice[nID].MapWindowPoints(this, &rect);
+		if (rect.PtInRect(point))
+		{
+			//CString str;
+			//str.Format("%d is clicked\r\n", nID);
+			//TRACE(str);
+
+			isSelected = TRUE;
+			m_nSelected = nID;
+			m_SDevice[nID].ShowWindow(1);
+			//InvalidateRect(rect);
+			if (lastSel != nID && lastSel != -1)
+			{
+				m_SDevice[lastSel].ShowWindow(0);
+				//Invalidate();
+			}
+			CDlgDevice dlg;
+			dlg.DoModal();
+			break;
+		}
+	}
+
+	if (!isSelected)
+	{
+		if (lastSel != -1)
+			m_SDevice[lastSel].ShowWindow(0);
+		m_nSelected = -1;
+	}
+	CBCGPFormView::OnLButtonDown(nFlags, point);
+}
+
+
+void CViewDevices::OnInitialUpdate()
+{
+	CBCGPFormView::OnInitialUpdate();
 }

@@ -27,6 +27,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnPaint();
+	void DrawIcon(ATL::CImage& img, int nID);
+
+	CStatic m_SDevice[6];
+	CStatic m_SText[6];
+	CImage m_imgDevice;
+	int m_nSelected; //鼠标选中的位置
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	virtual void OnInitialUpdate();
 };
 
 
