@@ -129,7 +129,7 @@ void CViewRegister::OnTimer(UINT_PTR nIDEvent)
 	m_videoCap >> cap;
 	if (!cap.empty())
 	{
-		m_cap = cap(Rect(150, 2, 340, 476)).clone(); //按照5:7的一寸照片比例截取
+		m_cap = cap(cv::Rect(150, 2, 340, 476)).clone(); //按照5:7的一寸照片比例截取
 		IplImage* frame;
 		frame = &IplImage(m_cap);
 		CvvImage cvvImage;

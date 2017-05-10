@@ -80,3 +80,7 @@
 #define WM_USER_UPDATE_VIEW		(WM_USER + 2002)//自定义消息, 刷新视图数据
 
 #include "xPublic\Common.h"
+
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
+using namespace Gdiplus;

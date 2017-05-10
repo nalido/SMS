@@ -18,6 +18,7 @@ CViewDevices::CViewDevices()
 	EnableVisualManagerStyle();
 
 	m_nSelected = -1;
+	m_canEraseBkgnd = FALSE;
 }
 
 CViewDevices::~CViewDevices()
@@ -45,8 +46,11 @@ void CViewDevices::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CViewDevices, CBCGPFormView)
 	ON_WM_PAINT()
 	ON_WM_CTLCOLOR()
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 //	ON_STN_CLICKED(IDC_DEVICE, &CViewDevices::OnStnClickedDevice)
 ON_WM_LBUTTONDOWN()
+//ON_WM_MOUSEMOVE()
+ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 
@@ -70,6 +74,8 @@ void CViewDevices::Dump(CDumpContext& dc) const
 // CViewDevices 消息处理程序
 
 
+CString pth[] = { "res\\设备1.png", "res\\保险2.png", "res\\汽油.png",
+"res\\保养1.png", "res\\年检1.png", "res\\理赔1.png" };
 void CViewDevices::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
@@ -79,43 +85,94 @@ void CViewDevices::OnPaint()
 	GetClientRect(&rect);
 	MapWindowPoints(this, &rect);
 
-	//CDC     MemDC;
+	CDC     MemDC;
 	//HBITMAP hbitmap;
-	//CBitmap bitmp;
-	//MemDC.CreateCompatibleDC(&dc);
+	CBitmap bitmp;
+	MemDC.CreateCompatibleDC(&dc);
 
-	//bitmp.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
-	//MemDC.SelectObject(&bitmp);
+	bitmp.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
+	MemDC.SelectObject(&bitmp);
 
-	if (m_nSelected != -1)
+	//if (m_nSelected != -1)
+	//{
+	//	CRect r;
+	//	m_SDevice[m_nSelected].GetClientRect(&r);
+	//	m_SDevice[m_nSelected].MapWindowPoints(this, &r);
+
+	//	CBrush brush;
+	//	brush.CreateSolidBrush(RGB(120, 240, 100));
+	//	//dc.FillRect(r, &brush);
+	//}
+
+	//if (m_imgDevice.IsNull())
+	//{
+	//	m_imgDevice.Create(rect.Width(), rect.Height(), 32, m_imgDevice.createAlphaChannel);
+	//	for (int i = 0; i < 6; i++)
+	//		DrawIcon(m_imgDevice, i);
+	//}
+
+	//m_imgDevice.Draw(dc.m_hDC, rect);
+
+	///GDI+
+	Graphics graph(MemDC.m_hDC);
+
+	//填充背景色
+	if (m_canEraseBkgnd == TRUE)
 	{
-		CRect r;
-		m_SDevice[m_nSelected].GetClientRect(&r);
-		m_SDevice[m_nSelected].MapWindowPoints(this, &r);
+		m_ThemeColor = dc.GetPixel(5, 5);
+		m_canEraseBkgnd = FALSE;
+	}
+	CBrush brush;
+	brush.CreateSolidBrush(m_ThemeColor);
+	MemDC.FillRect(rect, &brush);
 
-		CBrush brush;
-		brush.CreateSolidBrush(RGB(120, 240, 100));
-		dc.FillRect(r, &brush);
+
+	for (int i = 0; i < 6; i++)
+	{
+		CRect recti;
+		m_SDevice[i].GetClientRect(&recti);
+		m_SDevice[i].MapWindowPoints(this, &recti);
+
+		if (m_nSelected == i)
+		{
+			SolidBrush brush2(Color(120, 150, 110));
+			graph.FillRectangle(&brush2, recti.left, recti.top, recti.Width(), recti.Height());
+		}
+		CStringW strW = CT2CW(pth[i]);
+		Image img(strW.GetBuffer(0));
+		graph.DrawImage(&img, recti.left, recti.top, recti.Width(), recti.Height());
+
+		strW.ReleaseBuffer();
+		//delete pDC;
 	}
 
-	if (m_imgDevice.IsNull())
+
+	CFont font1;
+	font1.CreateFontA(20, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0,
+		0, 0, 0, VARIABLE_PITCH | FF_SWISS, "微软雅黑");
+	MemDC.SetBkMode(TRANSPARENT);
+	MemDC.SelectObject(&font1);
+	MemDC.SetTextAlign(TA_CENTER);
+	for (int i = 0; i < 6; i++)
 	{
-		m_imgDevice.Create(rect.Width(), rect.Height(), 32, m_imgDevice.createAlphaChannel);
-		for (int i = 0; i < 6; i++)
-			DrawIcon(m_imgDevice, i);
+		CRect rectT;
+		m_SText[i].GetClientRect(&rectT);
+		m_SText[i].MapWindowPoints(this, &rectT);
+
+		MemDC.TextOutA(rectT.CenterPoint().x, rectT.CenterPoint().y, "设备台账表");
 	}
 
-	m_imgDevice.Draw(dc.m_hDC, rect);
+	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, 0, 0, SRCCOPY);
+	//、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+
 	//dc.TransparentBlt(0, 0, rect.Width(), rect.Height(), &MemDC, 0, 0, rect.Width(), rect.Height(), RGB(0,0,0));
 	//
-	//bitmp.DeleteObject();
-	//MemDC.DeleteDC();
+	bitmp.DeleteObject();
+	MemDC.DeleteDC();
 }
 
 void CViewDevices::DrawIcon(CImage& img, int nID)
 {
-	CString pth[] = { "res\\设备1.png", "res\\保险2.png", "res\\汽油.png",
-		"res\\保养1.png", "res\\年检1.png", "res\\理赔1.png" };
 	CRect rect;
 	m_SDevice[nID].GetClientRect(&rect);
 	m_SDevice[nID].MapWindowPoints(this, &rect);
@@ -155,6 +212,7 @@ HBRUSH CViewDevices::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "微软雅黑");
 		pDC->SelectObject(&font1);
 		font1.DeleteObject();
+		pDC->SetBkMode(TRANSPARENT);
 	}
 
 	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
@@ -180,10 +238,10 @@ void CViewDevices::OnLButtonDown(UINT nFlags, CPoint point)
 
 			isSelected = TRUE;
 			m_nSelected = nID;
-			m_SDevice[nID].ShowWindow(1);
+			//m_SDevice[nID].ShowWindow(1);
 			if (lastSel != nID && lastSel != -1)
 			{
-				m_SDevice[lastSel].ShowWindow(0);
+				//m_SDevice[lastSel].ShowWindow(0);
 			}
 			break;
 		}
@@ -192,36 +250,38 @@ void CViewDevices::OnLButtonDown(UINT nFlags, CPoint point)
 	if (!isSelected)
 	{
 		if (lastSel != -1)
-			m_SDevice[lastSel].ShowWindow(0);
+			//m_SDevice[lastSel].ShowWindow(0);
 		m_nSelected = -1;
 	}
 	else
 	{
-		switch (m_nSelected)
-		{
-		case 0:
-		{
-				  CDlgDevice dlg;
-				  dlg.m_nQueryType = QUERY_DEVICES;
-				  dlg.DoModal();
-				  break;
-		}
-		case 1:
-		{
-				  CDlgDevice dlg;
-				  dlg.m_nQueryType = QUERY_INSURANCES;
-				  dlg.DoModal();
-				  break;
-		}
-		case 5:
-		{
-				  CDlgDevice dlg;
-				  dlg.m_nQueryType = QUERY_CLAIMS;
-				  dlg.DoModal();
-				  break;
-		}
-		}
+		//switch (m_nSelected)
+		//{
+		//case 0:
+		//{
+		//		  CDlgDevice dlg;
+		//		  dlg.m_nQueryType = QUERY_DEVICES;
+		//		  dlg.DoModal();
+		//		  break;
+		//}
+		//case 1:
+		//{
+		//		  CDlgDevice dlg;
+		//		  dlg.m_nQueryType = QUERY_INSURANCES;
+		//		  dlg.DoModal();
+		//		  break;
+		//}
+		//case 5:
+		//{
+		//		  CDlgDevice dlg;
+		//		  dlg.m_nQueryType = QUERY_CLAIMS;
+		//		  dlg.DoModal();
+		//		  break;
+		//}
+		//}
 	}
+
+	Invalidate();
 	CBCGPFormView::OnLButtonDown(nFlags, point);
 }
 
@@ -229,4 +289,58 @@ void CViewDevices::OnLButtonDown(UINT nFlags, CPoint point)
 void CViewDevices::OnInitialUpdate()
 {
 	CBCGPFormView::OnInitialUpdate();
+
+
+
+	//CString pth[] = { "res\\设备1.png", "res\\保险2.png", "res\\汽油.png",
+	//	"res\\保养1.png", "res\\年检1.png", "res\\理赔1.png" };
+	//for (int i = 0; i < 6; i++)
+	//{
+	//	m_SDevice[i].ShowWindow(1);
+	//	m_SDevice[i].SetPNGSource(pth[i]);
+	//}
+}
+
+
+void CViewDevices::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if (m_nSelected == -1)
+	for (int nID = 0; nID < 6; nID++)
+	{
+		m_SDevice[nID].ShowWindow(0);
+		//m_SDevice[nID].SetState(FALSE);
+		CRect rect;
+		m_SDevice[nID].GetClientRect(&rect);
+		m_SDevice[nID].MapWindowPoints(this, &rect);
+		if (rect.PtInRect(point))
+		{
+			m_SDevice[nID].ShowWindow(1);
+			//m_SDevice[nID].SetState(TRUE);
+		}
+	}
+
+
+
+	CBCGPFormView::OnMouseMove(nFlags, point);
+}
+
+
+BOOL CViewDevices::OnEraseBkgnd(CDC* pDC)
+{
+	if (!m_canEraseBkgnd)
+		return TRUE;
+	else
+	{
+		return CBCGPFormView::OnEraseBkgnd(pDC);
+	}
+}
+
+
+LRESULT CViewDevices::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int flag = (int)wParam;
+	if(flag==1)
+		m_canEraseBkgnd = TRUE;
+
+	return 0;
 }
