@@ -37,6 +37,7 @@
 #define IDD_DEVICES                     195
 #define IDD_DEVICE_DETAIL               200
 #define IDD_DEVICE_DETAIL2              201
+#define IDD_DATE_ITEM                   202
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -190,6 +191,7 @@
 #define IDC_TEXT4                       1180
 #define IDC_TEXT5                       1181
 #define IDC_TEXT6                       1182
+#define IDC_MONTHCALENDAR1              1187
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -239,9 +241,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        202
+#define _APS_NEXT_RESOURCE_VALUE        203
 #define _APS_NEXT_COMMAND_VALUE         32884
-#define _APS_NEXT_CONTROL_VALUE         1187
+#define _APS_NEXT_CONTROL_VALUE         1188
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

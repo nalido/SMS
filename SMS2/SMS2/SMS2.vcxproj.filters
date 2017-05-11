@@ -147,6 +147,9 @@
     <ClInclude Include="DlgDevice2.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DlgDateItem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -267,6 +270,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DlgDevice2.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgDateItem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -6,6 +6,7 @@
 #include "DlgDevice2.h"
 #include "afxdialogex.h"
 #include "MainFrm.h"
+#include "DlgDateItem.h"
 
 
 // CDlgDevice2 对话框
@@ -209,6 +210,7 @@ BOOL CDlgDevice2::OnInitDialog()
 	}
 	//注册虚拟列表回调函数
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
+	m_wndGrid.SetCallBack_Clk(OnGridClick);
 
 	//--------------按月显示---------------------------------
 	m_wndGridM.Create(nStyle, rect, this, IDC_GRID_STUPRO);
@@ -349,6 +351,29 @@ BOOL CDlgDevice2::OnInitDialog()
 	RefreshCar();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常:  OCX 属性页应返回 FALSE
+}
+
+
+void CALLBACK CDlgDevice2::OnGridClick(LPVOID lParam)
+{
+	CDlgDevice2* pThis = (CDlgDevice2*)lParam;
+
+	if (pThis->m_wndGrid.IsWholeRowSel()) return;
+
+	CBCGPGridItem* pItem = pThis->m_wndGrid.GetCurSelItem();
+	if (pItem != NULL)
+	{
+		int nCol = pItem->GetColumnId();
+		if (nCol == 0)
+		{
+			CDlgDateItem dlg;
+			if (dlg.DoModal() == IDOK)
+			{
+				pItem->SetValue(dlg.m_strDate.GetBuffer(0));
+				dlg.m_strDate.ReleaseBuffer();
+			}
+		}
+	}
 }
 
 

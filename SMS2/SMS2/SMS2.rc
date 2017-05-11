@@ -442,6 +442,13 @@ BEGIN
     CONTROL         "∞¥ƒÍœ‘ æ",IDC_RADIO4,"Button",BS_AUTORADIOBUTTON,519,339,49,10
 END
 
+IDD_DATE_ITEM DIALOGEX 0, 0, 140, 101
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_BORDER | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_MONTHCALENDAR1,"SysMonthCal32",WS_TABSTOP,0,0,140,100
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -664,6 +671,14 @@ BEGIN
         RIGHTMARGIN, 590
         TOPMARGIN, 7
         BOTTOMMARGIN, 345
+    END
+
+    IDD_DATE_ITEM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 133
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 94
     END
 END
 #endif    // APSTUDIO_INVOKED

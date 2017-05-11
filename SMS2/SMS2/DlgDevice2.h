@@ -29,6 +29,8 @@ protected:
 
 public:
 
+	virtual BOOL OnInitDialog();
+
 	//virtualGrid
 	//按天显示
 	CStatic m_wndGridLocation;
@@ -37,7 +39,7 @@ public:
 	int m_nOldRows; //数据库中的记录总数
 	CDStrs m_newDatas; //新添加的记录
 	int m_nColumns; //表的列数
-	virtual BOOL OnInitDialog();
+	static void CALLBACK OnGridClick(LPVOID lParam);
 
 	//按月显示
 	CVirtualGridCtrl m_wndGridM;
