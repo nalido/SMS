@@ -32,6 +32,7 @@ void CDlgDevice2::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CDlgDevice2, CBCGPDialog)
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_UPDATE, &CDlgDevice2::OnBnClickedUpdate)
 	ON_BN_CLICKED(IDC_NEWITEM, &CDlgDevice2::OnBnClickedNewitem)
 	ON_BN_CLICKED(IDC_SAVE, &CDlgDevice2::OnBnClickedSave)
@@ -134,7 +135,10 @@ static BOOL CALLBACK GridCCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		std::vector<CStrs>::iterator it = pThis->m_datasC.begin() + nRow;
 		if (!it->empty())
 		{
-			pdi->item.varValue = pThis->m_datasC[nRow][nCol];
+			if (nCol==1)
+				pdi->item.varValue = pThis->m_datasC[nRow][2];
+			else
+				pdi->item.varValue = pThis->m_datasC[nRow][nCol];
 		}
 		else
 		{
@@ -236,6 +240,7 @@ BOOL CDlgDevice2::OnInitDialog()
 	case QUERY_MOT:
 		arrColumns.push_back("年检日期");
 		arrColumns.push_back("年检结果");
+		arrColumns.push_back("负责人");
 		break;
 	}
 
@@ -282,6 +287,7 @@ BOOL CDlgDevice2::OnInitDialog()
 	case QUERY_MOT:
 		arrColumns.push_back("年检日期");
 		arrColumns.push_back("年检结果");
+		arrColumns.push_back("负责人");
 		break;
 	}
 
@@ -330,19 +336,54 @@ BOOL CDlgDevice2::OnInitDialog()
 	}
 	//注册虚拟列表回调函数
 	m_wndGridC.EnableVirtualMode(GridCCallback, (LPARAM)this);
+	m_wndGridC.SetCallBack_Clk(OnGridCClick);
 
 	m_nShowType = 0;
 	GetDlgItem(IDC_SAVE)->EnableWindow(FALSE);
+	GetDlgItem(IDC_NEWITEM)->EnableWindow(FALSE);
+	GetDlgItem(IDC_DELITEM)->EnableWindow(FALSE);
 
 	m_nOldRows = 0;
 	UpdateData(FALSE);
 
-	Refresh();
+	RefreshCar();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常:  OCX 属性页应返回 FALSE
 }
 
-void CDlgDevice2::Refresh()
+
+void CALLBACK CDlgDevice2::OnGridCClick(LPVOID lParam)
+{
+	CDlgDevice2* pThis = (CDlgDevice2*)lParam;
+
+	CBCGPGridRow* pRow = pThis->m_wndGridC.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		pThis->m_strCarID = pThis->m_datasC[nRow][0];
+		pThis->m_strPlateNum = pThis->m_datasC[nRow][2];
+		pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)1);
+	}
+}
+
+LRESULT CDlgDevice2::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int flag = (int)wParam;
+	if (flag == 1) //选择了新的车辆
+	{
+		Refresh();
+		GetDlgItem(IDC_NEWITEM)->EnableWindow(TRUE);
+		GetDlgItem(IDC_DELITEM)->EnableWindow(TRUE);
+
+		m_wndGrid.EnableWindow(TRUE);
+		m_wndGridM.EnableWindow(FALSE);
+		m_wndGridY.EnableWindow(FALSE);
+	}
+
+	return 0;
+}
+
+void CDlgDevice2::RefreshCar()
 {
 	CString strMsg, strSQL;
 
@@ -351,17 +392,22 @@ void CDlgDevice2::Refresh()
 	g_mysqlCon.ExecuteQuery(strSQL, m_datasC, strMsg);
 	ShowMsg2Output1(strMsg);
 	m_wndGridC.GridRefresh(m_datasC.size());
+}
+
+void CDlgDevice2::Refresh()
+{
+	CString strMsg, strSQL;
 
 	switch (m_nQueryType)
 	{
 	case QUERY_OIL:
-		strSQL.Format("SELECT * FROM oils ORDER BY OIL_DATE DESC");
+		strSQL.Format("SELECT * FROM oils WHERE CAR_ID='%s' ORDER BY OIL_DATE DESC", m_strCarID);
 		break;
 	case QUERY_MAINTENANCE:
-		strSQL.Format("SELECT * FROM maintenance ORDER BY MDATE DESC");
+		strSQL.Format("SELECT * FROM maintenances WHERE CAR_ID='%s' ORDER BY MDATE DESC", m_strCarID);
 		break;
 	case QUERY_MOT:
-		strSQL.Format("SELECT * FROM MOTs ORDER BY MOT_DATE DESC");
+		strSQL.Format("SELECT * FROM MOTs WHERE CAR_ID='%s' ORDER BY MOT_DATE DESC", m_strCarID);
 		break;
 	}
 
@@ -372,6 +418,99 @@ void CDlgDevice2::Refresh()
 	m_nOldRows = m_datas.size();
 	m_wndGrid.GridRefresh(m_nOldRows);
 
+	CountData();
+}
+
+void CDlgDevice2::CountData()
+{
+	m_datasM.clear();
+	m_datasY.clear();
+
+	if (m_nQueryType == QUERY_MOT)
+	{
+		m_datasM = m_datas;
+		m_datasY = m_datas;
+		return;
+	}
+
+	int n = m_datas.size();
+	if (n == 0) return; 
+
+	//按月份统计
+	int sum_m = 0; 
+	int money_m = 0;
+	CString strThisMonth = m_datas[0][0].Left(7);
+	for (int i = 0; i < n; i++)
+	{
+		if (m_datas[i][0].Left(7) == strThisMonth)
+		{
+			sum_m++;
+			money_m += atoi(m_datas[i][3]);
+		}
+		else
+		{
+			CStrs strs;
+			strs.push_back(strThisMonth);
+			CString strSum;
+			strSum.Format("%d", sum_m);
+			strs.push_back(strSum);
+			strSum.Format("%d", money_m);
+			strs.push_back(strSum);
+			m_datasM.push_back(strs);
+
+			sum_m = 1;
+			strThisMonth = m_datas[i][0].Left(7);
+		}
+
+	}
+	CStrs strs;
+	strs.push_back(strThisMonth);
+	CString strSum;
+	strSum.Format("%d", sum_m);
+	strs.push_back(strSum);
+	strSum.Format("%d", money_m);
+	strs.push_back(strSum);
+	m_datasM.push_back(strs);
+
+
+	//按年份统计
+	int m = m_datasM.size();
+	if (m == 0) return;
+	int sum_y = 0;
+	int money_y = 0;
+	CString strThisYear = m_datasM[0][0].Left(4);
+	for (int i = 0; i < m; i++)
+	{
+		if (m_datas[i][0].Left(4) == strThisYear)
+		{
+			sum_y += atoi(m_datasM[i][1]);
+			money_y += atoi(m_datasM[i][2]);
+		}
+		else
+		{
+			CStrs strsy;
+			strsy.push_back(strThisYear);
+			CString strSumy;
+			strSumy.Format("%d", sum_y);
+			strsy.push_back(strSumy);
+			strSumy.Format("%d", money_y);
+			strsy.push_back(strSumy);
+			m_datasY.push_back(strsy);
+
+			sum_y = 1;
+			strThisYear = m_datasM[i][0].Left(4);
+		}
+	}
+
+
+	CStrs strsy;
+	strsy.push_back(strThisYear);
+	CString strSumy;
+	strSumy.Format("%d", sum_y);
+	strsy.push_back(strSumy);
+	strSumy.Format("%d", money_y);
+	strsy.push_back(strSumy);
+	m_datasY.push_back(strsy);
 }
 
 void CDlgDevice2::OnBnClickedUpdate()
@@ -454,19 +593,19 @@ void CDlgDevice2::AddNewRowToDB(CStrs strs)
 	switch (m_nQueryType)
 	{
 	case QUERY_OIL:
-		strSQL.Format("INSERT INTO cars (CAR_NAME, TYPE, BUY_DAY, PLATE_NUM, CAR_NUM, PRODUCTION_PLACE)\
-					  					  VALUES('%s', '%s', '%s', '%s', '%s', '%s')",
-										  strs[0], strs[1], strs[2], strs[3], strs[4], strs[5]);
+		strSQL.Format("INSERT INTO oils (OIL_DATE, MONEY, RNAME, CAR_ID, PLATE_NUM)\
+						VALUES('%s', '%s', '%s', '%s', '%s')",
+						strs[0], strs[1], strs[2], m_strCarID, m_strPlateNum);
 		break;
 	case QUERY_MAINTENANCE:
-		strSQL.Format("INSERT INTO insurances (ITEM_NAME, PLATE_NUM, ITEM_NUM, CHEJIA_NUM, FEE, DUE_DATE, COMPANY)\
-					  					  	VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s')",
-											strs[0], strs[1], strs[2], strs[3], strs[4], strs[5], strs[6]);
+		strSQL.Format("INSERT INTO maintenances (MDATE, MITEM, COMPLETE_DATE, FEE, RNAME, CAR_ID, PLATE_NUM)\
+						VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+						strs[0], strs[1], strs[2], strs[3], strs[4], m_strCarID, m_strPlateNum);
 		break;
 	case QUERY_MOT:
-		strSQL.Format("INSERT INTO claims (PLATE_NUM, CLAIM_DATE, FEE, CAR_LOSS, OTHER_LOSS)\
-					  					  	VALUES('%s', '%s', '%s', '%s', '%s')",
-											strs[0], strs[1], strs[2], strs[3], strs[4]);
+		strSQL.Format("INSERT INTO mots (MOT_DATE, MOT_RESULT, RNAME, CAR_ID, PLATE_NUM)\
+						VALUES('%s', '%s', '%s', '%s', '%s')",
+						strs[0], strs[1], strs[2], m_strCarID, m_strPlateNum);
 		break;
 	}
 
@@ -503,20 +642,19 @@ void CDlgDevice2::DelRowFromDB(CStrs strs)
 	switch (m_nQueryType)
 	{
 	case QUERY_OIL:
-		strSQL.Format("DELETE FROM cars WHERE CAR_NAME='%s' AND TYPE='%s' \
-					  						AND BUY_DAY='%s' AND PLATE_NUM='%s'",
-											strs[0], strs[1], strs[2], strs[3]);
+		strSQL.Format("DELETE FROM oils WHERE OIL_DATE='%s' AND MONEY='%s' AND RNAME='%s' AND\
+						CAR_ID='%s' AND PLATE_NUM='%s'",
+						strs[0], strs[1], strs[2], strs[3], strs[4]);
 		break;
 	case QUERY_MAINTENANCE:
-		strSQL.Format("DELETE FROM insurances WHERE ITEM_NAME='%s' AND PLATE_NUM='%s' AND \
-					  					  ITEM_NUM='%s' AND CHEJIA_NUM='%s' AND FEE='%s' AND DUE_DATE='%s' AND \
-										  					  COMPANY='%s'",
-															  strs[0], strs[1], strs[2], strs[3], strs[4], strs[5], strs[6]);
+		strSQL.Format("DELETE FROM maintenances WHERE MDATE='%s' AND MITEM='%s' AND\
+						COMPLETE_DATE='%s' AND FEE='%s' AND RNAME='%s' AND CAR_ID='%s' AND PLATE_NUM='%s'",
+						strs[0], strs[1], strs[2], strs[3], strs[4], strs[5], strs[6]);
 		break;
 	case QUERY_MOT:
-		strSQL.Format("DELETE FROM claims WHERE PLATE_NUM='%s' AND CLAIM_DATE='%s' AND FEE='%s' AND \
-					  					  CAR_LOSS='%s' AND OTHER_LOSS='%s'",
-										  strs[0], strs[1], strs[2], strs[3], strs[4]);
+		strSQL.Format("DELETE FROM mots WHERE MOT_DATE='%s' AND MOT_RESULT='%s' AND RNAME='%s' AND \
+						CAR_ID='%s' AND PLATE_NUM='%s'",
+						strs[0], strs[1], strs[2], strs[3], strs[4]);
 		break;
 	}
 

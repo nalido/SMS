@@ -53,9 +53,15 @@ public:
 	CStatic m_wndGridLocationC;
 	CVirtualGridCtrl m_wndGridC;
 	CDStrs m_datasC;
+	CString m_strCarID; //选中的汽车编号
+	CString m_strPlateNum; //车牌号
+	static void CALLBACK OnGridCClick(LPVOID lParam);
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
 	int m_nQueryType;
+	void RefreshCar();
 	void Refresh();
+	void CountData(); //统计年月记录
 	afx_msg void OnBnClickedUpdate();
 	afx_msg void OnBnClickedNewitem();
 	afx_msg void OnBnClickedSave();
