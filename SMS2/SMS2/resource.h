@@ -36,7 +36,6 @@
 #define IDD_COACH_CHECK                 194
 #define IDD_DEVICES                     195
 #define IDD_DEVICE_DETAIL               200
-#define IDD_DIALOG3                     201
 #define IDD_DEVICE_DETAIL2              201
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
@@ -242,7 +241,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        202
 #define _APS_NEXT_COMMAND_VALUE         32883
-#define _APS_NEXT_CONTROL_VALUE         1183
+#define _APS_NEXT_CONTROL_VALUE         1184
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

@@ -30,6 +30,7 @@ protected:
 public:
 
 	//virtualGrid
+	//按天显示
 	CStatic m_wndGridLocation;
 	CVirtualGridCtrl m_wndGrid;
 	CDStrs m_datas;
@@ -37,6 +38,21 @@ public:
 	CDStrs m_newDatas; //新添加的记录
 	int m_nColumns; //表的列数
 	virtual BOOL OnInitDialog();
+
+	//按月显示
+	CVirtualGridCtrl m_wndGridM;
+	CDStrs m_datasM;
+
+	//按年显示
+	CVirtualGridCtrl m_wndGridY;
+	CDStrs m_datasY;
+
+	int m_nShowType; //显示方式 0 按天， 1 按月， 2 按年
+
+	//车辆信息
+	CStatic m_wndGridLocationC;
+	CVirtualGridCtrl m_wndGridC;
+	CDStrs m_datasC;
 
 	int m_nQueryType;
 	void Refresh();
@@ -47,4 +63,7 @@ public:
 	void DelRowFromDB(CStrs strs);
 	void GetNewData(); //获取用户输入的新数据
 	afx_msg void OnBnClickedDelitem();
+	afx_msg void OnBnClickedRadio1();
+	afx_msg void OnBnClickedRadio2();
+	afx_msg void OnBnClickedRadio4();
 };

@@ -26,6 +26,8 @@ void CDlgDevice2::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_GRID1, m_wndGridLocation);
+	DDX_Control(pDX, IDC_GRID2, m_wndGridLocationC);
+	DDX_Radio(pDX, IDC_RADIO1, m_nShowType);
 }
 
 
@@ -34,6 +36,9 @@ BEGIN_MESSAGE_MAP(CDlgDevice2, CBCGPDialog)
 	ON_BN_CLICKED(IDC_NEWITEM, &CDlgDevice2::OnBnClickedNewitem)
 	ON_BN_CLICKED(IDC_SAVE, &CDlgDevice2::OnBnClickedSave)
 	ON_BN_CLICKED(IDC_DELITEM, &CDlgDevice2::OnBnClickedDelitem)
+	ON_BN_CLICKED(IDC_RADIO1, &CDlgDevice2::OnBnClickedRadio1)
+	ON_BN_CLICKED(IDC_RADIO2, &CDlgDevice2::OnBnClickedRadio2)
+	ON_BN_CLICKED(IDC_RADIO4, &CDlgDevice2::OnBnClickedRadio4)
 END_MESSAGE_MAP()
 
 
@@ -64,6 +69,82 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 	return TRUE;
 }
 
+static BOOL CALLBACK GridMCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
+{
+	ASSERT(pdi != NULL);
+
+	CDlgDevice2* pThis = (CDlgDevice2*)lp;
+
+	int nRow = pdi->item.nRow;	// Row of an item
+	int nCol = pdi->item.nCol;	// Column of an item
+	int ndata = pThis->m_datasM.size(); //number of data exist
+	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
+	{
+		std::vector<CStrs>::iterator it = pThis->m_datasM.begin() + nRow;
+		if (!it->empty())
+		{
+			pdi->item.varValue = pThis->m_datasM[nRow][nCol];
+		}
+		else
+		{
+			pdi->item.varValue = "访问内存出错";
+		}
+	}
+
+	return TRUE;
+}
+
+
+static BOOL CALLBACK GridYCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
+{
+	ASSERT(pdi != NULL);
+
+	CDlgDevice2* pThis = (CDlgDevice2*)lp;
+
+	int nRow = pdi->item.nRow;	// Row of an item
+	int nCol = pdi->item.nCol;	// Column of an item
+	int ndata = pThis->m_datasY.size(); //number of data exist
+	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
+	{
+		std::vector<CStrs>::iterator it = pThis->m_datasY.begin() + nRow;
+		if (!it->empty())
+		{
+			pdi->item.varValue = pThis->m_datasY[nRow][nCol];
+		}
+		else
+		{
+			pdi->item.varValue = "访问内存出错";
+		}
+	}
+
+	return TRUE;
+}
+
+static BOOL CALLBACK GridCCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
+{
+	ASSERT(pdi != NULL);
+
+	CDlgDevice2* pThis = (CDlgDevice2*)lp;
+
+	int nRow = pdi->item.nRow;	// Row of an item
+	int nCol = pdi->item.nCol;	// Column of an item
+	int ndata = pThis->m_datasC.size(); //number of data exist
+	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
+	{
+		std::vector<CStrs>::iterator it = pThis->m_datasC.begin() + nRow;
+		if (!it->empty())
+		{
+			pdi->item.varValue = pThis->m_datasC[nRow][nCol];
+		}
+		else
+		{
+			pdi->item.varValue = "访问内存出错";
+		}
+	}
+
+	return TRUE;
+}
+
 
 BOOL CDlgDevice2::OnInitDialog()
 {
@@ -75,6 +156,8 @@ BOOL CDlgDevice2::OnInitDialog()
 	m_wndGridLocation.MapWindowPoints(this, &rect);
 
 	DWORD nStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER;
+
+	//---------------按天显示-------------------------------------------------------
 	m_wndGrid.Create(nStyle, rect, this, IDC_GRID_STUPRO);
 	m_wndGrid.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
 	m_wndGrid.EnableHeader(TRUE, 0); //不允许表头移动
@@ -92,28 +175,21 @@ BOOL CDlgDevice2::OnInitDialog()
 	switch (m_nQueryType)
 	{
 	case QUERY_OIL:
-		arrColumns.push_back("名称");
-		arrColumns.push_back("型号");
-		arrColumns.push_back("购车日期");
-		arrColumns.push_back("牌号");
-		arrColumns.push_back("数量");
-		arrColumns.push_back("产地");
+		arrColumns.push_back("记录日期");
+		arrColumns.push_back("金额");
+		arrColumns.push_back("负责人");
 		break;
 	case QUERY_MAINTENANCE:
-		arrColumns.push_back("名称");
-		arrColumns.push_back("牌号");
-		arrColumns.push_back("编号");
-		arrColumns.push_back("车架号");
+		arrColumns.push_back("维保日期");
+		arrColumns.push_back("维保项目");
+		arrColumns.push_back("完工日期");
 		arrColumns.push_back("金额");
-		arrColumns.push_back("有效期");
-		arrColumns.push_back("备保公司");
+		arrColumns.push_back("负责人");
 		break;
 	case QUERY_MOT:
-		arrColumns.push_back("牌号");
-		arrColumns.push_back("日期");
-		arrColumns.push_back("金额");
-		arrColumns.push_back("车辆损失");
-		arrColumns.push_back("其它损失");
+		arrColumns.push_back("年检日期");
+		arrColumns.push_back("年检结果");
+		arrColumns.push_back("负责人");
 		break;
 	}
 
@@ -130,9 +206,137 @@ BOOL CDlgDevice2::OnInitDialog()
 	//注册虚拟列表回调函数
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
 
+	//--------------按月显示---------------------------------
+	m_wndGridM.Create(nStyle, rect, this, IDC_GRID_STUPRO);
+	m_wndGridM.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
+	m_wndGridM.EnableHeader(TRUE, 0); //不允许表头移动
+	// Set grid tab order (first):
+	m_wndGridM.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndGridM.SetReadOnly();
+	m_wndGridM.SetWholeRowSel();
+	m_wndGridM.SetSingleSel(); //只能选一个
+	m_wndGridM.EnableRowHeader(TRUE);
+	m_wndGridM.EnableLineNumbers();
+
+	nColumn = 0;
+	hw = m_wndGridM.GetRowHeaderWidth();
+	arrColumns.clear();
+	switch (m_nQueryType)
+	{
+	case QUERY_OIL:
+		arrColumns.push_back("月份");
+		arrColumns.push_back("记录次数");
+		arrColumns.push_back("汇总金额");
+		break;
+	case QUERY_MAINTENANCE:
+		arrColumns.push_back("月份");
+		arrColumns.push_back("维保次数");
+		arrColumns.push_back("汇总金额");
+		break;
+	case QUERY_MOT:
+		arrColumns.push_back("年检日期");
+		arrColumns.push_back("年检结果");
+		break;
+	}
+
+	nColumns = arrColumns.size();
+	w = rect.Width() - hw;
+	nColumnWidth = w / nColumns;
+	for (int i = 0; i < nColumns; i++)
+	{
+		m_wndGridM.InsertColumn(i, arrColumns[i], nColumnWidth);
+		m_wndGridM.SetColumnAlign(i, HDF_CENTER);
+		m_wndGridM.SetHeaderAlign(i, HDF_CENTER);
+	}
+	//注册虚拟列表回调函数
+	m_wndGridM.EnableVirtualMode(GridMCallback, (LPARAM)this);
+	m_wndGridM.EnableWindow(FALSE);
+
+	//---------------按年显示-------------------------------
+	m_wndGridY.Create(nStyle, rect, this, IDC_GRID_STUPRO);
+	m_wndGridY.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
+	m_wndGridY.EnableHeader(TRUE, 0); //不允许表头移动
+	// Set grid tab order (first):
+	m_wndGridY.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndGridY.SetReadOnly();
+	m_wndGridY.SetWholeRowSel();
+	m_wndGridY.SetSingleSel(); //只能选一个
+	m_wndGridY.EnableRowHeader(TRUE);
+	m_wndGridY.EnableLineNumbers();
+
+	nColumn = 0;
+	hw = m_wndGridY.GetRowHeaderWidth();
+	arrColumns.clear();
+	switch (m_nQueryType)
+	{
+	case QUERY_OIL:
+		arrColumns.push_back("年份");
+		arrColumns.push_back("记录次数");
+		arrColumns.push_back("汇总金额");
+		break;
+	case QUERY_MAINTENANCE:
+		arrColumns.push_back("年份");
+		arrColumns.push_back("维保次数");
+		arrColumns.push_back("汇总金额");
+		break;
+	case QUERY_MOT:
+		arrColumns.push_back("年检日期");
+		arrColumns.push_back("年检结果");
+		break;
+	}
+
+	nColumns = arrColumns.size();
+	w = rect.Width() - hw;
+	nColumnWidth = w / nColumns;
+	for (int i = 0; i < nColumns; i++)
+	{
+		m_wndGridY.InsertColumn(i, arrColumns[i], nColumnWidth);
+		m_wndGridY.SetColumnAlign(i, HDF_CENTER);
+		m_wndGridY.SetHeaderAlign(i, HDF_CENTER);
+	}
+	//注册虚拟列表回调函数
+	m_wndGridY.EnableVirtualMode(GridYCallback, (LPARAM)this);
+	m_wndGridY.EnableWindow(FALSE);
+
+	//---------------车辆信息-------------------------------
+	CRect rectC;
+	m_wndGridLocationC.GetClientRect(&rectC);
+	m_wndGridLocationC.MapWindowPoints(this, &rectC);
+	m_wndGridC.Create(nStyle, rectC, this, IDC_GRID_STUPRO);
+	m_wndGridC.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
+	m_wndGridC.EnableHeader(TRUE, 0); //不允许表头移动
+	// Set grid tab order (first):
+	m_wndGridC.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndGridC.SetReadOnly();
+	m_wndGridC.SetWholeRowSel();
+	m_wndGridC.SetSingleSel(); //只能选一个
+	m_wndGridC.EnableRowHeader(TRUE);
+	m_wndGridC.EnableLineNumbers();
+
+	nColumn = 0;
+	hw = m_wndGridC.GetRowHeaderWidth();
+	arrColumns.clear();
+	arrColumns.push_back("车辆编号");
+	arrColumns.push_back("车辆牌照");
+
+	nColumns = arrColumns.size();
+	w = rectC.Width() - hw;
+	nColumnWidth = w / nColumns;
+	for (int i = 0; i < nColumns; i++)
+	{
+		m_wndGridC.InsertColumn(i, arrColumns[i], nColumnWidth);
+		m_wndGridC.SetColumnAlign(i, HDF_CENTER);
+		m_wndGridC.SetHeaderAlign(i, HDF_CENTER);
+	}
+	//注册虚拟列表回调函数
+	m_wndGridC.EnableVirtualMode(GridCCallback, (LPARAM)this);
+
+	m_nShowType = 0;
 	GetDlgItem(IDC_SAVE)->EnableWindow(FALSE);
 
 	m_nOldRows = 0;
+	UpdateData(FALSE);
+
 	Refresh();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常:  OCX 属性页应返回 FALSE
@@ -141,16 +345,23 @@ BOOL CDlgDevice2::OnInitDialog()
 void CDlgDevice2::Refresh()
 {
 	CString strMsg, strSQL;
+
+	strSQL.Format("SELECT * FROM carinfo");
+	m_datasC.clear();
+	g_mysqlCon.ExecuteQuery(strSQL, m_datasC, strMsg);
+	ShowMsg2Output1(strMsg);
+	m_wndGridC.GridRefresh(m_datasC.size());
+
 	switch (m_nQueryType)
 	{
 	case QUERY_OIL:
-		strSQL.Format("SELECT * FROM cars ORDER BY BUY_DAY DESC");
+		strSQL.Format("SELECT * FROM oils ORDER BY OIL_DATE DESC");
 		break;
 	case QUERY_MAINTENANCE:
-		strSQL.Format("SELECT * FROM insurances ORDER BY PLATE_NUM DESC");
+		strSQL.Format("SELECT * FROM maintenance ORDER BY MDATE DESC");
 		break;
 	case QUERY_MOT:
-		strSQL.Format("SELECT * FROM claims ORDER BY CLAIM_DATE DESC");
+		strSQL.Format("SELECT * FROM MOTs ORDER BY MOT_DATE DESC");
 		break;
 	}
 
@@ -160,6 +371,7 @@ void CDlgDevice2::Refresh()
 
 	m_nOldRows = m_datas.size();
 	m_wndGrid.GridRefresh(m_nOldRows);
+
 }
 
 void CDlgDevice2::OnBnClickedUpdate()
@@ -310,4 +522,39 @@ void CDlgDevice2::DelRowFromDB(CStrs strs)
 
 	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	ShowMsg2Output1(strMsg);
+}
+
+void CDlgDevice2::OnBnClickedRadio1()
+{
+	m_wndGrid.EnableWindow(TRUE);
+	m_wndGridM.EnableWindow(FALSE);
+	m_wndGridY.EnableWindow(FALSE);
+	m_wndGrid.GridRefresh(m_datas.size());
+
+	GetDlgItem(IDC_DELITEM)->EnableWindow(TRUE);
+	GetDlgItem(IDC_NEWITEM)->EnableWindow(TRUE);
+}
+
+
+void CDlgDevice2::OnBnClickedRadio2()
+{
+	m_wndGrid.EnableWindow(FALSE);
+	m_wndGridM.EnableWindow(TRUE);
+	m_wndGridY.EnableWindow(FALSE);
+	m_wndGridM.GridRefresh(m_datasM.size());
+
+	GetDlgItem(IDC_DELITEM)->EnableWindow(FALSE);
+	GetDlgItem(IDC_NEWITEM)->EnableWindow(FALSE);
+}
+
+
+void CDlgDevice2::OnBnClickedRadio4()
+{
+	m_wndGrid.EnableWindow(FALSE);
+	m_wndGridM.EnableWindow(FALSE);
+	m_wndGridY.EnableWindow(TRUE);
+	m_wndGridY.GridRefresh(m_datasY.size());
+
+	GetDlgItem(IDC_DELITEM)->EnableWindow(FALSE);
+	GetDlgItem(IDC_NEWITEM)->EnableWindow(FALSE);
 }
