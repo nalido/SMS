@@ -163,6 +163,34 @@
 							</ID>
 							<TEXT>Office 2013 Dark &amp;Gray Theme</TEXT>
 						</ELEMENT>
+						<ELEMENT>
+							<ELEMENT_NAME>Separator</ELEMENT_NAME>
+							<HORIZ>TRUE</HORIZ>
+						</ELEMENT>
+						<ELEMENT>
+							<ELEMENT_NAME>Button</ELEMENT_NAME>
+							<ID>
+								<NAME>ID_VIEW_APPLOOK_VS2012_LIGHT</NAME>
+								<VALUE>32841</VALUE>
+							</ID>
+							<TEXT>VS2012 Light Theme</TEXT>
+						</ELEMENT>
+						<ELEMENT>
+							<ELEMENT_NAME>Button</ELEMENT_NAME>
+							<ID>
+								<NAME>ID_VIEW_APPLOOK_VS2012_DARK</NAME>
+								<VALUE>32842</VALUE>
+							</ID>
+							<TEXT>VS2012 Dark Theme</TEXT>
+						</ELEMENT>
+						<ELEMENT>
+							<ELEMENT_NAME>Button</ELEMENT_NAME>
+							<ID>
+								<NAME>ID_VIEW_APPLOOK_VS2012_BLUE</NAME>
+								<VALUE>32843</VALUE>
+							</ID>
+							<TEXT>VS2012 Blue Theme</TEXT>
+						</ELEMENT>
 					</ELEMENTS>
 				</ELEMENT>
 				<ELEMENT>

@@ -161,6 +161,10 @@ void CViewDevices::OnPaint()
 	MemDC.SetBkMode(TRANSPARENT);
 	MemDC.SelectObject(&font1);
 	MemDC.SetTextAlign(TA_CENTER);
+	BYTE r = GetRValue(m_ThemeColor);
+	BYTE g = GetGValue(m_ThemeColor);
+	BYTE b = GetBValue(m_ThemeColor);
+	MemDC.SetTextColor(RGB(255 - r, 255 - g, 255 - b));
 	for (int i = 0; i < 6; i++)
 	{
 		CRect rectT;
