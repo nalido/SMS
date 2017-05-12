@@ -26,6 +26,9 @@ public:
 public:
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
+
+	ULONG_PTR m_gdiplusToken;
+
 	//virtual void OnBeforeChangeVisualTheme(CBCGPAppOptions& appOptions, CWnd* pMainWnd); //设置主题颜色
 	//virtual void OnAfterChangeVisualTheme(CWnd* pMainWnd);
 // Implementation

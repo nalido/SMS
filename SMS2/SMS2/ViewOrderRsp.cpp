@@ -108,6 +108,11 @@ void CALLBACK CViewOrderRsp::OnGridDbClick(LPVOID lParam)
 {
 	CViewOrderRsp* pThis = (CViewOrderRsp*)lParam;
 
+
+	CBCGPGridRow* pRow = pThis->m_wndGrid.GetCurSel();
+	int nRow = pRow->GetRowId();
+	if (pThis->m_datas[nRow][4] != "1") return; //已经反馈过
+
 	CResponse dlg;
 	if (dlg.DoModal() == IDOK)
 	{
@@ -115,8 +120,8 @@ void CALLBACK CViewOrderRsp::OnGridDbClick(LPVOID lParam)
 		CString strService = dlg.m_strServiceScore;
 		CString strSelf = dlg.m_strSelfScore;
 
-		CBCGPGridRow* pRow = pThis->m_wndGrid.GetCurSel();
-		int nRow = pRow->GetRowId();
+		//CBCGPGridRow* pRow = pThis->m_wndGrid.GetCurSel();
+		//int nRow = pRow->GetRowId();
 
 		pThis->m_datas[nRow][7] = strService;
 		pThis->m_datas[nRow][8] = strSelf;

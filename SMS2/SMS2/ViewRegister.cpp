@@ -129,7 +129,7 @@ void CViewRegister::OnTimer(UINT_PTR nIDEvent)
 	m_videoCap >> cap;
 	if (!cap.empty())
 	{
-		m_cap = cap(Rect(150, 2, 340, 476)).clone(); //按照5:7的一寸照片比例截取
+		m_cap = cap(cv::Rect(150, 2, 340, 476)).clone(); //按照5:7的一寸照片比例截取
 		IplImage* frame;
 		frame = &IplImage(m_cap);
 		CvvImage cvvImage;
@@ -182,24 +182,24 @@ void CViewRegister::OnPaint()
 
 	//双缓存绘制
 	CRect   rect1, rect0;
-	CDC     MenDC;
+	CDC     MemDC;
 	CBitmap MemMap;
 
 	GetDlgItem(IDC_BKBMP)->GetClientRect(&rect0); //贴图原点
 	GetDlgItem(IDC_BKBMP)->MapWindowPoints(this, &rect0);
 	GetDlgItem(IDC_BKBMP1)->GetClientRect(&rect1); //贴图终点
 	GetDlgItem(IDC_BKBMP1)->MapWindowPoints(this, &rect1);
-	MenDC.CreateCompatibleDC(&dc); 
+	MemDC.CreateCompatibleDC(&dc); 
 	MemMap.LoadBitmapA(IDB_BITMAP3);
 	BITMAP bmp;
 	MemMap.GetBitmap(&bmp); //获取bmp参数
-	MenDC.SelectObject(&MemMap);
+	MemDC.SelectObject(&MemMap);
 
 	int w = rect1.right - rect0.left;
 	int h = rect1.bottom - rect0.top;
-	dc.StretchBlt(rect0.left, rect0.top, w, h, &MenDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
-	//dc.BitBlt(rect0.left, rect0.top, rect.Width(), rect.Height(), &MenDC, 0, 0, SRCCOPY);
-	MenDC.DeleteDC();
+	dc.StretchBlt(rect0.left, rect0.top, w, h, &MemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+	//dc.BitBlt(rect0.left, rect0.top, rect.Width(), rect.Height(), &MemDC, 0, 0, SRCCOPY);
+	MemDC.DeleteDC();
 	MemMap.DeleteObject();
 
 	if (m_isCaptured)
@@ -366,6 +366,11 @@ void CViewRegister::OnBnClickedNewfile()
 				nfiles = atoi(data[0][0]) + 1;
 				m_strNumber.Format("DJ%d", nfiles);
 			}
+		}
+		else
+		{
+			nfiles = 1;
+			m_strNumber.Format("DJ%s%04d", strMonth, nfiles);
 		}
 		m_Sta_Num.SetWindowTextA(m_strNumber);
 		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(TRUE);

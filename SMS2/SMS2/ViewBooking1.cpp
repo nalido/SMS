@@ -358,21 +358,21 @@ void CViewBooking1::OnPaint()
 
 	////双缓存绘制
 	//CRect   rect;
-	//CDC     MenDC;
+	//CDC     MemDC;
 	//CBitmap MemMap;
 
 	//GetClientRect(&rect);
-	//MenDC.CreateCompatibleDC(&dc);
+	//MemDC.CreateCompatibleDC(&dc);
 	//MemMap.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
-	//MenDC.SelectObject(&MemMap);
-	//MenDC.FillSolidRect(&rect, RGB(255, 255, 255));
+	//MemDC.SelectObject(&MemMap);
+	//MemDC.FillSolidRect(&rect, RGB(255, 255, 255));
 
 	////调用默认的OnPaint(),把图形画在内存DC表上
-	//DefWindowProc(WM_PAINT, (WPARAM)MenDC.m_hDC, (LPARAM)0);
+	//DefWindowProc(WM_PAINT, (WPARAM)MemDC.m_hDC, (LPARAM)0);
 
 	////输出   
-	//dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MenDC, 0, 0, SRCCOPY);
-	//MenDC.DeleteDC();
+	//dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, 0, 0, SRCCOPY);
+	//MemDC.DeleteDC();
 	//MemMap.DeleteObject();
 }
 

@@ -42,6 +42,9 @@ CSMS2App::CSMS2App()
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2013_WHITE, ID_VIEW_APPLOOK_2013_1);
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2013_GRAY, ID_VIEW_APPLOOK_2013_2);
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2013_DARK_GRAY, ID_VIEW_APPLOOK_2013_3);
+	AddVisualTheme(BCGP_VISUAL_THEME_VS_2013_LIGHT, ID_VIEW_APPLOOK_VS2012_LIGHT);
+	AddVisualTheme(BCGP_VISUAL_THEME_VS_2013_DARK, ID_VIEW_APPLOOK_VS2012_DARK);
+	AddVisualTheme(BCGP_VISUAL_THEME_VS_2013_BLUE, ID_VIEW_APPLOOK_VS2012_BLUE);
 
 
 
@@ -50,7 +53,6 @@ CSMS2App::CSMS2App()
 	//CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Blue);
 	//CBCGPVisualManagerVS2012::SetAccentColor(CBCGPVisualManagerVS2012::VS2012_Blue);
 	SetVisualTheme(BCGP_VISUAL_THEME_OFFICE_2010_BLUE);
-
 
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
@@ -132,6 +134,11 @@ BOOL CSMS2App::InitInstance()
 	// The one and only window has been initialized, so show and update it
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
+
+	GdiplusStartupInput gdiplusStartupInput;
+	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
+
+
 	// call DragAcceptFiles only if there's a suffix
 	//  In an SDI app, this should occur after ProcessShellCommand
 	return TRUE;
@@ -141,6 +148,8 @@ BOOL CSMS2App::InitInstance()
 
 int CSMS2App::ExitInstance() 
 {
+	GdiplusShutdown(m_gdiplusToken);
+
 	return CBCGPWinApp::ExitInstance();
 }
 

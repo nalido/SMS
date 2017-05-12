@@ -35,16 +35,21 @@
 #define IDD_RESPONSE                    193
 #define IDD_COACH_CHECK                 194
 #define IDD_DEVICES                     195
-#define IDB_BITMAP1                     199
+#define IDD_DEVICE_DETAIL               200
+#define IDD_DEVICE_DETAIL2              201
+#define IDD_DATE_ITEM                   202
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
 #define IDC_QUERY                       1055
+#define IDC_UPDATE                      1055
 #define IDC_BTN_NOPASS                  1056
 #define IDC_BUTTON4                     1056
 #define IDC_RESET                       1056
 #define IDC_SETTODAY                    1056
+#define IDC_NEWITEM                     1056
 #define IDC_BUTTON5                     1057
+#define IDC_DELITEM                     1057
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
@@ -174,6 +179,19 @@
 #define IDC_MSG1                        1168
 #define IDC_MSG2                        1169
 #define IDC_MSG3                        1170
+#define IDC_DEVICE                      1171
+#define IDC_DEVICE2                     1172
+#define IDC_DEVICE3                     1173
+#define IDC_DEVICE4                     1174
+#define IDC_DEVICE5                     1175
+#define IDC_DEVICE6                     1176
+#define IDC_TEXT1                       1177
+#define IDC_TEXT2                       1178
+#define IDC_TEXT3                       1179
+#define IDC_TEXT4                       1180
+#define IDC_TEXT5                       1181
+#define IDC_TEXT6                       1182
+#define IDC_MONTHCALENDAR1              1187
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -223,9 +241,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        200
-#define _APS_NEXT_COMMAND_VALUE         32883
-#define _APS_NEXT_CONTROL_VALUE         1171
+#define _APS_NEXT_RESOURCE_VALUE        203
+#define _APS_NEXT_COMMAND_VALUE         32884
+#define _APS_NEXT_CONTROL_VALUE         1188
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

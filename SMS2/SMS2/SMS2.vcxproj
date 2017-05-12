@@ -208,9 +208,13 @@
     <ClInclude Include="ClassItem.h" />
     <ClInclude Include="Coaches.h" />
     <ClInclude Include="DlgCoachCheck.h" />
+    <ClInclude Include="DlgDateItem.h" />
+    <ClInclude Include="DlgDevice.h" />
+    <ClInclude Include="DlgDevice2.h" />
     <ClInclude Include="GridCalendar.h" />
     <ClInclude Include="MyPicCtrl.h" />
     <ClInclude Include="OrderDetail.h" />
+    <ClInclude Include="PNGButton.h" />
     <ClInclude Include="Response.h" />
     <ClInclude Include="ViewDevices.h" />
     <ClInclude Include="ViewOrderRsp.h" />
@@ -248,9 +252,13 @@
     <ClCompile Include="ClassItem.cpp" />
     <ClCompile Include="Coaches.cpp" />
     <ClCompile Include="DlgCoachCheck.cpp" />
+    <ClCompile Include="DlgDateItem.cpp" />
+    <ClCompile Include="DlgDevice.cpp" />
+    <ClCompile Include="DlgDevice2.cpp" />
     <ClCompile Include="GridCalendar.cpp" />
     <ClCompile Include="MyPicCtrl.cpp" />
     <ClCompile Include="OrderDetail.cpp" />
+    <ClCompile Include="PNGButton.cpp" />
     <ClCompile Include="Response.cpp" />
     <ClCompile Include="ViewDevices.cpp" />
     <ClCompile Include="ViewOrderRsp.cpp" />
