@@ -4,34 +4,21 @@
 //
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
-#define IDD_SMS_SERVER_FORM                   101
+#define IDD_SMS_SERVER_FORM             101
 #define IDS_MAIN_TOOLBAR                101
 #define IDR_MAINFRAME                   128
-#define IDR_SMS_SERVERTYPE                    129
+#define IDR_SMS_SERVERTYPE              129
 #define IDR_POPUP_TOOLBAR               131
 #define IDR_PASTE_MENU                  134
 #define IDR_THEME_MENU                  136
 #define IDB_WORKSPACE                   147
-#define IDD_REGISTER                    166
 #define IDD_DIALOG1                     167
-#define IDD_BOOKING1                    167
-#define IDD_BOOKING2                    168
+#define IDB_TREE_IMG                    169
 #define IDC_COMPANY_URL                 1041
-#define IDC_BUTTON1                     1055
-#define IDC_PHOTO                       1058
-#define IDC_CAMERA                      1059
-#define IDC_DATE_SIGNIN                 1061
-#define IDC_CARTYPE                     1063
-#define IDC_NUMBER                      1064
-#define IDC_BTN_SIGN                    1065
 #define IDC_BUTTON2                     1066
-#define IDC_NEWFILE                     1066
-#define IDC_NAME                        1067
-#define IDC_TEL                         1069
-#define IDC_FEE                         1070
-#define IDC_ID                          1071
-#define IDC_HOME                        1072
-#define IDC_BIRTH                       1073
+#define IDC_TREE1                       1073
+#define IDC_STATIC_VGRID                1074
+#define IDC_SPIC                        1075
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
 #define ID_VIEW_APPLOOK_2000            32826
@@ -74,9 +61,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        169
+#define _APS_NEXT_RESOURCE_VALUE        170
 #define _APS_NEXT_COMMAND_VALUE         32876
-#define _APS_NEXT_CONTROL_VALUE         1073
+#define _APS_NEXT_CONTROL_VALUE         1076
 #define _APS_NEXT_SYMED_VALUE           117
 #endif
 #endif

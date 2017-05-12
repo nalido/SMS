@@ -28,46 +28,6 @@
 			</IMAGE_LARGE>
 			<ELEMENTS>
 				<ELEMENT>
-					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<ID>
-						<NAME>57600</NAME>
-						<VALUE>57600</VALUE>
-					</ID>
-					<TEXT>&amp;New</TEXT>
-					<INDEX_SMALL>0</INDEX_SMALL>
-					<INDEX_LARGE>0</INDEX_LARGE>
-				</ELEMENT>
-				<ELEMENT>
-					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<ID>
-						<NAME>57601</NAME>
-						<VALUE>57601</VALUE>
-					</ID>
-					<TEXT>&amp;Open...</TEXT>
-					<INDEX_SMALL>1</INDEX_SMALL>
-					<INDEX_LARGE>1</INDEX_LARGE>
-				</ELEMENT>
-				<ELEMENT>
-					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<ID>
-						<NAME>57603</NAME>
-						<VALUE>57603</VALUE>
-					</ID>
-					<TEXT>&amp;Save</TEXT>
-					<INDEX_SMALL>2</INDEX_SMALL>
-					<INDEX_LARGE>2</INDEX_LARGE>
-				</ELEMENT>
-				<ELEMENT>
-					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<ID>
-						<NAME>57604</NAME>
-						<VALUE>57604</VALUE>
-					</ID>
-					<TEXT>Save &amp;As...</TEXT>
-					<INDEX_SMALL>3</INDEX_SMALL>
-					<INDEX_LARGE>3</INDEX_LARGE>
-				</ELEMENT>
-				<ELEMENT>
 					<ELEMENT_NAME>Button_Main_Panel</ELEMENT_NAME>
 					<ID>
 						<NAME>57665</NAME>
@@ -85,44 +45,24 @@
 		</CATEGORY_MAIN>
 		<QAT_ELEMENTS>
 			<ELEMENT_NAME>QAT</ELEMENT_NAME>
-			<ITEMS>
-				<ITEM>
-					<ID>
-						<NAME>57600</NAME>
-						<VALUE>57600</VALUE>
-					</ID>
-					<VISIBLE>FALSE</VISIBLE>
-				</ITEM>
-				<ITEM>
-					<ID>
-						<NAME>57601</NAME>
-						<VALUE>57601</VALUE>
-					</ID>
-					<VISIBLE>FALSE</VISIBLE>
-				</ITEM>
-				<ITEM>
-					<ID>
-						<NAME>57603</NAME>
-						<VALUE>57603</VALUE>
-					</ID>
-				</ITEM>
-				<ITEM>
-					<ID>
-						<NAME>57643</NAME>
-						<VALUE>57643</VALUE>
-					</ID>
-				</ITEM>
-			</ITEMS>
 		</QAT_ELEMENTS>
 		<TAB_ELEMENTS>
 			<ELEMENT_NAME>Group</ELEMENT_NAME>
 			<ELEMENTS>
 				<ELEMENT>
 					<ELEMENT_NAME>Button</ELEMENT_NAME>
-					<TEXT>Style</TEXT>
+					<TEXT>主题风格</TEXT>
 					<KEYS>s</KEYS>
 					<DEFAULT_COMMAND>FALSE</DEFAULT_COMMAND>
 					<ELEMENTS>
+						<ELEMENT>
+							<ELEMENT_NAME>Button</ELEMENT_NAME>
+							<ID>
+								<NAME>ID_VIEW_APPLOOK_2003</NAME>
+								<VALUE>32828</VALUE>
+							</ID>
+							<TEXT>Office 200&amp;3</TEXT>
+						</ELEMENT>
 						<ELEMENT>
 							<ELEMENT_NAME>Button</ELEMENT_NAME>
 							<ID>
@@ -223,6 +163,34 @@
 							</ID>
 							<TEXT>Office 2013 Dark &amp;Gray Theme</TEXT>
 						</ELEMENT>
+						<ELEMENT>
+							<ELEMENT_NAME>Separator</ELEMENT_NAME>
+							<HORIZ>TRUE</HORIZ>
+						</ELEMENT>
+						<ELEMENT>
+							<ELEMENT_NAME>Button</ELEMENT_NAME>
+							<ID>
+								<NAME>ID_VIEW_APPLOOK_VS2012_LIGHT</NAME>
+								<VALUE>32841</VALUE>
+							</ID>
+							<TEXT>VS2012 Light Theme</TEXT>
+						</ELEMENT>
+						<ELEMENT>
+							<ELEMENT_NAME>Button</ELEMENT_NAME>
+							<ID>
+								<NAME>ID_VIEW_APPLOOK_VS2012_DARK</NAME>
+								<VALUE>32842</VALUE>
+							</ID>
+							<TEXT>VS2012 Dark Theme</TEXT>
+						</ELEMENT>
+						<ELEMENT>
+							<ELEMENT_NAME>Button</ELEMENT_NAME>
+							<ID>
+								<NAME>ID_VIEW_APPLOOK_VS2012_BLUE</NAME>
+								<VALUE>32843</VALUE>
+							</ID>
+							<TEXT>VS2012 Blue Theme</TEXT>
+						</ELEMENT>
 					</ELEMENTS>
 				</ELEMENT>
 				<ELEMENT>
@@ -260,11 +228,20 @@
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>ID_VIEW_REPORT</NAME>
-									<VALUE>32865</VALUE>
+									<NAME>ID_VIEW_K1CHECK</NAME>
+									<VALUE>32876</VALUE>
 								</ID>
-								<TEXT>报表打印</TEXT>
-								<INDEX_LARGE>4</INDEX_LARGE>
+								<TEXT>新生审核</TEXT>
+								<INDEX_LARGE>10</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_K1EXAM</NAME>
+									<VALUE>32877</VALUE>
+								</ID>
+								<TEXT>科一报考</TEXT>
+								<INDEX_LARGE>11</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>
@@ -284,10 +261,19 @@
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
+									<NAME>ID_VIEW_STUPROGRESS</NAME>
+									<VALUE>32879</VALUE>
+								</ID>
+								<TEXT>学员进度</TEXT>
+								<INDEX_LARGE>12</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
 									<NAME>ID_VIEW_BOOKING1</NAME>
 									<VALUE>32866</VALUE>
 								</ID>
-								<TEXT>科一预约</TEXT>
+								<TEXT>培训预约</TEXT>
 								<INDEX_LARGE>10</INDEX_LARGE>
 							</ELEMENT>
 							<ELEMENT>
@@ -296,17 +282,17 @@
 									<NAME>ID_VIEW_BOOKING2</NAME>
 									<VALUE>32867</VALUE>
 								</ID>
-								<TEXT>科二预约</TEXT>
+								<TEXT>派工</TEXT>
 								<INDEX_LARGE>10</INDEX_LARGE>
 							</ELEMENT>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>ID_VIEW_PRINTB</NAME>
-									<VALUE>32871</VALUE>
+									<NAME>ID_VIEW_ORDER_RSP</NAME>
+									<VALUE>32882</VALUE>
 								</ID>
-								<TEXT>打印</TEXT>
-								<INDEX_LARGE>4</INDEX_LARGE>
+								<TEXT>派工反馈</TEXT>
+								<INDEX_LARGE>13</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>
@@ -326,11 +312,11 @@
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>ID_VIEW_DEVICE</NAME>
-									<VALUE>32873</VALUE>
+									<NAME>ID_VIEW_COACH</NAME>
+									<VALUE>32880</VALUE>
 								</ID>
-								<TEXT>设备管理</TEXT>
-								<INDEX_LARGE>0</INDEX_LARGE>
+								<TEXT>员工名册</TEXT>
+								<INDEX_LARGE>12</INDEX_LARGE>
 							</ELEMENT>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
@@ -340,6 +326,15 @@
 								</ID>
 								<TEXT>KPI</TEXT>
 								<INDEX_LARGE>1</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_DEVICE</NAME>
+									<VALUE>32873</VALUE>
+								</ID>
+								<TEXT>设备管理</TEXT>
+								<INDEX_LARGE>0</INDEX_LARGE>
 							</ELEMENT>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>

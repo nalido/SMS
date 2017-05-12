@@ -16,39 +16,24 @@
     <Filter Include="xPublic">
       <UniqueIdentifier>{7990ec57-7cba-4fe8-ac8e-588cac6d3591}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BCGClass">
+      <UniqueIdentifier>{3ab41474-4fed-49bb-947b-91f674f14c37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SMS2.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MainFrm.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SMS2Doc.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SMS2View.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="OutputBar.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ViewRegister.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ViewBooking1.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ViewBooking2.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="xPublic\CObjectBase.h">
@@ -66,33 +51,33 @@
     <ClInclude Include="xPublic\ThreadBase.h">
       <Filter>xPublic</Filter>
     </ClInclude>
+    <ClInclude Include="SMS_SERVER.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SMS_SERVERDoc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SMS_SERVERView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="xPublic\NetSocket.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
+    <ClInclude Include="BCGClass\VirtualGridCtrl.h">
+      <Filter>BCGClass</Filter>
+    </ClInclude>
+    <ClInclude Include="xPublic\HTTPClient.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SMS2.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MainFrm.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SMS2Doc.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SMS2View.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="OutputBar.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ViewRegister.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ViewBooking1.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ViewBooking2.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="xPublic\CObjectBase.cpp">
@@ -110,28 +95,40 @@
     <ClCompile Include="xPublic\ThreadBase.cpp">
       <Filter>xPublic</Filter>
     </ClCompile>
+    <ClCompile Include="SMS_SERVER.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SMS_SERVERDoc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SMS_SERVERView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="xPublic\NetSocket.cpp">
+      <Filter>xPublic</Filter>
+    </ClCompile>
+    <ClCompile Include="BCGClass\VirtualGridCtrl.cpp">
+      <Filter>BCGClass</Filter>
+    </ClCompile>
+    <ClCompile Include="xPublic\HTTPClient.cpp">
+      <Filter>xPublic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SMS2.rc">
+    <ResourceCompile Include="SMS_SERVER.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\SMS2.rc2">
+    <None Include="res\BCGSoft_ribbon\SMS_SERVER.ribbon.rc2">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="res\BCGSoft_ribbon\SMS2.ribbon.rc2">
+    <None Include="res\SMS_SERVER.rc2">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Workspace.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\SMS2Doc.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\SMS2.ico">
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\BCGSoft_ribbon\main.png">
@@ -153,6 +150,15 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\Toolbar.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\SMS_SERVER.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\SMS_SERVERDoc.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\treeImg.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

@@ -9,6 +9,7 @@
 #include "SMS2View.h"
 
 #include "ViewRegister.h"
+#include "xPublic\Common.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -29,6 +30,7 @@ END_MESSAGE_MAP()
 
 CSMS2App::CSMS2App()
 {
+	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2003, ID_VIEW_APPLOOK_2003);
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2007_BLUE, ID_VIEW_APPLOOK_2007);
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2007_BLACK, ID_VIEW_APPLOOK_2007_1);
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2007_SILVER, ID_VIEW_APPLOOK_2007_2);
@@ -40,9 +42,17 @@ CSMS2App::CSMS2App()
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2013_WHITE, ID_VIEW_APPLOOK_2013_1);
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2013_GRAY, ID_VIEW_APPLOOK_2013_2);
 	AddVisualTheme(BCGP_VISUAL_THEME_OFFICE_2013_DARK_GRAY, ID_VIEW_APPLOOK_2013_3);
+	AddVisualTheme(BCGP_VISUAL_THEME_VS_2013_LIGHT, ID_VIEW_APPLOOK_VS2012_LIGHT);
+	AddVisualTheme(BCGP_VISUAL_THEME_VS_2013_DARK, ID_VIEW_APPLOOK_VS2012_DARK);
+	AddVisualTheme(BCGP_VISUAL_THEME_VS_2013_BLUE, ID_VIEW_APPLOOK_VS2012_BLUE);
 
-	SetVisualTheme(BCGP_VISUAL_THEME_OFFICE_2013_WHITE);
 
+
+	CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Green);
+	//CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Orange);
+	//CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Blue);
+	//CBCGPVisualManagerVS2012::SetAccentColor(CBCGPVisualManagerVS2012::VS2012_Blue);
+	SetVisualTheme(BCGP_VISUAL_THEME_OFFICE_2010_BLUE);
 
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
@@ -69,6 +79,13 @@ BOOL CSMS2App::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CBCGPWinApp::InitInstance();
+
+
+	//系统配置初始化
+	xPublic::GetWorkPath("StudentsManagementSystem");
+	g_strFilePath = xPublic::GETSTR2("Option", "PicSavePath", _T("E:\\Photos\\"));
+	g_nSubForLeave = xPublic::GETINT2("Coach", "SubForLeave", 8);
+	g_nMinWorkTime = xPublic::GETINT2("Coach", "MinWorkTime", 8);
 
 	// Initialize OLE libraries
 	if (!AfxOleInit())
@@ -117,6 +134,11 @@ BOOL CSMS2App::InitInstance()
 	// The one and only window has been initialized, so show and update it
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
+
+	GdiplusStartupInput gdiplusStartupInput;
+	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
+
+
 	// call DragAcceptFiles only if there's a suffix
 	//  In an SDI app, this should occur after ProcessShellCommand
 	return TRUE;
@@ -126,6 +148,8 @@ BOOL CSMS2App::InitInstance()
 
 int CSMS2App::ExitInstance() 
 {
+	GdiplusShutdown(m_gdiplusToken);
+
 	return CBCGPWinApp::ExitInstance();
 }
 
@@ -138,7 +162,7 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_ABOUTBOX };
-	CBCGPURLLinkButton m_btnURL;
+	//CBCGPURLLinkButton m_btnURL;
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -146,6 +170,8 @@ protected:
 // Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedCompanyUrl();
 };
 
 CAboutDlg::CAboutDlg() : CBCGPDialog(CAboutDlg::IDD)
@@ -156,10 +182,11 @@ CAboutDlg::CAboutDlg() : CBCGPDialog(CAboutDlg::IDD)
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_COMPANY_URL, m_btnURL);
+	//DDX_Control(pDX, IDC_COMPANY_URL, m_btnURL);
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CBCGPDialog)
+	ON_BN_CLICKED(IDC_COMPANY_URL, &CAboutDlg::OnBnClickedCompanyUrl)
 END_MESSAGE_MAP()
 
 // App command to run the dialog
@@ -176,3 +203,56 @@ void CSMS2App::OnAppAbout()
 void CSMS2App::PreLoadState()
 {
 }
+
+
+void CAboutDlg::OnBnClickedCompanyUrl()
+{
+	CString strMsg;
+	strMsg.Format("开发商：黄剑冰\r\n邮箱：nalido@yeah.net\r\n");
+	MessageBox(strMsg);
+}
+
+//
+//void CSMS2App::OnBeforeChangeVisualTheme(CBCGPAppOptions& appOptions, CWnd* pMainWnd)
+//{
+//	CBCGPWinApp::OnBeforeChangeVisualTheme(appOptions, pMainWnd);
+//
+//	switch (m_ActiveTheme)
+//	{
+//	case BCGP_VISUAL_THEME_OFFICE_2013_WHITE:
+//		CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Green);
+//		break;
+//
+//	case BCGP_VISUAL_THEME_OFFICE_2013_GRAY:
+//		CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Orange);
+//		break;
+//
+//	case BCGP_VISUAL_THEME_OFFICE_2013_DARK_GRAY:
+//		CBCGPVisualManager2013::SetAccentColor(CBCGPVisualManager2013::VS2012_Blue);
+//		break;
+//
+//	case BCGP_VISUAL_THEME_VS_2012_LIGHT:
+//	case BCGP_VISUAL_THEME_VS_2012_DARK:
+//	case BCGP_VISUAL_THEME_VS_2012_BLUE:
+//		CBCGPVisualManagerVS2012::SetAccentColor(CBCGPVisualManagerVS2012::VS2012_Blue);	// Default
+//	}
+//}
+//
+//void CSMS2App::OnAfterChangeVisualTheme(CWnd* pMainWnd)
+//{
+//	CBCGPWinApp::OnAfterChangeVisualTheme(pMainWnd);
+//
+//	CBCGPDockManager::SetDockMode(BCGP_DT_SMART);
+//
+//	CMainFrame* pFrame = DYNAMIC_DOWNCAST(CMainFrame, pMainWnd);
+//	if (pFrame->GetSafeHwnd() == NULL)
+//	{
+//		return;
+//	}
+//
+//	//CSMS2View* pView = DYNAMIC_DOWNCAST(CSMS2View, pFrame->GetActiveView());
+//	//if (pView->GetSafeHwnd())
+//	//{
+//	//	pView->GetManagerCtrl().AdjustLayout(TRUE);
+//	//}
+//}

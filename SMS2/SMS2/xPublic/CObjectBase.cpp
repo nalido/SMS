@@ -6,22 +6,8 @@ namespace xPublic{
 
 	void DELETE_PARAM(SENDFILEPARAM *p)
 	{
-		//nType说明：0=整个都不删除，1=只删除struct，2=删除struct同时删除byte
-		if (NULL != p && p->nDelType > 0)
+		if (p != NULL)
 		{
-			if (p->nDelType == 2)
-			{
-				if (NULL != p->pictureBuff)
-				{
-					try
-					{
-						delete[] p->pictureBuff; p->pictureBuff = NULL;
-					}
-					catch (...)
-					{
-					}
-				}
-			}
 			delete p; p = NULL;
 		}
 	}
@@ -75,27 +61,12 @@ namespace xPublic{
 		m_cs.Unlock();
 	}
 
-	BOOL CObjectBase::AddTail(BYTE *pSrc, int nSrc)
+	BOOL CObjectBase::AddTail(CString str)
 	{
 		SENDFILEPARAM *pParam = new SENDFILEPARAM;
 		if (NULL != pParam)
 		{
-			if (nSrc > 0)
-			{
-				pParam->pictureBuff = new BYTE[nSrc];
-				if (NULL == pParam->pictureBuff)
-				{
-					delete pParam; pParam = NULL;
-					return FALSE;
-				}
-				pParam->nDelType = 2;
-				pParam->pictureLen = nSrc;
-				memcpy(pParam->pictureBuff, pSrc, pParam->pictureLen);
-			}
-			else
-			{
-				pParam->nDelType = 1;
-			}
+			pParam->strMsg = str;
 			AddTail(pParam);
 			return TRUE;
 		}

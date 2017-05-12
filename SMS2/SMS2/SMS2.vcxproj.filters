@@ -16,6 +16,9 @@
     <Filter Include="xPublic">
       <UniqueIdentifier>{7990ec57-7cba-4fe8-ac8e-588cac6d3591}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BCGClass">
+      <UniqueIdentifier>{94cbd303-744b-4026-bac2-5ffd781194ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -66,6 +69,87 @@
     <ClInclude Include="xPublic\ThreadBase.h">
       <Filter>xPublic</Filter>
     </ClInclude>
+    <ClInclude Include="xPublic\TCPClient.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
+    <ClInclude Include="BCGClass\VirtualGridCtrl.h">
+      <Filter>BCGClass</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewK1Check.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MSGINFO.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="School.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="xPublic\Common.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewK1Exam.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewStuProgress.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MyPicCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GridCalendar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassDetail.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Coaches.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AddCoach.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassItem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SheetCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="OrderDetail.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Orders.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TmpOrder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewOrderRsp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Response.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgCoachCheck.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewDevices.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgDevice.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PNGButton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgDevice2.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgDateItem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -110,6 +194,87 @@
     <ClCompile Include="xPublic\ThreadBase.cpp">
       <Filter>xPublic</Filter>
     </ClCompile>
+    <ClCompile Include="xPublic\TCPClient.cpp">
+      <Filter>xPublic</Filter>
+    </ClCompile>
+    <ClCompile Include="BCGClass\VirtualGridCtrl.cpp">
+      <Filter>BCGClass</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewK1Check.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MSGINFO.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="School.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="xPublic\Common.cpp">
+      <Filter>xPublic</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewK1Exam.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewStuProgress.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MyPicCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GridCalendar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassDetail.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Coaches.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AddCoach.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassItem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SheetCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OrderDetail.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Orders.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TmpOrder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewOrderRsp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Response.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgCoachCheck.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewDevices.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgDevice.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PNGButton.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgDevice2.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgDateItem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SMS2.rc">
@@ -153,6 +318,42 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\Toolbar.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\bitmap1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\bitmap3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\tool15.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\tool14.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\保养.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

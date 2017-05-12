@@ -11,6 +11,25 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
+{
+	ASSERT(pdi != NULL);
+
+	COutputBar* pThis = (COutputBar*)lp;
+
+	int nRow = pdi->item.nRow;	// Row of an item
+	int nCol = pdi->item.nCol;	// Column of an item
+	int ndata = pThis->m_datas.GetCount(); //number of data exist
+	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
+	{
+		xPublic::SENDFILEPARAM * pParam = pThis->m_datas.GetAt(nRow);
+		if (pParam != NULL && nCol == 0)
+			pdi->item.varValue = pParam->strMsg;
+	}
+
+	return TRUE;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // COutputBar
 
@@ -75,8 +94,48 @@ int COutputBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 	m_wndList1.InsertColumn(0, _T("information"), LVCFMT_LEFT, 800);
+	m_wndList2.InsertColumn(0, _T("information"), LVCFMT_LEFT, 800);
+	m_wndList3.InsertColumn(0, _T("information"), LVCFMT_LEFT, 800);
+
+
+	m_wndGrid.Create(WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER, rectDummy, &m_wndTabs, 5);
+	m_wndTabs.AddTab(&m_wndGrid, _T("Output 4"), -1);
+	m_wndGrid.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndGrid.SetReadOnly();
+	m_wndGrid.InsertColumn(0, _T("服务器连接信息"), 800);
+	//注册虚拟列表回调函数
+	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
+
+	//for (int i = 0; i < 200; i++)
+	//{
+	//	CStrs strs;
+	//	CString str;
+	//	str.Format("item %d", i);
+	//	strs.push_back(str);
+	//	m_datas.push_back(strs);
+	//}
+	//ListFresh();
 
 	return 0;
+}
+
+void COutputBar::ListFresh()
+{
+	m_wndGrid.RemoveAll();
+	int nCount = m_datas.GetCount();
+	m_wndGrid.SetVirtualRows(nCount);
+	m_wndGrid.AdjustLayout();
+
+	if (nCount > 0)
+	{
+		CBCGPGridRow* pRow = m_wndGrid.GetRow(nCount - 1);
+		m_wndGrid.EnsureVisible(pRow);
+	}
+}
+
+void COutputBar::AddItem2List4(CString str)
+{
+	m_datas.AddTail(str);
 }
 
 void COutputBar::OnSize(UINT nType, int cx, int cy) 

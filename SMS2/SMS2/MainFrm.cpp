@@ -8,14 +8,27 @@
 #include "ViewRegister.h"
 #include "ViewBooking1.h"
 #include "ViewBooking2.h"
+#include "ViewK1Check.h"
+#include "ViewK1Exam.h"
+#include "ViewStuProgress.h"
+#include "School.h"
+#include "System.h"
+#include "Coaches.h"
+#include "ViewOrderRsp.h"
+#include "ViewDevices.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 ////////////////global functions and values///////////////////////
-CString g_FilePath = "E:\\Photos\\";
+CString g_strFilePath = "E:\\Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
+CString g_sServerIP = "127.0.0.1";
+int g_nClassTotal = 9;
+int g_nMaxBooking = 15;
+int g_nSubForLeave = 8;
+int g_nMinWorkTime = 176;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -43,6 +56,54 @@ void ShowMsg2Output1(CString strMsg)
 	pFrame->m_wndOutput.AddItem2List1(strMsg);
 }
 
+char* EncodeToUTF8(const char* mbcsStr)
+{
+	wchar_t*  wideStr;
+	char*   utf8Str;
+	int   charLen;
+
+	charLen = MultiByteToWideChar(CP_UTF8, 0, mbcsStr, -1, NULL, 0);
+	wideStr = (wchar_t*)malloc(sizeof(wchar_t)*charLen);
+	MultiByteToWideChar(CP_ACP, 0, mbcsStr, -1, wideStr, charLen);
+
+	charLen = WideCharToMultiByte(CP_UTF8, 0, wideStr, -1, NULL, 0, NULL, NULL);
+
+	utf8Str = (char*)malloc(charLen);
+
+	WideCharToMultiByte(CP_UTF8, 0, wideStr, -1, utf8Str, charLen, NULL, NULL);
+
+	free(wideStr);
+	return utf8Str;
+
+}
+
+CString GetClassTime(int n) //根据时段编号获得具体时间
+{
+	CString res("");
+	switch (n)
+	{
+	case 0:
+		res = "A8:00-10:00";
+		break;
+	case 1:
+		res = "A10:00-12:00";
+		break;
+	case 2:
+		res = "P2:00 - 4:00";
+		break;
+	case 3:
+		res = "P4:00 - 6:00";
+		break;
+	case 4:
+		res = "P6:00 - 8:00";
+		break;
+	default:
+		res = "未定义";
+		break;
+	}
+	return res;
+}
+
 ///////////////////////////////end of global functions//////////////
 
 // CMainFrame
@@ -52,28 +113,35 @@ IMPLEMENT_DYNCREATE(CMainFrame, CBCGPFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_VIEW_OUTPUT, OnViewOutput)
-	ON_COMMAND(ID_VIEW_REGISTER, OnViewRegister)
-	ON_COMMAND(ID_VIEW_BOOKING1, OnViewBooking1)
-	ON_COMMAND(ID_VIEW_BOOKING2, OnViewBooking2)
+	ON_COMMAND_EX(ID_VIEW_REGISTER, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_K1CHECK, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_K1EXAM, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_STUPROGRESS, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_COACH, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_DEVICE, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_ORDER_RSP, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
 	ON_MESSAGE(UM_REDRAW, OnRedraw)
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 	ON_WM_CLOSE()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CMainFrame construction/destruction
-enum VIEW_TYPE{
-	VIEW_REGISTER = 0,
-	VIEW_BOOKING1,
-	VIEW_BOOKING2
-};
 
 CMainFrame::CMainFrame()
 : m_threadMySQL(this, ThreadMySQLCallback)
+, m_threadSocket(this, ThreadSocketCallback)
 {
-	// TODO: add member initialization code here
+	m_pSendBuf = NULL;
+	m_nSendLen = 0;
+	m_isSendReady = FALSE;
 }
 
 CMainFrame::~CMainFrame()
@@ -138,6 +206,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	//开始子线程
 	m_threadMySQL.StartThread();
+	m_threadSocket.StartThread();
+
+	//timer
+	SetTimer(0, 100, NULL); //定时刷新子界面
 
 	return 0;
 }
@@ -149,6 +221,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
 
+	cs.style &= ~FWS_ADDTOTITLE; //使用固定标题
+	cs.lpszName = "东华驾校学员管理系统";
 	//cs.cx = GetSystemMetrics(SM_CXSCREEN);
 	//cs.cy = GetSystemMetrics(SM_CYSCREEN);
 
@@ -282,22 +356,48 @@ void CMainFrame::OnUpdateViewOutput(CCmdUI* pCmdUI)
 }
  // OUTPUTBAR
 
- // Register
-void CMainFrame::OnViewRegister()
+
+BOOL CMainFrame::OnViewSelected(UINT nID)
 {
-	SelectView(VIEW_REGISTER);
+	switch (nID)
+	{
+	case ID_VIEW_BOOKING1:
+		SelectView(VIEW_BOOKING1);
+		break;
+	case ID_VIEW_BOOKING2:
+		SelectView(VIEW_BOOKING2); 
+			break;
+	case ID_VIEW_ORDER_RSP:
+		SelectView(VIEW_ORDER_RSP);
+			break;
+	case ID_VIEW_REGISTER:
+		SelectView(VIEW_REGISTER);
+		break;
+	case ID_VIEW_K1CHECK:
+		SelectView(VIEW_K1CHECK);
+		break;
+	case ID_VIEW_K1EXAM:
+		SelectView(VIEW_K1EXAM);
+		break;
+	case ID_VIEW_STUPROGRESS:
+		SelectView(VIEW_STUPROGRESS);
+		break;
+	case ID_VIEW_SYSTEMSETTING:
+		SelectView(VIEW_SYSTEM);
+		break;
+	case ID_VIEW_SCHOOLSETTING:
+		SelectView(VIEW_SCHOOL);
+		break;
+	case ID_VIEW_COACH:
+		SelectView(VIEW_COACHES);
+		break;
+	case ID_VIEW_DEVICE:
+		SelectView(VIEW_DEVICES);
+		break;
+	}
+	return TRUE;
 }
 
-
-void CMainFrame::OnViewBooking1()
-{
-	SelectView(VIEW_BOOKING1);
-}
-
-void CMainFrame::OnViewBooking2()
-{
-	SelectView(VIEW_BOOKING2);
-}
  // UI_TYPE_RIBBON
 
 
@@ -305,7 +405,7 @@ CView* CMainFrame::GetView(int nID)
 {
 	if (m_arViews.GetSize() == 0)
 	{
-		const int nCount = 3; //子窗口总数
+		const int nCount = VIEW_NUM; //子窗口总数
 		for (int i = 0; i < nCount; i++)
 		{
 			m_arViews.Add(NULL);
@@ -337,6 +437,30 @@ CView* CMainFrame::GetView(int nID)
 	case VIEW_BOOKING2:
 		pClass = RUNTIME_CLASS(CViewBooking2);
 		break;
+	case VIEW_ORDER_RSP:
+		pClass = RUNTIME_CLASS(CViewOrderRsp);
+		break;
+	case VIEW_K1CHECK:
+		pClass = RUNTIME_CLASS(CViewK1Check);
+		break;
+	case VIEW_K1EXAM:
+		pClass = RUNTIME_CLASS(CViewK1Exam); 
+		break;
+	case VIEW_COACHES:
+		pClass = RUNTIME_CLASS(CCoaches);
+		break;
+	case VIEW_DEVICES:
+		pClass = RUNTIME_CLASS(CViewDevices);
+		break;
+	case VIEW_STUPROGRESS:
+		pClass = RUNTIME_CLASS(CViewStuProgress); 
+			break;
+	case VIEW_SCHOOL:
+		pClass = RUNTIME_CLASS(CSchool);
+		break;
+	case VIEW_SYSTEM:
+		pClass = RUNTIME_CLASS(CSystem);
+		break;
 	}
 	if (pClass == NULL)
 	{
@@ -364,7 +488,7 @@ CView* CMainFrame::GetView(int nID)
 	newContext.m_pCurrentFrame = NULL;
 	newContext.m_pCurrentDoc = pCurrentDoc;
 
-	if (!pView->Create(NULL, _T(""), (AFX_WS_DEFAULT_VIEW & ~WS_VISIBLE),
+	if (!pView->Create(NULL, _T(""), (AFX_WS_DEFAULT_VIEW),
 		CRect(0, 0, 0, 0), this, AFX_IDW_PANE_FIRST + nIndex, &newContext))
 	{
 		TRACE1("Failed to create view '%s'\n", pClass->m_lpszClassName);
@@ -381,6 +505,7 @@ CView* CMainFrame::GetView(int nID)
 void CMainFrame::SelectView(int nID)
 {
 	CWaitCursor wait;
+
 
 	CView* pNewView = GetView(nID);
 	if (pNewView == NULL)
@@ -409,9 +534,13 @@ void CMainFrame::SelectView(int nID)
 
 		pActiveView->ShowWindow(SW_HIDE);
 		pNewView->ShowWindow(SW_SHOW);
+		//Invalidate();
 
 		SetActiveView(pNewView);
 	}
+
+	//窗口的数据初始化刷新
+	pNewView->SendMessage(WM_USER_UPDATE_VIEW, (WPARAM)1);
 
 	//theApp.WriteInt(_T("ViewType"), m_nCurrType);
 	PostMessage(UM_REDRAW);
@@ -456,6 +585,7 @@ void CMainFrame::OnClose()
 {
 	//关闭子线程
 	m_threadMySQL.StopThread();
+	m_threadSocket.StopThread();
 	CBCGPFrameWnd::OnClose();
 }
 
@@ -463,4 +593,152 @@ void CMainFrame::OnClose()
 LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 {
 	return 0;
+}
+
+
+void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent)
+{
+	CMainFrame* pThis = (CMainFrame*)pParam;
+	xPublic::CTCPClient *pTcpClient = &pThis->m_tcpClient;
+	DWORD dwWaitTime = 10;
+	BOOL bNotify = TRUE;
+	CString strMsg;
+	BYTE senttime = 0;
+
+	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, dwWaitTime))
+	{
+		if (pThis->m_pSendBuf == NULL)
+		{
+			if (pTcpClient->Close())
+			{
+				strMsg.Format("没有图像发送，自动断开与服务器的连接");
+				pThis->m_wndOutput.AddItem2List4(strMsg);
+			}
+			continue;
+		}
+
+		if (pThis->m_isSendReady == FALSE) continue; //数据还没有准备好
+
+		//检测和创建TCP连接
+		if (!pTcpClient->IsConnected())
+		{
+			if (!pTcpClient->Connect(g_sServerIP, 39200, NULL))
+			{
+				if (bNotify)
+				{
+					bNotify = FALSE;
+					strMsg.Format("连接服务器(%s:39200)失败,直接删除数据", g_sServerIP);
+					pThis->m_wndOutput.AddItem2List4(strMsg);
+					if (pThis->m_pSendBuf != NULL) //服务器无连接则直接删除数据
+					{
+						delete[] pThis->m_pSendBuf;
+						pThis->m_pSendBuf = NULL;
+						bNotify = TRUE;
+					}
+				}
+				::WaitForSingleObject(hCloseEvent, 2000);
+				continue;
+			}
+			bNotify = TRUE;
+			strMsg.Format("连接服务器(%s:39200)成功", g_sServerIP);
+			pThis->m_wndOutput.AddItem2List4(strMsg);
+		}//检测和创建连接
+
+		//发送数据
+		strMsg.Format("第%d次发送数据", senttime);
+		pThis->m_wndOutput.AddItem2List4(strMsg);
+		BOOL bSendOK = FALSE;
+		int nPicLen = pThis->m_nSendLen;
+		if (pTcpClient->IsConnected() && pTcpClient->Send(pThis->m_pSendBuf, nPicLen) & !bSendOK)
+		{
+			bSendOK = TRUE;
+			strMsg.Format("数据发送成功");
+			pThis->m_wndOutput.AddItem2List4(strMsg);
+
+			if (pThis->m_pSendBuf[0] == 3)
+			{
+				BYTE flag = 0;
+				pTcpClient->Receive(&flag, 1);
+				if (flag == 1) //后有图像数据
+				{
+					int wid, hei, imgSize;
+					char FileNum[11] = { 0 };
+					pTcpClient->Receive(&FileNum, 10);
+					pTcpClient->Receive(&wid, 4);
+					pTcpClient->Receive(&hei, 4);
+					pTcpClient->Receive(&imgSize, 4);
+					BYTE* picBuf = new BYTE[imgSize + 1];
+					if (pTcpClient->Receive(picBuf, imgSize))
+					{
+						strMsg.Format("收到图像信息：%dX%d 接收成功", wid, hei);
+
+						pThis->SaveBmp(FileNum, picBuf, wid, hei, imgSize); //保存图片，第二次点击时无需再下载
+						IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
+						int lineByte = (wid * 3 + 3) / 4 * 4;
+						cvSetData(pImg, picBuf, lineByte);
+						cv::Mat img = cv::cvarrToMatND(pImg);
+						pThis->GetActiveView()->SendMessageA(WM_USER_MESSAGE, (WPARAM)&img, (LPARAM)2);
+
+						pThis->m_wndOutput.AddItem2List4(strMsg);
+					}
+					else
+					{
+						strMsg.Format("收到图像信息：%dX%d 接收图像数据失败", wid, hei);
+						pThis->m_wndOutput.AddItem2List4(strMsg);
+					}
+
+					delete[] picBuf; picBuf = NULL;
+				}
+			} //if (pThis->m_pSendBuf[0] == 3)
+
+			delete[]pThis->m_pSendBuf; //删除数据
+			pThis->m_pSendBuf = NULL;
+		}
+
+		//判断是否发送成功，删除图像缓存
+		if (!bSendOK)
+		{
+			if (++senttime >= 3) //试发三次后删除图像
+			{
+				if (pThis->m_pSendBuf != NULL)
+				{
+					delete[] pThis->m_pSendBuf;
+					pThis->m_pSendBuf = NULL;
+				}
+				senttime = 0;
+				strMsg.Format("数据发送三次失败");
+				pThis->m_wndOutput.AddItem2List4(strMsg);
+			}
+		}
+	}//end while
+
+
+	if (pThis->m_pSendBuf != NULL)
+	{
+		delete[] pThis->m_pSendBuf;
+		pThis->m_pSendBuf = NULL;
+	}
+}
+
+void CMainFrame::OnTimer(UINT_PTR nIDEvent)
+{
+	m_wndOutput.ListFresh();
+
+	CBCGPFrameWnd::OnTimer(nIDEvent);
+}
+
+void CMainFrame::SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize)
+{
+	IplImage* pImg = cvCreateImageHeader(cvSize(wid, hei), 8, 3);
+	int lineByte = (wid*3 + 3) / 4 * 4;
+	cvSetData(pImg, picBuf, lineByte);
+
+	cv::Mat img = cv::cvarrToMatND(pImg);
+	CString sFileName("");
+	sFileName.Format("%s\\%s.bmp", g_strFilePath, FileNum);
+	::SHCreateDirectory(NULL, CA2W(g_strFilePath));
+	cv::String s = sFileName.GetBuffer();
+	imwrite(s, img);
+	sFileName.ReleaseBuffer();
+	pImg = NULL;
 }

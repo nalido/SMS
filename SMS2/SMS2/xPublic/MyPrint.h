@@ -1,6 +1,7 @@
 #pragma once
 #include "..\\stdafx.h"
 #include <vector>
+#include "MySQLEx.h"
 
 namespace xPublic{
 	typedef struct struct_PRINTERINFO //打印机属性信息，纸张信息
@@ -57,10 +58,12 @@ namespace xPublic{
 	typedef struct struct_CLASSINFO //课程内容
 	{
 		int nClassID; //课时编号
+		CStrs arrClassText; //课时授课内容
 
 		struct_CLASSINFO()
 		{
 			nClassID = 0;
+			arrClassText.clear();
 		}
 	}CLASSINFO;
 
@@ -74,7 +77,7 @@ namespace xPublic{
 		CString strMsg1; //表单固定提示内容
 		CString strMsg2;
 		CString strMsg3;
-		CString strData; //表单时间
+		CString strDate; //表单时间
 
 
 		struct_SHEETINFO()
@@ -82,12 +85,12 @@ namespace xPublic{
 			strTitle = "未定义";
 			strClassType = "科一";
 			strCoach = "未定义";
-			strCarID = "000";
+			strCarID = "---";
 			strCoachID = "未定义";
 			strMsg1 = "杜绝陋习\"吃拿卡要\"，维护权益从我做起！";
 			strMsg2 = "   特别提示：根据规定在有效期内，凡授训超出30个课时的，每1课时需补缴50元！";
 			strMsg3 = "辛苦了！ 谢谢配合！";
-			strData = "2017年03月27日制";
+			strDate = "2017年03月27日制";
 		}
 	}SHEETINFO;
 
@@ -98,17 +101,22 @@ namespace xPublic{
 		~CMyPrint();
 
 		HDC m_hdcPrinter; //打印机设备句柄
-		CDC m_dcPrinter; //图形设备环境， 使用时与打印机设备关联，在上面绘图就相当于往打印机要打出的纸上绘图
+		CDC m_dcPrinter; //程序控件的设备环境
 		BOOL m_isInit; //设备是否初始化完成
 		int m_nMaxPage; //最大打印页码范围
 		PRINTERINFO m_printerInfo;
 		SHEETINFO* m_sheetInfo;
 		//STUDENTINFO* m_studentInfo;
-		std::vector<STUDENTINFO*> m_students;
+		std::vector<STUDENTINFO> m_students;
 		CLASSINFO* m_classInfo;
 
 		//添加学员信息
-		void AddStudent(STUDENTINFO* student);
+		void AddStudent(STUDENTINFO student);
+		//移除学员信息
+		void RemoveStudentAt(int index);
+		CString GetClassTime(int n);
+		//重置表单，清空学员信息
+		void Reset();
 
 		//初始化设备，设置纸张格式等
 		void PrinterInit(SHEETINFO* SheetInfo, CLASSINFO* ClassInfo); //只打印一张单子
@@ -117,6 +125,7 @@ namespace xPublic{
 		//打印单张表单内容
 		void PrintTrainSheet(int page);
 		void PrintTrainSheet2(int page);
+		void DrawTrainSheet();
 
 		//自定义绘图 单位为mm
 		void RectangleEx(int x1, int y1, int x2, int y2);
@@ -124,5 +133,7 @@ namespace xPublic{
 		void TextEx(int x, int y, CString str);
 		void DrawTextExx(CString str, CRect& rect); //自动分行的文字输出
 		void FillPieEx(COLORREF color, CRect& rect, STUDENTINFO* student); //填充扇形，扇形面积为nUsed/nTotal
+
+		void operator=(CMyPrint& print); //重载运算符
 	};
 }//xPublic

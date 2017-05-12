@@ -5,17 +5,15 @@
 #include "SMS_SERVER.h"
 
 #include "MainFrm.h"
-#include "ViewRegister.h"
-#include "ViewBooking1.h"
-#include "ViewBooking2.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 ////////////////global functions and values///////////////////////
-CString g_FilePath = "E:\\Photos\\";
+CString g_strFilePath = "E:\\Server_Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
+CDStrs g_strMsgLog;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -52,15 +50,13 @@ IMPLEMENT_DYNCREATE(CMainFrame, CBCGPFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_VIEW_OUTPUT, OnViewOutput)
-	ON_COMMAND(ID_VIEW_REGISTER, OnViewRegister)
-	ON_COMMAND(ID_VIEW_BOOKING1, OnViewBooking1)
-	ON_COMMAND(ID_VIEW_BOOKING2, OnViewBooking2)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
 	ON_MESSAGE(UM_REDRAW, OnRedraw)
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 	ON_WM_CLOSE()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CMainFrame construction/destruction
@@ -138,6 +134,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	//开始子线程
 	m_threadMySQL.StartThread();
+
+	//开启定时器定时刷新输出信息
+	SetTimer(0, 100, NULL);
 
 	return 0;
 }
@@ -282,22 +281,6 @@ void CMainFrame::OnUpdateViewOutput(CCmdUI* pCmdUI)
 }
  // OUTPUTBAR
 
- // Register
-void CMainFrame::OnViewRegister()
-{
-	SelectView(VIEW_REGISTER);
-}
-
-
-void CMainFrame::OnViewBooking1()
-{
-	SelectView(VIEW_BOOKING1);
-}
-
-void CMainFrame::OnViewBooking2()
-{
-	SelectView(VIEW_BOOKING2);
-}
  // UI_TYPE_RIBBON
 
 
@@ -329,13 +312,11 @@ CView* CMainFrame::GetView(int nID)
 	switch (nIndex)
 	{
 	case VIEW_REGISTER:
-		pClass = RUNTIME_CLASS(CViewRegister);
+		//pClass = RUNTIME_CLASS(CViewRegister);
 		break;
 	case VIEW_BOOKING1:
-		pClass = RUNTIME_CLASS(CViewBooking1);
 		break;
 	case VIEW_BOOKING2:
-		pClass = RUNTIME_CLASS(CViewBooking2);
 		break;
 	}
 	if (pClass == NULL)
@@ -463,4 +444,15 @@ void CMainFrame::OnClose()
 LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 {
 	return 0;
+}
+
+void CMainFrame::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	switch (nIDEvent)
+	{
+	case 0: //定时刷新输出信息
+		break;
+	}
+	CBCGPFrameWnd::OnTimer(nIDEvent);
 }

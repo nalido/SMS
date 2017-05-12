@@ -51,7 +51,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -87,6 +87,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Program Files %28x86%29\BCGSoft\BCGControlBarPro\BCGCBPro;E:\mysql-5.7.17-winx64\include;D:\opencv\build\include\opencv2;D:\opencv\build\include\opencv;D:\opencv\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\BCGSoft\BCGControlBarPro\Bin64;E:\mysql-5.7.17-winx64\lib;E:\mysql-5.7.17-winx64\bin;D:\opencv\build\x64\vc12\bin;D:\opencv\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
+    <LibraryWPath>E:\mysql-5.7.17-winx64\lib;$(LibraryWPath)</LibraryWPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -183,6 +186,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opencv_world310.lib;opencv_world310d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -198,25 +202,74 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddCoach.h" />
+    <ClInclude Include="BCGClass\VirtualGridCtrl.h" />
+    <ClInclude Include="ClassDetail.h" />
+    <ClInclude Include="ClassItem.h" />
+    <ClInclude Include="Coaches.h" />
+    <ClInclude Include="DlgCoachCheck.h" />
+    <ClInclude Include="DlgDateItem.h" />
+    <ClInclude Include="DlgDevice.h" />
+    <ClInclude Include="DlgDevice2.h" />
+    <ClInclude Include="GridCalendar.h" />
+    <ClInclude Include="MyPicCtrl.h" />
+    <ClInclude Include="OrderDetail.h" />
+    <ClInclude Include="PNGButton.h" />
+    <ClInclude Include="Response.h" />
+    <ClInclude Include="ViewDevices.h" />
+    <ClInclude Include="ViewOrderRsp.h" />
+    <ClInclude Include="Orders.h" />
+    <ClInclude Include="SheetCtrl.h" />
+    <ClInclude Include="TmpOrder.h" />
+    <ClInclude Include="ViewK1Exam.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MSGINFO.h" />
     <ClInclude Include="OutputBar.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="School.h" />
     <ClInclude Include="SMS2.h" />
     <ClInclude Include="SMS2Doc.h" />
     <ClInclude Include="SMS2View.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="System.h" />
     <ClInclude Include="ViewBooking1.h" />
     <ClInclude Include="ViewBooking2.h" />
+    <ClInclude Include="ViewK1Check.h" />
     <ClInclude Include="ViewRegister.h" />
+    <ClInclude Include="ViewStuProgress.h" />
     <ClInclude Include="xPublic\CObjectBase.h" />
+    <ClInclude Include="xPublic\Common.h" />
     <ClInclude Include="xPublic\CvvImage.h" />
     <ClInclude Include="xPublic\MyPrint.h" />
     <ClInclude Include="xPublic\MySQLEx.h" />
+    <ClInclude Include="xPublic\TCPClient.h" />
     <ClInclude Include="xPublic\ThreadBase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddCoach.cpp" />
+    <ClCompile Include="BCGClass\VirtualGridCtrl.cpp" />
+    <ClCompile Include="ClassDetail.cpp" />
+    <ClCompile Include="ClassItem.cpp" />
+    <ClCompile Include="Coaches.cpp" />
+    <ClCompile Include="DlgCoachCheck.cpp" />
+    <ClCompile Include="DlgDateItem.cpp" />
+    <ClCompile Include="DlgDevice.cpp" />
+    <ClCompile Include="DlgDevice2.cpp" />
+    <ClCompile Include="GridCalendar.cpp" />
+    <ClCompile Include="MyPicCtrl.cpp" />
+    <ClCompile Include="OrderDetail.cpp" />
+    <ClCompile Include="PNGButton.cpp" />
+    <ClCompile Include="Response.cpp" />
+    <ClCompile Include="ViewDevices.cpp" />
+    <ClCompile Include="ViewOrderRsp.cpp" />
+    <ClCompile Include="Orders.cpp" />
+    <ClCompile Include="SheetCtrl.cpp" />
+    <ClCompile Include="TmpOrder.cpp" />
+    <ClCompile Include="ViewK1Exam.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MSGINFO.cpp" />
     <ClCompile Include="OutputBar.cpp" />
+    <ClCompile Include="School.cpp" />
     <ClCompile Include="SMS2.cpp" />
     <ClCompile Include="SMS2Doc.cpp" />
     <ClCompile Include="SMS2View.cpp" />
@@ -226,13 +279,18 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="System.cpp" />
     <ClCompile Include="ViewBooking1.cpp" />
     <ClCompile Include="ViewBooking2.cpp" />
+    <ClCompile Include="ViewK1Check.cpp" />
     <ClCompile Include="ViewRegister.cpp" />
+    <ClCompile Include="ViewStuProgress.cpp" />
     <ClCompile Include="xPublic\CObjectBase.cpp" />
+    <ClCompile Include="xPublic\Common.cpp" />
     <ClCompile Include="xPublic\CvvImage.cpp" />
     <ClCompile Include="xPublic\MyPrint.cpp" />
     <ClCompile Include="xPublic\MySQLEx.cpp" />
+    <ClCompile Include="xPublic\TCPClient.cpp" />
     <ClCompile Include="xPublic\ThreadBase.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -243,16 +301,28 @@
     <None Include="res\SMS2.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\1.bmp" />
+    <Image Include="..\2.bmp" />
+    <Image Include="..\3.bmp" />
+    <Image Include="..\4.bmp" />
+    <Image Include="..\bitmap3.bmp" />
+    <Image Include="res\1.bmp" />
+    <Image Include="res\2.bmp" />
+    <Image Include="res\3.bmp" />
     <Image Include="res\BCGSoft_ribbon\category_large_0.png" />
     <Image Include="res\BCGSoft_ribbon\category_main_large.png" />
     <Image Include="res\BCGSoft_ribbon\category_main_small.png" />
     <Image Include="res\BCGSoft_ribbon\category_small_0.png" />
     <Image Include="res\BCGSoft_ribbon\main.png" />
     <Image Include="res\BCGSoft_ribbon\ribbon_bar.png" />
+    <Image Include="res\bitmap1.bmp" />
     <Image Include="res\SMS2.ico" />
     <Image Include="res\SMS2Doc.ico" />
+    <Image Include="res\tool14.bmp" />
+    <Image Include="res\tool15.png" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\Workspace.bmp" />
+    <Image Include="res\保养.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="res\BCGSoft_ribbon\ribbon.xml" />

@@ -45,9 +45,6 @@ protected:
 	afx_msg LRESULT OnRibbonCustomize (WPARAM wp, LPARAM lp);
 	afx_msg void OnToolsOptions();
 	afx_msg void OnViewOutput();
-	afx_msg void OnViewRegister();
-	afx_msg void OnViewBooking1();
-	afx_msg void OnViewBooking2();
 	afx_msg void OnUpdateViewOutput(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnRedraw(WPARAM, LPARAM);
 	DECLARE_MESSAGE_MAP()
@@ -66,9 +63,13 @@ public:
 	xPublic::CThreadBase m_threadMySQL;
 	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
 	afx_msg void OnClose();
+
+	//定时刷新输出信息
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
-extern CString g_FilePath;
+extern CString g_strFilePath;
 extern xPublic::CMySQLEx g_mysqlCon;
 extern void LOG(CString sFileName, CString str_log, int flag = 1);
 extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。
+extern CDStrs g_strMsgLog; //全局消息

@@ -2,18 +2,18 @@
 
 
 
-// CViewBooking2 窗体视图
+// CViewK1Exam 窗体视图
 
-class CViewBooking2 : public CBCGPFormView
+class CViewK1Exam : public CBCGPFormView
 {
-	DECLARE_DYNCREATE(CViewBooking2)
+	DECLARE_DYNCREATE(CViewK1Exam)
 
 protected:
-	CViewBooking2();           // 动态创建所使用的受保护的构造函数
-	virtual ~CViewBooking2();
+	CViewK1Exam();           // 动态创建所使用的受保护的构造函数
+	virtual ~CViewK1Exam();
 
 public:
-	enum { IDD = IDD_BOOKING2 };
+	enum { IDD = IDD_K1EXAM };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE

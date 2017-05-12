@@ -33,10 +33,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedCamera();
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
 
 	CStatic m_SPhoto;
-	CButton m_Btn_Cap;
 
 	CStatic m_Sta_Num;
 	CString m_strNumber; //档案号
@@ -46,6 +46,7 @@ public:
 	CEdit m_Ed_Home;
 	CEdit m_Ed_Fee;
 	CComboBox m_Comb_CarType;
+	CComboBox m_Comb_Gender;
 	CDateTimeCtrl m_Date_Sign;
 	CDateTimeCtrl m_Date_Birth;
 
@@ -56,9 +57,14 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	virtual void OnInitialUpdate();
 	afx_msg void OnPaint();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+//	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedBtnSign();
 	afx_msg void OnBnClickedNewfile();
+	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+
+	//背景设置
+	CStatic m_staticText[10]; //10个静态文本框
 };
 
 
