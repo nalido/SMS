@@ -16,6 +16,7 @@
 #include "Coaches.h"
 #include "ViewOrderRsp.h"
 #include "ViewDevices.h"
+#include "ViewKPI.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -120,6 +121,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_COACH, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_KPI, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_DEVICE, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
@@ -391,6 +393,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_COACH:
 		SelectView(VIEW_COACHES);
 		break;
+	case ID_VIEW_KPI:
+		SelectView(VIEW_KPI);
+		break;
 	case ID_VIEW_DEVICE:
 		SelectView(VIEW_DEVICES);
 		break;
@@ -448,6 +453,9 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_COACHES:
 		pClass = RUNTIME_CLASS(CCoaches);
+		break;
+	case VIEW_KPI:
+		pClass = RUNTIME_CLASS(CViewKPI);
 		break;
 	case VIEW_DEVICES:
 		pClass = RUNTIME_CLASS(CViewDevices);
