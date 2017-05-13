@@ -41,11 +41,19 @@
 #define IDD_KPI                         203
 #define IDD_DIALOG3                     204
 #define IDD_SCAN                        204
+#define IDD_STUDENT_ENTER               205
+#define IDD_STUFF_ENTER                 206
+#define IDB_BITMAP1                     208
+#define IDD_NEWSTUFF                    209
+#define IDD_RESETPSW                    210
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
 #define IDC_QUERY                       1055
 #define IDC_UPDATE                      1055
+#define IDC_NEWSTUFF                    1055
+#define IDC_REGISTER                    1055
+#define IDC_SMS                         1055
 #define IDC_BTN_NOPASS                  1056
 #define IDC_BUTTON4                     1056
 #define IDC_RESET                       1056
@@ -54,6 +62,7 @@
 #define IDC_EXPORT                      1056
 #define IDC_BUTTON5                     1057
 #define IDC_DELITEM                     1057
+#define IDC_FORGET                      1057
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
@@ -239,6 +248,13 @@
 #define IDC_D12                         1223
 #define IDC_D13                         1224
 #define IDC_VIEW_4STUDENT               1227
+#define IDC_E1                          1229
+#define IDC_E2                          1230
+#define IDC_LOGIN                       1231
+#define IDC_E3                          1231
+#define IDC_E4                          1232
+#define IDC_E5                          1233
+#define IDC_CANCEL                      1236
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -285,14 +301,17 @@
 #define ID_VIEW_ORDER_RSP               32882
 #define ID_VIEW_SCAN                    32884
 #define ID_VIEW_LOGIN                   32885
+#define ID_VIEW_4STUDENT                32886
+#define ID_VIEW_4STUFF                  32887
+#define ID_VIEW_STUFF                   32888
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        205
-#define _APS_NEXT_COMMAND_VALUE         32886
-#define _APS_NEXT_CONTROL_VALUE         1229
+#define _APS_NEXT_RESOURCE_VALUE        211
+#define _APS_NEXT_COMMAND_VALUE         32889
+#define _APS_NEXT_CONTROL_VALUE         1239
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

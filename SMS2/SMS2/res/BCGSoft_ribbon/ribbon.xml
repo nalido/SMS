@@ -360,16 +360,16 @@
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>IDC_VIEW_4STUDENT</NAME>
-									<VALUE>1227</VALUE>
+									<NAME>ID_VIEW_4STUDENT</NAME>
+									<VALUE>32886</VALUE>
 								</ID>
-								<TEXT>学员查询</TEXT>
+								<TEXT>学员查询入口</TEXT>
 							</ELEMENT>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>ID_VIEW_LOGIN</NAME>
-									<VALUE>32885</VALUE>
+									<NAME>ID_VIEW_STUFF</NAME>
+									<VALUE>32888</VALUE>
 								</ID>
 								<TEXT>工作人员登录</TEXT>
 							</ELEMENT>

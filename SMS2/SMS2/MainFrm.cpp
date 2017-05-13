@@ -18,6 +18,8 @@
 #include "ViewDevices.h"
 #include "ViewKPI.h"
 #include "ViewScan.h"
+#include "ViewStuffEnter.h"
+#include "ViewStudentEnter.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -183,6 +185,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_COACH, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_KPI, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCAN, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_4STUDENT, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_STUFF, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_DEVICE, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
@@ -463,6 +467,12 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_DEVICE:
 		SelectView(VIEW_DEVICES);
 		break;
+	case ID_VIEW_STUFF:
+		SelectView(VIEW_STUFFENTER);
+		break;
+	case ID_VIEW_4STUDENT:
+		SelectView(VIEW_STUDENTENTER);
+		break;
 	}
 	return TRUE;
 }
@@ -526,6 +536,12 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_SCAN:
 		pClass = RUNTIME_CLASS(CViewScan);
+		break;
+	case VIEW_STUFFENTER:
+		pClass = RUNTIME_CLASS(CViewStuffEnter);
+		break;
+	case VIEW_STUDENTENTER:
+		pClass = RUNTIME_CLASS(CViewStudentEnter);
 		break;
 	case VIEW_STUPROGRESS:
 		pClass = RUNTIME_CLASS(CViewStuProgress); 
