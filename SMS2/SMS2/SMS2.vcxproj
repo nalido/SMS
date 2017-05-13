@@ -237,6 +237,7 @@
     <ClInclude Include="ViewBooking2.h" />
     <ClInclude Include="ViewK1Check.h" />
     <ClInclude Include="ViewRegister.h" />
+    <ClInclude Include="ViewScan.h" />
     <ClInclude Include="ViewStuProgress.h" />
     <ClInclude Include="xPublic\CObjectBase.h" />
     <ClInclude Include="xPublic\Common.h" />
@@ -286,6 +287,7 @@
     <ClCompile Include="ViewBooking2.cpp" />
     <ClCompile Include="ViewK1Check.cpp" />
     <ClCompile Include="ViewRegister.cpp" />
+    <ClCompile Include="ViewScan.cpp" />
     <ClCompile Include="ViewStuProgress.cpp" />
     <ClCompile Include="xPublic\CObjectBase.cpp" />
     <ClCompile Include="xPublic\Common.cpp" />

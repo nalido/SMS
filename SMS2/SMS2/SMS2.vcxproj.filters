@@ -153,6 +153,9 @@
     <ClInclude Include="ViewKPI.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ViewScan.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -279,6 +282,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ViewKPI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewScan.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

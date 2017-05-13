@@ -17,6 +17,7 @@
 #include "ViewOrderRsp.h"
 #include "ViewDevices.h"
 #include "ViewKPI.h"
+#include "ViewScan.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -105,6 +106,65 @@ CString GetClassTime(int n) //根据时段编号获得具体时间
 	return res;
 }
 
+CString GetLastMonth(CTime& thisMonth)
+{
+	int tyear = thisMonth.GetYear();
+	int tmonth = thisMonth.GetMonth();
+	int tday = thisMonth.GetDay();
+
+	if (tmonth == 1)
+	{
+		tyear -= 1;
+		tmonth = 12;
+	}
+	else tmonth -= 1;
+	CString lastMonth;
+	lastMonth.Format("%d/%02d", tyear, tmonth);
+
+	return lastMonth;
+}
+
+void ExportExcel(std::vector<CString>& titles, CDStrs &datas)
+{
+	CFileDialog fileDlg(FALSE, "*.csv", NULL, 6UL, "通用表格(*.csv)|*.csv|");
+	CString filename("");
+	if (fileDlg.DoModal() == IDOK)
+	{
+		filename = fileDlg.GetPathName();
+	}
+	else return;
+
+	CFile f;
+	if (f.Open(filename, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeReadWrite))
+	{
+		CString strLine("");
+
+		//列名
+		int cols = titles.size();
+		for (int i = 0; i < cols; i++)
+		{
+			strLine = strLine + titles[i] + ",";
+		}
+		strLine = strLine + "\r\n";
+		f.Write(strLine, strlen(strLine));
+
+		//数据
+		int rows = datas.size();
+		for (int r = 0; r < rows; r++)
+		{
+			strLine = "";
+			for (int c = 0; c < cols; c++)
+			{
+				strLine = strLine + datas[r][c] + ",";
+			}
+			strLine = strLine + "\r\n";
+			f.Write(strLine, strlen(strLine));
+		}
+
+		f.Close();
+	}
+	
+}
 ///////////////////////////////end of global functions//////////////
 
 // CMainFrame
@@ -122,6 +182,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_COACH, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_KPI, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_SCAN, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_DEVICE, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
@@ -396,6 +457,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_KPI:
 		SelectView(VIEW_KPI);
 		break;
+	case ID_VIEW_SCAN:
+		SelectView(VIEW_SCAN);
+		break;
 	case ID_VIEW_DEVICE:
 		SelectView(VIEW_DEVICES);
 		break;
@@ -460,6 +524,9 @@ CView* CMainFrame::GetView(int nID)
 	case VIEW_DEVICES:
 		pClass = RUNTIME_CLASS(CViewDevices);
 		break;
+	case VIEW_SCAN:
+		pClass = RUNTIME_CLASS(CViewScan);
+		break;
 	case VIEW_STUPROGRESS:
 		pClass = RUNTIME_CLASS(CViewStuProgress); 
 			break;
@@ -503,7 +570,6 @@ CView* CMainFrame::GetView(int nID)
 		delete pView;
 		return NULL;
 	}
-
 	pView->OnInitialUpdate(); //initial
 
 	m_arViews.SetAt(nIndex, pView);
@@ -542,7 +608,6 @@ void CMainFrame::SelectView(int nID)
 
 		pActiveView->ShowWindow(SW_HIDE);
 		pNewView->ShowWindow(SW_SHOW);
-		//Invalidate();
 
 		SetActiveView(pNewView);
 	}

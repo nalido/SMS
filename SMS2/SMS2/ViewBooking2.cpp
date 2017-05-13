@@ -502,14 +502,14 @@ void CViewBooking2::Refresh(int nID)
 
 	if (nID == 0 || nID == 2)//查询待可预约教练员信息
 	{
-		int year = m_tToday.GetYear();
-		CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
-		//半年内 超过3次请假为不合格, 超过半年按6次算
-		int th = 3;
-		if (midYear < m_tToday) th = 6;
+		//int year = m_tToday.GetYear();
+		//CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
+		////半年内 超过3次请假为不合格, 超过半年按6次算
+		//int th = 3;
+		//if (midYear < m_tToday) th = 6;
 		strSQL.Format("select coachinfo.SName, coachinfo.GENDER, coachinfo.FILE_NUM, coachstat.PERFORMANCE from \
 					  	coachstat INNER JOIN coachinfo ON coachinfo.FILE_NUM=coachstat.FILE_NUM \
-						WHERE coachstat.LEAVE_N<'%d' ORDER BY coachstat.PERFORMANCE DESC", th);
+						WHERE coachstat.BLACK_NAME='0' ORDER BY coachstat.PERFORMANCE DESC");
 		m_datas2.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg))
 		{

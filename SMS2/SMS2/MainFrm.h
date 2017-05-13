@@ -129,6 +129,7 @@ enum VIEW_TYPE{
 	VIEW_DEVICES,
 	VIEW_SCHOOL,
 	VIEW_SYSTEM,
+	VIEW_SCAN,
 	VIEW_NUM
 };
 
@@ -138,6 +139,16 @@ typedef struct struct_STUDENTINFO
 	CString strFileName; //学员档案名
 	CString strGender; //学员性别
 	CString strCarType; //申领车型
+	CString strSignDate; //报名日期
+	CString strBirthDay; //出生日期
+	CString strTEL; //电话
+	CString strIDCard; //身份证
+	CString strHome; //住址
+	CString strFee; //费用
+
+
+	int nClassBooked; //已预约课时
+	int nClassStep; //课程进度,已用课时
 
 	struct_STUDENTINFO()
 	{
@@ -145,6 +156,15 @@ typedef struct struct_STUDENTINFO
 		strFileName = "";
 		strGender = "";
 		strCarType = "";
+		strSignDate = "";
+		strBirthDay = ""; //出生日期
+		strTEL = ""; //电话
+		strIDCard = ""; //身份证
+		strHome = ""; //住址
+		strFee = ""; //费用
+
+		nClassStep = 0;
+		nClassBooked = 0;
 	}
 
 	struct_STUDENTINFO(CString name, CString filename, CString gender, CString cartype)
@@ -158,4 +178,5 @@ typedef struct struct_STUDENTINFO
 
 
 extern CString GetClassTime(int n); //根据时段编号获得具体时间
-
+extern CString GetLastMonth(CTime& thisMonth); //获取上个月的月份
+extern void ExportExcel(std::vector<CString>& titles, CDStrs &datas); //数据导出到excel

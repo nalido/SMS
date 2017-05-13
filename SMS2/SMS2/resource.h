@@ -38,8 +38,9 @@
 #define IDD_DEVICE_DETAIL               200
 #define IDD_DEVICE_DETAIL2              201
 #define IDD_DATE_ITEM                   202
-#define IDD_DIALOG3                     203
 #define IDD_KPI                         203
+#define IDD_DIALOG3                     204
+#define IDD_SCAN                        204
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -50,6 +51,7 @@
 #define IDC_RESET                       1056
 #define IDC_SETTODAY                    1056
 #define IDC_NEWITEM                     1056
+#define IDC_EXPORT                      1056
 #define IDC_BUTTON5                     1057
 #define IDC_DELITEM                     1057
 #define IDC_PHOTO                       1058
@@ -62,17 +64,21 @@
 #define IDC_NEWFILE                     1066
 #define IDC_ADDCOACH                    1066
 #define IDC_DO_PRINT                    1066
+#define IDC_EXIT                        1066
 #define IDC_NAME                        1067
 #define IDC_ORDER                       1067
 #define IDC_CHUQIN                      1067
+#define IDC_NEXTCLASS                   1067
 #define IDC_NAME2                       1068
 #define IDC_FILE                        1068
 #define IDC_RESET_PRINT                 1068
 #define IDC_QUEQIN                      1068
+#define IDC_FEEDBACK                    1068
 #define IDC_TEL                         1069
 #define IDC_NAME3                       1069
 #define IDC__TMP_ORDER                  1069
 #define IDC_WORKTIME                    1069
+#define IDC_BOOK                        1069
 #define IDC_FEE                         1070
 #define IDC_NCLASS                      1070
 #define IDC_JIXIAO                      1070
@@ -110,6 +116,7 @@
 #define IDC_SLIST                       1090
 #define IDC_TOBOOK                      1090
 #define IDC_NAME0                       1091
+#define IDC_SCAN                        1091
 #define IDC_WEEK                        1092
 #define IDC_NAME1                       1093
 #define IDC_NAME4                       1094
@@ -194,6 +201,44 @@
 #define IDC_TEXT5                       1181
 #define IDC_TEXT6                       1182
 #define IDC_MONTHCALENDAR1              1187
+#define IDC_POS1                        1188
+#define IDC_POS2                        1189
+#define IDC_CONTENT                     1190
+#define IDC_BASICINFO                   1191
+#define IDC_S1                          1192
+#define IDC_S2                          1193
+#define IDC_S3                          1194
+#define IDC_S4                          1195
+#define IDC_S5                          1196
+#define IDC_S6                          1197
+#define IDC_S7                          1198
+#define IDC_S8                          1199
+#define IDC_D1                          1200
+#define IDC_D2                          1201
+#define IDC_D3                          1202
+#define IDC_D4                          1203
+#define IDC_D5                          1204
+#define IDC_D6                          1205
+#define IDC_D7                          1206
+#define IDC_D8                          1207
+#define IDC_S9                          1208
+#define IDC_D9                          1209
+#define IDC_BASICINFO2                  1210
+#define IDC_T1                          1211
+#define IDC_T2                          1212
+#define IDC_BASICINFO3                  1213
+#define IDC_BASICINFO4                  1214
+#define IDC_BASICINFO5                  1215
+#define IDC_T3                          1216
+#define IDC_T4                          1217
+#define IDC_T5                          1218
+#define IDC_S10                         1219
+#define IDC_D10                         1220
+#define IDC_PIE                         1221
+#define IDC_D11                         1222
+#define IDC_D12                         1223
+#define IDC_D13                         1224
+#define IDC_VIEW_4STUDENT               1227
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -238,14 +283,16 @@
 #define ID_VIEW_COACH                   32880
 #define ID_OFFICE2003                   32881
 #define ID_VIEW_ORDER_RSP               32882
+#define ID_VIEW_SCAN                    32884
+#define ID_VIEW_LOGIN                   32885
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        204
-#define _APS_NEXT_COMMAND_VALUE         32884
-#define _APS_NEXT_CONTROL_VALUE         1188
+#define _APS_NEXT_RESOURCE_VALUE        205
+#define _APS_NEXT_COMMAND_VALUE         32886
+#define _APS_NEXT_CONTROL_VALUE         1229
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif
