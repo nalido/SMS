@@ -260,7 +260,7 @@ void CViewStuProgress::OnBnClickedTobook()
 
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 
-	pFrame->GetView(VIEW_BOOKING1); //若预约视图未创建，则创建新视图
+	//pFrame->GetView(VIEW_BOOKING1); //若预约视图未创建，则创建新视图
 
 	CBCGPGridRow* pRow = m_wndGrid.GetCurSel(); 
 	if (pRow != NULL)
@@ -280,6 +280,7 @@ void CViewStuProgress::OnBnClickedTobook()
 
 		pFrame->SelectView(VIEW_BOOKING1);
 		CViewBooking1* pView = (CViewBooking1*)pFrame->GetActiveView();
+		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)VIEW_STUPROGRESS, (LPARAM)3);
 		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)&stuInfo, (LPARAM)1);
 	}
 
@@ -301,6 +302,7 @@ void CViewStuProgress::OnBnClickedScan()
 
 		pFrame->SelectView(VIEW_SCAN);
 		CView* pView = (CView*)pFrame->GetActiveView();
+		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)VIEW_STUPROGRESS, (LPARAM)3);
 		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)&stuInfo, (LPARAM)1);
 	}
 }

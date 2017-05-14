@@ -275,6 +275,8 @@ void CViewBooking1::OnInitialUpdate()
 
 	Refresh(); //刷新列表
 
+
+	m_LAST_VIEW = VIEW_HOME; //默认回到主页
 }
 
 void CViewBooking1::Refresh()
@@ -392,7 +394,6 @@ LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
 		m_strGender = pInfo->strGender;
 		m_strCarType = pInfo->strCarType;
 		m_strFileName = pInfo->strFileName;
-		UpdateData(FALSE);
 
 
 		//本地打开照片，若本地无，则查询服务器下载
@@ -431,6 +432,19 @@ LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
 
 		UpdateData(FALSE);
 	}
+	else if (flag == 3) //设置上一个视图
+	{
+		m_LAST_VIEW = (UINT)wp;
+
+		if (m_LAST_VIEW == VIEW_SCAN)
+		{
+			GetDlgItem(IDC_STUDENT_SEL)->SetWindowTextA("返回");
+		}
+		else
+		{
+			GetDlgItem(IDC_STUDENT_SEL)->SetWindowTextA("选择学员");
+		}
+	}
 
 	return 0;
 }
@@ -439,7 +453,11 @@ LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
 void CViewBooking1::OnBnClickedStudentSel()
 {
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-	pFrame->SelectView(VIEW_STUPROGRESS);
+	if (m_LAST_VIEW == VIEW_SCAN)
+	{
+		pFrame->SelectView(VIEW_SCAN);
+	}
+	else pFrame->SelectView(VIEW_STUPROGRESS);
 }
 
 

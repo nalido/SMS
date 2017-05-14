@@ -483,6 +483,7 @@ void CViewScan::OnBnClickedBook()
 
 	pFrame->SelectView(VIEW_BOOKING1);
 	CView* pView = (CView*)pFrame->GetActiveView();
+	pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)VIEW_SCAN, (LPARAM)3);
 	pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)&m_student, (LPARAM)1);
 }
 

@@ -70,6 +70,9 @@ public:
 	void UpdateBookingList(); //更新预约列表，实现排序
 	void JudgeSelected(int selected, int nclass, CString aday, int r, int c); //判断第nclass课时是否被选择以及是否有效
 	afx_msg void OnBnClickedRemove();
+
+	//打开此视图的上一个视图
+	UINT m_LAST_VIEW;
 };
 
 
