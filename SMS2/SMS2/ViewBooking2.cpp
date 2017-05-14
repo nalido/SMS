@@ -486,7 +486,7 @@ void CViewBooking2::Refresh(int nID)
 		strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, \
 						students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME \
 					  	FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
-						WHERE BOOK_DATE='%s' ORDER BY bookings.CLASS_ID, students.CLASS_NUM", strDate);
+						WHERE BOOK_DATE='%s' ORDER BY bookings.CLASS_ID, students.CLASS_NUM, students.SNAME", strDate);
 		m_datas1.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg))
 		{
@@ -836,9 +836,14 @@ BOOL CViewBooking2::CanBeSelected(int nRow)
 			return FALSE;
 		}
 
-		//课程时间不同的不能选
-		int classID = (atoi(m_datas1[nRow][2]) - 1) / 2;
-		int selectedID = (atoi(m_datas1[m_order[2]][2]) - 1) / 2;
+		//课程时间重复的不能选
+		int classID = atoi(m_datas1[nRow][2]);
+		int selectedID = atoi(m_datas1[m_order[2]][2]);
+		if (classID == selectedID) return FALSE;
+
+		//课程时间在上下午的不能选 
+		classID = (classID - 1) / 2;
+		selectedID = (selectedID - 1) / 2;
 		if (classID != selectedID) return FALSE;
 	}
 	return TRUE;

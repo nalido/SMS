@@ -327,6 +327,15 @@
 								<TEXT>派工反馈</TEXT>
 								<INDEX_LARGE>13</INDEX_LARGE>
 							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_DEVICE</NAME>
+									<VALUE>32873</VALUE>
+								</ID>
+								<TEXT>设备管理</TEXT>
+								<INDEX_LARGE>14</INDEX_LARGE>
+							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>
 				</PANELS>
@@ -359,15 +368,6 @@
 								</ID>
 								<TEXT>KPI</TEXT>
 								<INDEX_LARGE>1</INDEX_LARGE>
-							</ELEMENT>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>ID_VIEW_DEVICE</NAME>
-									<VALUE>32873</VALUE>
-								</ID>
-								<TEXT>设备管理</TEXT>
-								<INDEX_LARGE>0</INDEX_LARGE>
 							</ELEMENT>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>

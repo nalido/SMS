@@ -696,6 +696,8 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 				{
 					m_wndRibbonBar.ShowCategory(i, FALSE);
 				}
+				CBCGPRibbonCategory* pCate = m_wndRibbonBar.GetCategory(0);
+				m_wndRibbonBar.SetActiveCategory(pCate);
 				m_wndRibbonBar.RecalcLayout();
 				break;
 	}
