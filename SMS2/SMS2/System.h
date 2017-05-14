@@ -32,6 +32,7 @@ public:
 	CString m_strFilePath;
 	afx_msg void OnBnClickedChangepath();
 	afx_msg void OnBnClickedChangeback();
+	afx_msg void OnBnClickedButton1();
 };
 
 

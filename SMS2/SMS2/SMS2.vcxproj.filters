@@ -153,6 +153,24 @@
     <ClInclude Include="ViewKPI.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ViewScan.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewStudentEnter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewStuffEnter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgNewStuff.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgResetPSW.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewHome.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -281,6 +299,24 @@
     <ClCompile Include="ViewKPI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ViewScan.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewStudentEnter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewStuffEnter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgNewStuff.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgResetPSW.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewHome.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SMS2.rc">
@@ -360,6 +396,9 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\保养.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\0.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

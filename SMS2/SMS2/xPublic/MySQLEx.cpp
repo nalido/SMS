@@ -148,7 +148,11 @@ namespace xPublic{
 		MYSQL_RES *res;
 		res = mysql_store_result(&m_mysql);
 		BOOL isExist = FALSE;
-		if (res) isExist = TRUE;
+
+		int r = mysql_num_rows(res);
+		//int c = mysql_num_fields(res);
+		if (r>0) 
+			isExist = TRUE;
 		mysql_free_result(res);
 
 		return isExist;

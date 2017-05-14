@@ -79,6 +79,7 @@ BEGIN_MESSAGE_MAP(CViewStuProgress, CBCGPFormView)
 	ON_BN_CLICKED(IDC_STUFRESH, &CViewStuProgress::OnBnClickedStufresh)
 	ON_BN_CLICKED(IDC_SENDBOOKMSG, &CViewStuProgress::OnBnClickedSendbookmsg)
 	ON_BN_CLICKED(IDC_TOBOOK, &CViewStuProgress::OnBnClickedTobook)
+	ON_BN_CLICKED(IDC_SCAN, &CViewStuProgress::OnBnClickedScan)
 END_MESSAGE_MAP()
 
 
@@ -282,4 +283,24 @@ void CViewStuProgress::OnBnClickedTobook()
 		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)&stuInfo, (LPARAM)1);
 	}
 
+}
+
+
+void CViewStuProgress::OnBnClickedScan()
+{
+	CMainFrame* pFrame = (CMainFrame*)::AfxGetMainWnd();
+
+
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+
+		CString strFileName = m_datas[nRow][0];
+		STUDENTINFO stuInfo(m_datas[nRow][1], m_datas[nRow][0], m_datas[nRow][2], m_datas[nRow][4]);
+
+		pFrame->SelectView(VIEW_SCAN);
+		CView* pView = (CView*)pFrame->GetActiveView();
+		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)&stuInfo, (LPARAM)1);
+	}
 }

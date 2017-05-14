@@ -17,6 +17,10 @@
 #include "ViewOrderRsp.h"
 #include "ViewDevices.h"
 #include "ViewKPI.h"
+#include "ViewScan.h"
+#include "ViewStuffEnter.h"
+#include "ViewStudentEnter.h"
+#include "ViewHome.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -105,6 +109,65 @@ CString GetClassTime(int n) //根据时段编号获得具体时间
 	return res;
 }
 
+CString GetLastMonth(CTime& thisMonth)
+{
+	int tyear = thisMonth.GetYear();
+	int tmonth = thisMonth.GetMonth();
+	int tday = thisMonth.GetDay();
+
+	if (tmonth == 1)
+	{
+		tyear -= 1;
+		tmonth = 12;
+	}
+	else tmonth -= 1;
+	CString lastMonth;
+	lastMonth.Format("%d/%02d", tyear, tmonth);
+
+	return lastMonth;
+}
+
+void ExportExcel(std::vector<CString>& titles, CDStrs &datas)
+{
+	CFileDialog fileDlg(FALSE, "*.csv", NULL, 6UL, "通用表格(*.csv)|*.csv|");
+	CString filename("");
+	if (fileDlg.DoModal() == IDOK)
+	{
+		filename = fileDlg.GetPathName();
+	}
+	else return;
+
+	CFile f;
+	if (f.Open(filename, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeReadWrite))
+	{
+		CString strLine("");
+
+		//列名
+		int cols = titles.size();
+		for (int i = 0; i < cols; i++)
+		{
+			strLine = strLine + titles[i] + ",";
+		}
+		strLine = strLine + "\r\n";
+		f.Write(strLine, strlen(strLine));
+
+		//数据
+		int rows = datas.size();
+		for (int r = 0; r < rows; r++)
+		{
+			strLine = "";
+			for (int c = 0; c < cols; c++)
+			{
+				strLine = strLine + datas[r][c] + ",";
+			}
+			strLine = strLine + "\r\n";
+			f.Write(strLine, strlen(strLine));
+		}
+
+		f.Close();
+	}
+	
+}
 ///////////////////////////////end of global functions//////////////
 
 // CMainFrame
@@ -122,6 +185,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_COACH, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_KPI, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_SCAN, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_4STUDENT, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_STUFF, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_DEVICE, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
@@ -161,7 +227,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("Failed to create ribbon bar\n");
 		return -1;      // fail to create
 	}
-
 
 	if (!m_wndStatusBar.Create(this))
 	{
@@ -269,6 +334,7 @@ BOOL CMainFrame::CreateRibbonBar ()
  // USE_RIBBON_DESIGNER
 
 	m_wndRibbonBar.EnablePrintPreview(FALSE);
+
 
 	return TRUE;
 }
@@ -396,8 +462,17 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_KPI:
 		SelectView(VIEW_KPI);
 		break;
+	case ID_VIEW_SCAN:
+		SelectView(VIEW_SCAN);
+		break;
 	case ID_VIEW_DEVICE:
 		SelectView(VIEW_DEVICES);
+		break;
+	case ID_VIEW_STUFF:
+		SelectView(VIEW_STUFFENTER);
+		break;
+	case ID_VIEW_4STUDENT:
+		SelectView(VIEW_STUDENTENTER);
 		break;
 	}
 	return TRUE;
@@ -433,6 +508,9 @@ CView* CMainFrame::GetView(int nID)
 	CRuntimeClass* pClass;
 	switch (nIndex)
 	{
+	case VIEW_HOME:
+		pClass = RUNTIME_CLASS(CViewHome);
+		break;
 	case VIEW_REGISTER:
 		pClass = RUNTIME_CLASS(CViewRegister);
 		break;
@@ -459,6 +537,15 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_DEVICES:
 		pClass = RUNTIME_CLASS(CViewDevices);
+		break;
+	case VIEW_SCAN:
+		pClass = RUNTIME_CLASS(CViewScan);
+		break;
+	case VIEW_STUFFENTER:
+		pClass = RUNTIME_CLASS(CViewStuffEnter);
+		break;
+	case VIEW_STUDENTENTER:
+		pClass = RUNTIME_CLASS(CViewStudentEnter);
 		break;
 	case VIEW_STUPROGRESS:
 		pClass = RUNTIME_CLASS(CViewStuProgress); 
@@ -503,7 +590,6 @@ CView* CMainFrame::GetView(int nID)
 		delete pView;
 		return NULL;
 	}
-
 	pView->OnInitialUpdate(); //initial
 
 	m_arViews.SetAt(nIndex, pView);
@@ -542,7 +628,6 @@ void CMainFrame::SelectView(int nID)
 
 		pActiveView->ShowWindow(SW_HIDE);
 		pNewView->ShowWindow(SW_SHOW);
-		//Invalidate();
 
 		SetActiveView(pNewView);
 	}
@@ -600,6 +685,32 @@ void CMainFrame::OnClose()
 
 LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 {
+	int permission = (int)wParam; //当前用户的权限
+	switch (permission)
+	{
+	case 0: //初始化，隐藏全部
+	{
+				//默认全部隐藏
+				int nCount = m_wndRibbonBar.GetCategoryCount();
+				for (int i = 1; i < nCount; i++)
+				{
+					m_wndRibbonBar.ShowCategory(i, FALSE);
+				}
+				m_wndRibbonBar.RecalcLayout();
+				break;
+	}
+	case 1: //最高权限，显示全部
+	{
+				int nCount = m_wndRibbonBar.GetCategoryCount();
+				for (int i = 1; i < nCount; i++)
+				{
+					m_wndRibbonBar.ShowCategory(i, TRUE);
+				}
+				m_wndRibbonBar.RecalcLayout();
+				break;
+	}
+	}
+
 	return 0;
 }
 

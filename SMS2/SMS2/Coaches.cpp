@@ -80,8 +80,8 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		}
 
 		//颜色控制
-		int nLeave = atoi(pThis->m_arCoaches[nRow][9]);
-		if (nLeave >= pThis->m_nMaxLeave)
+		int nLeave = atoi(pThis->m_arCoaches[nRow][12]);
+		if (nLeave > 0)
 		{
 			pdi->item.clrBackground = COLOR_NONE;
 			pdi->item.clrText = COLOR_TEXTNONE;
@@ -145,12 +145,12 @@ void CCoaches::Refresh()
 
 	m_wndCoaches.GridRefresh(m_arCoaches.size());
 
-	CTime t = CTime::GetCurrentTime();
-	int year = t.GetYear();
-	CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
-	//半年内 超过3次请假为不合格, 超过半年按6次算
-	m_nMaxLeave = 3;
-	if (midYear < t) m_nMaxLeave = 6;
+	//CTime t = CTime::GetCurrentTime();
+	//int year = t.GetYear();
+	//CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
+	////半年内 超过3次请假为不合格, 超过半年按6次算
+	//m_nMaxLeave = 3;
+	//if (midYear < t) m_nMaxLeave = 6;
 }
 
 void CCoaches::OnBnClickedAddcoach()
