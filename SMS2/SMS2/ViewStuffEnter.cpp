@@ -177,6 +177,21 @@ void CViewStuffEnter::OnPaint()
 	Image img(L"res//0.bmp");
 	graph.DrawImage(&img, Rect(p1.X, p1.Y, width, height));
 
+	CFont fontt1;
+	fontt1.CreateFontA(80, 0, 0, 0, FW_BOLD, 0, 0, 0, 0,
+		0, 0, 0, VARIABLE_PITCH | FF_SWISS, "微软雅黑");
+	CFont* oldF = MemDC.SelectObject(&fontt1);
+	MemDC.SetBkMode(TRANSPARENT);
+	MemDC.SetTextAlign(TA_CENTER);
+	CString stri;
+	stri.Format("东 华 驾 校 管 理 系 统");
+	CPoint pT(width / 2, height / 4);
+	MemDC.SetTextColor(RGB(241, 241, 241));
+	MemDC.TextOutA(pT.x + 3, pT.y + 3, stri);
+	MemDC.SetTextColor(RGB(51, 103, 155));
+	MemDC.SetTextColor(RGB(65, 57, 36));
+	MemDC.TextOutA(pT.x, pT.y, stri);
+
 	SolidBrush brush(Color(150, 230, 230, 230));
 	graph.FillRectangle(&brush, m_rctContent.left, m_rctContent.top, m_rctContent.Width(), m_rctContent.Height());
 

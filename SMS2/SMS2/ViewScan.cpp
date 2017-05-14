@@ -99,6 +99,7 @@ BEGIN_MESSAGE_MAP(CViewScan, CBCGPFormView)
 	ON_WM_CTLCOLOR()
 	ON_WM_ERASEBKGND()
 	ON_BN_CLICKED(IDC_BOOK, &CViewScan::OnBnClickedBook)
+	ON_BN_CLICKED(IDC_EXIT, &CViewScan::OnBnClickedExit)
 END_MESSAGE_MAP()
 
 
@@ -334,6 +335,8 @@ void CViewScan::OnInitialUpdate()
 	m_SPhoto.InitPicSource(&m_img); //注册图片控件数据源
 
 	m_strMaxClass.Format("全部有%02d课时", g_nMaxBooking);
+
+	m_LAST_VIEW = VIEW_HOME; //默认回到主页
 }
 
 void CViewScan::GridInit(std::vector<CString>& arrColumns, CRect& rect, CVirtualGridCtrl* pGrid)
@@ -504,7 +507,6 @@ LRESULT CViewScan::OnUserMessage(WPARAM wp, LPARAM lp)
 		m_student.strGender = pInfo->strGender;
 		m_student.strCarType = pInfo->strCarType;
 		m_student.strFileName = pInfo->strFileName;
-		UpdateData(FALSE);
 
 		//查询信息
 		CString strMsg, strSQL;
@@ -562,9 +564,50 @@ LRESULT CViewScan::OnUserMessage(WPARAM wp, LPARAM lp)
 
 		Refresh();
 
+		//隐私保护
+		if (m_isPublic)
+		{
+			if (m_student.strHome.GetLength() > 8)
+			{
+				CString rs = m_student.strHome.Right(4);
+				m_student.strHome = "**********" + rs;
+			}
+			if (m_student.strIDCard.GetLength() > 8)
+			{
+				CString rs = m_student.strIDCard.Right(4);
+				m_student.strIDCard = "**********" + rs;
+			}
+			if (m_student.strTEL.GetLength() > 8)
+			{
+				CString rs = m_student.strTEL.Right(4);
+				m_student.strTEL = "**********" + rs;
+			}
+		}
 
 		UpdateData(FALSE);
 	}
+	else if (flag == 3) //设置上一个视图
+	{
+		m_LAST_VIEW = (UINT)wp;
+		if (m_LAST_VIEW == VIEW_STUDENTENTER)
+		{
+			m_isPublic = TRUE;
+		}
+		else
+		{
+			m_isPublic = FALSE;
+		}
+	}
 
 	return 0;
+}
+
+
+void CViewScan::OnBnClickedExit()
+{
+	if (m_LAST_VIEW != 0)
+	{
+		CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+		pFrame->SelectView(m_LAST_VIEW);
+	}
 }
