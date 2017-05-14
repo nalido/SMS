@@ -304,14 +304,16 @@
 #define ID_VIEW_4STUDENT                32886
 #define ID_VIEW_4STUFF                  32887
 #define ID_VIEW_STUFF                   32888
+#define ID_VIEW_HSTUDENT                32889
+#define ID_VIEW_HSTUFF                  32890
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        211
-#define _APS_NEXT_COMMAND_VALUE         32889
-#define _APS_NEXT_CONTROL_VALUE         1239
+#define _APS_NEXT_COMMAND_VALUE         32891
+#define _APS_NEXT_CONTROL_VALUE         1241
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

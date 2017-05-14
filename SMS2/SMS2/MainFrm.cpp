@@ -227,7 +227,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;      // fail to create
 	}
 
-
 	if (!m_wndStatusBar.Create(this))
 	{
 		TRACE0("Failed to create status bar\n");
@@ -334,6 +333,7 @@ BOOL CMainFrame::CreateRibbonBar ()
  // USE_RIBBON_DESIGNER
 
 	m_wndRibbonBar.EnablePrintPreview(FALSE);
+
 
 	return TRUE;
 }
@@ -681,6 +681,32 @@ void CMainFrame::OnClose()
 
 LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 {
+	int permission = (int)wParam; //当前用户的权限
+	switch (permission)
+	{
+	case 0: //初始化，隐藏全部
+	{
+				//默认全部隐藏
+				int nCount = m_wndRibbonBar.GetCategoryCount();
+				for (int i = 1; i < nCount; i++)
+				{
+					m_wndRibbonBar.ShowCategory(i, FALSE);
+				}
+				m_wndRibbonBar.RecalcLayout();
+				break;
+	}
+	case 1: //最高权限，显示全部
+	{
+				int nCount = m_wndRibbonBar.GetCategoryCount();
+				for (int i = 1; i < nCount; i++)
+				{
+					m_wndRibbonBar.ShowCategory(i, TRUE);
+				}
+				m_wndRibbonBar.RecalcLayout();
+				break;
+	}
+	}
+
 	return 0;
 }
 

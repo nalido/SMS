@@ -33,6 +33,7 @@ BEGIN_MESSAGE_MAP(CSystem, CBCGPFormView)
 	ON_BN_CLICKED(IDC_FILEPATH, &CSystem::OnBnClickedFilepath)
 	ON_BN_CLICKED(IDC_CHANGEPATH, &CSystem::OnBnClickedChangepath)
 	ON_BN_CLICKED(IDC_CHANGEBACK, &CSystem::OnBnClickedChangeback)
+	ON_BN_CLICKED(IDC_BUTTON1, &CSystem::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -115,4 +116,11 @@ void CSystem::OnBnClickedChangeback()
 {
 	m_strFilePath = g_strFilePath;
 	UpdateData(FALSE);
+}
+
+
+void CSystem::OnBnClickedButton1()
+{
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+	pFrame->PostMessageA(WM_USER_MESSAGE, (WPARAM)1);
 }

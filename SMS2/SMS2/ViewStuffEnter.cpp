@@ -20,6 +20,7 @@ CViewStuffEnter::CViewStuffEnter()
 
 	m_strName = "";
 	m_strPSWD = "";
+	m_isLoged = FALSE;
 }
 
 CViewStuffEnter::~CViewStuffEnter()
@@ -155,12 +156,26 @@ void CViewStuffEnter::OnPaint()
 	SolidBrush brush(Color(150, 230, 230, 230));
 	graph.FillRectangle(&brush, m_rctContent.left, m_rctContent.top, m_rctContent.Width(), m_rctContent.Height());
 
+	if (m_isLoged)
+	{
+		CFont font1;
+		font1.CreateFontA(40, 0, 0, 0, FW_BOLD, 0, 0, 0, 0,
+			0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Î¢ÈíÑÅºÚ");
+		CFont* oldF = MemDC.SelectObject(&font1);
+		MemDC.SetTextAlign(TA_CENTER);
+		MemDC.SetBkMode(TRANSPARENT);
+		MemDC.SetTextColor(RGB(51, 103, 155));
+		CPoint cp = m_rctContent.CenterPoint();
+		CString stri;
+		stri.Format("»¶Ó­Äú£¬%s", m_strName);
+		MemDC.TextOutA(cp.x, cp.y-40, stri);
+	}
 
 	//¸´ÖÆÄÚ´æDCµ½ÆÁÄ»ÉÏ
 	CPoint pos = GetScrollPosition();
 	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, pos.x, pos.y, SRCCOPY);
-	//SetStretchBltMode(dc.m_hDC, STRETCH_HALFTONE);
-	//dc.StretchBlt(p1.X, p1.Y, width, height, &MemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
+	
+
 
 	bitmp.DeleteObject();
 	MemDC.DeleteDC();
@@ -170,6 +185,28 @@ void CViewStuffEnter::OnPaint()
 
 void CViewStuffEnter::OnBnClickedLogin()
 {
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+	if (m_isLoged) //µã»÷ÍË³öµÇÂ¼
+	{
+		m_isLoged = FALSE;
+		InvalidateRect(&m_rctContent);
+		m_S[0].ShowWindow(TRUE);
+		m_S[1].ShowWindow(TRUE);
+		GetDlgItem(IDC_E1)->ShowWindow(TRUE);
+		GetDlgItem(IDC_E2)->ShowWindow(TRUE);
+		GetDlgItem(IDC_NEWSTUFF)->ShowWindow(TRUE);
+		GetDlgItem(IDC_FORGET)->ShowWindow(TRUE);
+		GetDlgItem(IDC_LOGIN)->SetWindowTextA("µÇÂ¼");
+
+		m_strName = "";
+		m_strPSWD = "";
+		UpdateData(FALSE);
+
+		pFrame->PostMessageA(WM_USER_MESSAGE, (WPARAM)0);
+
+		return;
+	}
+
 	UpdateData();
 
 	if (m_strName.IsEmpty() || m_strPSWD.IsEmpty())
@@ -179,17 +216,42 @@ void CViewStuffEnter::OnBnClickedLogin()
 	}
 
 	CString strMsg, strSQL;
-	strSQL.Format("SELECT * FROM stuff WHERE UNAME='%s' AND UPSWD=PASSWORD('%s')", m_strName, m_strPSWD);
-	if (g_mysqlCon.ExecuteQueryExist(strSQL, strMsg))
+	CDStrs datas;
+	strSQL.Format("SELECT UPERMISSION FROM stuff WHERE UNAME='%s' AND UPSWD=PASSWORD('%s')", m_strName, m_strPSWD);
+	if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg))
 	{
-		strMsg.Format("»¶Ó­Äú£¬ %s", m_strName);
-		MessageBox(strMsg);
+		//strMsg.Format("»¶Ó­Äú£¬ %s", m_strName);
+		//MessageBox(strMsg);
+		ShowMsg2Output1(strMsg);
+
+		//²éÑ¯È¨ÏÞ
+		if (datas.size() > 0)  //ÕýÈ·µÇÂ¼³É¹¦
+		{
+			m_isLoged = TRUE;
+			int permission = atoi(datas[0][0]);
+			pFrame->PostMessageA(WM_USER_MESSAGE, (WPARAM)permission);
+
+			//Òþ²ØµÇÂ¼¿ò
+			m_S[0].ShowWindow(FALSE);
+			m_S[1].ShowWindow(FALSE);
+			GetDlgItem(IDC_E1)->ShowWindow(FALSE);
+			GetDlgItem(IDC_E2)->ShowWindow(FALSE);
+			GetDlgItem(IDC_NEWSTUFF)->ShowWindow(FALSE);
+			GetDlgItem(IDC_FORGET)->ShowWindow(FALSE);
+			GetDlgItem(IDC_LOGIN)->SetWindowTextA("ÍË³ö");
+			InvalidateRect(&m_rctContent);
+		}
+		else
+		{
+			m_S[2].ShowWindow(TRUE);
+		}
+
 	}
 	else
 	{
+		ShowMsg2Output1(strMsg);
 		m_S[2].ShowWindow(TRUE);
 	}
-	ShowMsg2Output1(strMsg);
 }
 
 

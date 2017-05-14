@@ -40,6 +40,7 @@ public:
 	CStatic m_S[11]; //静态文本框
 	CString m_strName;
 	CString m_strPSWD;
+	BOOL m_isLoged; //是否已经登录
 
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnBnClickedLogin();

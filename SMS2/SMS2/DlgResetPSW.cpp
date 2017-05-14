@@ -117,7 +117,7 @@ void CDlgResetPSW::OnBnClickedSms()
 	GetDlgItem(IDC_CONFIRM)->EnableWindow(TRUE);
 	m_S[5].ShowWindow(FALSE);
 	GetDlgItem(IDC_SMS)->EnableWindow(FALSE);
-	m_nCount = 90;
+	m_nCount = 60;
 	SetTimer(0, 1000, NULL);
 
 	//数据打包
@@ -131,7 +131,7 @@ void CDlgResetPSW::OnBnClickedSms()
 	else
 	{
 		CString strSMS;
-		m_strSMS0 = datas[0][0].Right(8);
+		m_strSMS0 = datas[0][0].Right(4);
 		strSMS.Format("%s>%s", m_strTel, m_strSMS0);
 		int nCount = strlen(strSMS);
 		int len = 6 + nCount; //Type(1) Flag(1) Number(4) FileNums(Number*8)
