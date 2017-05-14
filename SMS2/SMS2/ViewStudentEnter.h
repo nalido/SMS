@@ -33,6 +33,10 @@ public:
 	CRect m_rctBK1, m_rctBK2;
 	afx_msg void OnPaint();
 	virtual void OnInitialUpdate();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+
+	int m_nEraseBkgnd; //窗口重绘次数(根据控件个数决定)
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 };
 
 

@@ -41,6 +41,8 @@ public:
 	CString m_strName;
 	CString m_strPSWD;
 	BOOL m_isLoged; //是否已经登录
+	int m_nEraseBkgnd; //窗口重绘次数(根据控件个数决定)
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnBnClickedLogin();
@@ -48,6 +50,7 @@ public:
 	afx_msg void OnEnChangeE2();
 	afx_msg void OnBnClickedNewstuff();
 	afx_msg void OnBnClickedForget();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 };
 
 

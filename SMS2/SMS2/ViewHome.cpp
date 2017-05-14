@@ -1,39 +1,40 @@
-// ViewStudentEnter.cpp : 实现文件
+// ViewHome.cpp : 实现文件
 //
 
 #include "stdafx.h"
 #include "SMS2.h"
-#include "ViewStudentEnter.h"
+#include "ViewHome.h"
 
 
-// CViewStudentEnter
+// CViewHome
 
-IMPLEMENT_DYNCREATE(CViewStudentEnter, CBCGPFormView)
+IMPLEMENT_DYNCREATE(CViewHome, CBCGPFormView)
 
-CViewStudentEnter::CViewStudentEnter()
-	: CBCGPFormView(CViewStudentEnter::IDD)
+CViewHome::CViewHome()
+	: CBCGPFormView(CViewHome::IDD)
 {
 	EnableVisualManagerStyle();
 }
 
-CViewStudentEnter::~CViewStudentEnter()
+CViewHome::~CViewHome()
 {
 }
 
-void CViewStudentEnter::DoDataExchange(CDataExchange* pDX)
+void CViewHome::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_POS1, m_BKpos1);
 	DDX_Control(pDX, IDC_POS2, m_BKpos2);
 }
 
-BEGIN_MESSAGE_MAP(CViewStudentEnter, CBCGPFormView)
-	ON_WM_PAINT()
+BEGIN_MESSAGE_MAP(CViewHome, CBCGPFormView)
 	ON_WM_ERASEBKGND()
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
-LRESULT CViewStudentEnter::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+
+LRESULT CViewHome::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 {
 	int flag = (int)wParam;
 	if (flag == 1)
@@ -42,8 +43,7 @@ LRESULT CViewStudentEnter::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-
-BOOL CViewStudentEnter::OnEraseBkgnd(CDC* pDC)
+BOOL CViewHome::OnEraseBkgnd(CDC* pDC)
 {
 	if (m_nEraseBkgnd<6)
 	{
@@ -55,27 +55,7 @@ BOOL CViewStudentEnter::OnEraseBkgnd(CDC* pDC)
 }
 
 
-// CViewStudentEnter 诊断
-
-#ifdef _DEBUG
-void CViewStudentEnter::AssertValid() const
-{
-	CBCGPFormView::AssertValid();
-}
-
-#ifndef _WIN32_WCE
-void CViewStudentEnter::Dump(CDumpContext& dc) const
-{
-	CBCGPFormView::Dump(dc);
-}
-#endif
-#endif //_DEBUG
-
-
-// CViewStudentEnter 消息处理程序
-
-
-void CViewStudentEnter::OnPaint()
+void CViewHome::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
@@ -112,17 +92,35 @@ void CViewStudentEnter::OnPaint()
 	MemDC.DeleteDC();
 }
 
+// CViewHome 诊断
 
-void CViewStudentEnter::OnInitialUpdate()
+#ifdef _DEBUG
+void CViewHome::AssertValid() const
+{
+	CBCGPFormView::AssertValid();
+}
+
+#ifndef _WIN32_WCE
+void CViewHome::Dump(CDumpContext& dc) const
+{
+	CBCGPFormView::Dump(dc);
+}
+#endif
+#endif //_DEBUG
+
+
+// CViewHome 消息处理程序
+
+
+
+void CViewHome::OnInitialUpdate()
 {
 	CBCGPFormView::OnInitialUpdate();
-
 
 	//获取背景定位点位置
 	m_BKpos1.GetClientRect(&m_rctBK1);
 	m_BKpos1.MapWindowPoints(this, &m_rctBK1);
 	m_BKpos2.GetClientRect(&m_rctBK2);
 	m_BKpos2.MapWindowPoints(this, &m_rctBK2);
+
 }
-
-

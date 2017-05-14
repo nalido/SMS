@@ -20,6 +20,7 @@
 #include "ViewScan.h"
 #include "ViewStuffEnter.h"
 #include "ViewStudentEnter.h"
+#include "ViewHome.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -507,6 +508,9 @@ CView* CMainFrame::GetView(int nID)
 	CRuntimeClass* pClass;
 	switch (nIndex)
 	{
+	case VIEW_HOME:
+		pClass = RUNTIME_CLASS(CViewHome);
+		break;
 	case VIEW_REGISTER:
 		pClass = RUNTIME_CLASS(CViewRegister);
 		break;

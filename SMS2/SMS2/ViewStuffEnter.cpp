@@ -21,6 +21,8 @@ CViewStuffEnter::CViewStuffEnter()
 	m_strName = "";
 	m_strPSWD = "";
 	m_isLoged = FALSE;
+
+	m_nEraseBkgnd = 0;
 }
 
 CViewStuffEnter::~CViewStuffEnter()
@@ -45,13 +47,35 @@ void CViewStuffEnter::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CViewStuffEnter, CBCGPFormView)
 	ON_WM_PAINT()
 	ON_WM_CTLCOLOR()
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_LOGIN, &CViewStuffEnter::OnBnClickedLogin)
 	ON_EN_CHANGE(IDC_E1, &CViewStuffEnter::OnEnChangeE1)
 	ON_EN_CHANGE(IDC_E2, &CViewStuffEnter::OnEnChangeE2)
 	ON_BN_CLICKED(IDC_NEWSTUFF, &CViewStuffEnter::OnBnClickedNewstuff)
 	ON_BN_CLICKED(IDC_FORGET, &CViewStuffEnter::OnBnClickedForget)
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
+LRESULT CViewStuffEnter::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int flag = (int)wParam;
+	if (flag == 1)
+		m_nEraseBkgnd = 0; //≤ª÷ÿªÊ±≥æ∞ “‘√‚…¡À∏
+
+	return 0;
+}
+
+
+BOOL CViewStuffEnter::OnEraseBkgnd(CDC* pDC)
+{
+	if (m_nEraseBkgnd<6)
+	{
+		m_nEraseBkgnd++;
+		return TRUE;
+	}
+	else
+		return CBCGPFormView::OnEraseBkgnd(pDC);
+}
 
 HBRUSH CViewStuffEnter::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
@@ -279,3 +303,4 @@ void CViewStuffEnter::OnBnClickedForget()
 	CDlgResetPSW dlg;
 	dlg.DoModal();
 }
+

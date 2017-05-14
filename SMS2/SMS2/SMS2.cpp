@@ -139,7 +139,7 @@ BOOL CSMS2App::InitInstance()
 	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
 
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-	pFrame->SelectView(VIEW_STUFFENTER);
+	pFrame->SelectView(VIEW_HOME);
 	pFrame->PostMessage(WM_USER_MESSAGE, (WPARAM)0);
 	// call DragAcceptFiles only if there's a suffix
 	//  In an SDI app, this should occur after ProcessShellCommand

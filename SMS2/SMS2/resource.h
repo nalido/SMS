@@ -46,6 +46,8 @@
 #define IDB_BITMAP1                     208
 #define IDD_NEWSTUFF                    209
 #define IDD_RESETPSW                    210
+#define IDD_DIALOG4                     211
+#define IDD_HOME                        211
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -311,7 +313,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        211
+#define _APS_NEXT_RESOURCE_VALUE        212
 #define _APS_NEXT_COMMAND_VALUE         32891
 #define _APS_NEXT_CONTROL_VALUE         1241
 #define _APS_NEXT_SYMED_VALUE           118

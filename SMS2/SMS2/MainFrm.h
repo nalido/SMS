@@ -117,6 +117,7 @@ enum enum_StudentProgress{
 
 enum VIEW_TYPE{
 	VIEW_MAIN = 0,
+	VIEW_HOME,
 	VIEW_REGISTER,
 	VIEW_K1CHECK,
 	VIEW_BOOKING1,
