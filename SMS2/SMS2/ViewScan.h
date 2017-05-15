@@ -99,6 +99,8 @@ public:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	void Refresh();
 	afx_msg void OnBnClickedExit();
+	afx_msg void OnBnClickedFeedback();
+	afx_msg void OnBnClickedNextclass();
 };
 
 

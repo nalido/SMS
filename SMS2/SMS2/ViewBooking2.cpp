@@ -9,7 +9,7 @@
 #include "OrderDetail.h"
 #include "Orders.h"
 #include "TmpOrder.h"
-
+#include "DlgNextClass.h"
 
 // CViewBooking2
 
@@ -52,6 +52,7 @@ BEGIN_MESSAGE_MAP(CViewBooking2, CBCGPFormView)
 	ON_BN_CLICKED(IDC_ORDER_QUERY, &CViewBooking2::OnBnClickedOrderQuery)
 	ON_BN_CLICKED(IDC_AUTO_ORDER, &CViewBooking2::OnBnClickedAutoOrder)
 	ON_BN_CLICKED(IDC__TMP_ORDER, &CViewBooking2::OnBnClickedTmpOrder)
+	ON_BN_CLICKED(IDC_CHANGECLASS, &CViewBooking2::OnBnClickedChangeclass)
 END_MESSAGE_MAP()
 
 
@@ -782,11 +783,11 @@ void CViewBooking2::OnBnClickedOrder()
 		{
 			MessageBox("派工单未完成！");
 
-			CString strMsg;
-			TRACE("=============\r\n");
-			for (int nn = 0; nn < m_order.size(); nn++)
-				TRACE("[%d]%d\r\n", nn, m_order[nn]);
-			TRACE("=============\r\n");
+			//CString strMsg;
+			//TRACE("=============\r\n");
+			//for (int nn = 0; nn < m_order.size(); nn++)
+			//	TRACE("[%d]%d\r\n", nn, m_order[nn]);
+			//TRACE("=============\r\n");
 			return;
 		}
 	}
@@ -794,6 +795,7 @@ void CViewBooking2::OnBnClickedOrder()
 	//检测派工单的合法性
 
 	//上传数据库
+	int nClassIndex = m_wndPrint.m_classInfo.nClassID;
 	int nstu = n - 2;
 	for (int i = 0; i < nstu; i++)
 	{
@@ -807,9 +809,9 @@ void CViewBooking2::OnBnClickedOrder()
 
 		CString strMsg, strSQL;
 		strSQL.Format("UPDATE bookings SET FLAG='1', ORDER_DATE='%s', ORDER_COACH='%s', ORDER_CAR='%s', \
-					  CLASS_NUM='%s', CLASS_TYPE='%s'\
+					  CLASS_NUM='%s', CLASS_TYPE='%s', CLASS_INDEX='%d'\
 					  WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
-					  m_tToday.Format("%Y/%m/%d"), strCoach, strCar, strClassNum, strClassType
+					  m_tToday.Format("%Y/%m/%d"), strCoach, strCar, strClassNum, strClassType, nClassIndex
 					  , strStudent, strDate, strClassID);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
@@ -1021,7 +1023,7 @@ void CViewBooking2::OnBnClickedAutoOrder()
 	RestOrder(!m_canChangeOrder);
 	for (; iStu < nStu; iStu++)
 	{
-		if (m_datas1[iStu][5] == "1") //已派工
+		if (m_datas1[iStu][5] != "0") //已派工
 		{
 			continue;
 		}
@@ -1102,7 +1104,7 @@ void CViewBooking2::OnBnClickedAutoOrder()
 		//添加第二个学员
 		for (int t = iStu + 1; t < nStu; t++)
 		{
-			if (m_datas1[t][5] == "1") continue; //已派工
+			if (m_datas1[t][5] != "0") continue; //已派工
 
 			//不是同一节课的不能派工
 			if (!CanBeSelected(t)) continue;
@@ -1138,4 +1140,32 @@ void CViewBooking2::OnBnClickedTmpOrder()
 	dlg.DoModal();
 
 	Refresh(1);
+}
+
+
+void CViewBooking2::OnBnClickedChangeclass()
+{
+	int nStu = m_order.size() - 2;
+	if (nStu > 1)
+	{
+		CString strM = "当前派工单学员大于一个，改变课程内容会同时影响到派工单中所有学员的进度。请将不需要修改内容的学员从派工单中移除后再修改。是否继续？";
+		if (MessageBox(strM, "警告", MB_YESNO) != IDYES) return;
+	}
+
+	if (nStu > 0)
+	{
+		int nRow = m_order[2];
+
+		CString strStuID = m_datas1[nRow][6];
+
+		CDlgNextClass dlg;
+		int nClassIndex;
+		if (dlg.DoModal() == IDOK)
+		{
+			nClassIndex = atoi(dlg.m_strSelectedClass);
+			m_wndPrint.m_classInfo.nClassID = nClassIndex;
+			m_wndPrint.m_classInfo.arrClassText.clear();
+			m_wndPrint.Invalidate();
+		}
+	}
 }

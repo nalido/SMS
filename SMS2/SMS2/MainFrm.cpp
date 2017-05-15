@@ -21,6 +21,7 @@
 #include "ViewStuffEnter.h"
 #include "ViewStudentEnter.h"
 #include "ViewHome.h"
+#include "ViewPermission.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,6 +35,8 @@ int g_nClassTotal = 9;
 int g_nMaxBooking = 15;
 int g_nSubForLeave = 8;
 int g_nMinWorkTime = 176;
+int g_nPermissions[6] = { 0 };
+CString g_strUserID = "";
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -192,6 +195,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_ORDER_RSP, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_PERMISSION, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
@@ -474,6 +478,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_4STUDENT:
 		SelectView(VIEW_STUDENTENTER);
 		break;
+	case ID_VIEW_PERMISSION:
+		SelectView(VIEW_PERMISSION);
+		break;
 	}
 	return TRUE;
 }
@@ -555,6 +562,9 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_SYSTEM:
 		pClass = RUNTIME_CLASS(CSystem);
+		break;
+	case VIEW_PERMISSION:
+		pClass = RUNTIME_CLASS(CViewPermission);
 		break;
 	}
 	if (pClass == NULL)
@@ -699,6 +709,10 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 				CBCGPRibbonCategory* pCate = m_wndRibbonBar.GetCategory(0);
 				m_wndRibbonBar.SetActiveCategory(pCate);
 				m_wndRibbonBar.RecalcLayout();
+				for (int i = 0; i < 5; i++)
+				{
+					g_nPermissions[i] = 0;
+				}
 				break;
 	}
 	case 1: //最高权限，显示全部
@@ -708,6 +722,32 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 				{
 					m_wndRibbonBar.ShowCategory(i, TRUE);
 				}
+				m_wndRibbonBar.RecalcLayout();
+				break;
+	}
+	default: //非最高权限，按权限设置显示
+	{
+				 int nCount = m_wndRibbonBar.GetCategoryCount();
+				for (int i = 1; i < nCount; i++)
+				{
+					m_wndRibbonBar.ShowCategory(i, TRUE);
+				}
+				
+				if (g_nPermissions[0] == 0) //新生管理
+					m_wndRibbonBar.ShowCategory(1, FALSE);
+
+				if (g_nPermissions[1] == 0) //学员管理
+					m_wndRibbonBar.ShowCategory(2, FALSE);
+
+				if (g_nPermissions[2] == 0) //设备管理
+					m_wndRibbonBar.ShowCategory(3, FALSE);
+
+				if (g_nPermissions[3] == 0) //员工管理
+					m_wndRibbonBar.ShowCategory(4, FALSE);
+
+				if (g_nPermissions[4] == 0) //驾校管理
+					m_wndRibbonBar.ShowCategory(5, FALSE);
+
 				m_wndRibbonBar.RecalcLayout();
 				break;
 	}

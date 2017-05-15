@@ -5,6 +5,8 @@
 #include "SMS2.h"
 #include "ViewScan.h"
 #include "MainFrm.h"
+#include "DlgMyBooks.h"
+#include "DlgNextClass.h"
 
 
 // CViewScan
@@ -100,6 +102,8 @@ BEGIN_MESSAGE_MAP(CViewScan, CBCGPFormView)
 	ON_WM_ERASEBKGND()
 	ON_BN_CLICKED(IDC_BOOK, &CViewScan::OnBnClickedBook)
 	ON_BN_CLICKED(IDC_EXIT, &CViewScan::OnBnClickedExit)
+	ON_BN_CLICKED(IDC_FEEDBACK, &CViewScan::OnBnClickedFeedback)
+	ON_BN_CLICKED(IDC_NEXTCLASS, &CViewScan::OnBnClickedNextclass)
 END_MESSAGE_MAP()
 
 
@@ -611,4 +615,19 @@ void CViewScan::OnBnClickedExit()
 		CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 		pFrame->SelectView(m_LAST_VIEW);
 	}
+}
+
+
+void CViewScan::OnBnClickedFeedback()
+{
+	CDlgMyBooks dlg;
+	dlg.m_strStuID = m_student.strFileName;
+	dlg.DoModal();
+}
+
+
+void CViewScan::OnBnClickedNextclass()
+{
+	CDlgNextClass dlg;
+	dlg.DoModal();
 }

@@ -211,7 +211,9 @@
     <ClInclude Include="DlgDateItem.h" />
     <ClInclude Include="DlgDevice.h" />
     <ClInclude Include="DlgDevice2.h" />
+    <ClInclude Include="DlgMyBooks.h" />
     <ClInclude Include="DlgNewStuff.h" />
+    <ClInclude Include="DlgNextClass.h" />
     <ClInclude Include="DlgResetPSW.h" />
     <ClInclude Include="GridCalendar.h" />
     <ClInclude Include="MyPicCtrl.h" />
@@ -239,6 +241,7 @@
     <ClInclude Include="ViewBooking1.h" />
     <ClInclude Include="ViewBooking2.h" />
     <ClInclude Include="ViewK1Check.h" />
+    <ClInclude Include="ViewPermission.h" />
     <ClInclude Include="ViewRegister.h" />
     <ClInclude Include="ViewScan.h" />
     <ClInclude Include="ViewStudentEnter.h" />
@@ -262,7 +265,9 @@
     <ClCompile Include="DlgDateItem.cpp" />
     <ClCompile Include="DlgDevice.cpp" />
     <ClCompile Include="DlgDevice2.cpp" />
+    <ClCompile Include="DlgMyBooks.cpp" />
     <ClCompile Include="DlgNewStuff.cpp" />
+    <ClCompile Include="DlgNextClass.cpp" />
     <ClCompile Include="DlgResetPSW.cpp" />
     <ClCompile Include="GridCalendar.cpp" />
     <ClCompile Include="MyPicCtrl.cpp" />
@@ -294,6 +299,7 @@
     <ClCompile Include="ViewBooking1.cpp" />
     <ClCompile Include="ViewBooking2.cpp" />
     <ClCompile Include="ViewK1Check.cpp" />
+    <ClCompile Include="ViewPermission.cpp" />
     <ClCompile Include="ViewRegister.cpp" />
     <ClCompile Include="ViewScan.cpp" />
     <ClCompile Include="ViewStudentEnter.cpp" />

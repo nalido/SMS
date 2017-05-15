@@ -256,7 +256,7 @@ void CViewStuffEnter::OnBnClickedLogin()
 
 	CString strMsg, strSQL;
 	CDStrs datas;
-	strSQL.Format("SELECT UPERMISSION FROM stuff WHERE UNAME='%s' AND UPSWD=PASSWORD('%s')", m_strName, m_strPSWD);
+	strSQL.Format("SELECT UID, UPERMISSION, NEW_STUDENTS, STUDENTS, DEVICES, STUFF, SCHOOL FROM stuff WHERE UNAME='%s' AND UPSWD=PASSWORD('%s')", m_strName, m_strPSWD);
 	if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg))
 	{
 		//strMsg.Format("»¶Ó­Äú£¬ %s", m_strName);
@@ -267,7 +267,12 @@ void CViewStuffEnter::OnBnClickedLogin()
 		if (datas.size() > 0)  //ÕýÈ·µÇÂ¼³É¹¦
 		{
 			m_isLoged = TRUE;
-			int permission = atoi(datas[0][0]);
+			g_strUserID = datas[0][0];
+			int permission = atoi(datas[0][1]);
+			for (int i = 0; i < 5; i++)
+			{
+				g_nPermissions[i] = atoi(datas[0][i + 2]);
+			}
 			pFrame->PostMessageA(WM_USER_MESSAGE, (WPARAM)permission);
 
 			//Òþ²ØµÇÂ¼¿ò

@@ -91,6 +91,9 @@ extern int g_nMaxBooking; //每个学员最多预约课数
 extern int g_nSubForLeave; //教练缺勤一次减去的学员数量
 extern int g_nMinWorkTime; //教练一个月最少工时
 
+extern CString g_strUserID; //当前用户工号
+extern int g_nPermissions[6]; //当前用户的权限
+
 enum enum_StudentProgress{
 	SP_NEWONE = 0,			//新生记录
 	SP_K0PASS,				//政审通过	
@@ -133,6 +136,7 @@ enum VIEW_TYPE{
 	VIEW_SCAN,
 	VIEW_STUFFENTER,
 	VIEW_STUDENTENTER,
+	VIEW_PERMISSION,
 	VIEW_NUM
 };
 

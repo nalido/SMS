@@ -93,6 +93,7 @@ public:
 	afx_msg void OnBnClickedOrderQuery();
 	afx_msg void OnBnClickedAutoOrder();
 	afx_msg void OnBnClickedTmpOrder();
+	afx_msg void OnBnClickedChangeclass();
 };
 
 

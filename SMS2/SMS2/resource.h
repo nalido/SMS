@@ -48,6 +48,10 @@
 #define IDD_RESETPSW                    210
 #define IDD_DIALOG4                     211
 #define IDD_HOME                        211
+#define IDD_MYBOOKS                     212
+#define IDD_NEXTCLASS                   213
+#define IDD_DIALOG5                     214
+#define IDD_PERMISSION                  214
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -62,9 +66,12 @@
 #define IDC_SETTODAY                    1056
 #define IDC_NEWITEM                     1056
 #define IDC_EXPORT                      1056
+#define IDC_DELSTUFF                    1056
 #define IDC_BUTTON5                     1057
 #define IDC_DELITEM                     1057
 #define IDC_FORGET                      1057
+#define IDC_DELSTUFF2                   1057
+#define IDC_SELFDOWN                    1057
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
@@ -174,6 +181,7 @@
 #define IDC_DATETIMEPICKER1             1147
 #define IDC_AUTO_ORDER                  1147
 #define IDC_DATETIMEPICKER2             1148
+#define IDC_CHANGECLASS                 1148
 #define IDC_CHECK1                      1149
 #define IDC_COMBO_TYPE                  1150
 #define IDC_COMBO_CAR                   1151
@@ -308,14 +316,15 @@
 #define ID_VIEW_STUFF                   32888
 #define ID_VIEW_HSTUDENT                32889
 #define ID_VIEW_HSTUFF                  32890
+#define ID_VIEW_PERMISSION              32891
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        212
-#define _APS_NEXT_COMMAND_VALUE         32891
-#define _APS_NEXT_CONTROL_VALUE         1241
+#define _APS_NEXT_RESOURCE_VALUE        215
+#define _APS_NEXT_COMMAND_VALUE         32892
+#define _APS_NEXT_CONTROL_VALUE         1242
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

@@ -180,7 +180,7 @@ void COrders::OnBnClickedQuery()
 	CString strMsg, strSQL;
 	strSQL.Format("SELECT bookings.ORDER_DATE, bookings.BOOK_DATE, bookings.CLASS_ID, bookings.ORDER_CAR, coachinfo.SName\
 				  	, students.SNAME, bookings.FLAG, bookings.FILE_NAME, \
-					bookings.ORDER_COACH, bookings.CLASS_NUM, bookings.CLASS_TYPE\
+					bookings.ORDER_COACH, bookings.CLASS_NUM, bookings.CLASS_TYPE, bookings.CLASS_INDEX\
 					FROM bookings \
 					inner join students ON bookings.FILE_NAME = students.FILE_NAME \
 					inner join coachinfo ON bookings.ORDER_COACH = coachinfo.FILE_NUM\
@@ -402,10 +402,8 @@ void CALLBACK COrders::OnGrid1Click(LPVOID lParam)
 		//课程信息
 		CString classType = pThis->m_datas1[nRow][10];
 		pThis->m_sheetInfo.strClassType = classType;
-		int classStep = atoi(pThis->m_datas1[nRow][9]);
-		CString cn;
-		cn.Format("c%d", classStep + 1);
-		pThis->m_classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
+		int classStep = atoi(pThis->m_datas1[nRow][11]);
+		pThis->m_classInfo.nClassID = classStep;
 		//学员信息
 		CString strBookDate = pThis->m_datas1[nRow][1];
 		CString name = pThis->m_datas1[nRow][5];
@@ -416,6 +414,7 @@ void CALLBACK COrders::OnGrid1Click(LPVOID lParam)
 
 		//寻找同个派工单的学员
 		int rows = pThis->m_datas1.size();
+		CString strCoachID = pThis->m_datas1[nRow][8];
 		int nstu = 0;
 		for (int i = 0; i < rows; i++)
 		{
@@ -423,7 +422,9 @@ void CALLBACK COrders::OnGrid1Click(LPVOID lParam)
 			CString strBookDate1 = pThis->m_datas1[i][1];
 			int classID1 = atoi(pThis->m_datas1[i][2]) - 1;
 			int nClass1 = (classID1) / 2;
-			if (i != nRow && strCar == strCar1 && strBookDate == strBookDate1 && nClass == nClass1)
+			CString strCoachID1 = pThis->m_datas1[i][8];
+			if (i != nRow && strCar == strCar1 && strBookDate == strBookDate1 
+				&& nClass == nClass1 && strCoachID == strCoachID1)
 			{
 				CString name1 = pThis->m_datas1[i][5];
 				int classStep1 = atoi(pThis->m_datas1[i][9]) + 1;

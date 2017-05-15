@@ -2,7 +2,7 @@
 <BCGP_RIBBON>
 	<HEADER>
 		<VERSION>1</VERSION>
-		<VERSION_STAMP>6</VERSION_STAMP>
+		<VERSION_STAMP>10</VERSION_STAMP>
 	</HEADER>
 	<RIBBON_BAR>
 		<ELEMENT_NAME>RibbonBar</ELEMENT_NAME>
@@ -327,6 +327,21 @@
 								<TEXT>派工反馈</TEXT>
 								<INDEX_LARGE>13</INDEX_LARGE>
 							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>设备管理</NAME>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_3</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>设备管理</NAME>
+						<ELEMENTS>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
@@ -334,7 +349,8 @@
 									<VALUE>32873</VALUE>
 								</ID>
 								<TEXT>设备管理</TEXT>
-								<INDEX_LARGE>14</INDEX_LARGE>
+								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
+								<INDEX_LARGE>0</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>
@@ -344,7 +360,7 @@
 				<ELEMENT_NAME>Category</ELEMENT_NAME>
 				<NAME>员工管理</NAME>
 				<IMAGE_LARGE>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_3</NAME>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_4</NAME>
 				</IMAGE_LARGE>
 				<PANELS>
 					<PANEL>
@@ -384,12 +400,47 @@
 			</CATEGORY>
 			<CATEGORY>
 				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>驾校管理</NAME>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_5</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>驾校管理</NAME>
+						<ELEMENTS>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_SCHOOLSETTING</NAME>
+									<VALUE>32870</VALUE>
+								</ID>
+								<TEXT>驾校设置</TEXT>
+								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
+								<INDEX_LARGE>0</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_PERMISSION</NAME>
+									<VALUE>32891</VALUE>
+								</ID>
+								<TEXT>员工权限管理</TEXT>
+								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
+								<INDEX_LARGE>1</INDEX_LARGE>
+							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
 				<NAME>设置</NAME>
 				<IMAGE_SMALL>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_SMALL_4</NAME>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_SMALL_6</NAME>
 				</IMAGE_SMALL>
 				<IMAGE_LARGE>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_4</NAME>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_6</NAME>
 				</IMAGE_LARGE>
 				<PANELS>
 					<PANEL>
@@ -422,16 +473,6 @@
 						<ELEMENT_NAME>Panel</ELEMENT_NAME>
 						<NAME>系统设置</NAME>
 						<ELEMENTS>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>ID_VIEW_SCHOOLSETTING</NAME>
-									<VALUE>32870</VALUE>
-								</ID>
-								<TEXT>驾校管理</TEXT>
-								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
-								<INDEX_LARGE>12</INDEX_LARGE>
-							</ELEMENT>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
