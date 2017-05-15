@@ -6,6 +6,7 @@
 #include "Coaches.h"
 #include "AddCoach.h"
 #include "DlgCoachCheck.h"
+#include "DlgMontPlate.h"
 
 
 // CCoaches
@@ -36,6 +37,7 @@ BEGIN_MESSAGE_MAP(CCoaches, CBCGPFormView)
 	ON_BN_CLICKED(IDC_JIXIAO, &CCoaches::OnBnClickedJixiao)
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_KPI, &CCoaches::OnBnClickedKpi)
+	ON_BN_CLICKED(IDC_MONTHPLATE, &CCoaches::OnBnClickedMonthplate)
 END_MESSAGE_MAP()
 
 
@@ -250,6 +252,19 @@ void CCoaches::OnBnClickedKpi()
 		dlg.m_nCheckType = CHECK_KPI;
 		dlg.m_strCoachID = m_arCoaches[nRow][7];
 		dlg.m_strCoach = m_arCoaches[nRow][0];
+		dlg.DoModal();
+	}
+}
+
+
+void CCoaches::OnBnClickedMonthplate()
+{
+	CBCGPGridRow* pRow = m_wndCoaches.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CDlgMontPlate dlg;
+		dlg.m_strCoachID = m_arCoaches[nRow][7];
 		dlg.DoModal();
 	}
 }

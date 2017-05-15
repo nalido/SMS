@@ -186,4 +186,5 @@ typedef struct struct_STUDENTINFO
 
 extern CString GetClassTime(int n); //根据时段编号获得具体时间
 extern CString GetLastMonth(CTime& thisMonth); //获取上个月的月份
+extern CTime Str2Time(CString str); //解析字符串得到时间
 extern void ExportExcel(std::vector<CString>& titles, CDStrs &datas); //数据导出到excel

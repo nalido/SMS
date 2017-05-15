@@ -130,6 +130,21 @@ CString GetLastMonth(CTime& thisMonth)
 	return lastMonth;
 }
 
+CTime Str2Time(CString str)
+{
+	int pos1, pos2;
+	pos1 = str.Find('/');
+	pos2 = str.ReverseFind('/');
+
+	int nYear = atoi(str.Left(pos1));
+	int nMonth = atoi(str.Mid(pos1 + 1, pos2));
+	int nDay = atoi(str.Mid(pos2 + 1));
+
+	CTime tmp(nYear, nMonth, nDay, 0, 0, 0);
+
+	return tmp;
+}
+
 void ExportExcel(std::vector<CString>& titles, CDStrs &datas)
 {
 	CFileDialog fileDlg(FALSE, "*.csv", NULL, 6UL, "通用表格(*.csv)|*.csv|");
@@ -701,18 +716,18 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 	case 0: //初始化，隐藏全部
 	{
 				//默认全部隐藏
-				int nCount = m_wndRibbonBar.GetCategoryCount();
-				for (int i = 1; i < nCount; i++)
-				{
-					m_wndRibbonBar.ShowCategory(i, FALSE);
-				}
-				CBCGPRibbonCategory* pCate = m_wndRibbonBar.GetCategory(0);
-				m_wndRibbonBar.SetActiveCategory(pCate);
-				m_wndRibbonBar.RecalcLayout();
-				for (int i = 0; i < 5; i++)
-				{
-					g_nPermissions[i] = 0;
-				}
+				//int nCount = m_wndRibbonBar.GetCategoryCount();
+				//for (int i = 1; i < nCount; i++)
+				//{
+				//	m_wndRibbonBar.ShowCategory(i, FALSE);
+				//}
+				//CBCGPRibbonCategory* pCate = m_wndRibbonBar.GetCategory(0);
+				//m_wndRibbonBar.SetActiveCategory(pCate);
+				//m_wndRibbonBar.RecalcLayout();
+				//for (int i = 0; i < 5; i++)
+				//{
+				//	g_nPermissions[i] = 0;
+				//}
 				break;
 	}
 	case 1: //最高权限，显示全部

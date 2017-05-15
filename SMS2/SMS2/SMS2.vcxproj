@@ -211,6 +211,7 @@
     <ClInclude Include="DlgDateItem.h" />
     <ClInclude Include="DlgDevice.h" />
     <ClInclude Include="DlgDevice2.h" />
+    <ClInclude Include="DlgMontPlate.h" />
     <ClInclude Include="DlgMyBooks.h" />
     <ClInclude Include="DlgNewStuff.h" />
     <ClInclude Include="DlgNextClass.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="DlgDateItem.cpp" />
     <ClCompile Include="DlgDevice.cpp" />
     <ClCompile Include="DlgDevice2.cpp" />
+    <ClCompile Include="DlgMontPlate.cpp" />
     <ClCompile Include="DlgMyBooks.cpp" />
     <ClCompile Include="DlgNewStuff.cpp" />
     <ClCompile Include="DlgNextClass.cpp" />

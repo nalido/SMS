@@ -41,6 +41,7 @@ public:
 	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
 	afx_msg void OnBnClickedKpi();
+	afx_msg void OnBnClickedMonthplate();
 };
 
 

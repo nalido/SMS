@@ -180,6 +180,9 @@
     <ClInclude Include="ViewPermission.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DlgMontPlate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -333,6 +336,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ViewPermission.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgMontPlate.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

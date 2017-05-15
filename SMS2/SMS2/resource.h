@@ -52,6 +52,7 @@
 #define IDD_NEXTCLASS                   213
 #define IDD_DIALOG5                     214
 #define IDD_PERMISSION                  214
+#define IDD_MONTH_PLATE                 215
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -70,7 +71,6 @@
 #define IDC_BUTTON5                     1057
 #define IDC_DELITEM                     1057
 #define IDC_FORGET                      1057
-#define IDC_DELSTUFF2                   1057
 #define IDC_SELFDOWN                    1057
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
@@ -105,6 +105,7 @@
 #define IDC_JIXIAO2                     1071
 #define IDC_KPI                         1071
 #define IDC_HOME                        1072
+#define IDC_MONTHPLATE                  1072
 #define IDC_BIRTH                       1073
 #define IDC_BUTTON1073                  1073
 #define IDC_SAVE                        1073
@@ -265,6 +266,7 @@
 #define IDC_E4                          1232
 #define IDC_E5                          1233
 #define IDC_CANCEL                      1236
+#define IDC_CALENDAR                    1243
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -322,9 +324,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        215
+#define _APS_NEXT_RESOURCE_VALUE        216
 #define _APS_NEXT_COMMAND_VALUE         32892
-#define _APS_NEXT_CONTROL_VALUE         1242
+#define _APS_NEXT_CONTROL_VALUE         1244
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif
