@@ -32,6 +32,7 @@ void CDlgMontPlate::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CDlgMontPlate, CBCGPDialog)
 	ON_BN_CLICKED(IDC_ADD, &CDlgMontPlate::OnBnClickedAdd)
+	ON_BN_CLICKED(IDC_DEL, &CDlgMontPlate::OnBnClickedDel)
 END_MESSAGE_MAP()
 
 
@@ -128,6 +129,7 @@ void CDlgMontPlate::Refresh()
 	CString strMsg, strSQL;
 	strSQL.Format("SELECT LEAVE_DATE, LEAVE_LEN FROM askforleave WHERE COACH_ID='%s' AND LEAVE_DATE LIKE '%s' ORDER BY LEAVE_DATE", m_strCoachID, m_strMonth);
 	m_datas.clear();
+	m_arMarkedDates.RemoveAll();
 	g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg);
 	ShowMsg2Output1(strMsg);
 
@@ -137,10 +139,11 @@ void CDlgMontPlate::Refresh()
 		CString strDate = m_datas[i][0];
 		CTime t = Str2Time(strDate);
 		COleDateTime dayColor(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
+		m_arMarkedDates.Add(dayColor.m_dt);
 		m_wndCalendarCtrl.SetDateColor(dayColor, RGB(255, 0, 0));
 	}
-
-	m_wndGrid.GridRefresh(m_datas.size());
+	m_wndCalendarCtrl.MarkDates(m_arMarkedDates);
+	m_wndGrid.GridRefresh(m_datas.size()); 
 }
 
 void CDlgMontPlate::OnBnClickedAdd()
@@ -149,6 +152,9 @@ void CDlgMontPlate::OnBnClickedAdd()
 
 	CString strDay;
 	COleDateTime t = m_wndCalendarCtrl.GetDate();
+	if (m_wndCalendarCtrl.IsDateMarked(t)) //已被选过
+		return;
+
 	strDay = t.Format("%Y/%m/%d");
 
 	CString strMsg, strSQL;
@@ -157,4 +163,27 @@ void CDlgMontPlate::OnBnClickedAdd()
 	ShowMsg2Output1(strMsg);
 
 	Refresh();
+}
+
+
+void CDlgMontPlate::OnBnClickedDel()
+{
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+
+		CString strDate, strSQL, strMsg;
+		strDate = m_datas[nRow][0];
+		strSQL.Format("DELETE FROM askforleave WHERE LEAVE_DATE='%s' AND COACH_ID = '%s'", strDate, m_strCoachID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+
+
+		CTime t = Str2Time(strDate);
+		COleDateTime dayColor(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
+		m_wndCalendarCtrl.SetDateColor(dayColor, RGB(0, 0, 0));
+
+		Refresh();
+	}
 }

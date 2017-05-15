@@ -479,11 +479,11 @@ void CViewBooking2::Refresh(int nID)
 {
 	CString strMsg("");
 	CString strSQL("");
+	CString strDate("");
+	strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d");
 
 	if (nID == 0 || nID == 1)//查询待预约学生信息
-	{
-		CString strDate("");
-		strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d"); //AND FLAG='0'
+	{ //AND FLAG='0'
 		strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, \
 						students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME \
 					  	FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
@@ -512,13 +512,27 @@ void CViewBooking2::Refresh(int nID)
 					  	coachstat INNER JOIN coachinfo ON coachinfo.FILE_NUM=coachstat.FILE_NUM \
 						WHERE coachstat.BLACK_NAME='0' ORDER BY coachstat.PERFORMANCE DESC");
 		m_datas2.clear();
-		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg))
+		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg) && m_datas2.size()>0)
 		{
 			ShowMsg2Output1("查询教练员信息成功");
+			strSQL.Format("SELECT COACH_ID FROM askforleave WHERE LEAVE_DATE='%s'", strDate);
+			CDStrs leaves; //请假表
+			g_mysqlCon.ExecuteQuery(strSQL, leaves, strMsg);
+			ShowMsg2Output1(strMsg);
 			int n = m_datas2.size();
-			for (int i = 0; i < n; i++)
+			int nl = leaves.size();
+			for (int i = n-1; i >= 0; i--)
 			{
-				m_datas2[i].push_back("0"); //最后一列为已安排课时数，每个教练早上下午晚上各有一次机会
+				for (int k = 0; k < nl; k++)
+				{
+					if (leaves[k][0] == m_datas2[i][2])
+					{
+						CDStrs::iterator it = m_datas2.begin() + i;
+						m_datas2.erase(it);
+						break;
+					}
+				}
+				//m_datas2[i].push_back("0"); //最后一列为已安排课时数，每个教练早上下午晚上各有一次机会
 			}
 		}
 		else ShowMsg2Output1(strMsg);

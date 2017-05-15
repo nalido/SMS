@@ -28,9 +28,11 @@ public:
 	CDStrs m_datas;
 
 	CStatic	m_calendarLocation;
-	CBCGPCalendar  m_wndCalendarCtrl;
+	CBCGPCalendar  m_wndCalendarCtrl; 
+	CArray<DATE, DATE&> m_arMarkedDates;
 
 	virtual BOOL OnInitDialog();
 	void Refresh();
 	afx_msg void OnBnClickedAdd();
+	afx_msg void OnBnClickedDel();
 };
