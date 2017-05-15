@@ -29,9 +29,11 @@ protected:
 public:
 	CString m_strSubForLeave; //教练缺勤一次减去的绩效
 	CString m_strMinWorkTime; //教练一个月最少工时
+	CString m_strK1Place; //科目一上课地址
 	virtual void OnInitialUpdate();
 	afx_msg void OnBnClickedSave();
 	afx_msg void OnBnClickedSave2();
+	afx_msg void OnBnClickedSave3();
 };
 
 

@@ -7,6 +7,7 @@
 
 #include "SMS_SERVERDoc.h"
 #include "SMS_SERVERView.h"
+#include "xPublic\Common.h"
 
 
 #ifdef _DEBUG
@@ -69,6 +70,11 @@ BOOL CSMS_SERVERApp::InitInstance()
 
 	CBCGPWinApp::InitInstance();
 
+	//系统配置初始化
+	xPublic::GetWorkPath("server");
+	g_strFilePath = xPublic::GETSTR2("Option", "PicSavePath", _T("E:\\Server_Photos\\"));
+	int visible = xPublic::GETINT2("Option", "isVisible", 0);
+
 	// Initialize OLE libraries
 	if (!AfxOleInit())
 	{
@@ -114,7 +120,10 @@ BOOL CSMS_SERVERApp::InitInstance()
 		return FALSE;
 
 	// The one and only window has been initialized, so show and update it
-	m_pMainWnd->ShowWindow(SW_SHOW); //隐藏运行窗口
+	if (visible)
+		m_pMainWnd->ShowWindow(SW_SHOW); //隐藏运行窗口
+	else
+		m_pMainWnd->ShowWindow(SW_HIDE); //隐藏运行窗口
 	m_pMainWnd->UpdateWindow();
 	// call DragAcceptFiles only if there's a suffix
 	//  In an SDI app, this should occur after ProcessShellCommand

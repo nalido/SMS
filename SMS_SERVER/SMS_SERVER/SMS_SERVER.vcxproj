@@ -207,6 +207,7 @@
     <ClInclude Include="SMS_SERVERView.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="xPublic\CObjectBase.h" />
+    <ClInclude Include="xPublic\Common.h" />
     <ClInclude Include="xPublic\CvvImage.h" />
     <ClInclude Include="xPublic\HTTPClient.h" />
     <ClInclude Include="xPublic\MyPrint.h" />
@@ -228,6 +229,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="xPublic\CObjectBase.cpp" />
+    <ClCompile Include="xPublic\Common.cpp" />
     <ClCompile Include="xPublic\CvvImage.cpp" />
     <ClCompile Include="xPublic\HTTPClient.cpp" />
     <ClCompile Include="xPublic\MyPrint.cpp" />

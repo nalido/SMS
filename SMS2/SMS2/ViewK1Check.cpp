@@ -441,10 +441,6 @@ void CViewK1Check::OnBnClickedReturn2()
 void CViewK1Check::OnBnClickedBtnSms1()
 {
 	int nCount = m_datas_pass.size();
-	CMSGINFO dlgMsg;
-	dlgMsg.m_nFlag = 1;
-	dlgMsg.m_strSMS.Format("即将给%d个新生发送科目一开班通知短信，请确认名单无误后点击确认按钮", nCount);
-	if(dlgMsg.DoModal() != IDOK) return;
 
 	//数据打包
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
@@ -455,26 +451,31 @@ void CViewK1Check::OnBnClickedBtnSms1()
 	}
 	else
 	{
-		int len = 6 + nCount * 8; //Type(1) Flag(1) Number(4) FileNums(Number*8)
-		pFrame->m_isSendReady = FALSE;
-		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
-		pFrame->m_nSendLen = len;
-		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
-		pFrame->m_pSendBuf[1] = 1; //开班通知短信
-		memcpy(pFrame->m_pSendBuf + 2, &nCount, 4); //档案数量
+		//int len = 6 + nCount * 8; //Type(1) Flag(1) Number(4) FileNums(Number*8)
+		//pFrame->m_isSendReady = FALSE;
+		//pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+		//pFrame->m_nSendLen = len;
+		//pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+		//pFrame->m_pSendBuf[1] = 1; //开班通知短信
+		//memcpy(pFrame->m_pSendBuf + 2, &nCount, 4); //档案数量
 
 		CString strFileNum;
 		for (int i = 0; i < nCount; i++)
 		{
-			strFileNum = m_datas_pass[i][4].Right(8);
-			char* data = strFileNum.GetBuffer();
-			memcpy(pFrame->m_pSendBuf + 6 + 8*i, data, 8);
-			strFileNum.ReleaseBuffer();
+
+			CMSGINFO dlgMsg;
+			dlgMsg.m_nFlag = 1;
+			dlgMsg.m_strStu = m_datas_pass[i][0];
+			if (dlgMsg.DoModal() != IDOK) continue;
+			//strFileNum = m_datas_pass[i][4].Right(8);
+			//char* data = strFileNum.GetBuffer();
+			//memcpy(pFrame->m_pSendBuf + 6 + 8*i, data, 8);
+			//strFileNum.ReleaseBuffer();
 		}
 
-		pFrame->m_isSendReady = TRUE;
-		m_datas_pass.clear();
-		ListFresh();
+		//pFrame->m_isSendReady = TRUE;
+		//m_datas_pass.clear();
+		//ListFresh();
 	}
 }
 

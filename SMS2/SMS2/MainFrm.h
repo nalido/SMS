@@ -81,6 +81,7 @@ public:
 };
 
 extern CString g_strFilePath;
+extern CString g_strK1Address;//科目一上课地址
 extern xPublic::CMySQLEx g_mysqlCon;
 extern void LOG(CString sFileName, CString str_log, int flag = 1);
 extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。 没有使用虚拟列表技术，只用于显示当前窗口的信息
