@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include "MainFrm.h"
 
 #include "BCGClass\VirtualGridCtrl.h"
 #include "xPublic\MySQLEx.h"
@@ -35,6 +36,9 @@ public:
 	virtual void OnInitialUpdate();
 	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
+	//SQL
+	xPublic::CThreadBase m_threadMySQL;
+	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
 
 	//virtualGrid
 	CStatic m_wndGridLocation1;

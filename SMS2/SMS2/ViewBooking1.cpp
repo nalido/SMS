@@ -47,12 +47,28 @@ BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
 	ON_WM_SIZE()
 	ON_WM_PAINT()
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 //	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
 ON_BN_CLICKED(IDC_STUDENT_SEL, &CViewBooking1::OnBnClickedStudentSel)
 ON_BN_CLICKED(IDC_CONFIRM, &CViewBooking1::OnBnClickedConfirm)
 ON_BN_CLICKED(IDC_REMOVE, &CViewBooking1::OnBnClickedRemove)
 END_MESSAGE_MAP()
 
+
+LRESULT CViewBooking1::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int flag = (int)wParam;
+
+	if (flag == 1) //update data from database
+	{
+		//数据初始化
+		CTime t = CTime::GetCurrentTime();
+		m_wndCalendar.m_tToday = CTime(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
+		m_wndCalendar.m_PointToday = m_wndCalendar.GetDay0Pos();
+	}
+	
+	return 0;
+}
 
 // CViewBooking1 诊断
 
@@ -272,17 +288,13 @@ void CViewBooking1::OnInitialUpdate()
 	m_wndCalendar.InitGrid(rectWeek.Width());
 	m_wndCalendar.SetCallBack_Clk(OnCalendarClick);
 
-
-	Refresh(); //刷新列表
-
-
 	m_LAST_VIEW = VIEW_HOME; //默认回到主页
 }
 
 void CViewBooking1::Refresh()
 {
-	m_wndCalendar.UpdateGrid();
-	UpdateBookingList();
+	m_wndCalendar.UpdateGrid(); //先还原状态
+	UpdateBookingList(); //更新状态
 }
 
 void CViewBooking1::UpdateBookingList()

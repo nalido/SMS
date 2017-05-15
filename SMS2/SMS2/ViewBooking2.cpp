@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "SMS2.h"
 #include "ViewBooking2.h"
-#include "MainFrm.h"
 #include "xPublic\MyPrint.h"
 #include "OrderDetail.h"
 #include "Orders.h"
@@ -17,6 +16,7 @@ IMPLEMENT_DYNCREATE(CViewBooking2, CBCGPFormView)
 
 CViewBooking2::CViewBooking2()
 	: CBCGPFormView(CViewBooking2::IDD)
+	, m_threadMySQL(this, ThreadMySQLCallback)
 {
 	EnableVisualManagerStyle();
 
@@ -74,6 +74,13 @@ void CViewBooking2::Dump(CDumpContext& dc) const
 
 
 // CViewBooking2 消息处理程序
+
+void CALLBACK CViewBooking2::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
+{
+	CViewBooking2* pThis = (CViewBooking2*)pParam;
+	
+	pThis->Refresh(0);
+}
 
 static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 {
@@ -495,10 +502,11 @@ void CViewBooking2::Refresh(int nID)
 		}
 		else ShowMsg2Output1(strMsg);
 
-		m_wndGrid1.GridRefresh(m_datas1.size());
 
 		//学员分类
 		GetClassIndex();
+
+		PostMessage(WM_USER_UPDATE_VIEW, (WPARAM)2);
 	}
 
 	if (nID == 0 || nID == 2)//查询待可预约教练员信息
@@ -537,7 +545,7 @@ void CViewBooking2::Refresh(int nID)
 		}
 		else ShowMsg2Output1(strMsg);
 
-		m_wndGrid2.GridRefresh(m_datas2.size());
+		PostMessage(WM_USER_UPDATE_VIEW, (WPARAM)3);
 	}
 
 	if (nID == 0 || nID == 3)//查询可用车辆信息
@@ -550,12 +558,8 @@ void CViewBooking2::Refresh(int nID)
 		}
 		else ShowMsg2Output1(strMsg);
 
-		int nCount = m_datas3.size();
-		m_Combo_Cars.ResetContent();
-		for (int i = 0; i < nCount; i++)
-		{
-			m_Combo_Cars.AddString(m_datas3[i][0]);
-		}
+
+		PostMessage(WM_USER_UPDATE_VIEW, (WPARAM)4);
 	}
 
 	if (nID == 4) //查询派工单的合法性
@@ -658,7 +662,15 @@ LRESULT CViewBooking2::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 	{
 		m_wndGrid2.GridRefresh(m_datas2.size());
 	}
-
+	else if (flag == 4)
+	{
+		int nCount = m_datas3.size();
+		m_Combo_Cars.ResetContent();
+		for (int i = 0; i < nCount; i++)
+		{
+			m_Combo_Cars.AddString(m_datas3[i][0]);
+		}
+	}
 	return 0;
 }
 

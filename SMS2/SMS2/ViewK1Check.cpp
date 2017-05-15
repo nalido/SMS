@@ -83,6 +83,7 @@ void CViewK1Check::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CViewK1Check, CBCGPFormView)
 	ON_WM_CREATE()
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_BTN_PASS, &CViewK1Check::OnBnClickedBtnPass)
 	ON_BN_CLICKED(IDC_BTN_FRESH, &CViewK1Check::OnBnClickedBtnFresh)
 	ON_BN_CLICKED(IDC_BTN_NOPASS, &CViewK1Check::OnBnClickedBtnNopass)
@@ -96,6 +97,18 @@ BEGIN_MESSAGE_MAP(CViewK1Check, CBCGPFormView)
 END_MESSAGE_MAP()
 
 
+LRESULT CViewK1Check::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int flag = (int)wParam;
+
+	if (flag == 1) //update data from database
+	{
+		//数据初始化
+		Refresh();
+	}
+
+	return 0;
+}
 // CViewK1Check 诊断
 
 #ifdef _DEBUG

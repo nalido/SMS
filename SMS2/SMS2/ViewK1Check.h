@@ -56,6 +56,8 @@ public:
 	afx_msg void OnBnClickedBtnSms2();
 	afx_msg void OnBnClickedBtnFresh2();
 	afx_msg void OnBnClickedNewStudent();
+
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 };
 
 

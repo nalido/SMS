@@ -36,6 +36,7 @@ protected:
 public:
 //	afx_msg void OnBnClickedButton1();
 	virtual void OnInitialUpdate();
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 	//virtualGrid
