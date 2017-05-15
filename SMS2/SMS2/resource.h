@@ -54,6 +54,7 @@
 #define IDD_DIALOG5                     214
 #define IDD_PERMISSION                  214
 #define IDD_MONTH_PLATE                 215
+#define IDD_NOPASS                      216
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -325,9 +326,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        216
+#define _APS_NEXT_RESOURCE_VALUE        217
 #define _APS_NEXT_COMMAND_VALUE         32892
-#define _APS_NEXT_CONTROL_VALUE         1244
+#define _APS_NEXT_CONTROL_VALUE         1245
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

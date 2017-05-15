@@ -6,6 +6,7 @@
 #include "ViewK1Check.h"
 #include "MainFrm.h"
 #include "MSGINFO.h"
+#include "DlgNoPass.h"
 
 
 static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
@@ -162,7 +163,34 @@ void CViewK1Check::OnInitialUpdate()
 
 	m_wndGridLocation_nopass.GetClientRect(&rectGrid);
 	m_wndGridLocation_nopass.MapWindowPoints(this, &rectGrid); //转为桌面坐标
-	InitList(&m_wndGrid_nopass, rectGrid);
+	//InitList(&m_wndGrid_nopass, rectGrid);
+	DWORD nStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER;
+	m_wndGrid_nopass.Create(nStyle, rectGrid, this, (UINT)-3);
+	m_wndGrid_nopass.SetCustomColors(-1, -1, -1, -1, -1, RGB(0, 0, 0)); //黑色边框
+	m_wndGrid_nopass.EnableHeader(TRUE, 0); //不允许表头移动
+	// Set grid tab order (first):
+	m_wndGrid_nopass.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndGrid_nopass.SetReadOnly();
+	m_wndGrid_nopass.SetWholeRowSel();
+	m_wndGrid_nopass.EnableRowHeader(TRUE);
+	m_wndGrid_nopass.EnableLineNumbers();
+
+	int hw = m_wndGrid_nopass.GetRowHeaderWidth();
+	std::vector<CString> arrColumns;
+	arrColumns.push_back("姓名");
+	arrColumns.push_back("性别");
+	arrColumns.push_back("手机");
+	arrColumns.push_back("原因");
+	arrColumns.push_back("档案号");
+	const int nColumns = arrColumns.size();
+	int w = rectGrid.Width() - hw;
+	int nColumnWidth = w / nColumns;
+	for (int nColumn = 0; nColumn < nColumns; nColumn++)
+	{
+		m_wndGrid_nopass.InsertColumn(nColumn, arrColumns[nColumn], nColumnWidth);
+		m_wndGrid_nopass.SetColumnAlign(nColumn, HDF_CENTER);
+		m_wndGrid_nopass.SetHeaderAlign(nColumn, HDF_CENTER);
+	}
 	//注册虚拟列表回调函数
 	m_wndGrid_nopass.EnableVirtualMode(GridCallback3, (LPARAM)this);
 	
@@ -218,7 +246,7 @@ void CViewK1Check::Refresh(BOOL isInit)
 		}
 		else ShowMsg2Output1(strMsg);
 
-		strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NAME FROM students WHERE STEP='1000'");
+		strSQL.Format("SELECT SNAME, GENDER, TEL, NOPASS_REASON, FILE_NAME, CAR_TYPE FROM students WHERE STEP='1000'");
 		m_datas_nopass.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas_nopass, strMsg))
 		{
@@ -305,14 +333,22 @@ void CViewK1Check::OnBnClickedBtnNopass()
 	{
 		if (m_wndGrid.IsRowSelected(i))
 		{
+			CDlgNoPass dlg;
+			dlg.m_strStuName = m_datas[i][0];
+			if (dlg.DoModal() != IDOK) continue;
+			CString strReason = dlg.m_strReason;
+
 			nSel++;
 			CString fileNum = m_datas[i][4];
 			CString strSQL;
-			strSQL.Format("UPDATE students SET STEP='1000' WHERE FILE_NAME='%s'", fileNum);
+			strSQL.Format("UPDATE students SET STEP='1000', NOPASS_REASON='%s' WHERE FILE_NAME='%s'", strReason, fileNum);
 			if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 			{
 				ShowMsg2Output1("更新新生信息成功");
 				CStrs strs = m_datas[i];
+				CString strCarType = strs[3];
+				strs[3] = strReason;
+				strs.push_back(strCarType);
 				m_datas_nopass.push_back(strs);
 				RemoveData(0, i);
 			}
@@ -388,6 +424,8 @@ void CViewK1Check::OnBnClickedReturn2()
 			{
 				ShowMsg2Output1("更新新生信息成功");
 				CStrs strs = m_datas_nopass[i];
+				strs[3] = strs[5];
+				strs.pop_back();
 				m_datas.push_back(strs);
 				RemoveData(2, i);
 			}

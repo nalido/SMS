@@ -649,6 +649,17 @@ BEGIN
     PUSHBUTTON      "删除",IDC_DEL,203,208,66,17
 END
 
+IDD_NOPASS DIALOGEX 0, 0, 281, 144
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "审核未通过原因"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "确定",IDOK,84,103,50,14
+    PUSHBUTTON      "取消",IDCANCEL,147,103,50,14
+    LTEXT           "请输入某某同学审核不通过的原因：",IDC_S1,36,22,178,11
+    EDITTEXT        IDC_E1,36,52,209,14,ES_AUTOHSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -966,6 +977,14 @@ BEGIN
         RIGHTMARGIN, 364
         TOPMARGIN, 7
         BOTTOMMARGIN, 225
+    END
+
+    IDD_NOPASS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 274
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 137
     END
 END
 #endif    // APSTUDIO_INVOKED
