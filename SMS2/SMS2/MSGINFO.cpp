@@ -29,13 +29,13 @@ void CMSGINFO::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPDialog::DoDataExchange(pDX);
 
-	DDX_Control(pDX, IDC_S1, m_S[0]);
-	DDX_Control(pDX, IDC_S2, m_S[1]);
-	DDX_Control(pDX, IDC_S3, m_S[2]);
-	DDX_Control(pDX, IDC_S4, m_S[3]);
-	DDX_Control(pDX, IDC_S5, m_S[4]);
-	DDX_Control(pDX, IDC_S6, m_S[5]);
-	DDX_Control(pDX, IDC_S7, m_S[6]);
+	DDX_Control(pDX, IDC_S1, m_S[6]);
+	DDX_Control(pDX, IDC_S2, m_S[0]);
+	DDX_Control(pDX, IDC_S3, m_S[1]);
+	DDX_Control(pDX, IDC_S4, m_S[2]);
+	DDX_Control(pDX, IDC_S5, m_S[3]);
+	DDX_Control(pDX, IDC_S6, m_S[4]);
+	DDX_Control(pDX, IDC_S7, m_S[5]);
 	DDX_Control(pDX, IDC_DATE, m_wndDatePicker);
 	DDX_Control(pDX, IDC_TIME, m_wndTimePicker);
 
@@ -118,10 +118,10 @@ BOOL CMSGINFO::OnInitDialog()
 				m_strHints[4] = "______";
 				m_strHints[5] = "上课时间";
 
+				m_S[1].EnableWindow(FALSE);
 				m_S[2].EnableWindow(FALSE);
 				m_S[3].EnableWindow(FALSE);
 				m_S[4].EnableWindow(FALSE);
-				m_S[5].EnableWindow(FALSE);
 				m_E[1].EnableWindow(FALSE);
 				m_E[2].EnableWindow(FALSE);
 				m_E[3].EnableWindow(FALSE);
@@ -149,7 +149,36 @@ BOOL CMSGINFO::OnInitDialog()
 	}
 		break;
 	case 2: //退款短信
-		strKeyName = "K1PrePass";
+	{
+				m_strHints[0] = "______";
+				m_strHints[1] = "______";
+				m_strHints[2] = "______";
+				m_strHints[3] = "______";
+				m_strHints[4] = "______";
+				m_strHints[5] = "退款时间";
+
+				m_S[0].EnableWindow(FALSE);
+				m_S[1].EnableWindow(FALSE);
+				m_S[2].EnableWindow(FALSE);
+				m_S[3].EnableWindow(FALSE);
+				m_S[4].EnableWindow(FALSE);
+				m_S[5].EnableWindow(TRUE);
+
+				m_E[0].EnableWindow(FALSE);
+				m_E[1].EnableWindow(FALSE);
+				m_E[2].EnableWindow(FALSE);
+				m_E[3].EnableWindow(FALSE);
+
+				m_Comb.EnableWindow(FALSE);
+
+
+				strKeyName = "K1NOPass";
+				m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
+
+				m_strSMSTmp.Replace("N", m_strStu);
+
+				m_strSMS = m_strSMSTmp;
+	}
 		break;
 	case 3: //科一考试短信
 		strKeyName = "K1PrePass";
@@ -261,6 +290,7 @@ void CMSGINFO::UpdateSMS()
 		break;
 	case 2: //退款短信
 	{
+				m_strSMS.Replace("T", m_strDate);
 	}
 		break;
 	case 3: //科一考试短信

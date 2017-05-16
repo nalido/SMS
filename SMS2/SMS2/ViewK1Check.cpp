@@ -451,12 +451,12 @@ void CViewK1Check::OnBnClickedBtnSms1()
 	}
 	else
 	{
-
 		CString strFileNum;
 		CString strClassIssue("");
 		CString strSMS("");
 		for (int i = 0; i < nCount; i++)
 		{
+			if (!m_wndGrid_pass.IsRowSelected(i)) continue;
 
 			CMSGINFO dlgMsg;
 			dlgMsg.m_nFlag = 1;
@@ -483,12 +483,9 @@ void CViewK1Check::OnBnClickedBtnSms1()
 			strSMS.ReleaseBuffer();
 			pFrame->m_isSendReady = TRUE;
 
-			WaitForSingleObject(0, 1000); //等待信息发送
+			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
 		}
 
-		//pFrame->m_isSendReady = TRUE;
-		//m_datas_pass.clear();
-		//ListFresh();
 	}
 }
 
@@ -505,26 +502,41 @@ void CViewK1Check::OnBnClickedBtnSms2()
 	else
 	{
 		int nCount = m_datas_nopass.size();
-		int len = 6 + nCount * 8; //Type(1) Flag(1) Number(4) FileNums(Number*8)
-		pFrame->m_isSendReady = FALSE;
-		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
-		pFrame->m_nSendLen = len;
-		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
-		pFrame->m_pSendBuf[1] = 2; //退款通知短信
-		memcpy(pFrame->m_pSendBuf + 2, &nCount, 4); //档案数量
 
 		CString strFileNum;
+		CString strClassIssue("");
+		CString strSMS("");
 		for (int i = 0; i < nCount; i++)
 		{
-			strFileNum = m_datas_nopass[i][4].Right(8);
-			char* data = strFileNum.GetBuffer();
-			memcpy(pFrame->m_pSendBuf + 6 + 8 * i, data, 8);
-			strFileNum.ReleaseBuffer();
-		}
-		pFrame->m_isSendReady = TRUE;
+			if (!m_wndGrid_nopass.IsRowSelected(i)) continue;
 
-		m_datas_nopass.clear();
-		ListFresh();
+			CMSGINFO dlgMsg;
+			dlgMsg.m_nFlag = 2;
+			dlgMsg.m_strStu = m_datas_nopass[i][0];
+			dlgMsg.m_strClassIssue = strClassIssue;
+			if (dlgMsg.DoModal() != IDOK) continue;
+			strClassIssue = dlgMsg.m_strClassIssue;
+			CString strSMS0 = dlgMsg.m_strSMS;
+
+			//数据打包发送
+			CString strTel = m_datas_nopass[i][2];
+			strSMS.Format("%s>%s", strTel, strSMS0);
+			int SMSlen = strlen(strSMS);
+			int len = 6 + SMSlen;
+			pFrame->m_isSendReady = FALSE;
+			pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+			pFrame->m_nSendLen = len;
+			pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+			pFrame->m_pSendBuf[1] = 1; //开班通知短信
+			memcpy(pFrame->m_pSendBuf + 2, &SMSlen, 4); //档案数量
+
+			char* data = strSMS.GetBuffer();
+			memcpy(pFrame->m_pSendBuf + 6, data, SMSlen);
+			strSMS.ReleaseBuffer();
+			pFrame->m_isSendReady = TRUE;
+
+			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
+		}
 	}
 }
 

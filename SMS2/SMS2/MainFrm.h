@@ -69,6 +69,7 @@ public:
 	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
 
 	//SOCKET
+	HANDLE  m_hSocketEvent;
 	xPublic::CTCPClient m_tcpClient;
 	xPublic::CThreadBase m_threadSocket;
 	BYTE* m_pSendBuf; //·¢ËÍÊý¾Ý»º´æ

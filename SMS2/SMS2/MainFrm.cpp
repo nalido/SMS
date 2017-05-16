@@ -230,10 +230,16 @@ CMainFrame::CMainFrame()
 	m_pSendBuf = NULL;
 	m_nSendLen = 0;
 	m_isSendReady = FALSE;
+	m_hSocketEvent = ::CreateEventA(NULL, TRUE, FALSE, NULL);
 }
 
 CMainFrame::~CMainFrame()
 {
+
+	if (NULL != m_hSocketEvent)
+	{
+		::CloseHandle(m_hSocketEvent); m_hSocketEvent = NULL;
+	}
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -822,6 +828,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 		}//检测和创建连接
 
 		//发送数据
+		::ResetEvent(pThis->m_hSocketEvent);
 		strMsg.Format("第%d次发送数据", senttime);
 		pThis->m_wndOutput.AddItem2List4(strMsg);
 		BOOL bSendOK = FALSE;
@@ -887,6 +894,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 				pThis->m_wndOutput.AddItem2List4(strMsg);
 			}
 		}
+		::SetEvent(pThis->m_hSocketEvent);
 	}//end while
 
 
