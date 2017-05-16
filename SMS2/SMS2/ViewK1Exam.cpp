@@ -381,11 +381,17 @@ void CViewK1Exam::OnBnClickedK1pass()
 	{
 		int nRow = pRow->GetRowId();
 
+		CString strDate = m_datas2[nRow][4];
+		if (strDate == "0") return;
+
 		CString strSQL, strMsg;
 		strMsg.Format("该操作不可撤销，请确认%s学员是否已经通过科目一考试？", m_datas2[nRow][0]);
 		if (MessageBox(strMsg, "警告", MB_YESNOCANCEL) != IDYES) return;
 
 		strSQL.Format("UPDATE students SET STEP='6' WHERE FILE_NAME='%s'", m_datas2[nRow][5]);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+
+		strSQL.Format("UPDATE stuDates SET K1_STAT='1' WHERE STU_ID='%s'", m_datas2[nRow][5]);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 
 		Refresh();
