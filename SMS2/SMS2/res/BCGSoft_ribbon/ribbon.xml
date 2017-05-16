@@ -2,7 +2,7 @@
 <BCGP_RIBBON>
 	<HEADER>
 		<VERSION>1</VERSION>
-		<VERSION_STAMP>10</VERSION_STAMP>
+		<VERSION_STAMP>11</VERSION_STAMP>
 	</HEADER>
 	<RIBBON_BAR>
 		<ELEMENT_NAME>RibbonBar</ELEMENT_NAME>
@@ -326,6 +326,21 @@
 								</ID>
 								<TEXT>派工反馈</TEXT>
 								<INDEX_LARGE>13</INDEX_LARGE>
+							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>路训报考</NAME>
+						<ELEMENTS>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_K23EXAM</NAME>
+									<VALUE>32892</VALUE>
+								</ID>
+								<TEXT>路训报考</TEXT>
+								<INDEX_LARGE>15</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>

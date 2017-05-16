@@ -22,6 +22,7 @@
 #include "ViewStudentEnter.h"
 #include "ViewHome.h"
 #include "ViewPermission.h"
+#include "ViewK23Exam.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -199,6 +200,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_REGISTER, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_K1CHECK, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_K1EXAM, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_K23EXAM, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_STUPROGRESS, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
@@ -473,6 +475,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_K1EXAM:
 		SelectView(VIEW_K1EXAM);
 		break;
+	case ID_VIEW_K23EXAM:
+		SelectView(VIEW_K23EXAM);
+		break;
 	case ID_VIEW_STUPROGRESS:
 		SelectView(VIEW_STUPROGRESS);
 		break;
@@ -557,6 +562,9 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_K1EXAM:
 		pClass = RUNTIME_CLASS(CViewK1Exam); 
+		break;
+	case VIEW_K23EXAM:
+		pClass = RUNTIME_CLASS(CViewK23Exam);
 		break;
 	case VIEW_COACHES:
 		pClass = RUNTIME_CLASS(CCoaches);

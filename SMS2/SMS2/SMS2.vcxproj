@@ -223,6 +223,7 @@
     <ClInclude Include="Response.h" />
     <ClInclude Include="ViewDevices.h" />
     <ClInclude Include="ViewHome.h" />
+    <ClInclude Include="ViewK23Exam.h" />
     <ClInclude Include="ViewKPI.h" />
     <ClInclude Include="ViewOrderRsp.h" />
     <ClInclude Include="Orders.h" />
@@ -278,6 +279,7 @@
     <ClCompile Include="Response.cpp" />
     <ClCompile Include="ViewDevices.cpp" />
     <ClCompile Include="ViewHome.cpp" />
+    <ClCompile Include="ViewK23Exam.cpp" />
     <ClCompile Include="ViewKPI.cpp" />
     <ClCompile Include="ViewOrderRsp.cpp" />
     <ClCompile Include="Orders.cpp" />

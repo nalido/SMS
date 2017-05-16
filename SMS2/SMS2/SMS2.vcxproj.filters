@@ -183,6 +183,9 @@
     <ClInclude Include="DlgNoPass.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ViewK23Exam.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -339,6 +342,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DlgNoPass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewK23Exam.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

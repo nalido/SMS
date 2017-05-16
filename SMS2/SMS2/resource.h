@@ -55,6 +55,8 @@
 #define IDD_PERMISSION                  214
 #define IDD_MONTH_PLATE                 215
 #define IDD_NOPASS                      216
+#define IDD_DIALOG6                     217
+#define IDD_K23EXAM                     217
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -330,14 +332,15 @@
 #define ID_VIEW_HSTUDENT                32889
 #define ID_VIEW_HSTUFF                  32890
 #define ID_VIEW_PERMISSION              32891
+#define ID_VIEW_K23EXAM                 32892
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        217
-#define _APS_NEXT_COMMAND_VALUE         32892
-#define _APS_NEXT_CONTROL_VALUE         1247
+#define _APS_NEXT_RESOURCE_VALUE        218
+#define _APS_NEXT_COMMAND_VALUE         32893
+#define _APS_NEXT_CONTROL_VALUE         1248
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

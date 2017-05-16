@@ -312,7 +312,7 @@ void CViewBooking1::UpdateBookingList()
 		ShowMsg2Output1("查询预约信息成功");
 		int n = m_datas.size();
 
-		if (n > g_nMaxBooking)
+		if (n >= g_nMaxBooking)
 		{
 			GetDlgItem(IDC_REMOVE)->EnableWindow(FALSE);
 			GetDlgItem(IDC_CONFIRM)->EnableWindow(FALSE);
@@ -560,7 +560,7 @@ void CViewBooking1::OnBnClickedConfirm()
 		g_mysqlCon.ExecuteQuery(strSQL, bookNum, strMsg);
 		ShowMsg2Output1(strMsg);
 		int num = atoi(bookNum[0][0]);
-		if (num > g_nMaxBooking)
+		if (num >= g_nMaxBooking)
 		{
 			strSQL.Format("UPDATE students SET STEP='8' WHERE FILE_NAME='%s'", m_strFileName);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);

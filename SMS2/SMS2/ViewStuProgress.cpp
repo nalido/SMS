@@ -301,9 +301,15 @@ void CViewStuProgress::OnBnClickedTobook()
 
 		CString strStep = m_datas[nRow][5];
 		int step = atoi(strStep);
-		if (step < 7)
+		if (step < 6)
 		{
 			MessageBox("该学员不能进行预约操作！");
+			return;
+		}
+		CString strType = m_datas[nRow][6];
+		if (strType == "0")
+		{
+			MessageBox("该学员还没选定培训模式，请前往选择！");
 			return;
 		}
 
@@ -355,5 +361,26 @@ void CViewStuProgress::OnBnClickedSettype()
 			MessageBox("已设置！");
 			return;
 		}
+
+		CString str = "选择“是”为先报考科目二\r\n选择“否”为先报考科目三";
+		int n = MessageBoxA(str, "培训模式选择", MB_YESNOCANCEL);
+		if (n == IDYES)
+		{
+			strType = "科目二";
+		}
+		else if (n == IDNO)
+		{
+			strType = "科目三";
+		}
+		else return;
+
+
+		CString strMsg, strSQL;
+
+		strSQL.Format("UPDATE students SET CLASS_TYPE='%s', STEP='7' WHERE FILE_NAME='%s'", strType, strID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+
+		Refresh();
 	}
 }
