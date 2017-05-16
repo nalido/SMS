@@ -66,6 +66,10 @@ LRESULT CViewBooking1::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 		m_wndCalendar.m_tToday = CTime(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
 		m_wndCalendar.m_PointToday = m_wndCalendar.GetDay0Pos();
 	}
+
+	GetDlgItem(IDC_REMOVE)->EnableWindow(TRUE);
+
+	GetDlgItem(IDC_CONFIRM)->EnableWindow(TRUE);
 	
 	return 0;
 }
@@ -307,6 +311,13 @@ void CViewBooking1::UpdateBookingList()
 	{
 		ShowMsg2Output1("查询预约信息成功");
 		int n = m_datas.size();
+
+		if (n > g_nMaxBooking)
+		{
+			GetDlgItem(IDC_REMOVE)->EnableWindow(FALSE);
+			GetDlgItem(IDC_CONFIRM)->EnableWindow(FALSE);
+		}
+
 		m_strBooked.Format("%d", n);
 		CString state = "1"; //最后一列（第四列）表示已经记录在数据库，避免重复提交数据库
 		for (int i = 0; i < n; i++)
@@ -543,6 +554,18 @@ void CViewBooking1::OnBnClickedConfirm()
 					   WHERE FILE_NAME='%s'", m_strFileName, m_strFileName);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
+
+		CDStrs bookNum;
+		strSQL.Format("SELECT BOOK_NUM FROM students WHERE FILE_NAME='%s'", m_strFileName);
+		g_mysqlCon.ExecuteQuery(strSQL, bookNum, strMsg);
+		ShowMsg2Output1(strMsg);
+		int num = atoi(bookNum[0][0]);
+		if (num > g_nMaxBooking)
+		{
+			strSQL.Format("UPDATE students SET STEP='8' WHERE FILE_NAME='%s'", m_strFileName);
+			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+			ShowMsg2Output1(strMsg);
+		}
 	}
 
 	UpdateBookingList(); //排序

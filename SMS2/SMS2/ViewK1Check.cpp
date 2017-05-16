@@ -84,6 +84,7 @@ void CViewK1Check::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CViewK1Check, CBCGPFormView)
 	ON_WM_CREATE()
+	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_BTN_PASS, &CViewK1Check::OnBnClickedBtnPass)
 	ON_BN_CLICKED(IDC_BTN_FRESH, &CViewK1Check::OnBnClickedBtnFresh)
@@ -97,6 +98,16 @@ BEGIN_MESSAGE_MAP(CViewK1Check, CBCGPFormView)
 	ON_BN_CLICKED(IDC_NEW_STUDENT, &CViewK1Check::OnBnClickedNewStudent)
 END_MESSAGE_MAP()
 
+
+LRESULT CViewK1Check::OnUserMessage(WPARAM wp, LPARAM lp)
+{
+	int flag = (int)lp;
+	if (flag == 5)  //数据发送成功
+	{
+		Refresh(1);
+	}
+	return 0;
+}
 
 LRESULT CViewK1Check::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 {
@@ -250,7 +261,7 @@ void CViewK1Check::Refresh(BOOL isInit)
 		m_datas_nopass.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas_nopass, strMsg))
 		{
-			ShowMsg2Output1("查询通过新生信息成功");
+			ShowMsg2Output1("查询未通过新生信息成功");
 		}
 		else ShowMsg2Output1(strMsg);
 	}
@@ -451,7 +462,6 @@ void CViewK1Check::OnBnClickedBtnSms1()
 	}
 	else
 	{
-		CString strFileNum;
 		CString strClassIssue("");
 		CString strSMS("");
 		for (int i = 0; i < nCount; i++)
@@ -467,8 +477,9 @@ void CViewK1Check::OnBnClickedBtnSms1()
 			CString strSMS0 = dlgMsg.m_strSMS;
 
 			//数据打包发送
+			CString strStuID = m_datas_pass[i][4];
 			CString strTel = m_datas_pass[i][2];
-			strSMS.Format("%s>%s", strTel, strSMS0);
+			strSMS.Format("%s:%s>%s", strTel, strStuID, strSMS0);
 			int SMSlen = strlen(strSMS);
 			int len = 6 + SMSlen;
 			pFrame->m_isSendReady = FALSE;
@@ -482,6 +493,8 @@ void CViewK1Check::OnBnClickedBtnSms1()
 			memcpy(pFrame->m_pSendBuf + 6, data, SMSlen);
 			strSMS.ReleaseBuffer();
 			pFrame->m_isSendReady = TRUE;
+
+			m_datas_pass[i][2] = "已发送";
 
 			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
 		}
@@ -519,21 +532,24 @@ void CViewK1Check::OnBnClickedBtnSms2()
 			CString strSMS0 = dlgMsg.m_strSMS;
 
 			//数据打包发送
+			CString strStuID = m_datas_nopass[i][4];
 			CString strTel = m_datas_nopass[i][2];
-			strSMS.Format("%s>%s", strTel, strSMS0);
+			strSMS.Format("%s:%s>%s", strTel, strStuID, strSMS0);
 			int SMSlen = strlen(strSMS);
 			int len = 6 + SMSlen;
 			pFrame->m_isSendReady = FALSE;
 			pFrame->m_pSendBuf = new BYTE[len];//发送完删除
 			pFrame->m_nSendLen = len;
 			pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
-			pFrame->m_pSendBuf[1] = 1; //开班通知短信
+			pFrame->m_pSendBuf[1] = dlgMsg.m_nFlag; //短信类型
 			memcpy(pFrame->m_pSendBuf + 2, &SMSlen, 4); //档案数量
 
 			char* data = strSMS.GetBuffer();
 			memcpy(pFrame->m_pSendBuf + 6, data, SMSlen);
 			strSMS.ReleaseBuffer();
 			pFrame->m_isSendReady = TRUE;
+
+			m_datas_nopass[i][2] = "已发送";
 
 			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
 		}

@@ -348,15 +348,58 @@ void CSMS_SERVERView::SendSMS(BYTE flag, CString& vFiles)
 
 	if (vFiles.IsEmpty()) return;
 
-	int pos = vFiles.Find(">");
-	if (pos == -1) return; //无效信息
-	CString strTel = vFiles.Left(pos);
-	CString strSMS = vFiles.Mid(pos + 1);
+	//TEL:ID>MSG flg<6
+	//TEL:MSG  flag=6
+	int pos1 = vFiles.Find(":");
+	if (pos1 == -1) return; //invalid
+	CString strTel = vFiles.Left(pos1);
+
+	CString strStuID;
+	int pos2 = vFiles.Find(">");
+	if (flag < 6)
+	{
+		if (pos2 == -1) return; //无效信息
+
+		strStuID = vFiles.Mid(pos1+1, pos2-pos1-1);
+	}
+	else if (flag==6)
+	{
+		pos2 = pos1;
+	}
+
+	CString strSMS = vFiles.Mid(pos2 + 1);
 	
 	strPosData.Format("action=send&username=dhjx&password=c739fa3c630ca4e65ac9efdc8317df7d&apiid=13952&mobiles=%s&text=%s", strTel, strSMS);
 	char* posdata = EncodeToUTF8(strPosData);
-	hPost.HttpPost(strUrl, posdata, strResponse);
+	//hPost.HttpPost(strUrl, posdata, strResponse);
 	strSMS = strResponse.c_str();
+
+	if (flag < 6)
+	{
+		//更新数据库
+		CString strMsg, strSQL;
+		int step = 0;
+		switch (flag)
+		{
+		case 1:
+			step = 2;
+			break;
+		case 2:
+			step = 1001;
+			break;
+		case 3:
+			step = 4;
+			break;
+		case 4:
+			step = 7;
+			break;
+		case 5:
+			step = 7;
+			break;
+		}
+		strSQL.Format("UPDATE students SET STEP='%d' WHERE FILE_NAME='%s'", step, strStuID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	}
 
 	m_arMsg.AddTail("发送成功。");
 	ListFresh();

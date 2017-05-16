@@ -132,7 +132,7 @@ void CDlgResetPSW::OnBnClickedSms()
 	{
 		CString strSMS;
 		m_strSMS0 = "【东华驾校】验证码：" + datas[0][0].Right(4);
-		strSMS.Format("%s>%s", m_strTel, m_strSMS0);
+		strSMS.Format("%s:%s", m_strTel, m_strSMS0);
 		int nCount = strlen(strSMS);
 		int len = 6 + nCount; //Type(1) Flag(1) Number(4) FileNums(Number*8)
 		pFrame->m_isSendReady = FALSE;

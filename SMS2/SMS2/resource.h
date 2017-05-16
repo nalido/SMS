@@ -3,7 +3,6 @@
 // π© SMS2.rc  π”√
 //
 #define IDC_DEL                         2
-#define IDC_PREVIEW                     3
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDD_SMS2_FORM                   101
@@ -90,19 +89,23 @@
 #define IDC_ORDER                       1067
 #define IDC_CHUQIN                      1067
 #define IDC_NEXTCLASS                   1067
+#define IDC_PASS                        1067
 #define IDC_NAME2                       1068
 #define IDC_FILE                        1068
 #define IDC_RESET_PRINT                 1068
 #define IDC_QUEQIN                      1068
 #define IDC_FEEDBACK                    1068
+#define IDC_RETURN                      1068
 #define IDC_TEL                         1069
 #define IDC_NAME3                       1069
 #define IDC__TMP_ORDER                  1069
 #define IDC_WORKTIME                    1069
 #define IDC_BOOK                        1069
+#define IDC_SENDSMS                     1069
 #define IDC_FEE                         1070
 #define IDC_NCLASS                      1070
 #define IDC_JIXIAO                      1070
+#define IDC_K1PASS                      1070
 #define IDC_ID                          1071
 #define IDC_NAME6                       1071
 #define IDC_JIXIAO2                     1071
@@ -141,6 +144,8 @@
 #define IDC_NAME0                       1091
 #define IDC_SCAN                        1091
 #define IDC_WEEK                        1092
+#define IDC_TOBOOK2                     1092
+#define IDC_SETTYPE                     1092
 #define IDC_NAME1                       1093
 #define IDC_NAME4                       1094
 #define IDC_NAME5                       1095

@@ -27,7 +27,7 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 				{
 					pdi->item.varValue = pThis->m_datas[nRow][nCol];
 				}
-				else //后边是进度
+				else if(nCol < 9) //后边是进度
 				{
 					CString strStep = pThis->m_datas[nRow][5];
 					int step = atoi(strStep);
@@ -39,6 +39,22 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 						pdi->item.varValue = "完成";
 					}
 					if (tmp == step)
+					{
+						pdi->item.clrBackground = COLOR_DOING;
+						pdi->item.varValue = "进行中";
+					}
+				}
+				else //培训类型的进度
+				{
+					CString strClassType = pThis->m_datas[nRow][6];
+					int step = atoi(pThis->m_datas[nRow][5]);
+					if (nCol == 9 && strClassType == "科目二")
+					{
+						pdi->item.clrBackground = COLOR_DOING;
+						pdi->item.varValue = "进行中";
+					}
+
+					if (nCol == 11 && strClassType == "科目三")
 					{
 						pdi->item.clrBackground = COLOR_DOING;
 						pdi->item.varValue = "进行中";
@@ -76,12 +92,28 @@ void CViewStuProgress::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CViewStuProgress, CBCGPFormView)
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_STUFRESH, &CViewStuProgress::OnBnClickedStufresh)
 	ON_BN_CLICKED(IDC_SENDBOOKMSG, &CViewStuProgress::OnBnClickedSendbookmsg)
 	ON_BN_CLICKED(IDC_TOBOOK, &CViewStuProgress::OnBnClickedTobook)
 	ON_BN_CLICKED(IDC_SCAN, &CViewStuProgress::OnBnClickedScan)
+	ON_BN_CLICKED(IDC_SETTYPE, &CViewStuProgress::OnBnClickedSettype)
 END_MESSAGE_MAP()
 
+
+LRESULT CViewStuProgress::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int type = (int)wParam;
+
+	switch (type)
+	{
+	case 1:
+		Refresh();
+		break;
+	}
+
+	return 0;
+}
 
 // CViewStuProgress 诊断
 
@@ -154,7 +186,7 @@ void CViewStuProgress::Refresh()
 {
 	CString strMsg("");
 	CString strSQL("");
-	strSQL.Format("SELECT FILE_NAME, SNAME, GENDER, TEL, CAR_TYPE, STEP FROM students WHERE STEP<'1000'");
+	strSQL.Format("SELECT FILE_NAME, SNAME, GENDER, TEL, CAR_TYPE, STEP, CLASS_TYPE FROM students WHERE STEP<'1000'");
 	m_datas.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg))
 	{
@@ -304,5 +336,24 @@ void CViewStuProgress::OnBnClickedScan()
 		CView* pView = (CView*)pFrame->GetActiveView();
 		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)VIEW_STUPROGRESS, (LPARAM)3);
 		pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)&stuInfo, (LPARAM)1);
+	}
+}
+
+
+void CViewStuProgress::OnBnClickedSettype()
+{
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+
+		CString strType = m_datas[nRow][6];
+		CString strID = m_datas[nRow][0];
+
+		if (strType != "0")
+		{
+			MessageBox("已设置！");
+			return;
+		}
 	}
 }

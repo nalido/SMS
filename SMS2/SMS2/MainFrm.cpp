@@ -837,6 +837,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 		{
 			bSendOK = TRUE;
 			strMsg.Format("数据发送成功");
+			pThis->GetActiveView()->PostMessageA(WM_USER_MESSAGE, (WPARAM)0, (LPARAM)5);
 			pThis->m_wndOutput.AddItem2List4(strMsg);
 
 			if (pThis->m_pSendBuf[0] == 3)
