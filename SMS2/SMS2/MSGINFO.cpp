@@ -141,6 +141,10 @@ BOOL CMSGINFO::OnInitDialog()
 				strKeyName = "K1Address";
 				CString str = xPublic::GETSTR2("SMS", strKeyName, "failed");
 				m_strSMSTmp.Replace("A", str);
+
+				m_strSMSTmp.Replace("N", m_strStu);
+
+				m_strE[0] = m_strClassIssue;
 				m_strSMS = m_strSMSTmp;
 	}
 		break;
@@ -160,7 +164,8 @@ BOOL CMSGINFO::OnInitDialog()
 
 	//char* strSMS = EncodeToUTF8(m_strSMS);
 
-	UpdateData(FALSE);
+	UpdateData(FALSE); //显示预设信息
+	UpdateSMS();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常:  OCX 属性页应返回 FALSE
@@ -226,10 +231,7 @@ void CMSGINFO::OnBnClickedTime()
 
 void CMSGINFO::UpdateSMS()
 {
-	CRect rect;
-	m_SMS.GetClientRect(&rect);
-	m_SMS.MapWindowPoints(this, &rect);
-
+	UpdateData(); //获得输入
 	m_strSMS = m_strSMSTmp;
 
 	COleDateTime dt = m_wndTimePicker.GetDate();
@@ -247,10 +249,35 @@ void CMSGINFO::UpdateSMS()
 	COleDateTime dd = m_wndDatePicker.GetDate();
 	m_strDate = dd.Format("%Y年%m月%d日");
 
-	CString str = m_strDate + m_strTime;
-	m_strSMS.Replace("T", str);
-	m_strSMS.Replace("Q", m_strE[0]);
-	
+	switch (m_nFlag)
+	{
+	case 1: //开班短信
+	{
+			  CString str = m_strDate + m_strTime;
+			  m_strSMS.Replace("T", str);
+			  m_strSMS.Replace("Q", m_strE[0]);
+			  m_strClassIssue = m_strE[0];
+	}
+		break;
+	case 2: //退款短信
+	{
+	}
+		break;
+	case 3: //科一考试短信
+		
+		break;
+	case 4: //培训预约短信
+		
+		break;
+	case 5: //上课提醒短信
+		
+		break;
+	}
+
+	//刷新
+	CRect rect;
+	m_SMS.GetClientRect(&rect);
+	m_SMS.MapWindowPoints(this, &rect);
 
 	UpdateData(FALSE);
 	InvalidateRect(&rect);

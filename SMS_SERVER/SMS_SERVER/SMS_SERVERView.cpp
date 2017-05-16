@@ -250,27 +250,17 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 		{
 			BYTE Flag = 0;
 			pClient->Receive(&Flag, 1);
-			int number = 0;
-			pClient->Receive(&number, 4);
-			vector<CString> vFiles;
+			int SMSsize = 0;
+			pClient->Receive(&SMSsize, 4);
+			BYTE* SMSBuf = new BYTE[SMSsize + 1];
 
-			if (Flag == 6)
+			if (pClient->Receive(SMSBuf, SMSsize))
 			{
-				char FileNum[50] = { 0 };
-				pClient->Receive(FileNum, number);
-				FileNum[number] = '\0';
-				vFiles.push_back(FileNum);
+				CString strSMS; 
+				SMSBuf[SMSsize] = '\0';
+				strSMS.Format("%s", SMSBuf);
+				pThis->SendSMS(Flag, strSMS);
 			}
-			else
-			{
-				for (int i = 0; i < number; i++)
-				{
-					char FileNum[9] = { 0 };
-					pClient->Receive(&FileNum, 8); //8位纯数字档案号
-					vFiles.push_back(FileNum);
-				}
-			}
-			pThis->SendSMS(Flag, vFiles);
 		}// end MsgType 2
 		else if (MsgType == 3) //学生图片寻找
 		{
@@ -349,82 +339,39 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 	}
 }
 
-void CSMS_SERVERView::SendSMS(BYTE flag, vector<CString>& vFiles)
+void CSMS_SERVERView::SendSMS(BYTE flag, CString& vFiles)
 {
 	CHttpClient hPost;
 	CString strUrl("http://121.40.160.86:7890/msgapiv2.aspx"); //发送短信
 	CString strPosData;
 	string strResponse("");
-	CString strSMS;
 
-	int nCount = vFiles.size();
-	if (nCount == 0) return;
+	if (vFiles.IsEmpty()) return;
 
-	//发送验证码
-	if (flag == 6)
+	int pos = vFiles.Find(">");
+	if (pos == -1) return; //无效信息
+	CString strTel = vFiles.Left(pos);
+	CString strSMS = vFiles.Mid(pos + 1);
+	
+	strPosData.Format("action=send&username=dhjx&password=c739fa3c630ca4e65ac9efdc8317df7d&apiid=13952&mobiles=%s&text=%s", strTel, strSMS);
+	char* posdata = EncodeToUTF8(strPosData);
+	hPost.HttpPost(strUrl, posdata, strResponse);
+	strSMS = strResponse.c_str();
+
+	m_arMsg.AddTail("发送成功。");
+	ListFresh();
+	return;
+
+	
+	if (flag == 1)//发送开班短信
 	{
-		int pos = vFiles[0].Find(">");
-		if (pos == -1) return; //无效信息
-		CString strTel = vFiles[0].Left(pos);
-		CString SMS = vFiles[0].Mid(pos + 1);
-		strSMS.Format("【东华驾校】验证码：%s", SMS);
-		strPosData.Format("action=send&username=dhjx&password=c739fa3c630ca4e65ac9efdc8317df7d&apiid=13952&mobiles=%s&text=%s", strTel, strSMS);
-		char* posdata = EncodeToUTF8(strPosData);
-		hPost.HttpPost(strUrl, posdata, strResponse);
-		strSMS = strResponse.c_str();
 
-		m_arMsg.AddTail("发送验证码。");
-		return;
-	}
-
-	//查询手机号和姓名
-	CDStrs datas;
-	CString strMsg;
-	CString strSQL;
-	for (int i = 0; i < nCount; i++)
-	{
-		if (vFiles[i].IsEmpty()) continue;
-
-		CDStrs tmp;
-		strSQL.Format("SELECT SNAME, TEL FROM students WHERE FILE_NUMBER='%s'", vFiles[i]);
-		if (g_mysqlCon.ExecuteQuery(strSQL, tmp, strMsg))
-		{
-			datas.push_back(tmp[0]);
-			m_arMsg.AddTail(tmp[0][0]);
-		}
-		else
-		{
-			m_arMsg.AddTail(strMsg);
-		}
-	}
-	m_arMsg.AddTail("查询通讯信息成功");
-
-	//发送短信
-	if (flag == 1)
-	{
-		strMsg.Format("【东华驾校】尊敬的%s先生：您个人的相关资料已顺利通过审核，\
-			请于2017年6月23日（星期二）上午8点：30分之前来我校参加科目一第105期理\
-			论学习（地址：南京市红山路90号第二教室）。谢谢您的配合！", datas[0][0]);
-		strMsg.Remove('\t');
-		//char* cstring = EncodeToUTF8(strMsg); 
-		strPosData.Format("action=send&username=dhjx&password=c739fa3c630ca4e65ac9efdc8317df7d&apiid=13952&mobiles=%s&text=%s", datas[0][1], strMsg);
-		char* posdata = EncodeToUTF8(strPosData);
-		hPost.HttpPost(strUrl, posdata, strResponse);
-		strMsg = strResponse.c_str();
-		LOG("res.log", strMsg);
-		m_arMsg.AddTail(strMsg);
-		int pos1, pos2;
-		pos1 = strMsg.Find(',');
-		pos2 = strMsg.Find('\n');
-		CString response = "Response:" + strMsg.Mid(pos1 + 1, pos2 - pos1);
-		m_arMsg.AddTail(response);
 	}//end flag 1
 	else if (flag == 2) //退款通知
 	{
 
 	}// end flag 2
 
-	ListFresh();
 
 }
 

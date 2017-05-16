@@ -23,6 +23,7 @@ public:
 	int m_nFlag; //短信类型标志
 
 	CString m_strStu;
+	CString m_strClassIssue;//期号
 	CString m_strSMSTmp; //原始模板
 	CString m_strSMS;
 
