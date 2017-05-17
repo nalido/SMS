@@ -8,6 +8,7 @@
 
 #include "MainFrm.h"
 #include "OrderDetail.h"
+#include "MSGINFO.h"
 
 // COrders 对话框
 
@@ -180,7 +181,7 @@ void COrders::OnBnClickedQuery()
 	CString strMsg, strSQL;
 	strSQL.Format("SELECT bookings.ORDER_DATE, bookings.BOOK_DATE, bookings.CLASS_ID, bookings.ORDER_CAR, coachinfo.SName\
 				  	, students.SNAME, bookings.FLAG, bookings.FILE_NAME, \
-					bookings.ORDER_COACH, bookings.CLASS_NUM, bookings.CLASS_TYPE, bookings.CLASS_INDEX\
+					bookings.ORDER_COACH, bookings.CLASS_NUM, bookings.CLASS_TYPE, bookings.CLASS_INDEX, students.TEL \
 					FROM bookings \
 					inner join students ON bookings.FILE_NAME = students.FILE_NAME \
 					inner join coachinfo ON bookings.ORDER_COACH = coachinfo.FILE_NUM\
@@ -283,80 +284,52 @@ void COrders::OnBnClickedPrint()
 		m_printx.PrinterInit(&m_sheetInfo, &m_classInfo);
 		CString strMsg; 
 		m_printx.Printx(1, strMsg);
+
+		//发送短信
+		//int n = m_printx.m_students.size();
+		//for (int nRow = 0; nRow < n; nRow++)
+		//{
+		//	CMSGINFO dlgMsg;
+		//	dlgMsg.m_strStu = m_printx.m_students[nRow].strName;
+		//	dlgMsg.m_strCoach = m_printx.m_sheetInfo->strCoach;
+		//	dlgMsg.m_strCar = m_printx.m_sheetInfo->strCarID;
+		//	int classi = m_printx.m_students[nRow].nClassStep + 1;
+		//	dlgMsg.m_strClassIndex.Format("%d", classi);
+		//	CString classTime = GetClassTime(m_printx.m_students[nRow].nClassTime);
+		//	dlgMsg.m_strDate = m_printx.m_students[nRow].strDate + classTime;
+		//	dlgMsg.Init(5);
+		//	CString strSMS0 = dlgMsg.m_strSMS;
+		//	CString strTEL = m_printx.m_students[nRow].strTEL;
+
+		//	CString strSMS;
+		//	strSMS.Format("%s:%s>%s", strTEL, dlgMsg.m_strStu, strSMS0);
+		//	int SMSlen = strlen(strSMS);
+		//	int len = 6 + SMSlen;
+		//	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+		//	if (pFrame->m_pSendBuf != NULL)
+		//	{
+		//		//MessageBox("上一个信息还未处理完毕，请稍等重试。");
+		//		WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
+		//	}
+		//	else
+		//	{
+		//		pFrame->m_isSendReady = FALSE;
+		//		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+		//		pFrame->m_nSendLen = len;
+		//		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+		//		pFrame->m_pSendBuf[1] = 5; //短信类型
+		//		memcpy(pFrame->m_pSendBuf + 2, &SMSlen, 4); //档案数量
+
+		//		char* data = strSMS.GetBuffer();
+		//		memcpy(pFrame->m_pSendBuf + 6, data, SMSlen);
+		//		strSMS.ReleaseBuffer();
+		//		pFrame->m_isSendReady = TRUE;
+
+		//		WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
+		//	}
+		//}
 	}
-	//CBCGPGridRow* pRow = m_wndGrid1.GetCurSel();
-	//if (pRow != NULL)
-	//{
-	//	//int nRow = pRow->GetRowId();
-
-	//	m_dataPrint[nRow] = 1;
-	//	xPublic::CMyPrint printx;
-	//	xPublic::CLASSINFO classInfo;
-	//	xPublic::SHEETINFO sheetInfo;
-
-
-	//	//表单信息
-	//	CString strCar = m_datas1[nRow][3];
-	//	sheetInfo.strCarID = strCar;
-	//	sheetInfo.strCoach = m_datas1[nRow][4];
-	//	sheetInfo.strCoachID = m_datas1[nRow][8];
-
-	//	CString str = m_datas1[nRow][0]; //派工日期
-	//	//解析字符串得到日期
-	//	int pos1, pos2;
-	//	pos1 = str.Find('/');
-	//	pos2 = str.ReverseFind('/');
-	//	int nYear = atoi(str.Left(pos1));
-	//	int nMonth = atoi(str.Mid(pos1 + 1, pos2));
-	//	int nDay = atoi(str.Mid(pos2 + 1));
-	//	CTime tOrderDay(nYear, nMonth, nDay, 0, 0, 0);
-
-	//	sheetInfo.strDate = tOrderDay.Format("%Y年%m月%d日制");
-	//	//课程信息
-	//	CString classType = m_datas1[nRow][10]; 
-	//	int classStep = atoi(m_datas1[nRow][9]);
-	//	CString cn;
-	//	cn.Format("c%d", classStep);
-	//	classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
-	//	//学员信息
-	//	CString strBookDate = m_datas1[nRow][1];
-	//	CString name = m_datas1[nRow][5];
-	//	int classID = atoi(m_datas1[nRow][2]) - 1;
-	//	int  nClass = (classID) / 2;
-	//	xPublic::STUDENTINFO student(name, strBookDate, classID, classStep, g_nMaxBooking);
-	//	printx.AddStudent(student);
-
-	//	//寻找同个派工单的学员
-	//	int rows = m_datas1.size();
-	//	for (int i = 0; i < rows; i++)
-	//	{
-	//		CString strCar1 = m_datas1[i][3];
-	//		CString strBookDate1 = m_datas1[i][1];
-	//		int classID1 = atoi(m_datas1[i][2]) - 1;
-	//		int nClass1 = (classID1) / 2;
-	//		if (i != nRow && strCar == strCar1 && strBookDate == strBookDate1 && nClass == nClass1)
-	//		{
-	//			CString name1 = m_datas1[i][5];
-	//			int classStep1 = atoi(m_datas1[i][9]);
-	//			xPublic::STUDENTINFO student1(name1, strBookDate, classID1, classStep1, g_nMaxBooking);
-	//			printx.AddStudent(student1);
-	//			m_dataPrint[i] = 1;
-	//			continue;
-	//		}
-	//	}
-
-	//	COrderDetail dlgDetail;
-	//	dlgDetail.m_wndPrint.m_classInfo = classInfo;
-	//	dlgDetail.m_wndPrint.m_sheetInfo = sheetInfo;
-	//	dlgDetail.m_wndPrint.m_printData.m_students = printx.m_students;
-	//	dlgDetail.DoModal();
-
-	//	//printx.PrinterInit(&sheetInfo, &classInfo);
-	//	//CString strMsg;
-	//	//printx.Printx(1, strMsg);
-
-	//	m_wndGrid1.GridRefresh(m_datas1.size());
-	//}
+	
 }
 
 
@@ -410,6 +383,7 @@ void CALLBACK COrders::OnGrid1Click(LPVOID lParam)
 		int classID = atoi(pThis->m_datas1[nRow][2]) - 1;
 		int  nClass = (classID) / 2;
 		xPublic::STUDENTINFO student(name, strBookDate.Right(8), classID, classStep, g_nMaxBooking);
+		student.strTEL = pThis->m_datas1[nRow][12];
 		pThis->m_printx.AddStudent(student);
 
 		//寻找同个派工单的学员
@@ -429,6 +403,7 @@ void CALLBACK COrders::OnGrid1Click(LPVOID lParam)
 				CString name1 = pThis->m_datas1[i][5];
 				int classStep1 = atoi(pThis->m_datas1[i][9]) + 1;
 				xPublic::STUDENTINFO student1(name1, strBookDate.Right(8), classID1, classStep1, g_nMaxBooking);
+				student1.strTEL = pThis->m_datas1[i][12];
 				pThis->m_printx.AddStudent(student1);
 				//pThis->m_dataPrint[i] = 1;
 				pThis->m_index[nstu + 1] = i; nstu++;

@@ -281,6 +281,7 @@ void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 				pPrint->m_sheetInfo.strClassType = classType;
 			}
 			xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
+			student.strTEL = pThis->m_datas1[nRow][7];
 			pPrint->m_printData.AddStudent(student);
 			pThis->m_wndPrint.Invalidate();
 
@@ -332,6 +333,7 @@ void CALLBACK CViewBooking2::OnOrdersClick(LPVOID lParam)
 			}
 
 			xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
+			student.strTEL = pThis->m_datas1[nRow][7];
 			pPrint->m_printData.AddStudent(student);
 		}
 
@@ -492,7 +494,7 @@ void CViewBooking2::Refresh(int nID)
 	if (nID == 0 || nID == 1)//查询待预约学生信息
 	{ //AND FLAG='0'
 		strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, \
-						students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME \
+						students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME, students.TEL \
 					  	FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
 						WHERE BOOK_DATE='%s' ORDER BY bookings.CLASS_ID, students.CLASS_NUM, students.SNAME", strDate);
 		m_datas1.clear();
@@ -704,7 +706,26 @@ void CViewBooking2::OnBnClickedDoPrint()
 		CString strMsg("");
 		printx.Printx(1, strMsg);
 		TRACE(strMsg);
-		OnBnClickedOrder();
+
+		//发送短信
+		//int n = printx.m_students.size();
+		//for (int nRow = 0; nRow < n; nRow++)
+		//{
+		//	CMSGINFO dlgMsg;
+		//	dlgMsg.m_strStu = printx.m_students[nRow].strName;
+		//	dlgMsg.m_strCoach = m_wndPrint.m_printData.m_sheetInfo->strCoach;
+		//	dlgMsg.m_strCar = m_wndPrint.m_printData.m_sheetInfo->strCarID;
+		//	int classi = printx.m_students[nRow].nClassStep + 1;
+		//	dlgMsg.m_strClassIndex.Format("%d", classi);
+		//	CString classTime = GetClassTime(printx.m_students[nRow].nClassTime);
+		//	dlgMsg.m_strDate = printx.m_students[nRow].strDate + classTime;
+		//	dlgMsg.Init(5);
+		//	CString strSMS = dlgMsg.m_strSMS;
+		//	SendSMS("name", printx.m_students[nRow].strTEL, strSMS);
+		//}
+
+		if (m_canChangeOrder)
+			OnBnClickedOrder();
 	}
 	else if (printType == 2)
 	{
@@ -714,6 +735,11 @@ void CViewBooking2::OnBnClickedDoPrint()
 		sheetInfo.strDate = m_tToday.Format("%Y年%m月%d日制");
 		printx.PrinterInit(&sheetInfo, &classInfo);
 		int size = m_orderIndexes.size() - 1;
+		if (size < 0)
+		{
+			MessageBox("派工单工作区没有派工单可以打印！");
+			return;
+		}
 		for (int nRow = size; nRow >= 0; nRow--)
 		{
 			Indexes indexes = m_orderIndexes[nRow];
@@ -736,7 +762,7 @@ void CViewBooking2::OnBnClickedDoPrint()
 				//第一个加入的学员决定派工单的授课内容
 				if (classInfo.nClassID == 0)
 				{
-					CString classType = m_datas1[nRow][4];
+					CString classType = m_datas1[stuRow][4];
 					CString cn;
 					cn.Format("c%d", classStep + 1);
 					classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
@@ -744,6 +770,19 @@ void CViewBooking2::OnBnClickedDoPrint()
 
 				xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
 				printx.AddStudent(student);
+
+				//发送短信
+				//CMSGINFO dlgMsg;
+				//dlgMsg.m_strStu = name;
+				//dlgMsg.m_strCoach = sheetInfo.strCoach;
+				//dlgMsg.m_strCar = sheetInfo.strCarID;
+				//int classi = classStep + 1;
+				//dlgMsg.m_strClassIndex.Format("%d", classi);
+				//CString classTime = GetClassTime(classID);
+				//dlgMsg.m_strDate = date + classTime;
+				//dlgMsg.Init(5);
+				//CString strSMS = dlgMsg.m_strSMS;
+				//SendSMS("name", m_datas1[stuRow][7], strSMS);
 			}
 			printx.m_printerInfo.nCopy = 1;
 			printx.Printx(1, strMsg);
@@ -754,6 +793,37 @@ void CViewBooking2::OnBnClickedDoPrint()
 	//
 }
 
+void CViewBooking2::SendSMS(CString strStu, CString strTEL, CString strMsg)
+{
+	return;
+
+	CString strSMS;
+	strSMS.Format("%s:%s>%s", strTEL, strStu, strMsg);
+	int SMSlen = strlen(strSMS);
+	int len = 6 + SMSlen;
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+	if (pFrame->m_pSendBuf != NULL)
+	{
+		//MessageBox("上一个信息还未处理完毕，请稍等重试。");
+		WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
+	}
+	else
+	{
+		pFrame->m_isSendReady = FALSE;
+		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+		pFrame->m_nSendLen = len;
+		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+		pFrame->m_pSendBuf[1] = 5; //短信类型
+		memcpy(pFrame->m_pSendBuf + 2, &SMSlen, 4); //档案数量
+
+		char* data = strSMS.GetBuffer();
+		memcpy(pFrame->m_pSendBuf + 6, data, SMSlen);
+		strSMS.ReleaseBuffer();
+		pFrame->m_isSendReady = TRUE;
+
+		WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
+	}
+}
 
 //void CViewBooking2::OnStnClickedGrid1()
 //{

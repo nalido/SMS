@@ -203,6 +203,8 @@
 #define IDC_COMBO_STU                   1154
 #define IDC_COACH                       1155
 #define IDC_STU                         1156
+#define IDC_COMBO_STU2                  1157
+#define IDC_COMBO_CLASS                 1157
 #define IDC_RADIO1                      1158
 #define IDC_RADIO2                      1159
 #define IDC_SERVICE_SCORE               1160

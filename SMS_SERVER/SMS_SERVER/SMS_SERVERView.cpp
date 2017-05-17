@@ -348,21 +348,21 @@ void CSMS_SERVERView::SendSMS(BYTE flag, CString& vFiles)
 
 	if (vFiles.IsEmpty()) return;
 
-	//TEL:ID>MSG flg<6
-	//TEL:MSG  flag=6
+	//TEL:ID>MSG flg<60
+	//TEL:MSG  flag=60
 	int pos1 = vFiles.Find(":");
 	if (pos1 == -1) return; //invalid
 	CString strTel = vFiles.Left(pos1);
 
 	CString strStuID;
 	int pos2 = vFiles.Find(">");
-	if (flag < 6)
+	if (flag < 60)
 	{
 		if (pos2 == -1) return; //无效信息
 
 		strStuID = vFiles.Mid(pos1+1, pos2-pos1-1);
 	}
-	else if (flag==6)
+	else if (flag==60)
 	{
 		pos2 = pos1;
 	}
@@ -371,10 +371,10 @@ void CSMS_SERVERView::SendSMS(BYTE flag, CString& vFiles)
 	
 	strPosData.Format("action=send&username=dhjx&password=c739fa3c630ca4e65ac9efdc8317df7d&apiid=13952&mobiles=%s&text=%s", strTel, strSMS);
 	char* posdata = EncodeToUTF8(strPosData);
-	//hPost.HttpPost(strUrl, posdata, strResponse);
+	hPost.HttpPost(strUrl, posdata, strResponse);
 	strSMS = strResponse.c_str();
 
-	if (flag < 6)
+	if (flag < 5)
 	{
 		//更新数据库
 		CString strMsg, strSQL;
@@ -393,29 +393,24 @@ void CSMS_SERVERView::SendSMS(BYTE flag, CString& vFiles)
 		case 4:
 			step = 7;
 			break;
-		case 5:
-			step = 7;
-			break;
 		}
 		strSQL.Format("UPDATE students SET STEP='%d' WHERE FILE_NAME='%s'", step, strStuID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	}
+	else if (flag==6 || flag==7) //路训报考
+	{
+		//更新数据库
+		CString strMsg, strSQL;
+		CString strTypeName = "K2_STAT";
+		if (flag == 7)
+			strTypeName = "K3_STAT";
+		strSQL.Format("UPDATE stuDates SET %s='2' WHERE STU_ID='%s'", strTypeName, strStuID);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	}
 
 	m_arMsg.AddTail("发送成功。");
 	ListFresh();
 	return;
-
-	
-	if (flag == 1)//发送开班短信
-	{
-
-	}//end flag 1
-	else if (flag == 2) //退款通知
-	{
-
-	}// end flag 2
-
-
 }
 
 void CSMS_SERVERView::SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize)

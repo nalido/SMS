@@ -107,33 +107,42 @@ BOOL CMSGINFO::OnInitDialog()
 	m_wndDatePicker.m_monthFormat = 2;
 
 	CString strKeyName("");
+
+	m_strHints[0] = "______";
+	m_strHints[1] = "______";
+	m_strHints[2] = "______";
+	m_strHints[3] = "______";
+	m_strHints[4] = "______";
+	m_strHints[5] = "______";
+
+	m_S[0].EnableWindow(FALSE);
+	m_S[1].EnableWindow(FALSE);
+	m_S[2].EnableWindow(FALSE);
+	m_S[3].EnableWindow(FALSE);
+	m_S[4].EnableWindow(FALSE);
+	m_S[5].EnableWindow(FALSE);
+
+	m_E[0].EnableWindow(FALSE);
+	m_E[1].EnableWindow(FALSE);
+	m_E[2].EnableWindow(FALSE);
+	m_E[3].EnableWindow(FALSE);
+
+	m_arrComb.push_back("科目一");
+	m_arrComb.push_back("科目二");
+	m_arrComb.push_back("科目三");
+	m_Comb.AddString("科目一");
+	m_Comb.AddString("科目二");
+	m_Comb.AddString("科目三");
+	m_Comb.EnableWindow(FALSE);
 	switch (m_nFlag)
 	{
 	case 1: //开班短信
 	{
 				m_strHints[0] = "学员期数";
-				m_strHints[1] = "______";
-				m_strHints[2] = "______";
-				m_strHints[3] = "______";
-				m_strHints[4] = "______";
 				m_strHints[5] = "上课时间";
 
-				m_S[1].EnableWindow(FALSE);
-				m_S[2].EnableWindow(FALSE);
-				m_S[3].EnableWindow(FALSE);
-				m_S[4].EnableWindow(FALSE);
-				m_E[1].EnableWindow(FALSE);
-				m_E[2].EnableWindow(FALSE);
-				m_E[3].EnableWindow(FALSE);
-
-				m_arrComb.push_back("科目一");
-				m_arrComb.push_back("科目二");
-				m_arrComb.push_back("科目三");
-				m_Comb.AddString("科目一");
-				m_Comb.AddString("科目二");
-				m_Comb.AddString("科目三");
-				m_Comb.EnableWindow(FALSE);
-
+				m_S[0].EnableWindow(TRUE);
+				m_S[5].EnableWindow(TRUE);
 
 				strKeyName = "K1PrePass";
 				m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
@@ -150,27 +159,9 @@ BOOL CMSGINFO::OnInitDialog()
 		break;
 	case 2: //退款短信
 	{
-				m_strHints[0] = "______";
-				m_strHints[1] = "______";
-				m_strHints[2] = "______";
-				m_strHints[3] = "______";
-				m_strHints[4] = "______";
 				m_strHints[5] = "退款时间";
 
-				m_S[0].EnableWindow(FALSE);
-				m_S[1].EnableWindow(FALSE);
-				m_S[2].EnableWindow(FALSE);
-				m_S[3].EnableWindow(FALSE);
-				m_S[4].EnableWindow(FALSE);
 				m_S[5].EnableWindow(TRUE);
-
-				m_E[0].EnableWindow(FALSE);
-				m_E[1].EnableWindow(FALSE);
-				m_E[2].EnableWindow(FALSE);
-				m_E[3].EnableWindow(FALSE);
-
-				m_Comb.EnableWindow(FALSE);
-
 
 				strKeyName = "K1NOPass";
 				m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
@@ -182,26 +173,9 @@ BOOL CMSGINFO::OnInitDialog()
 		break;
 	case 3: //科一考试短信
 	{
-				m_strHints[0] = "______";
-				m_strHints[1] = "______";
-				m_strHints[2] = "______";
-				m_strHints[3] = "______";
-				m_strHints[4] = "______";
 				m_strHints[5] = "考试时间";
 
-				m_S[0].EnableWindow(FALSE);
-				m_S[1].EnableWindow(FALSE);
-				m_S[2].EnableWindow(FALSE);
-				m_S[3].EnableWindow(FALSE);
-				m_S[4].EnableWindow(FALSE);
 				m_S[5].EnableWindow(TRUE);
-
-				m_E[0].EnableWindow(FALSE);
-				m_E[1].EnableWindow(FALSE);
-				m_E[2].EnableWindow(FALSE);
-				m_E[3].EnableWindow(FALSE);
-
-				m_Comb.EnableWindow(FALSE);
 
 				strKeyName = "K1Exame";
 				m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
@@ -210,33 +184,51 @@ BOOL CMSGINFO::OnInitDialog()
 	}
 		break;
 	case 4: //培训预约短信
-		strKeyName = "K1PrePass";
+	{
+				m_strHints[5] = "预约时间";
+
+				m_S[5].EnableWindow(TRUE);
+
+				strKeyName = "K23Booking";
+				m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
+				m_strSMSTmp.Replace("N", m_strStu);
+				m_strSMS = m_strSMSTmp;
+	}
+		break;
+	case 44: //非第一次预约
+	{
+				 m_strHints[5] = "预约时间";
+
+				 m_S[5].EnableWindow(TRUE);
+
+				 m_wndTimePicker.EnableWindow(FALSE);
+
+				 strKeyName = "K23Booking2";
+				 m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
+				 m_strSMSTmp.Replace("N", m_strStu);
+				 m_strSMS = m_strSMSTmp;
+	}
+		break;
+	case 45: //非第一次预约
+	{
+				 m_wndDatePicker.EnableWindow(FALSE);
+				 m_wndTimePicker.EnableWindow(FALSE);
+
+				 strKeyName = "K23Booking2";
+				 m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
+				 m_strSMSTmp.Replace("N", m_strStu);
+				 m_strSMSTmp.Replace("T", m_strDate);
+				 m_strSMS = m_strSMSTmp;
+	}
 		break;
 	case 5: //上课提醒短信
 		strKeyName = "K1PrePass";
 		break;
 	case 6: //科二考试短信
 	{
-				m_strHints[0] = "______";
-				m_strHints[1] = "______";
-				m_strHints[2] = "______";
-				m_strHints[3] = "______";
-				m_strHints[4] = "______";
 				m_strHints[5] = "考试时间";
 
-				m_S[0].EnableWindow(FALSE);
-				m_S[1].EnableWindow(FALSE);
-				m_S[2].EnableWindow(FALSE);
-				m_S[3].EnableWindow(FALSE);
-				m_S[4].EnableWindow(FALSE);
 				m_S[5].EnableWindow(TRUE);
-
-				m_E[0].EnableWindow(FALSE);
-				m_E[1].EnableWindow(FALSE);
-				m_E[2].EnableWindow(FALSE);
-				m_E[3].EnableWindow(FALSE);
-
-				m_Comb.EnableWindow(FALSE);
 
 				strKeyName = "K2Exame";
 				m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
@@ -246,26 +238,9 @@ BOOL CMSGINFO::OnInitDialog()
 		break;
 	case 7: //科三考试短信
 	{
-				m_strHints[0] = "______";
-				m_strHints[1] = "______";
-				m_strHints[2] = "______";
-				m_strHints[3] = "______";
-				m_strHints[4] = "______";
 				m_strHints[5] = "考试时间";
 
-				m_S[0].EnableWindow(FALSE);
-				m_S[1].EnableWindow(FALSE);
-				m_S[2].EnableWindow(FALSE);
-				m_S[3].EnableWindow(FALSE);
-				m_S[4].EnableWindow(FALSE);
 				m_S[5].EnableWindow(TRUE);
-
-				m_E[0].EnableWindow(FALSE);
-				m_E[1].EnableWindow(FALSE);
-				m_E[2].EnableWindow(FALSE);
-				m_E[3].EnableWindow(FALSE);
-
-				m_Comb.EnableWindow(FALSE);
 
 				strKeyName = "K3Exame";
 				m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
@@ -286,7 +261,23 @@ BOOL CMSGINFO::OnInitDialog()
 
 void CMSGINFO::Init(int flag)
 {
-	m_nFlag = flag;
+	CString strKeyName("");
+	switch (flag)
+	{
+	case 5: //上课提醒短信
+		strKeyName = "NextClass";
+		m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
+		m_strSMSTmp.Replace("N", m_strStu);
+		m_strSMSTmp.Replace("L", m_strCoach); 
+		m_strSMSTmp.Replace("M", m_strCar);
+		m_strSMSTmp.Replace("K", m_strClassIndex);
+		m_strDate.Replace("A", "上午");
+		m_strDate.Replace("P", "下午");
+		m_strSMSTmp.Replace("T", m_strDate);
+
+		m_strSMS = m_strSMSTmp;
+		break;
+	}
 }
 
 HBRUSH CMSGINFO::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -378,13 +369,18 @@ void CMSGINFO::UpdateSMS()
 	}
 		break;
 	case 3: //科一考试短信
+	case 4: //培训预约短信
 	{
 				CString str = m_strDate + m_strTime;
 				m_strSMS.Replace("T", str);
 	}
 		break;
-	case 4: //培训预约短信
-		
+	case 44: //培训预约短信
+	{
+				m_strSMS.Replace("T", m_strDate);
+	}
+		break;
+	case 45: //培训预约短信
 		break;
 	case 5: //上课提醒短信
 		

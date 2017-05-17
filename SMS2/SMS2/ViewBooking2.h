@@ -6,6 +6,7 @@
 #include "BCGClass\VirtualGridCtrl.h"
 #include "xPublic\MySQLEx.h"
 #include "SheetCtrl.h"
+#include "MSGINFO.h"
 
 // CViewBooking2 窗体视图
 typedef std::vector<int> Indexes;
@@ -85,6 +86,7 @@ public:
 
 	//派工单
 	CSheetCtrl m_wndPrint;
+	void SendSMS(CString strStu, CString strTEL, CString strMsg);
 	afx_msg void OnBnClickedDoPrint();
 //	afx_msg void OnStnClickedGrid1();
 	afx_msg void OnPaint();

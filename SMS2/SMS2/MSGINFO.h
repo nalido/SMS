@@ -26,6 +26,9 @@ public:
 	CString m_strClassIssue;//期号
 	CString m_strSMSTmp; //原始模板
 	CString m_strSMS;
+	CString m_strCoach;
+	CString m_strCar;
+	CString m_strClassIndex;
 
 	CStatic m_S[7];
 	CStatic m_SMS;
