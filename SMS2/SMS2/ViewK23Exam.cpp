@@ -26,6 +26,11 @@ void CViewK23Exam::DoDataExchange(CDataExchange* pDX)
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_GRID1, m_wndGridLocation1);
 	DDX_Control(pDX, IDC_GRID2, m_wndGridLocation2);
+
+	DDX_Control(pDX, IDC_COLOR1, m_C[0]);
+	DDX_Control(pDX, IDC_COLOR2, m_C[1]);
+	DDX_Control(pDX, IDC_COLOR3, m_C[2]);
+	DDX_Control(pDX, IDC_COLOR4, m_C[3]);
 }
 
 BEGIN_MESSAGE_MAP(CViewK23Exam, CBCGPFormView)
@@ -36,6 +41,7 @@ BEGIN_MESSAGE_MAP(CViewK23Exam, CBCGPFormView)
 	ON_BN_CLICKED(IDC_SENDSMS, &CViewK23Exam::OnBnClickedSendsms)
 	ON_BN_CLICKED(IDC_K1PASS, &CViewK23Exam::OnBnClickedK23pass)
 	ON_BN_CLICKED(IDC_UPDATE, &CViewK23Exam::OnBnClickedUpdate)
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
@@ -106,7 +112,46 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		else
 		{
 			pdi->item.varValue = "访问内存出错";
+			return TRUE;
 		}
+
+		//颜色状态控制 已考过一科的黄色， 满足报考条件的红色， 已经报考的浅绿色， 已经通知的深绿色
+		CString strType = pThis->m_datas1[nRow][4];
+		int nClass = atoi(pThis->m_datas1[nRow][5]);
+		int minClass = g_nMinK2Class;
+		int statIndex = 6;
+		int statIndex1 = 7;
+		if (strType == "科目三")
+		{
+			statIndex = 7;
+			statIndex1 = 6;
+			minClass = g_nMinK3Class;
+		}
+
+		int state = atoi(pThis->m_datas1[nRow][statIndex]);
+		switch (state)
+		{
+		case 0:
+			if (nClass >= minClass) //满足报考条件
+				pdi->item.clrBackground = COLOR_LITTLE;
+			else //不满足报考条件的 考察另一个科目的考试情况
+			{
+				if (pThis->m_datas1[nRow][statIndex1] == "3")
+					pdi->item.clrBackground = COLOR_HALF;
+			}
+			break;
+		case 1:
+			pdi->item.clrBackground = COLOR_DOING;
+			break;
+		case 2:
+			pdi->item.clrBackground = COLOR_DONE;
+			break;
+		case 3:
+			pdi->item.clrBackground = COLOR_HALF;
+			break;
+		}
+		
+		
 	}
 
 	return TRUE;
@@ -131,11 +176,20 @@ static BOOL CALLBACK Grid2Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		else
 		{
 			pdi->item.varValue = "访问内存出错";
+			return TRUE;
 		}
 
-		if (pThis->m_datas2[nRow][6] == "4")
+		//颜色状态控制 已经发过短信的深绿色显示
+		CString strType = pThis->m_datas2[nRow][6];
+		int statIndex = 7; //默认科目二
+		if (strType == "科目三")
 		{
-			pdi->item.clrBackground = COLOR_MANY;
+			statIndex = 8;
+		}
+		int stat = atoi(pThis->m_datas2[nRow][statIndex]);
+		if (stat == 2)
+		{
+			pdi->item.clrBackground = COLOR_DONE;
 		}
 	}
 
@@ -233,9 +287,10 @@ void CViewK23Exam::Refresh()
 	CString strMsg("");
 	CString strSQL("");
 	strSQL.Format("SELECT students.SNAME, students.GENDER, students.TEL, students.FILE_NAME, \
-					students.CLASS_TYPE, students.CLASS_NUM FROM students \
+					students.CLASS_TYPE, students.CLASS_NUM, \
+					stuDates.K2_STAT, stuDates.K3_STAT FROM students \
 					inner join stuDates ON students.FILE_NAME=stuDates.STU_ID\
-					WHERE students.CLASS_TYPE!='0'");
+					WHERE students.CLASS_TYPE!='0' AND stuDates.ENDED='0'");
 	m_datas1.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg))
 	{
@@ -251,14 +306,15 @@ void CViewK23Exam::Refresh()
 				  	students.FILE_NAME, stuDates.K2_DATE, students.CLASS_TYPE, \
 					stuDates.K2_STAT, stuDates.K3_STAT FROM students \
 					inner join stuDates ON students.FILE_NAME=stuDates.STU_ID\
-					WHERE stuDates.K2_STAT='1'");
+					WHERE stuDates.K2_STAT>'0' AND stuDates.K2_STAT<'3'");
 	m_datas2.clear();
 	g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg);
 	ShowMsg2Output1(strMsg);
 	strSQL.Format("SELECT students.SNAME, students.GENDER, students.TEL, students.CAR_TYPE,\
-				  	students.FILE_NAME, stuDates.K3_DATE, students.CLASS_TYPE FROM students \
+				  	students.FILE_NAME, stuDates.K3_DATE, students.CLASS_TYPE, \
+					stuDates.K2_STAT, stuDates.K3_STAT FROM students \
 					inner join stuDates ON students.FILE_NAME=stuDates.STU_ID\
-					WHERE stuDates.K3_STAT='1'");
+					WHERE stuDates.K3_STAT>'0' AND stuDates.K3_STAT<'3'");
 	g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg);
 	ShowMsg2Output1(strMsg);
 	m_wndGrid2.GridRefresh(m_datas2.size());
@@ -348,13 +404,20 @@ void CViewK23Exam::OnBnClickedSendsms()
 	}
 	else
 	{
-		CString strClassIssue("");
 		CString strSMS("");
 		for (int i = 0; i < nCount; i++)
 		{
 			if (!m_wndGrid2.IsRowSelected(i)) continue;
 
-			if (m_datas2[i][6] == "4")
+			CString strType = m_datas2[i][6];
+			int statIndex = 7; //默认科目二的状态
+			CString strTypeName = "K2_DATE";
+			if (strType == "科目三")
+			{
+				statIndex = 8;
+				strTypeName = "K3_DATE";
+			}
+			if (m_datas2[i][statIndex] == "2") 
 			{
 				CString strM;
 				strM.Format("%s已经发送过通知短信，是否继续发送？", m_datas2[i][0]);
@@ -362,15 +425,13 @@ void CViewK23Exam::OnBnClickedSendsms()
 			}
 
 			CMSGINFO dlgMsg;
-			dlgMsg.m_nFlag = 3;
+			dlgMsg.m_nFlag = statIndex-1;
 			dlgMsg.m_strStu = m_datas2[i][0];
-			dlgMsg.m_strClassIssue = strClassIssue;
 			if (dlgMsg.DoModal() != IDOK) continue;
-			strClassIssue = dlgMsg.m_strClassIssue;
 			CString strSMS0 = dlgMsg.m_strSMS;
 
 			//数据打包发送
-			CString strStuID = m_datas2[i][5];
+			CString strStuID = m_datas2[i][4];
 			CString strTel = m_datas2[i][2];
 			strSMS.Format("%s:%s>%s", strTel, strStuID, strSMS0);
 			int SMSlen = strlen(strSMS);
@@ -389,7 +450,7 @@ void CViewK23Exam::OnBnClickedSendsms()
 
 			CString strDate = dlgMsg.m_strDate; //考试日期
 			CString strSQL, strMsg;
-			strSQL.Format("UPDATE stuDates SET K1_DATE='%s' WHERE STU_ID='%s'", strDate, strStuID);
+			strSQL.Format("UPDATE stuDates SET %s='%s' WHERE STU_ID='%s'", strTypeName, strDate, strStuID);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 
 			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
@@ -407,11 +468,43 @@ void CViewK23Exam::OnBnClickedK23pass()
 		int nRow = pRow->GetRowId();
 
 		CString strSQL, strMsg;
-		strMsg.Format("该操作不可撤销，请确认%s学员是否已经通过科目一考试？", m_datas2[nRow][0]);
+
+		CString strDate = m_datas2[nRow][5];
+		if (strDate == "0" || strDate.IsEmpty())
+		{
+			return;
+		}
+
+		CString strType = m_datas2[nRow][6];
+		int statIndex = 8; //默认科目二通过, 通过考试后查询科目三的状态
+		CString strTypeName = "K2_STAT";
+		CString strNextClass = "科目三";
+		if (strType == "科目三")
+		{
+			statIndex = 7;
+			strTypeName = "K3_STAT";
+			strNextClass = "科目二";
+		}
+
+		strMsg.Format("该操作不可撤销，请确认%s学员是否已经通过%s考试？", m_datas2[nRow][0], strType);
 		if (MessageBox(strMsg, "警告", MB_YESNOCANCEL) != IDYES) return;
 
-		strSQL.Format("UPDATE students SET STEP='6' WHERE FILE_NAME='%s'", m_datas2[nRow][5]);
+
+		strSQL.Format("UPDATE stuDates SET %s='3' WHERE STU_ID='%s'", strTypeName, m_datas2[nRow][4]);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+
+		//检查该学员是否通过全部考试
+		int anotherStat = atoi(m_datas2[nRow][statIndex]);
+		if (anotherStat < 3) //另一个科目没有过
+		{
+			strSQL.Format("UPDATE students SET CLASS_TYPE='%s' WHERE FILE_NAME='%s'", strNextClass, m_datas2[nRow][4]);
+			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		}
+		else //全部通过，完成驾校学习，设置标志位
+		{
+			strSQL.Format("UPDATE stuDates SET ENDED='1' WHERE STU_ID='%s'", m_datas2[nRow][4]);
+			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		}
 
 		Refresh();
 	}
@@ -421,4 +514,21 @@ void CViewK23Exam::OnBnClickedK23pass()
 void CViewK23Exam::OnBnClickedUpdate()
 {
 	Refresh();
+}
+
+
+void CViewK23Exam::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	
+	COLORREF col[4] = { COLOR_LITTLE, COLOR_DOING, COLOR_DONE, COLOR_HALF };
+	for (int i = 0; i < 4; i++)
+	{
+		CRect rect;
+		m_C[i].GetClientRect(&rect);
+		m_C[i].MapWindowPoints(this, &rect);
+		COLORREF color = col[i];
+		CBrush brush(color);
+		dc.FillRect(rect, &brush);
+	}
 }

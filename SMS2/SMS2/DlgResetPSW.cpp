@@ -139,7 +139,7 @@ void CDlgResetPSW::OnBnClickedSms()
 		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
 		pFrame->m_nSendLen = len;
 		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
-		pFrame->m_pSendBuf[1] = 6; //验证码短信
+		pFrame->m_pSendBuf[1] = 60; //验证码短信
 		memcpy(pFrame->m_pSendBuf + 2, &nCount, 4); //字符串长度
 
 		char* data = strSMS.GetBuffer();

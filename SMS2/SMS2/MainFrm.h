@@ -92,6 +92,8 @@ extern int g_nClassTotal; //每个课时每天可以预约的总数
 extern int g_nMaxBooking; //每个学员最多预约课数
 extern int g_nSubForLeave; //教练缺勤一次减去的学员数量
 extern int g_nMinWorkTime; //教练一个月最少工时
+extern int g_nMinK2Class; //科目二可以报考的最小课时
+extern int g_nMinK3Class; //科目三可以报考的最小课时
 
 extern CString g_strUserID; //当前用户工号
 extern int g_nPermissions[6]; //当前用户的权限
@@ -119,6 +121,7 @@ enum enum_StudentProgress{
 #define COLOR_COMPLETE RGB(149, 200, 146)
 #define COLOR_DOING RGB(195, 218, 195)
 #define COLOR_DONE RGB(149, 200, 146)
+#define COLOR_HALF RGB(214, 195, 147)
 
 enum VIEW_TYPE{
 	VIEW_MAIN = 0,

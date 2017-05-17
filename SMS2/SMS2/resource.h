@@ -55,7 +55,6 @@
 #define IDD_PERMISSION                  214
 #define IDD_MONTH_PLATE                 215
 #define IDD_NOPASS                      216
-#define IDD_DIALOG6                     217
 #define IDD_K23EXAM                     217
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
@@ -123,7 +122,9 @@
 #define IDC_LIST2                       1075
 #define IDC_SAVE3                       1075
 #define IDC_BTN_PASS                    1076
+#define IDC_SAVE4                       1076
 #define IDC_BTN_FRESH                   1077
+#define IDC_SAVE5                       1077
 #define IDC_LIST3                       1078
 #define IDC_RETURN1                     1079
 #define IDC_RETURN2                     1080
@@ -214,7 +215,9 @@
 #define IDC_COMBO2                      1163
 #define IDC_K1PLACE                     1163
 #define IDC_COMBO3                      1164
+#define IDC_MIN_K2CLASS                 1164
 #define IDC_COMBO4                      1165
+#define IDC_MIN_K3CLASS                 1165
 #define IDC_COMBO5                      1166
 #define IDC_COMBO6                      1167
 #define IDC_MSG1                        1168
@@ -280,6 +283,10 @@
 #define IDC_CANCEL                      1236
 #define IDC_CALENDAR                    1243
 #define IDC_TIME                        1246
+#define IDC_COLOR1                      1248
+#define IDC_COLOR2                      1249
+#define IDC_COLOR3                      1250
+#define IDC_COLOR4                      1251
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -340,7 +347,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        218
 #define _APS_NEXT_COMMAND_VALUE         32893
-#define _APS_NEXT_CONTROL_VALUE         1248
+#define _APS_NEXT_CONTROL_VALUE         1249
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

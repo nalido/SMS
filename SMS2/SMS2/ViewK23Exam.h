@@ -37,6 +37,8 @@ public:
 	int m_nColumns1;
 	void Refresh();
 
+	CStatic m_C[4];
+
 	CStatic m_wndGridLocation2;
 	CVirtualGridCtrl m_wndGrid2;
 	CDStrs m_datas2;
@@ -46,6 +48,7 @@ public:
 	afx_msg void OnBnClickedSendsms();
 	afx_msg void OnBnClickedK23pass();
 	afx_msg void OnBnClickedUpdate();
+	afx_msg void OnPaint();
 };
 
 

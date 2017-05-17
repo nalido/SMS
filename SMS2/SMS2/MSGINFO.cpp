@@ -215,6 +215,64 @@ BOOL CMSGINFO::OnInitDialog()
 	case 5: //上课提醒短信
 		strKeyName = "K1PrePass";
 		break;
+	case 6: //科二考试短信
+	{
+				m_strHints[0] = "______";
+				m_strHints[1] = "______";
+				m_strHints[2] = "______";
+				m_strHints[3] = "______";
+				m_strHints[4] = "______";
+				m_strHints[5] = "考试时间";
+
+				m_S[0].EnableWindow(FALSE);
+				m_S[1].EnableWindow(FALSE);
+				m_S[2].EnableWindow(FALSE);
+				m_S[3].EnableWindow(FALSE);
+				m_S[4].EnableWindow(FALSE);
+				m_S[5].EnableWindow(TRUE);
+
+				m_E[0].EnableWindow(FALSE);
+				m_E[1].EnableWindow(FALSE);
+				m_E[2].EnableWindow(FALSE);
+				m_E[3].EnableWindow(FALSE);
+
+				m_Comb.EnableWindow(FALSE);
+
+				strKeyName = "K2Exame";
+				m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
+				m_strSMSTmp.Replace("N", m_strStu);
+				m_strSMS = m_strSMSTmp;
+	}
+		break;
+	case 7: //科三考试短信
+	{
+				m_strHints[0] = "______";
+				m_strHints[1] = "______";
+				m_strHints[2] = "______";
+				m_strHints[3] = "______";
+				m_strHints[4] = "______";
+				m_strHints[5] = "考试时间";
+
+				m_S[0].EnableWindow(FALSE);
+				m_S[1].EnableWindow(FALSE);
+				m_S[2].EnableWindow(FALSE);
+				m_S[3].EnableWindow(FALSE);
+				m_S[4].EnableWindow(FALSE);
+				m_S[5].EnableWindow(TRUE);
+
+				m_E[0].EnableWindow(FALSE);
+				m_E[1].EnableWindow(FALSE);
+				m_E[2].EnableWindow(FALSE);
+				m_E[3].EnableWindow(FALSE);
+
+				m_Comb.EnableWindow(FALSE);
+
+				strKeyName = "K3Exame";
+				m_strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
+				m_strSMSTmp.Replace("N", m_strStu);
+				m_strSMS = m_strSMSTmp;
+	}
+		break;
 	}
 
 	//char* strSMS = EncodeToUTF8(m_strSMS);

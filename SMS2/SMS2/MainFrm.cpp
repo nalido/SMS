@@ -39,6 +39,8 @@ int g_nSubForLeave = 8;
 int g_nMinWorkTime = 176;
 int g_nPermissions[6] = { 0 };
 CString g_strUserID = "";
+int g_nMinK2Class = 8;
+int g_nMinK3Class = 10;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
