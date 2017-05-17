@@ -221,6 +221,7 @@
     <ClInclude Include="MyPicCtrl.h" />
     <ClInclude Include="OrderDetail.h" />
     <ClInclude Include="Response.h" />
+    <ClInclude Include="ViewAllStudents.h" />
     <ClInclude Include="ViewDevices.h" />
     <ClInclude Include="ViewHome.h" />
     <ClInclude Include="ViewK23Exam.h" />
@@ -277,6 +278,7 @@
     <ClCompile Include="MyPicCtrl.cpp" />
     <ClCompile Include="OrderDetail.cpp" />
     <ClCompile Include="Response.cpp" />
+    <ClCompile Include="ViewAllStudents.cpp" />
     <ClCompile Include="ViewDevices.cpp" />
     <ClCompile Include="ViewHome.cpp" />
     <ClCompile Include="ViewK23Exam.cpp" />

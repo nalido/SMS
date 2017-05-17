@@ -453,6 +453,9 @@ void CViewK23Exam::OnBnClickedSendsms()
 			strSQL.Format("UPDATE stuDates SET %s='%s' WHERE STU_ID='%s'", strTypeName, strDate, strStuID);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 
+			strSQL.Format("INSERT INTO stuDateHistory (EXAM_DATE, STU_ID, EXAM_TYPE) VALUES('%s', '%s', '%s')", strDate, strStuID, strType);
+			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+
 			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
 		}
 

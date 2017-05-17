@@ -23,6 +23,7 @@
 #include "ViewHome.h"
 #include "ViewPermission.h"
 #include "ViewK23Exam.h"
+#include "ViewAllStudents.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -215,6 +216,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_ORDER_RSP, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_ALLSTUDENTS, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_PERMISSION, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
@@ -507,6 +509,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_4STUDENT:
 		SelectView(VIEW_STUDENTENTER);
 		break;
+	case ID_VIEW_ALLSTUDENTS:
+		SelectView(VIEW_ALLSTUDENTS);
+		break;
 	case ID_VIEW_PERMISSION:
 		SelectView(VIEW_PERMISSION);
 		break;
@@ -594,6 +599,9 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_SYSTEM:
 		pClass = RUNTIME_CLASS(CSystem);
+		break;
+	case VIEW_ALLSTUDENTS:
+		pClass = RUNTIME_CLASS(CViewAllStudents);
 		break;
 	case VIEW_PERMISSION:
 		pClass = RUNTIME_CLASS(CViewPermission);

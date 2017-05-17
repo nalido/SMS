@@ -347,7 +347,7 @@ void CViewK1Check::OnBnClickedBtnNopass()
 			CDlgNoPass dlg;
 			dlg.m_strStuName = m_datas[i][0];
 			if (dlg.DoModal() != IDOK) continue;
-			CString strReason = dlg.m_strReason;
+			CString strReason = "nopass:" + dlg.m_strReason;
 
 			nSel++;
 			CString fileNum = m_datas[i][4];
