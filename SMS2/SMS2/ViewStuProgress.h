@@ -29,6 +29,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
 	//virtualGrid
 	CStatic m_wndGridLocation;
@@ -41,6 +42,9 @@ public:
 	afx_msg void OnBnClickedSendbookmsg();
 	static void CALLBACK OnGridDbClick(LPVOID lParam);
 	afx_msg void OnBnClickedTobook();
+	afx_msg void OnBnClickedScan();
+	afx_msg void OnBnClickedSettype();
+	afx_msg void OnBnClickedNextbook();
 };
 
 

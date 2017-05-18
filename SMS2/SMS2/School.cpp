@@ -26,11 +26,17 @@ void CSchool::DoDataExchange(CDataExchange* pDX)
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_NSUBFORLEAVE, m_strSubForLeave);
 	DDX_Text(pDX, IDC_MIN_WORK_TIME, m_strMinWorkTime);
+	DDX_Text(pDX, IDC_K1PLACE, m_strK1Place);
+	DDX_Text(pDX, IDC_MIN_K2CLASS, m_strMinK2Class);
+	DDX_Text(pDX, IDC_MIN_K3CLASS, m_strMinK3Class);
 }
 
 BEGIN_MESSAGE_MAP(CSchool, CBCGPFormView)
 	ON_BN_CLICKED(IDC_SAVE, &CSchool::OnBnClickedSave)
 	ON_BN_CLICKED(IDC_SAVE2, &CSchool::OnBnClickedSave2)
+	ON_BN_CLICKED(IDC_SAVE3, &CSchool::OnBnClickedSave3)
+	ON_BN_CLICKED(IDC_SAVE4, &CSchool::OnBnClickedSave4)
+	ON_BN_CLICKED(IDC_SAVE5, &CSchool::OnBnClickedSave5)
 END_MESSAGE_MAP()
 
 
@@ -60,6 +66,9 @@ void CSchool::OnInitialUpdate()
 
 	m_strSubForLeave.Format("%d", g_nSubForLeave);
 	m_strMinWorkTime.Format("%d", g_nMinWorkTime);
+	m_strK1Place = g_strK1Address;
+	m_strMinK2Class.Format("%d", g_nMinK2Class);
+	m_strMinK3Class.Format("%d", g_nMinK3Class);
 	UpdateData(FALSE);
 }
 
@@ -95,4 +104,52 @@ void CSchool::OnBnClickedSave2()
 
 	g_nMinWorkTime = atoi(m_strMinWorkTime);
 	xPublic::WRIINT2("Coach", "SubForLeave", g_nSubForLeave);
+}
+
+
+void CSchool::OnBnClickedSave3()
+{
+	UpdateData();
+	if (m_strK1Place.IsEmpty())
+	{
+		MessageBox("输入不合法！");
+		m_strK1Place = g_strK1Address;
+		UpdateData(FALSE);
+		return;
+	}
+
+	g_strK1Address = m_strK1Place;
+	xPublic::WRISTR2("SMS", "K1Address", g_strK1Address);
+}
+
+
+void CSchool::OnBnClickedSave4()
+{
+	UpdateData();
+	if (m_strMinK2Class.IsEmpty())
+	{
+		MessageBox("输入不合法！");
+		m_strMinK2Class.Format("%d", g_nMinK2Class);
+		UpdateData(FALSE);
+		return;
+	}
+
+	g_nMinK2Class = atoi(m_strMinK2Class);
+	xPublic::WRIINT2("Students", "MinK2Class", g_nMinK2Class);
+}
+
+
+void CSchool::OnBnClickedSave5()
+{
+	UpdateData();
+	if (m_strMinK3Class.IsEmpty())
+	{
+		MessageBox("输入不合法！");
+		m_strMinK3Class.Format("%d", g_nMinK3Class);
+		UpdateData(FALSE);
+		return;
+	}
+
+	g_nMinK3Class = atoi(m_strMinK3Class);
+	xPublic::WRIINT2("Students", "MinK3Class", g_nMinK3Class);
 }

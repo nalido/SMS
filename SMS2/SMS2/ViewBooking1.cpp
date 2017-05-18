@@ -47,12 +47,32 @@ BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
 	ON_WM_SIZE()
 	ON_WM_PAINT()
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 //	ON_BN_CLICKED(IDC_BUTTON1, &CViewBooking1::OnBnClickedButton1)
 ON_BN_CLICKED(IDC_STUDENT_SEL, &CViewBooking1::OnBnClickedStudentSel)
 ON_BN_CLICKED(IDC_CONFIRM, &CViewBooking1::OnBnClickedConfirm)
 ON_BN_CLICKED(IDC_REMOVE, &CViewBooking1::OnBnClickedRemove)
 END_MESSAGE_MAP()
 
+
+LRESULT CViewBooking1::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int flag = (int)wParam;
+
+	if (flag == 1) //update data from database
+	{
+		//数据初始化
+		CTime t = CTime::GetCurrentTime();
+		m_wndCalendar.m_tToday = CTime(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
+		m_wndCalendar.m_PointToday = m_wndCalendar.GetDay0Pos();
+	}
+
+	GetDlgItem(IDC_REMOVE)->EnableWindow(TRUE);
+
+	GetDlgItem(IDC_CONFIRM)->EnableWindow(TRUE);
+	
+	return 0;
+}
 
 // CViewBooking1 诊断
 
@@ -272,15 +292,13 @@ void CViewBooking1::OnInitialUpdate()
 	m_wndCalendar.InitGrid(rectWeek.Width());
 	m_wndCalendar.SetCallBack_Clk(OnCalendarClick);
 
-
-	Refresh(); //刷新列表
-
+	m_LAST_VIEW = VIEW_HOME; //默认回到主页
 }
 
 void CViewBooking1::Refresh()
 {
-	m_wndCalendar.UpdateGrid();
-	UpdateBookingList();
+	m_wndCalendar.UpdateGrid(); //先还原状态
+	UpdateBookingList(); //更新状态
 }
 
 void CViewBooking1::UpdateBookingList()
@@ -293,6 +311,13 @@ void CViewBooking1::UpdateBookingList()
 	{
 		ShowMsg2Output1("查询预约信息成功");
 		int n = m_datas.size();
+
+		if (n >= g_nMaxBooking)
+		{
+			GetDlgItem(IDC_REMOVE)->EnableWindow(FALSE);
+			GetDlgItem(IDC_CONFIRM)->EnableWindow(FALSE);
+		}
+
 		m_strBooked.Format("%d", n);
 		CString state = "1"; //最后一列（第四列）表示已经记录在数据库，避免重复提交数据库
 		for (int i = 0; i < n; i++)
@@ -392,7 +417,6 @@ LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
 		m_strGender = pInfo->strGender;
 		m_strCarType = pInfo->strCarType;
 		m_strFileName = pInfo->strFileName;
-		UpdateData(FALSE);
 
 
 		//本地打开照片，若本地无，则查询服务器下载
@@ -431,6 +455,19 @@ LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
 
 		UpdateData(FALSE);
 	}
+	else if (flag == 3) //设置上一个视图
+	{
+		m_LAST_VIEW = (UINT)wp;
+
+		if (m_LAST_VIEW == VIEW_SCAN)
+		{
+			GetDlgItem(IDC_STUDENT_SEL)->SetWindowTextA("返回");
+		}
+		else
+		{
+			GetDlgItem(IDC_STUDENT_SEL)->SetWindowTextA("选择学员");
+		}
+	}
 
 	return 0;
 }
@@ -439,7 +476,11 @@ LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
 void CViewBooking1::OnBnClickedStudentSel()
 {
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-	pFrame->SelectView(VIEW_STUPROGRESS);
+	if (m_LAST_VIEW == VIEW_SCAN)
+	{
+		pFrame->SelectView(VIEW_SCAN);
+	}
+	else pFrame->SelectView(VIEW_STUPROGRESS);
 }
 
 
@@ -513,6 +554,18 @@ void CViewBooking1::OnBnClickedConfirm()
 					   WHERE FILE_NAME='%s'", m_strFileName, m_strFileName);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
+
+		CDStrs bookNum;
+		strSQL.Format("SELECT BOOK_NUM FROM students WHERE FILE_NAME='%s'", m_strFileName);
+		g_mysqlCon.ExecuteQuery(strSQL, bookNum, strMsg);
+		ShowMsg2Output1(strMsg);
+		int num = atoi(bookNum[0][0]);
+		if (num >= g_nMaxBooking)
+		{
+			strSQL.Format("UPDATE students SET STEP='8' WHERE FILE_NAME='%s'", m_strFileName);
+			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+			ShowMsg2Output1(strMsg);
+		}
 	}
 
 	UpdateBookingList(); //排序

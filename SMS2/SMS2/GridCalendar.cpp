@@ -138,8 +138,58 @@ void CGridCalendar::DrawItems()
 	}
 }
 
+void CGridCalendar::ResetItems()
+{
+
+	for (int i = 0; i < 15; i++)
+	for (int j = 0; j < 7; j++)
+		m_nStatus[i][j][5] = 0; //默认状态为全空
+
+	CBCGPGridRow* pRow;
+	CBCGPGridItem* pItem;
+	for (int r = 0; r < 15; r++)
+	for (int c = 0; c < 7; c++)
+	{
+		pRow = GetRow(r * 2 + 1);
+		pItem = pRow->GetItem(c);
+		COLORREF ColorBK = pItem->GetBackgroundColor();
+		if (ColorBK == COLOR_SELECTED)
+		{
+			CString strText;
+			int m = m_nStatus[r][c][0] + m_nStatus[r][c][1] + m_nStatus[r][c][2] + m_nStatus[r][c][3];
+			int n = g_nClassTotal * 4 - m;
+			strText.Format("可预约数\n\n%d", n);
+			pItem->SetValue((LPCTSTR)strText);
+			int np = m * 25 / g_nClassTotal; //课时预约比例
+			if (np >= 100)
+			{
+				pItem->SetBackgroundColor(COLOR_NONE);
+				pItem->SetTextColor(COLOR_TEXTNONE);
+			}
+			else if (np > 80)
+			{
+				pItem->SetBackgroundColor(COLOR_LITTLE);
+				pItem->SetTextColor(COLOR_TEXTNORMAL);
+			}
+			else
+			{
+				pItem->SetBackgroundColor(COLOR_MANY);
+				pItem->SetTextColor(COLOR_TEXTNORMAL);
+			}
+		}
+	}
+}
+
 void CGridCalendar::UpdateGrid()
 {
+	if (m_tGridDay0 == m_tToday)
+	{
+		ResetItems();
+		return;
+	}
+
+	m_tGridDay0 = m_tToday;
+
 	CString strMaxDay, strMaxDay0;
 	CTime t = CTime::GetCurrentTime();
 	strMaxDay0 = t.Format("%Y/%m/%d");

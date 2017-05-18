@@ -1,10 +1,12 @@
 #pragma once
 
 
+#include "MainFrm.h"
 
 #include "BCGClass\VirtualGridCtrl.h"
 #include "xPublic\MySQLEx.h"
 #include "SheetCtrl.h"
+#include "MSGINFO.h"
 
 // CViewBooking2 窗体视图
 typedef std::vector<int> Indexes;
@@ -35,6 +37,9 @@ public:
 	virtual void OnInitialUpdate();
 	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
+	//SQL
+	xPublic::CThreadBase m_threadMySQL;
+	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
 
 	//virtualGrid
 	CStatic m_wndGridLocation1;
@@ -81,6 +86,7 @@ public:
 
 	//派工单
 	CSheetCtrl m_wndPrint;
+	void SendSMS(CString strStu, CString strTEL, CString strMsg);
 	afx_msg void OnBnClickedDoPrint();
 //	afx_msg void OnStnClickedGrid1();
 	afx_msg void OnPaint();
@@ -93,6 +99,7 @@ public:
 	afx_msg void OnBnClickedOrderQuery();
 	afx_msg void OnBnClickedAutoOrder();
 	afx_msg void OnBnClickedTmpOrder();
+	afx_msg void OnBnClickedChangeclass();
 };
 
 

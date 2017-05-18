@@ -17,8 +17,32 @@
 IMPLEMENT_DYNCREATE(CSMS2View, CBCGPFormView)
 
 BEGIN_MESSAGE_MAP(CSMS2View, CBCGPFormView)
-	ON_WM_SIZE()
+//	ON_WM_SIZE()
+//	ON_WM_PAINT()
+//	ON_WM_ERASEBKGND()
+//	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 END_MESSAGE_MAP()
+
+//LRESULT CSMS2View::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+//{
+//	int flag = (int)wParam;
+//	if (flag == 1)
+//		m_nEraseBkgnd = 0; //不重绘背景 以免闪烁
+//
+//	return 0;
+//}
+
+
+//BOOL CSMS2View::OnEraseBkgnd(CDC* pDC)
+//{
+//	if (m_nEraseBkgnd<6)
+//	{
+//		m_nEraseBkgnd++;
+//		return TRUE;
+//	}
+//	else
+//		return CBCGPFormView::OnEraseBkgnd(pDC);
+//}
 
 // CSMS2View construction/destruction
 
@@ -28,7 +52,7 @@ CSMS2View::CSMS2View()
 
 	EnableVisualManagerStyle();
 
-	// TODO: add construction code here
+	m_nEraseBkgnd = 0;
 
 }
 
@@ -81,7 +105,47 @@ CSMS2Doc* CSMS2View::GetDocument() const // non-debug version is inline
 // CSMS2View message handlers
 
 
-void CSMS2View::OnSize(UINT nType, int cx, int cy)
-{
-	CBCGPFormView::OnSize(nType, cx, cy);
-}
+//void CSMS2View::OnSize(UINT nType, int cx, int cy)
+//{
+//	CBCGPFormView::OnSize(nType, cx, cy);
+//}
+
+
+//void CSMS2View::OnPaint()
+//{
+//	CPaintDC dc(this); // device context for painting
+//
+//	CRect rect;
+//	GetClientRect(&rect);
+//	MapWindowPoints(this, &rect);
+//
+//	CDC     MemDC;
+//	//HBITMAP hbitmap;
+//	CBitmap bitmp;
+//	MemDC.CreateCompatibleDC(&dc);
+//
+//	Point p1(m_rctBK1.left, m_rctBK1.top);
+//	Point p2(m_rctBK2.right, m_rctBK2.bottom);
+//	int width = m_rctBK2.right - m_rctBK1.left;
+//	int height = m_rctBK2.bottom - m_rctBK1.top;
+//
+//	bitmp.CreateCompatibleBitmap(&dc, width, height);
+//	MemDC.SelectObject(&bitmp);
+//
+//	Graphics graph(MemDC.m_hDC);
+//
+//	Image img(L"res//0.bmp");
+//	graph.DrawImage(&img, Rect(p1.X, p1.Y, width, height));
+//
+//
+//
+//	//复制内存DC到屏幕上
+//	CPoint pos = GetScrollPosition();
+//	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, pos.x, pos.y, SRCCOPY);
+//
+//
+//	bitmp.DeleteObject();
+//	MemDC.DeleteDC();
+//}
+
+

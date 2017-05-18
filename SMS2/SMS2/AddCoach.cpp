@@ -89,6 +89,11 @@ void CAddCoach::OnBnClickedAdd()
 
 		strSQL.Format("INSERT INTO coachstat (FILE_NUM) VALUES('%s')", filenum);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+
+		CTime t = CTime::GetCurrentTime();
+		CString month = t.Format("%Y/%m");
+		strSQL.Format("INSERT INTO kpis (KMONTH, COACH_ID, COACH) VALUES('%s','%s','%s')",month, filenum, name);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	}
 
 	OnOK();

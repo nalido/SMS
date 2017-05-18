@@ -6,6 +6,7 @@
 #include "Coaches.h"
 #include "AddCoach.h"
 #include "DlgCoachCheck.h"
+#include "DlgMontPlate.h"
 
 
 // CCoaches
@@ -36,6 +37,7 @@ BEGIN_MESSAGE_MAP(CCoaches, CBCGPFormView)
 	ON_BN_CLICKED(IDC_JIXIAO, &CCoaches::OnBnClickedJixiao)
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_KPI, &CCoaches::OnBnClickedKpi)
+	ON_BN_CLICKED(IDC_MONTHPLATE, &CCoaches::OnBnClickedMonthplate)
 END_MESSAGE_MAP()
 
 
@@ -80,8 +82,8 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		}
 
 		//颜色控制
-		int nLeave = atoi(pThis->m_arCoaches[nRow][9]);
-		if (nLeave >= pThis->m_nMaxLeave)
+		int nBlack = atoi(pThis->m_arCoaches[nRow][11]);
+		if (nBlack > 0)
 		{
 			pdi->item.clrBackground = COLOR_NONE;
 			pdi->item.clrText = COLOR_TEXTNONE;
@@ -115,7 +117,7 @@ void CCoaches::OnInitialUpdate()
 	int nColumn = 0;
 	int hw = m_wndCoaches.GetRowHeaderWidth();
 	LPCTSTR arrColumns[] = { _T("姓名"), _T("性别"), _T("出生日期"), _T("面貌"), _T("手机")
-		, _T("家庭住址"), _T("进厂日期"), _T("档案号"), _T("KPI"), _T("缺勤数"), _T("本月工时") };
+		, _T("家庭住址"), _T("进厂日期"), _T("档案号"), _T("上月KPI"), _T("缺勤数"), _T("本月课时") };
 	const int nColumns = sizeof (arrColumns) / sizeof (LPCTSTR);
 	int w = rect.Width() - hw;
 	int nColumnWidth = w / nColumns;
@@ -135,22 +137,33 @@ void CCoaches::Refresh()
 {
 	CString strMsg("");
 	CString strSQL("");
-	strSQL.Format("SELECT * FROM coachinfo INNER JOIN coachstat ON coachinfo.FILE_NUM=coachstat.FILE_NUM ORDER BY coachstat.PERFORMANCE DESC");
+	strSQL.Format("SELECT coachinfo.SNAME, coachinfo.GENDER, coachinfo.BIRTH, coachinfo.PARTY_STAT, \
+				  coachinfo.TEL, coachinfo.HOME, coachinfo.SIGN_DATE, coachinfo.FILE_NUM, \
+				  coachstat.PERFORMANCE, coachstat.LEAVE_N, coachstat.CLASS_TIME, coachstat.BLACK_NAME FROM coachinfo \
+				  INNER JOIN coachstat ON coachinfo.FILE_NUM=coachstat.FILE_NUM \
+				  ORDER BY coachstat.PERFORMANCE DESC");
 	m_arCoaches.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_arCoaches, strMsg))
 	{
 		ShowMsg2Output1("查询教练信息成功");
+
+		int n = m_arCoaches.size();
+		for (int i = 0; i < n; i++)
+		{
+			double d = atoi(m_arCoaches[i][8])*1.0 / 100;
+			m_arCoaches[i][8].Format("%.2f", d);
+		}
 	}
 	else ShowMsg2Output1(strMsg);
 
 	m_wndCoaches.GridRefresh(m_arCoaches.size());
 
-	CTime t = CTime::GetCurrentTime();
-	int year = t.GetYear();
-	CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
-	//半年内 超过3次请假为不合格, 超过半年按6次算
-	m_nMaxLeave = 3;
-	if (midYear < t) m_nMaxLeave = 6;
+	//CTime t = CTime::GetCurrentTime();
+	//int year = t.GetYear();
+	//CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
+	////半年内 超过3次请假为不合格, 超过半年按6次算
+	//m_nMaxLeave = 3;
+	//if (midYear < t) m_nMaxLeave = 6;
 }
 
 void CCoaches::OnBnClickedAddcoach()
@@ -250,6 +263,19 @@ void CCoaches::OnBnClickedKpi()
 		dlg.m_nCheckType = CHECK_KPI;
 		dlg.m_strCoachID = m_arCoaches[nRow][7];
 		dlg.m_strCoach = m_arCoaches[nRow][0];
+		dlg.DoModal();
+	}
+}
+
+
+void CCoaches::OnBnClickedMonthplate()
+{
+	CBCGPGridRow* pRow = m_wndCoaches.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CDlgMontPlate dlg;
+		dlg.m_strCoachID = m_arCoaches[nRow][7];
 		dlg.DoModal();
 	}
 }

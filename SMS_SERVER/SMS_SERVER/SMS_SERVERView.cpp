@@ -250,16 +250,17 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 		{
 			BYTE Flag = 0;
 			pClient->Receive(&Flag, 1);
-			int number = 0;
-			pClient->Receive(&number, 4);
-			vector<CString> vFiles;
-			for (int i = 0; i < number; i++)
+			int SMSsize = 0;
+			pClient->Receive(&SMSsize, 4);
+			BYTE* SMSBuf = new BYTE[SMSsize + 1];
+
+			if (pClient->Receive(SMSBuf, SMSsize))
 			{
-				char FileNum[9] = { 0 };
-				pClient->Receive(&FileNum, 8); //8位纯数字档案号
-				vFiles.push_back(FileNum);
+				CString strSMS; 
+				SMSBuf[SMSsize] = '\0';
+				strSMS.Format("%s", SMSBuf);
+				pThis->SendSMS(Flag, strSMS);
 			}
-			pThis->SendSMS(Flag, vFiles);
 		}// end MsgType 2
 		else if (MsgType == 3) //学生图片寻找
 		{
@@ -338,62 +339,78 @@ void CSMS_SERVERView::OnTCPRecive(LPVOID lParam, xPublic::CTCPClient *pClient)
 	}
 }
 
-void CSMS_SERVERView::SendSMS(BYTE flag, vector<CString>& vFiles)
+void CSMS_SERVERView::SendSMS(BYTE flag, CString& vFiles)
 {
-	//查询手机号和姓名
-	CDStrs datas;
-	CString strMsg;
-	CString strSQL;
-	int nCount = vFiles.size();
-	for (int i = 0; i < nCount; i++)
-	{
-		if (vFiles[i].IsEmpty()) continue;
+	CHttpClient hPost;
+	CString strUrl("http://121.40.160.86:7890/msgapiv2.aspx"); //发送短信
+	CString strPosData;
+	string strResponse("");
 
-		CDStrs tmp;
-		strSQL.Format("SELECT SNAME, TEL FROM students WHERE FILE_NUMBER='%s'", vFiles[i]);
-		if (g_mysqlCon.ExecuteQuery(strSQL, tmp, strMsg))
-		{
-			datas.push_back(tmp[0]);
-			m_arMsg.AddTail(tmp[0][0]);
-		}
-		else
-		{
-			m_arMsg.AddTail(strMsg);
-		}
+	if (vFiles.IsEmpty()) return;
+
+	//TEL:ID>MSG flg<60
+	//TEL:MSG  flag=60
+	int pos1 = vFiles.Find(":");
+	if (pos1 == -1) return; //invalid
+	CString strTel = vFiles.Left(pos1);
+
+	CString strStuID;
+	int pos2 = vFiles.Find(">");
+	if (flag < 60)
+	{
+		if (pos2 == -1) return; //无效信息
+
+		strStuID = vFiles.Mid(pos1+1, pos2-pos1-1);
 	}
-	m_arMsg.AddTail("查询通讯信息成功");
-
-	//发送短信
-	if (flag == 1)
+	else if (flag==60)
 	{
-		CHttpClient hPost;
-		CString strUrl("http://121.40.160.86:7890/msgapiv2.aspx"); //发送短信
-		CString strPosData;
-		string strResponse("");
-		strMsg.Format("【东华驾校】尊敬的%s先生：您个人的相关资料已顺利通过审核，\
-			请于2017年6月23日（星期二）上午8点：30分之前来我校参加科目一第105期理\
-			论学习（地址：南京市红山路90号第二教室）。谢谢您的配合！", datas[0][0]);
-		strMsg.Remove('\t');
-		//char* cstring = EncodeToUTF8(strMsg); 
-		strPosData.Format("action=send&username=dhjx&password=c739fa3c630ca4e65ac9efdc8317df7d&apiid=13952&mobiles=%s&text=%s", datas[0][1], strMsg);
-		char* posdata = EncodeToUTF8(strPosData);
-		hPost.HttpPost(strUrl, posdata, strResponse);
-		strMsg = strResponse.c_str();
-		LOG("res.log", strMsg);
-		m_arMsg.AddTail(strMsg);
-		int pos1, pos2;
-		pos1 = strMsg.Find(',');
-		pos2 = strMsg.Find('\n');
-		CString response = "Response:" + strMsg.Mid(pos1 + 1, pos2 - pos1);
-		m_arMsg.AddTail(response);
-	}//end flag 1
-	else if (flag == 2) //退款通知
+		pos2 = pos1;
+	}
+
+	CString strSMS = vFiles.Mid(pos2 + 1);
+	
+	strPosData.Format("action=send&username=dhjx&password=c739fa3c630ca4e65ac9efdc8317df7d&apiid=13952&mobiles=%s&text=%s", strTel, strSMS);
+	char* posdata = EncodeToUTF8(strPosData);
+	hPost.HttpPost(strUrl, posdata, strResponse);
+	strSMS = strResponse.c_str();
+
+	if (flag < 5)
 	{
+		//更新数据库
+		CString strMsg, strSQL;
+		int step = 0;
+		switch (flag)
+		{
+		case 1:
+			step = 2;
+			break;
+		case 2:
+			step = 1001;
+			break;
+		case 3:
+			step = 4;
+			break;
+		case 4:
+			step = 7;
+			break;
+		}
+		strSQL.Format("UPDATE students SET STEP='%d' WHERE FILE_NAME='%s'", step, strStuID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	}
+	else if (flag==6 || flag==7) //路训报考
+	{
+		//更新数据库
+		CString strMsg, strSQL;
+		CString strTypeName = "K2_STAT";
+		if (flag == 7)
+			strTypeName = "K3_STAT";
+		strSQL.Format("UPDATE stuDates SET %s='2' WHERE STU_ID='%s'", strTypeName, strStuID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	}
 
-	}// end flag 2
-
+	m_arMsg.AddTail("发送成功。");
 	ListFresh();
-
+	return;
 }
 
 void CSMS_SERVERView::SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize)

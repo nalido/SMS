@@ -31,6 +31,7 @@ namespace xPublic{
 	typedef struct struct_STUDENTINFO //学员信息
 	{
 		CString strName; //学员姓名
+		CString strTEL; //学员手机
 		CString strDate; //约定训练日期
 
 		int nClassTime; //上课时段 0为am8:00-10:00 一节课两小时,以此类推
@@ -44,6 +45,7 @@ namespace xPublic{
 			nClassTime = 0;
 			nClassStep = 0;
 			nClassTotal = 15;
+			strTEL = "";
 		}
 		struct_STUDENTINFO(CString name, CString date, int time, int step, int total)
 		{

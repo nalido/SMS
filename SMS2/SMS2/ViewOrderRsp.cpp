@@ -238,18 +238,38 @@ void CViewOrderRsp::UpdateCoach(int nRow, int flag)
 
 	if (flag == 1) //旷工一次就更新教练的缺勤次数
 	{
-		strSQL.Format("UPDATE coachstat SET LEAVE_N=\
-					  (SELECT COUNT(COACH_ID) FROM coachCheck WHERE COACH_ID='%s' AND TYPE='0')\
-					  WHERE FILE_NUM='%s'", strCoachID, strCoachID);
+		CString strThisYear;
+		strThisYear = m_strToday.Left(4) + "%%";
+		strSQL.Format("SELECT COUNT(COACH_ID) FROM coachCheck WHERE COACH_ID='%s' AND TYPE='0' AND CHECK_DATE LIKE '%s'", strCoachID, strThisYear);
+		CDStrs counts;
+		int count;
+		g_mysqlCon.ExecuteQuery(strSQL, counts, strMsg);
+		ShowMsg2Output1(strMsg);
+		count = atoi(counts[0][0]);
 
+		strSQL.Format("UPDATE coachstat SET LEAVE_N='%d' WHERE FILE_NUM='%s'", count, strCoachID);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
+
+		CTime t = CTime::GetCurrentTime();
+		int year = t.GetYear();
+		CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
+		//半年内 超过3次请假为不合格, 超过半年按6次算
+		int th = 3;
+		if (midYear < t) th = 6;
+		if (count >= th)
+		{
+			strSQL.Format("UPDATE coachstat SET BLACK_NAME='1' WHERE FILE_NUM='%s'", count, strCoachID);
+			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+			ShowMsg2Output1(strMsg);
+		}
 	}
 	else if (flag == 0) //正常完成一次，增加一次本月已上课时数
 	{
-		strSQL.Format("UPDATE coachstat SET CLASS_NUM=\
-					  	(SELECT COUNT(COACH_ID) FROM coachCheck WHERE COACH_ID='%s' AND TYPE='1')\
-						WHERE FILE_NUM='%s'", strCoachID, strCoachID);
+		CString strThisMonth = m_strToday.Left(7) + "%%";
+		strSQL.Format("UPDATE coachstat SET CLASS_TIME=\
+					  	(SELECT COUNT(COACH_ID) FROM coachCheck WHERE COACH_ID='%s' AND STUDENT='1' AND CHECK_DATE LIKE '%s')\
+						WHERE FILE_NUM='%s'", strCoachID, strThisMonth, strCoachID);
 
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);

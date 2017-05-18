@@ -69,6 +69,9 @@
     <ClInclude Include="xPublic\HTTPClient.h">
       <Filter>xPublic</Filter>
     </ClInclude>
+    <ClInclude Include="xPublic\Common.h">
+      <Filter>xPublic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -111,6 +114,9 @@
       <Filter>BCGClass</Filter>
     </ClCompile>
     <ClCompile Include="xPublic\HTTPClient.cpp">
+      <Filter>xPublic</Filter>
+    </ClCompile>
+    <ClCompile Include="xPublic\Common.cpp">
       <Filter>xPublic</Filter>
     </ClCompile>
   </ItemGroup>

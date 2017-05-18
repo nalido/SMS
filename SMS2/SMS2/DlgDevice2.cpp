@@ -694,8 +694,12 @@ void CDlgDevice2::OnBnClickedRadio1()
 	m_wndGridY.EnableWindow(FALSE);
 	m_wndGrid.GridRefresh(m_datas.size());
 
-	GetDlgItem(IDC_DELITEM)->EnableWindow(TRUE);
-	GetDlgItem(IDC_NEWITEM)->EnableWindow(TRUE);
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		GetDlgItem(IDC_DELITEM)->EnableWindow(TRUE);
+		GetDlgItem(IDC_NEWITEM)->EnableWindow(TRUE);
+	}
 }
 
 

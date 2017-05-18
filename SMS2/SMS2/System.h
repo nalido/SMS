@@ -30,8 +30,12 @@ public:
 	virtual void OnInitialUpdate();
 
 	CString m_strFilePath;
+	CString m_strOutPath;
 	afx_msg void OnBnClickedChangepath();
 	afx_msg void OnBnClickedChangeback();
+	afx_msg void OnBnClickedFilepath2();
+	afx_msg void OnBnClickedChangepath2();
+	afx_msg void OnBnClickedChangeback2();
 };
 
 

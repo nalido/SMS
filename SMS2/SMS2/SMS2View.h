@@ -43,7 +43,12 @@ protected:
 	afx_msg void OnFilePrintPreview();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+//	afx_msg void OnSize(UINT nType, int cx, int cy);
+
+//	afx_msg void OnPaint();
+//	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	int m_nEraseBkgnd; //窗口重绘次数(根据控件个数决定)
+//	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 };
 
 #ifndef _DEBUG  // debug version in SMS2View.cpp

@@ -141,13 +141,52 @@
     <ClInclude Include="DlgDevice.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="PNGButton.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DlgDevice2.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DlgDateItem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewKPI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewScan.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewStudentEnter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewStuffEnter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgNewStuff.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgResetPSW.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewHome.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgMyBooks.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgNextClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewPermission.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgMontPlate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgNoPass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewK23Exam.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewAllStudents.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -266,13 +305,52 @@
     <ClCompile Include="DlgDevice.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="PNGButton.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DlgDevice2.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DlgDateItem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewKPI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewScan.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewStudentEnter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewStuffEnter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgNewStuff.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgResetPSW.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewHome.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgMyBooks.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgNextClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewPermission.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgMontPlate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgNoPass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewK23Exam.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewAllStudents.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -354,6 +432,9 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\保养.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\0.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

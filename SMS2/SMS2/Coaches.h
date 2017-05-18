@@ -40,8 +40,8 @@ public:
 	afx_msg void OnBnClickedJixiao();
 	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
-	int m_nMaxLeave; //教练可缺勤的最大次数
 	afx_msg void OnBnClickedKpi();
+	afx_msg void OnBnClickedMonthplate();
 };
 
 

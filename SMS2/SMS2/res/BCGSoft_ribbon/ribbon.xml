@@ -2,7 +2,7 @@
 <BCGP_RIBBON>
 	<HEADER>
 		<VERSION>1</VERSION>
-		<VERSION_STAMP>3</VERSION_STAMP>
+		<VERSION_STAMP>12</VERSION_STAMP>
 	</HEADER>
 	<RIBBON_BAR>
 		<ELEMENT_NAME>RibbonBar</ELEMENT_NAME>
@@ -207,9 +207,42 @@
 		<CATEGORIES>
 			<CATEGORY>
 				<ELEMENT_NAME>Category</ELEMENT_NAME>
-				<NAME>新生管理</NAME>
+				<NAME>主页</NAME>
 				<IMAGE_LARGE>
 					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_0</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>应用入口</NAME>
+						<ELEMENTS>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_4STUDENT</NAME>
+									<VALUE>32886</VALUE>
+								</ID>
+								<TEXT>学员查询</TEXT>
+								<INDEX_LARGE>1</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_STUFF</NAME>
+									<VALUE>32888</VALUE>
+								</ID>
+								<TEXT>员工登录</TEXT>
+								<INDEX_LARGE>0</INDEX_LARGE>
+							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>新生管理</NAME>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_1</NAME>
 				</IMAGE_LARGE>
 				<PANELS>
 					<PANEL>
@@ -251,7 +284,7 @@
 				<ELEMENT_NAME>Category</ELEMENT_NAME>
 				<NAME>学员管理</NAME>
 				<IMAGE_LARGE>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_1</NAME>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_2</NAME>
 				</IMAGE_LARGE>
 				<PANELS>
 					<PANEL>
@@ -296,13 +329,53 @@
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>路训报考</NAME>
+						<ELEMENTS>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_K23EXAM</NAME>
+									<VALUE>32892</VALUE>
+								</ID>
+								<TEXT>路训报考</TEXT>
+								<INDEX_LARGE>15</INDEX_LARGE>
+							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>设备管理</NAME>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_3</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>设备管理</NAME>
+						<ELEMENTS>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_DEVICE</NAME>
+									<VALUE>32873</VALUE>
+								</ID>
+								<TEXT>设备管理</TEXT>
+								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
+								<INDEX_LARGE>0</INDEX_LARGE>
+							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
 				</PANELS>
 			</CATEGORY>
 			<CATEGORY>
 				<ELEMENT_NAME>Category</ELEMENT_NAME>
 				<NAME>员工管理</NAME>
 				<IMAGE_LARGE>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_2</NAME>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_4</NAME>
 				</IMAGE_LARGE>
 				<PANELS>
 					<PANEL>
@@ -330,17 +403,8 @@
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
-									<NAME>ID_VIEW_DEVICE</NAME>
-									<VALUE>32873</VALUE>
-								</ID>
-								<TEXT>设备管理</TEXT>
-								<INDEX_LARGE>0</INDEX_LARGE>
-							</ELEMENT>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>ID_VIEW_CHECK</NAME>
-									<VALUE>32875</VALUE>
+									<NAME>ID_VIEW_SCAN</NAME>
+									<VALUE>32884</VALUE>
 								</ID>
 								<TEXT>查阅</TEXT>
 								<INDEX_LARGE>11</INDEX_LARGE>
@@ -351,12 +415,71 @@
 			</CATEGORY>
 			<CATEGORY>
 				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>信息统计</NAME>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_5</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>学生统计</NAME>
+						<ELEMENTS>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_ALLSTUDENTS</NAME>
+									<VALUE>32893</VALUE>
+								</ID>
+								<TEXT>学生信息统计</TEXT>
+								<INDEX_LARGE>0</INDEX_LARGE>
+							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>驾校管理</NAME>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_6</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>驾校管理</NAME>
+						<ELEMENTS>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_SCHOOLSETTING</NAME>
+									<VALUE>32870</VALUE>
+								</ID>
+								<TEXT>驾校设置</TEXT>
+								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
+								<INDEX_LARGE>0</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_PERMISSION</NAME>
+									<VALUE>32891</VALUE>
+								</ID>
+								<TEXT>员工权限管理</TEXT>
+								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
+								<INDEX_LARGE>1</INDEX_LARGE>
+							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
 				<NAME>设置</NAME>
 				<IMAGE_SMALL>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_SMALL_3</NAME>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_SMALL_7</NAME>
 				</IMAGE_SMALL>
 				<IMAGE_LARGE>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_3</NAME>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_7</NAME>
 				</IMAGE_LARGE>
 				<PANELS>
 					<PANEL>
@@ -389,16 +512,6 @@
 						<ELEMENT_NAME>Panel</ELEMENT_NAME>
 						<NAME>系统设置</NAME>
 						<ELEMENTS>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>ID_VIEW_SCHOOLSETTING</NAME>
-									<VALUE>32870</VALUE>
-								</ID>
-								<TEXT>驾校管理</TEXT>
-								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
-								<INDEX_LARGE>12</INDEX_LARGE>
-							</ELEMENT>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
