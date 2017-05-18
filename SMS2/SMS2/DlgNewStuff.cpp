@@ -30,7 +30,7 @@ void CDlgNewStuff::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_S2, m_S[1]);
 	DDX_Control(pDX, IDC_S3, m_S[2]);
 	DDX_Control(pDX, IDC_S4, m_S[3]);
-	DDX_Control(pDX, IDC_S7, m_S[6]);
+	DDX_Control(pDX, IDC_S5, m_S[4]);
 	DDX_Control(pDX, IDC_S8, m_S[7]);
 
 	DDX_Text(pDX, IDC_E1, m_strName); 
@@ -59,7 +59,7 @@ HBRUSH CDlgNewStuff::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	case IDC_S2:
 	case IDC_S3:
 	case IDC_S4:
-	case IDC_S7:
+	case IDC_S5:
 	{
 				   pDC->SetBkMode(TRANSPARENT);
 				   pDC->SetTextColor(RGB(51, 103, 155));
@@ -111,6 +111,30 @@ void CDlgNewStuff::OnBnClickedRegister()
 	}
 
 	CString strMsg, strSQL;
+	
+	BOOL isMaster = FALSE;
+	if (m_strName.Right(6) == "master") //管理员注册
+	{
+		strSQL.Format("SELECT UNAME FROM stuff WHERE UPERMISSION='1'");
+		CDStrs masters;
+		if (g_mysqlCon.ExecuteQuery(strSQL, masters, strMsg))
+		{
+			if (masters.size() > 0)
+			{
+				MessageBox("当前系统已经有管理员！请去掉用户名后的“master”或者请当前管理员移交管理权限！");
+				return;
+			}
+			else
+			{
+				isMaster = TRUE;
+				int pos = m_strName.ReverseFind('m');
+				m_strName = m_strName.Left(pos);
+				strMsg.Format("您好！欢迎注册管理员用户！注册成功后用户名为%s", m_strName);
+				MessageBox(strMsg);
+			}
+		}
+	}
+
 	strSQL.Format("SELECT UPSWD FROM stuff WHERE UTEL='%s'", m_strTel);
 	if (g_mysqlCon.ExecuteQueryExist(strSQL, strMsg))
 	{
@@ -119,8 +143,12 @@ void CDlgNewStuff::OnBnClickedRegister()
 		return;
 	}
 
-	strSQL.Format("INSERT INTO stuff (UNAME, UPSWD, UID, UTEL) VALUES ('%s', PASSWORD('%s'), '%s', '%s')"
-		, m_strName, m_strPSW1, m_strID, m_strTel);
+	if (!isMaster)
+		strSQL.Format("INSERT INTO stuff (UNAME, UPSWD, UID, UTEL) VALUES ('%s', PASSWORD('%s'), '%s', '%s')"
+			, m_strName, m_strPSW1, m_strID, m_strTel);
+	else
+		strSQL.Format("INSERT INTO stuff (UNAME, UPSWD, UID, UTEL, UPERMISSION) VALUES ('%s', PASSWORD('%s'), '%s', '%s', '1')"
+			, m_strName, m_strPSW1, m_strID, m_strTel);
 	if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 	{
 		strMsg.Format("注册成功！现在您可以使用%s登录啦~", m_strName);

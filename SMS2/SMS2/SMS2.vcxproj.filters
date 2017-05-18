@@ -141,9 +141,6 @@
     <ClInclude Include="DlgDevice.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="PNGButton.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DlgDevice2.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -169,6 +166,27 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ViewHome.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgMyBooks.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgNextClass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewPermission.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgMontPlate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgNoPass.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewK23Exam.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewAllStudents.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -287,9 +305,6 @@
     <ClCompile Include="DlgDevice.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="PNGButton.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DlgDevice2.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -315,6 +330,27 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ViewHome.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgMyBooks.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgNextClass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewPermission.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgMontPlate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgNoPass.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewK23Exam.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewAllStudents.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

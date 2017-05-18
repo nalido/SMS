@@ -6,6 +6,7 @@
 #include "TmpOrder.h"
 #include "afxdialogex.h"
 #include "MainFrm.h"
+#include "MSGINFO.h"  //临时派工不发短信
 
 
 // CTmpOrder 对话框
@@ -30,6 +31,7 @@ void CTmpOrder::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_COACH, m_Comb_Coach);
 	DDX_Control(pDX, IDC_COMBO_STU, m_Comb_Stu);
 	DDX_Control(pDX, IDC_COMBO_TIME, m_Comb_Time);
+	DDX_Control(pDX, IDC_COMBO_CLASS, m_Comb_Class);
 	DDX_Control(pDX, IDC_DATE, m_Date);
 	DDX_Control(pDX, IDC_COACH, m_SCoach);
 	DDX_Control(pDX, IDC_STU, m_SStu);
@@ -40,6 +42,7 @@ void CTmpOrder::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_COMBO_COACH, m_strCoach);
 	DDX_Text(pDX, IDC_COMBO_STU, m_strStu);
 	DDX_Text(pDX, IDC_COMBO_TIME, m_strTime);
+	DDX_Text(pDX, IDC_COMBO_CLASS, m_strNextClass);
 	DDX_Text(pDX, IDC_DATE, m_strBookDate);
 	DDX_Text(pDX, IDC_COACH, m_strCoachID);
 	DDX_Text(pDX, IDC_STU, m_strStuID);
@@ -82,6 +85,13 @@ BOOL CTmpOrder::OnInitDialog()
 	for (int i = 0; i < m_datasCoach.size(); i++)
 		m_Comb_Coach.AddString(m_datasCoach[i][0]);
 
+	for (int i = 0; i < g_nMaxBooking; i++)
+	{
+		CString str;
+		str.Format("%d", i + 1);
+		m_Comb_Class.AddString(str);
+	}
+
 	m_Date.SetFormat("yyyy/MM/dd");
 
 
@@ -95,7 +105,7 @@ void CTmpOrder::Refresh()
 
 	if (m_strType.IsEmpty()) return;
 	//全部可用学员信息
-	strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, students.CLASS_NUM, students.FILE_NAME\
+	strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, students.CLASS_NUM, students.FILE_NAME, students.TEL\
 				  	FROM students WHERE STEP>='7' AND STEP<'1000' AND CLASS_TYPE='%s' ORDER BY SNAME",
 					m_strType);
 	m_datasStu.clear();
@@ -196,6 +206,7 @@ void CTmpOrder::OnCbnSelchangeComboStu()
 	int pos = m_Comb_Stu.GetCurSel();
 	m_strStuID = m_datasStu[pos][3];
 	m_strNClass = m_datasStu[pos][2];
+	m_strTEL = m_datasStu[pos][4];
 
 	CRect rect;
 	m_SStu.GetClientRect(&rect);
@@ -216,7 +227,7 @@ void CTmpOrder::OnBnClickedPrint()
 
 	UpdateData(TRUE);
 	if (m_strCar.IsEmpty() || m_strCoach.IsEmpty() || m_strBookDate.IsEmpty() ||
-		m_strNClass.IsEmpty() || m_strStu.IsEmpty() || m_strStuID=="查无此人" ||
+		m_strNextClass.IsEmpty() || m_strStu.IsEmpty() || m_strStuID=="查无此人" ||
 		m_strTime.IsEmpty() || m_strType.IsEmpty() || m_strCoachID=="查无此人")
 	{
 		MessageBox("派工单信息未完善，不能打印");
@@ -229,7 +240,7 @@ void CTmpOrder::OnBnClickedPrint()
 	xPublic::SHEETINFO sheetInfo;
 
 	//派工单信息
-	int classStep = atoi(m_strNClass);
+	int classStep = atoi(m_strNextClass);
 	CString cn;
 	cn.Format("c%d", classStep + 1);
 	classInfo.nClassID = xPublic::GETINT2(m_strType, cn, 0);
@@ -244,6 +255,7 @@ void CTmpOrder::OnBnClickedPrint()
 	//学员信息
 	int classID = m_Comb_Time.GetCurSel();
 	xPublic::STUDENTINFO student(m_strStu, m_strBookDate.Right(8), classID, classStep, g_nMaxBooking);
+	student.strTEL = m_strTEL;
 	printx.AddStudent(student);
 
 	//上传数据库
@@ -283,7 +295,7 @@ void CTmpOrder::OnBnClickedOk()
 	{
 		UpdateData(TRUE);
 		if (m_strCar.IsEmpty() || m_strCoach.IsEmpty() || m_strBookDate.IsEmpty() ||
-			m_strNClass.IsEmpty() || m_strStu.IsEmpty() || m_strStuID == "查无此人" ||
+			m_strNextClass.IsEmpty() || m_strStu.IsEmpty() || m_strStuID == "查无此人" ||
 			m_strTime.IsEmpty() || m_strType.IsEmpty() || m_strCoachID == "查无此人")
 		{
 			MessageBox("派工单信息未完善!");

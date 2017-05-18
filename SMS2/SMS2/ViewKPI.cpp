@@ -19,7 +19,7 @@ CViewKPI::CViewKPI()
 
 CViewKPI::~CViewKPI()
 {
-	m_threadMySQL.StartThread();
+	m_threadMySQL.StopThread();
 }
 
 void CViewKPI::DoDataExchange(CDataExchange* pDX)
@@ -305,7 +305,7 @@ void CALLBACK CViewKPI::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
 		strSQL.Format("UPDATE KPIS SET SAMPLE_NUM='%d', SATISFIED_DEGREE='%d', SATISFIED_PERCENT='%d',\
 						SKILL_PERCENT='%d', SCORE='%d'\
 						WHERE COACH_ID='%s' AND KMONTH='%s'",
-						nStudents, service, good, self, kpi, coaches[nCoach], thisMonth.Left(7));
+						nStudents, service, good, self, kpi, coaches[nCoach][0], thisMonth.Left(7));
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 
 		c.push_back(item);

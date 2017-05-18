@@ -71,7 +71,7 @@ public:
 	void SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize);
 
 	//短信平台
-	void SendSMS(BYTE flag, vector<CString>& vFiles); //flag: 1-开班短信 2-退款短信
+	void SendSMS(BYTE flag, CString& vFiles); //flag: 1-开班短信 2-退款短信
 };
 
 #ifndef _DEBUG  // debug version in SMS_SERVERView.cpp

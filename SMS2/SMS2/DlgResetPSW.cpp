@@ -131,20 +131,20 @@ void CDlgResetPSW::OnBnClickedSms()
 	else
 	{
 		CString strSMS;
-		m_strSMS0 = datas[0][0].Right(4);
-		strSMS.Format("%s>%s", m_strTel, m_strSMS0);
+		m_strSMS0 = "【东华驾校】验证码：" + datas[0][0].Right(4);
+		strSMS.Format("%s:%s", m_strTel, m_strSMS0);
 		int nCount = strlen(strSMS);
 		int len = 6 + nCount; //Type(1) Flag(1) Number(4) FileNums(Number*8)
 		pFrame->m_isSendReady = FALSE;
 		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
 		pFrame->m_nSendLen = len;
 		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
-		pFrame->m_pSendBuf[1] = 6; //验证码短信
+		pFrame->m_pSendBuf[1] = 60; //验证码短信
 		memcpy(pFrame->m_pSendBuf + 2, &nCount, 4); //字符串长度
 
 		char* data = strSMS.GetBuffer();
 		memcpy(pFrame->m_pSendBuf + 6, data, nCount);
-		m_strSMS0.ReleaseBuffer();
+		m_strSMS.ReleaseBuffer();
 		pFrame->m_isSendReady = TRUE;
 	}
 }

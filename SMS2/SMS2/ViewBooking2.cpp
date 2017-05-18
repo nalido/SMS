@@ -4,12 +4,11 @@
 #include "stdafx.h"
 #include "SMS2.h"
 #include "ViewBooking2.h"
-#include "MainFrm.h"
 #include "xPublic\MyPrint.h"
 #include "OrderDetail.h"
 #include "Orders.h"
 #include "TmpOrder.h"
-
+#include "DlgNextClass.h"
 
 // CViewBooking2
 
@@ -17,6 +16,7 @@ IMPLEMENT_DYNCREATE(CViewBooking2, CBCGPFormView)
 
 CViewBooking2::CViewBooking2()
 	: CBCGPFormView(CViewBooking2::IDD)
+	, m_threadMySQL(this, ThreadMySQLCallback)
 {
 	EnableVisualManagerStyle();
 
@@ -52,6 +52,7 @@ BEGIN_MESSAGE_MAP(CViewBooking2, CBCGPFormView)
 	ON_BN_CLICKED(IDC_ORDER_QUERY, &CViewBooking2::OnBnClickedOrderQuery)
 	ON_BN_CLICKED(IDC_AUTO_ORDER, &CViewBooking2::OnBnClickedAutoOrder)
 	ON_BN_CLICKED(IDC__TMP_ORDER, &CViewBooking2::OnBnClickedTmpOrder)
+	ON_BN_CLICKED(IDC_CHANGECLASS, &CViewBooking2::OnBnClickedChangeclass)
 END_MESSAGE_MAP()
 
 
@@ -73,6 +74,13 @@ void CViewBooking2::Dump(CDumpContext& dc) const
 
 
 // CViewBooking2 消息处理程序
+
+void CALLBACK CViewBooking2::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
+{
+	CViewBooking2* pThis = (CViewBooking2*)pParam;
+	
+	pThis->Refresh(0);
+}
 
 static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 {
@@ -273,6 +281,7 @@ void CALLBACK CViewBooking2::OnGrid1Click(LPVOID lParam)
 				pPrint->m_sheetInfo.strClassType = classType;
 			}
 			xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
+			student.strTEL = pThis->m_datas1[nRow][7];
 			pPrint->m_printData.AddStudent(student);
 			pThis->m_wndPrint.Invalidate();
 
@@ -324,6 +333,7 @@ void CALLBACK CViewBooking2::OnOrdersClick(LPVOID lParam)
 			}
 
 			xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
+			student.strTEL = pThis->m_datas1[nRow][7];
 			pPrint->m_printData.AddStudent(student);
 		}
 
@@ -478,15 +488,15 @@ void CViewBooking2::Refresh(int nID)
 {
 	CString strMsg("");
 	CString strSQL("");
+	CString strDate("");
+	strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d");
 
 	if (nID == 0 || nID == 1)//查询待预约学生信息
-	{
-		CString strDate("");
-		strDate = m_isToday ? m_tToday.Format("%Y/%m/%d") : m_tTomorrow.Format("%Y/%m/%d"); //AND FLAG='0'
+	{ //AND FLAG='0'
 		strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, \
-						students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME \
+						students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME, students.TEL \
 					  	FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
-						WHERE BOOK_DATE='%s' ORDER BY bookings.CLASS_ID, students.CLASS_NUM", strDate);
+						WHERE BOOK_DATE='%s' ORDER BY bookings.CLASS_ID, students.CLASS_NUM, students.SNAME", strDate);
 		m_datas1.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg))
 		{
@@ -494,10 +504,11 @@ void CViewBooking2::Refresh(int nID)
 		}
 		else ShowMsg2Output1(strMsg);
 
-		m_wndGrid1.GridRefresh(m_datas1.size());
 
 		//学员分类
 		GetClassIndex();
+
+		PostMessage(WM_USER_UPDATE_VIEW, (WPARAM)2);
 	}
 
 	if (nID == 0 || nID == 2)//查询待可预约教练员信息
@@ -511,18 +522,64 @@ void CViewBooking2::Refresh(int nID)
 					  	coachstat INNER JOIN coachinfo ON coachinfo.FILE_NUM=coachstat.FILE_NUM \
 						WHERE coachstat.BLACK_NAME='0' ORDER BY coachstat.PERFORMANCE DESC");
 		m_datas2.clear();
-		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg))
+		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg) && m_datas2.size()>0)
 		{
 			ShowMsg2Output1("查询教练员信息成功");
+
+			//去掉请假的
+			strSQL.Format("SELECT COACH_ID FROM askforleave WHERE LEAVE_DATE='%s'", strDate);
+			CDStrs leaves; //请假表
+			g_mysqlCon.ExecuteQuery(strSQL, leaves, strMsg);
+			ShowMsg2Output1(strMsg);
 			int n = m_datas2.size();
-			for (int i = 0; i < n; i++)
+			int nl = leaves.size();
+			for (int i = n-1; i >= 0; i--)
 			{
-				m_datas2[i].push_back("0"); //最后一列为已安排课时数，每个教练早上下午晚上各有一次机会
+				for (int k = 0; k < nl; k++)
+				{
+					if (leaves[k][0] == m_datas2[i][2])
+					{
+						CDStrs::iterator it = m_datas2.begin() + i;
+						m_datas2.erase(it);
+						break;
+					}
+				}
+				//m_datas2[i].push_back("0"); //最后一列为已安排课时数，每个教练早上下午晚上各有一次机会
+			}
+
+			//去掉前一天派工未闭环的
+			CTime tYestoday = (m_isToday ? m_tToday : m_tTomorrow) - CTimeSpan(1, 0, 0, 0);
+			CString strYestoday = tYestoday.Format("%Y/%m/%d");
+			strSQL.Format("SELECT ORDER_COACH FROM bookings WHERE BOOK_DATE='%s' AND FLAG='1'", strYestoday);
+			leaves.clear();
+			g_mysqlCon.ExecuteQuery(strSQL, leaves, strMsg);
+			ShowMsg2Output1(strMsg);
+			n = m_datas2.size();
+			nl = leaves.size();
+			for (int i = n - 1; i >= 0; i--)
+			{
+				for (int k = 0; k < nl; k++)
+				{
+					if (leaves[k][0] == m_datas2[i][2])
+					{
+						CDStrs::iterator it = m_datas2.begin() + i;
+						m_datas2.erase(it);
+						break;
+					}
+				}
+			}
+
+			//KPI变为小数
+			int n2 = m_datas2.size();
+			for (int i = 0; i < n2; i++)
+			{
+				double d = atoi(m_datas2[i][3])*1.0 / 100;
+				m_datas2[i][3].Format("%.2f", d);
 			}
 		}
 		else ShowMsg2Output1(strMsg);
 
-		m_wndGrid2.GridRefresh(m_datas2.size());
+		PostMessage(WM_USER_UPDATE_VIEW, (WPARAM)3);
 	}
 
 	if (nID == 0 || nID == 3)//查询可用车辆信息
@@ -535,12 +592,8 @@ void CViewBooking2::Refresh(int nID)
 		}
 		else ShowMsg2Output1(strMsg);
 
-		int nCount = m_datas3.size();
-		m_Combo_Cars.ResetContent();
-		for (int i = 0; i < nCount; i++)
-		{
-			m_Combo_Cars.AddString(m_datas3[i][0]);
-		}
+
+		PostMessage(WM_USER_UPDATE_VIEW, (WPARAM)4);
 	}
 
 	if (nID == 4) //查询派工单的合法性
@@ -643,7 +696,15 @@ LRESULT CViewBooking2::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 	{
 		m_wndGrid2.GridRefresh(m_datas2.size());
 	}
-
+	else if (flag == 4)
+	{
+		int nCount = m_datas3.size();
+		m_Combo_Cars.ResetContent();
+		for (int i = 0; i < nCount; i++)
+		{
+			m_Combo_Cars.AddString(m_datas3[i][0]);
+		}
+	}
 	return 0;
 }
 
@@ -677,7 +738,26 @@ void CViewBooking2::OnBnClickedDoPrint()
 		CString strMsg("");
 		printx.Printx(1, strMsg);
 		TRACE(strMsg);
-		OnBnClickedOrder();
+
+		//发送短信
+		//int n = printx.m_students.size();
+		//for (int nRow = 0; nRow < n; nRow++)
+		//{
+		//	CMSGINFO dlgMsg;
+		//	dlgMsg.m_strStu = printx.m_students[nRow].strName;
+		//	dlgMsg.m_strCoach = m_wndPrint.m_printData.m_sheetInfo->strCoach;
+		//	dlgMsg.m_strCar = m_wndPrint.m_printData.m_sheetInfo->strCarID;
+		//	int classi = printx.m_students[nRow].nClassStep + 1;
+		//	dlgMsg.m_strClassIndex.Format("%d", classi);
+		//	CString classTime = GetClassTime(printx.m_students[nRow].nClassTime);
+		//	dlgMsg.m_strDate = printx.m_students[nRow].strDate + classTime;
+		//	dlgMsg.Init(5);
+		//	CString strSMS = dlgMsg.m_strSMS;
+		//	SendSMS("name", printx.m_students[nRow].strTEL, strSMS);
+		//}
+
+		if (m_canChangeOrder)
+			OnBnClickedOrder();
 	}
 	else if (printType == 2)
 	{
@@ -687,6 +767,11 @@ void CViewBooking2::OnBnClickedDoPrint()
 		sheetInfo.strDate = m_tToday.Format("%Y年%m月%d日制");
 		printx.PrinterInit(&sheetInfo, &classInfo);
 		int size = m_orderIndexes.size() - 1;
+		if (size < 0)
+		{
+			MessageBox("派工单工作区没有派工单可以打印！");
+			return;
+		}
 		for (int nRow = size; nRow >= 0; nRow--)
 		{
 			Indexes indexes = m_orderIndexes[nRow];
@@ -709,7 +794,7 @@ void CViewBooking2::OnBnClickedDoPrint()
 				//第一个加入的学员决定派工单的授课内容
 				if (classInfo.nClassID == 0)
 				{
-					CString classType = m_datas1[nRow][4];
+					CString classType = m_datas1[stuRow][4];
 					CString cn;
 					cn.Format("c%d", classStep + 1);
 					classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
@@ -717,6 +802,19 @@ void CViewBooking2::OnBnClickedDoPrint()
 
 				xPublic::STUDENTINFO student(name, date, classID, classStep, g_nMaxBooking);
 				printx.AddStudent(student);
+
+				//发送短信
+				//CMSGINFO dlgMsg;
+				//dlgMsg.m_strStu = name;
+				//dlgMsg.m_strCoach = sheetInfo.strCoach;
+				//dlgMsg.m_strCar = sheetInfo.strCarID;
+				//int classi = classStep + 1;
+				//dlgMsg.m_strClassIndex.Format("%d", classi);
+				//CString classTime = GetClassTime(classID);
+				//dlgMsg.m_strDate = date + classTime;
+				//dlgMsg.Init(5);
+				//CString strSMS = dlgMsg.m_strSMS;
+				//SendSMS("name", m_datas1[stuRow][7], strSMS);
 			}
 			printx.m_printerInfo.nCopy = 1;
 			printx.Printx(1, strMsg);
@@ -727,6 +825,37 @@ void CViewBooking2::OnBnClickedDoPrint()
 	//
 }
 
+void CViewBooking2::SendSMS(CString strStu, CString strTEL, CString strMsg)
+{
+	return;
+
+	CString strSMS;
+	strSMS.Format("%s:%s>%s", strTEL, strStu, strMsg);
+	int SMSlen = strlen(strSMS);
+	int len = 6 + SMSlen;
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+	if (pFrame->m_pSendBuf != NULL)
+	{
+		//MessageBox("上一个信息还未处理完毕，请稍等重试。");
+		WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
+	}
+	else
+	{
+		pFrame->m_isSendReady = FALSE;
+		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+		pFrame->m_nSendLen = len;
+		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+		pFrame->m_pSendBuf[1] = 5; //短信类型
+		memcpy(pFrame->m_pSendBuf + 2, &SMSlen, 4); //档案数量
+
+		char* data = strSMS.GetBuffer();
+		memcpy(pFrame->m_pSendBuf + 6, data, SMSlen);
+		strSMS.ReleaseBuffer();
+		pFrame->m_isSendReady = TRUE;
+
+		WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
+	}
+}
 
 //void CViewBooking2::OnStnClickedGrid1()
 //{
@@ -782,11 +911,11 @@ void CViewBooking2::OnBnClickedOrder()
 		{
 			MessageBox("派工单未完成！");
 
-			CString strMsg;
-			TRACE("=============\r\n");
-			for (int nn = 0; nn < m_order.size(); nn++)
-				TRACE("[%d]%d\r\n", nn, m_order[nn]);
-			TRACE("=============\r\n");
+			//CString strMsg;
+			//TRACE("=============\r\n");
+			//for (int nn = 0; nn < m_order.size(); nn++)
+			//	TRACE("[%d]%d\r\n", nn, m_order[nn]);
+			//TRACE("=============\r\n");
 			return;
 		}
 	}
@@ -794,6 +923,7 @@ void CViewBooking2::OnBnClickedOrder()
 	//检测派工单的合法性
 
 	//上传数据库
+	int nClassIndex = m_wndPrint.m_classInfo.nClassID;
 	int nstu = n - 2;
 	for (int i = 0; i < nstu; i++)
 	{
@@ -807,9 +937,9 @@ void CViewBooking2::OnBnClickedOrder()
 
 		CString strMsg, strSQL;
 		strSQL.Format("UPDATE bookings SET FLAG='1', ORDER_DATE='%s', ORDER_COACH='%s', ORDER_CAR='%s', \
-					  CLASS_NUM='%s', CLASS_TYPE='%s'\
+					  CLASS_NUM='%s', CLASS_TYPE='%s', CLASS_INDEX='%d'\
 					  WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
-					  m_tToday.Format("%Y/%m/%d"), strCoach, strCar, strClassNum, strClassType
+					  m_tToday.Format("%Y/%m/%d"), strCoach, strCar, strClassNum, strClassType, nClassIndex
 					  , strStudent, strDate, strClassID);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
@@ -836,9 +966,14 @@ BOOL CViewBooking2::CanBeSelected(int nRow)
 			return FALSE;
 		}
 
-		//课程时间不同的不能选
-		int classID = (atoi(m_datas1[nRow][2]) - 1) / 2;
-		int selectedID = (atoi(m_datas1[m_order[2]][2]) - 1) / 2;
+		//课程时间重复的不能选
+		int classID = atoi(m_datas1[nRow][2]);
+		int selectedID = atoi(m_datas1[m_order[2]][2]);
+		if (classID == selectedID) return FALSE;
+
+		//课程时间在上下午的不能选 
+		classID = (classID - 1) / 2;
+		selectedID = (selectedID - 1) / 2;
 		if (classID != selectedID) return FALSE;
 	}
 	return TRUE;
@@ -1016,7 +1151,7 @@ void CViewBooking2::OnBnClickedAutoOrder()
 	RestOrder(!m_canChangeOrder);
 	for (; iStu < nStu; iStu++)
 	{
-		if (m_datas1[iStu][5] == "1") //已派工
+		if (m_datas1[iStu][5] != "0") //已派工
 		{
 			continue;
 		}
@@ -1097,7 +1232,7 @@ void CViewBooking2::OnBnClickedAutoOrder()
 		//添加第二个学员
 		for (int t = iStu + 1; t < nStu; t++)
 		{
-			if (m_datas1[t][5] == "1") continue; //已派工
+			if (m_datas1[t][5] != "0") continue; //已派工
 
 			//不是同一节课的不能派工
 			if (!CanBeSelected(t)) continue;
@@ -1133,4 +1268,32 @@ void CViewBooking2::OnBnClickedTmpOrder()
 	dlg.DoModal();
 
 	Refresh(1);
+}
+
+
+void CViewBooking2::OnBnClickedChangeclass()
+{
+	int nStu = m_order.size() - 2;
+	if (nStu > 1)
+	{
+		CString strM = "当前派工单学员大于一个，改变课程内容会同时影响到派工单中所有学员的进度。请将不需要修改内容的学员从派工单中移除后再修改。是否继续？";
+		if (MessageBox(strM, "警告", MB_YESNO) != IDYES) return;
+	}
+
+	if (nStu > 0)
+	{
+		int nRow = m_order[2];
+
+		CString strStuID = m_datas1[nRow][6];
+
+		CDlgNextClass dlg;
+		int nClassIndex;
+		if (dlg.DoModal() == IDOK)
+		{
+			nClassIndex = atoi(dlg.m_strSelectedClass);
+			m_wndPrint.m_classInfo.nClassID = nClassIndex;
+			m_wndPrint.m_classInfo.arrClassText.clear();
+			m_wndPrint.Invalidate();
+		}
+	}
 }

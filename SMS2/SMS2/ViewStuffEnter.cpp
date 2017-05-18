@@ -177,6 +177,21 @@ void CViewStuffEnter::OnPaint()
 	Image img(L"res//0.bmp");
 	graph.DrawImage(&img, Rect(p1.X, p1.Y, width, height));
 
+	CFont fontt1;
+	fontt1.CreateFontA(80, 0, 0, 0, FW_BOLD, 0, 0, 0, 0,
+		0, 0, 0, VARIABLE_PITCH | FF_SWISS, "微软雅黑");
+	CFont* oldF = MemDC.SelectObject(&fontt1);
+	MemDC.SetBkMode(TRANSPARENT);
+	MemDC.SetTextAlign(TA_CENTER);
+	CString stri;
+	stri.Format("东 华 驾 校 管 理 系 统");
+	CPoint pT(width / 2, height / 4);
+	MemDC.SetTextColor(RGB(241, 241, 241));
+	MemDC.TextOutA(pT.x + 3, pT.y + 3, stri);
+	MemDC.SetTextColor(RGB(51, 103, 155));
+	MemDC.SetTextColor(RGB(65, 57, 36));
+	MemDC.TextOutA(pT.x, pT.y, stri);
+
 	SolidBrush brush(Color(150, 230, 230, 230));
 	graph.FillRectangle(&brush, m_rctContent.left, m_rctContent.top, m_rctContent.Width(), m_rctContent.Height());
 
@@ -241,7 +256,7 @@ void CViewStuffEnter::OnBnClickedLogin()
 
 	CString strMsg, strSQL;
 	CDStrs datas;
-	strSQL.Format("SELECT UPERMISSION FROM stuff WHERE UNAME='%s' AND UPSWD=PASSWORD('%s')", m_strName, m_strPSWD);
+	strSQL.Format("SELECT UID, UPERMISSION, NEW_STUDENTS, STUDENTS, DEVICES, STUFF, ALL_STUDENTS FROM stuff WHERE UNAME='%s' AND UPSWD=PASSWORD('%s')", m_strName, m_strPSWD);
 	if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg))
 	{
 		//strMsg.Format("欢迎您， %s", m_strName);
@@ -252,7 +267,12 @@ void CViewStuffEnter::OnBnClickedLogin()
 		if (datas.size() > 0)  //正确登录成功
 		{
 			m_isLoged = TRUE;
-			int permission = atoi(datas[0][0]);
+			g_strUserID = datas[0][0];
+			int permission = atoi(datas[0][1]);
+			for (int i = 0; i < 5; i++)
+			{
+				g_nPermissions[i] = atoi(datas[0][i + 2]);
+			}
 			pFrame->PostMessageA(WM_USER_MESSAGE, (WPARAM)permission);
 
 			//隐藏登录框

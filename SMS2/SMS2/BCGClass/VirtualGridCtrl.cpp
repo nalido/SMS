@@ -199,7 +199,6 @@ void CVirtualGridCtrl::SetCallBack_Clk(ONWORK onWork) //注册双击鼠标回调函数
 }
 
 
-
 void CVirtualGridCtrl::GridRefresh(int nCount)
 {
 	RemoveAll();

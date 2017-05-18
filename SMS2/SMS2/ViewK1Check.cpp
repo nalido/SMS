@@ -6,6 +6,7 @@
 #include "ViewK1Check.h"
 #include "MainFrm.h"
 #include "MSGINFO.h"
+#include "DlgNoPass.h"
 
 
 static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
@@ -83,6 +84,8 @@ void CViewK1Check::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CViewK1Check, CBCGPFormView)
 	ON_WM_CREATE()
+	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_BTN_PASS, &CViewK1Check::OnBnClickedBtnPass)
 	ON_BN_CLICKED(IDC_BTN_FRESH, &CViewK1Check::OnBnClickedBtnFresh)
 	ON_BN_CLICKED(IDC_BTN_NOPASS, &CViewK1Check::OnBnClickedBtnNopass)
@@ -96,6 +99,28 @@ BEGIN_MESSAGE_MAP(CViewK1Check, CBCGPFormView)
 END_MESSAGE_MAP()
 
 
+LRESULT CViewK1Check::OnUserMessage(WPARAM wp, LPARAM lp)
+{
+	int flag = (int)lp;
+	if (flag == 5)  //数据发送成功
+	{
+		Refresh(1);
+	}
+	return 0;
+}
+
+LRESULT CViewK1Check::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int flag = (int)wParam;
+
+	if (flag == 1) //update data from database
+	{
+		//数据初始化
+		Refresh();
+	}
+
+	return 0;
+}
 // CViewK1Check 诊断
 
 #ifdef _DEBUG
@@ -149,7 +174,34 @@ void CViewK1Check::OnInitialUpdate()
 
 	m_wndGridLocation_nopass.GetClientRect(&rectGrid);
 	m_wndGridLocation_nopass.MapWindowPoints(this, &rectGrid); //转为桌面坐标
-	InitList(&m_wndGrid_nopass, rectGrid);
+	//InitList(&m_wndGrid_nopass, rectGrid);
+	DWORD nStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER;
+	m_wndGrid_nopass.Create(nStyle, rectGrid, this, (UINT)-3);
+	m_wndGrid_nopass.SetCustomColors(-1, -1, -1, -1, -1, RGB(0, 0, 0)); //黑色边框
+	m_wndGrid_nopass.EnableHeader(TRUE, 0); //不允许表头移动
+	// Set grid tab order (first):
+	m_wndGrid_nopass.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndGrid_nopass.SetReadOnly();
+	m_wndGrid_nopass.SetWholeRowSel();
+	m_wndGrid_nopass.EnableRowHeader(TRUE);
+	m_wndGrid_nopass.EnableLineNumbers();
+
+	int hw = m_wndGrid_nopass.GetRowHeaderWidth();
+	std::vector<CString> arrColumns;
+	arrColumns.push_back("姓名");
+	arrColumns.push_back("性别");
+	arrColumns.push_back("手机");
+	arrColumns.push_back("原因");
+	arrColumns.push_back("档案号");
+	const int nColumns = arrColumns.size();
+	int w = rectGrid.Width() - hw;
+	int nColumnWidth = w / nColumns;
+	for (int nColumn = 0; nColumn < nColumns; nColumn++)
+	{
+		m_wndGrid_nopass.InsertColumn(nColumn, arrColumns[nColumn], nColumnWidth);
+		m_wndGrid_nopass.SetColumnAlign(nColumn, HDF_CENTER);
+		m_wndGrid_nopass.SetHeaderAlign(nColumn, HDF_CENTER);
+	}
 	//注册虚拟列表回调函数
 	m_wndGrid_nopass.EnableVirtualMode(GridCallback3, (LPARAM)this);
 	
@@ -205,11 +257,11 @@ void CViewK1Check::Refresh(BOOL isInit)
 		}
 		else ShowMsg2Output1(strMsg);
 
-		strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NAME FROM students WHERE STEP='1000'");
+		strSQL.Format("SELECT SNAME, GENDER, TEL, NOPASS_REASON, FILE_NAME, CAR_TYPE FROM students WHERE STEP='1000'");
 		m_datas_nopass.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas_nopass, strMsg))
 		{
-			ShowMsg2Output1("查询通过新生信息成功");
+			ShowMsg2Output1("查询未通过新生信息成功");
 		}
 		else ShowMsg2Output1(strMsg);
 	}
@@ -292,14 +344,22 @@ void CViewK1Check::OnBnClickedBtnNopass()
 	{
 		if (m_wndGrid.IsRowSelected(i))
 		{
+			CDlgNoPass dlg;
+			dlg.m_strStuName = m_datas[i][0];
+			if (dlg.DoModal() != IDOK) continue;
+			CString strReason = "nopass:" + dlg.m_strReason;
+
 			nSel++;
 			CString fileNum = m_datas[i][4];
 			CString strSQL;
-			strSQL.Format("UPDATE students SET STEP='1000' WHERE FILE_NAME='%s'", fileNum);
+			strSQL.Format("UPDATE students SET STEP='1000', NOPASS_REASON='%s' WHERE FILE_NAME='%s'", strReason, fileNum);
 			if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 			{
 				ShowMsg2Output1("更新新生信息成功");
 				CStrs strs = m_datas[i];
+				CString strCarType = strs[3];
+				strs[3] = strReason;
+				strs.push_back(strCarType);
 				m_datas_nopass.push_back(strs);
 				RemoveData(0, i);
 			}
@@ -375,6 +435,8 @@ void CViewK1Check::OnBnClickedReturn2()
 			{
 				ShowMsg2Output1("更新新生信息成功");
 				CStrs strs = m_datas_nopass[i];
+				strs[3] = strs[5];
+				strs.pop_back();
 				m_datas.push_back(strs);
 				RemoveData(2, i);
 			}
@@ -390,10 +452,6 @@ void CViewK1Check::OnBnClickedReturn2()
 void CViewK1Check::OnBnClickedBtnSms1()
 {
 	int nCount = m_datas_pass.size();
-	CMSGINFO dlgMsg;
-	dlgMsg.m_nFlag = 1;
-	dlgMsg.m_strSMS.Format("即将给%d个新生发送科目一开班通知短信，请确认名单无误后点击确认按钮", nCount);
-	if(dlgMsg.DoModal() != IDOK) return;
 
 	//数据打包
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
@@ -404,26 +462,43 @@ void CViewK1Check::OnBnClickedBtnSms1()
 	}
 	else
 	{
-		int len = 6 + nCount * 8; //Type(1) Flag(1) Number(4) FileNums(Number*8)
-		pFrame->m_isSendReady = FALSE;
-		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
-		pFrame->m_nSendLen = len;
-		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
-		pFrame->m_pSendBuf[1] = 1; //开班通知短信
-		memcpy(pFrame->m_pSendBuf + 2, &nCount, 4); //档案数量
-
-		CString strFileNum;
+		CString strClassIssue("");
+		CString strSMS("");
 		for (int i = 0; i < nCount; i++)
 		{
-			strFileNum = m_datas_pass[i][4].Right(8);
-			char* data = strFileNum.GetBuffer();
-			memcpy(pFrame->m_pSendBuf + 6 + 8*i, data, 8);
-			strFileNum.ReleaseBuffer();
+			if (!m_wndGrid_pass.IsRowSelected(i)) continue;
+
+			CMSGINFO dlgMsg;
+			dlgMsg.m_nFlag = 1;
+			dlgMsg.m_strStu = m_datas_pass[i][0];
+			dlgMsg.m_strClassIssue = strClassIssue;
+			if (dlgMsg.DoModal() != IDOK) continue;
+			strClassIssue = dlgMsg.m_strClassIssue;
+			CString strSMS0 = dlgMsg.m_strSMS;
+
+			//数据打包发送
+			CString strStuID = m_datas_pass[i][4];
+			CString strTel = m_datas_pass[i][2];
+			strSMS.Format("%s:%s>%s", strTel, strStuID, strSMS0);
+			int SMSlen = strlen(strSMS);
+			int len = 6 + SMSlen;
+			pFrame->m_isSendReady = FALSE;
+			pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+			pFrame->m_nSendLen = len;
+			pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+			pFrame->m_pSendBuf[1] = 1; //开班通知短信
+			memcpy(pFrame->m_pSendBuf + 2, &SMSlen, 4); //档案数量
+
+			char* data = strSMS.GetBuffer();
+			memcpy(pFrame->m_pSendBuf + 6, data, SMSlen);
+			strSMS.ReleaseBuffer();
+			pFrame->m_isSendReady = TRUE;
+
+			m_datas_pass[i][2] = "已发送";
+
+			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
 		}
 
-		pFrame->m_isSendReady = TRUE;
-		m_datas_pass.clear();
-		ListFresh();
 	}
 }
 
@@ -440,26 +515,44 @@ void CViewK1Check::OnBnClickedBtnSms2()
 	else
 	{
 		int nCount = m_datas_nopass.size();
-		int len = 6 + nCount * 8; //Type(1) Flag(1) Number(4) FileNums(Number*8)
-		pFrame->m_isSendReady = FALSE;
-		pFrame->m_pSendBuf = new BYTE[len];//发送完删除
-		pFrame->m_nSendLen = len;
-		pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
-		pFrame->m_pSendBuf[1] = 2; //退款通知短信
-		memcpy(pFrame->m_pSendBuf + 2, &nCount, 4); //档案数量
 
 		CString strFileNum;
+		CString strClassIssue("");
+		CString strSMS("");
 		for (int i = 0; i < nCount; i++)
 		{
-			strFileNum = m_datas_nopass[i][4].Right(8);
-			char* data = strFileNum.GetBuffer();
-			memcpy(pFrame->m_pSendBuf + 6 + 8 * i, data, 8);
-			strFileNum.ReleaseBuffer();
-		}
-		pFrame->m_isSendReady = TRUE;
+			if (!m_wndGrid_nopass.IsRowSelected(i)) continue;
 
-		m_datas_nopass.clear();
-		ListFresh();
+			CMSGINFO dlgMsg;
+			dlgMsg.m_nFlag = 2;
+			dlgMsg.m_strStu = m_datas_nopass[i][0];
+			dlgMsg.m_strClassIssue = strClassIssue;
+			if (dlgMsg.DoModal() != IDOK) continue;
+			strClassIssue = dlgMsg.m_strClassIssue;
+			CString strSMS0 = dlgMsg.m_strSMS;
+
+			//数据打包发送
+			CString strStuID = m_datas_nopass[i][4];
+			CString strTel = m_datas_nopass[i][2];
+			strSMS.Format("%s:%s>%s", strTel, strStuID, strSMS0);
+			int SMSlen = strlen(strSMS);
+			int len = 6 + SMSlen;
+			pFrame->m_isSendReady = FALSE;
+			pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+			pFrame->m_nSendLen = len;
+			pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
+			pFrame->m_pSendBuf[1] = dlgMsg.m_nFlag; //短信类型
+			memcpy(pFrame->m_pSendBuf + 2, &SMSlen, 4); //档案数量
+
+			char* data = strSMS.GetBuffer();
+			memcpy(pFrame->m_pSendBuf + 6, data, SMSlen);
+			strSMS.ReleaseBuffer();
+			pFrame->m_isSendReady = TRUE;
+
+			m_datas_nopass[i][2] = "已发送";
+
+			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
+		}
 	}
 }
 

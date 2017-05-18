@@ -60,6 +60,7 @@ protected:
 public:
 	CView* GetView(int nID);
 	void SelectView(int nID);
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
 	afx_msg void OnClose();
 
@@ -68,7 +69,13 @@ public:
 	xPublic::CThreadBase m_threadMySQL;
 	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
 
+
+	//定时事务子线程
+	xPublic::CThreadBase m_threadClock;
+	static void CALLBACK ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent);
+
 	//SOCKET
+	HANDLE  m_hSocketEvent;
 	xPublic::CTCPClient m_tcpClient;
 	xPublic::CThreadBase m_threadSocket;
 	BYTE* m_pSendBuf; //发送数据缓存
@@ -80,7 +87,9 @@ public:
 	void SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize);//保存图像
 };
 
-extern CString g_strFilePath;
+extern CString g_strFilePath; //图片保存位置
+extern CString g_strOutPath; //输出文件位置
+extern CString g_strK1Address;//科目一上课地址
 extern xPublic::CMySQLEx g_mysqlCon;
 extern void LOG(CString sFileName, CString str_log, int flag = 1);
 extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。 没有使用虚拟列表技术，只用于显示当前窗口的信息
@@ -90,6 +99,12 @@ extern int g_nClassTotal; //每个课时每天可以预约的总数
 extern int g_nMaxBooking; //每个学员最多预约课数
 extern int g_nSubForLeave; //教练缺勤一次减去的学员数量
 extern int g_nMinWorkTime; //教练一个月最少工时
+extern int g_nMinK2Class; //科目二可以报考的最小课时
+extern int g_nMinK3Class; //科目三可以报考的最小课时
+extern BOOL g_isSMSSended; //每天发送一次上课提醒短信的标志
+
+extern CString g_strUserID; //当前用户工号
+extern int g_nPermissions[6]; //当前用户的权限
 
 enum enum_StudentProgress{
 	SP_NEWONE = 0,			//新生记录
@@ -114,6 +129,7 @@ enum enum_StudentProgress{
 #define COLOR_COMPLETE RGB(149, 200, 146)
 #define COLOR_DOING RGB(195, 218, 195)
 #define COLOR_DONE RGB(149, 200, 146)
+#define COLOR_HALF RGB(214, 195, 147)
 
 enum VIEW_TYPE{
 	VIEW_MAIN = 0,
@@ -125,6 +141,7 @@ enum VIEW_TYPE{
 	VIEW_ORDER_RSP,
 	VIEW_K1EXAM,
 	VIEW_STUPROGRESS,
+	VIEW_K23EXAM,
 	VIEW_COACHES,
 	VIEW_KPI,
 	VIEW_DEVICES,
@@ -133,6 +150,8 @@ enum VIEW_TYPE{
 	VIEW_SCAN,
 	VIEW_STUFFENTER,
 	VIEW_STUDENTENTER,
+	VIEW_ALLSTUDENTS,
+	VIEW_PERMISSION,
 	VIEW_NUM
 };
 
@@ -182,4 +201,6 @@ typedef struct struct_STUDENTINFO
 
 extern CString GetClassTime(int n); //根据时段编号获得具体时间
 extern CString GetLastMonth(CTime& thisMonth); //获取上个月的月份
+extern CTime Str2Time(CString str); //解析字符串得到时间
 extern void ExportExcel(std::vector<CString>& titles, CDStrs &datas); //数据导出到excel
+extern void ExportExcel(CString strFileName, std::vector<CString>& titles, CDStrs &datas); //数据导出到excel

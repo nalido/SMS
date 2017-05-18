@@ -84,8 +84,13 @@ BOOL CSMS2App::InitInstance()
 	//系统配置初始化
 	xPublic::GetWorkPath("StudentsManagementSystem");
 	g_strFilePath = xPublic::GETSTR2("Option", "PicSavePath", _T("E:\\Photos\\"));
+	g_sServerIP = xPublic::GETSTR2("Option", "ServerIP", _T("127.0.0.1"));
+
+	g_strK1Address = xPublic::GETSTR2("SMS", "K1Address", _T("南京市红山路90号第二教室"));
 	g_nSubForLeave = xPublic::GETINT2("Coach", "SubForLeave", 8);
 	g_nMinWorkTime = xPublic::GETINT2("Coach", "MinWorkTime", 8);
+	g_nMinK2Class = xPublic::GETINT2("Students", "MinK2Class", 8);
+	g_nMinK3Class = xPublic::GETINT2("Students", "MinK3Class", 10);
 
 	// Initialize OLE libraries
 	if (!AfxOleInit())

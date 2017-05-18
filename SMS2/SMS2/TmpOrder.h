@@ -27,6 +27,7 @@ public:
 	CComboBox m_Comb_Coach;
 	CComboBox m_Comb_Stu;
 	CComboBox m_Comb_Time;
+	CComboBox m_Comb_Class;
 	CStatic m_SCoach;
 	CStatic m_SStu;
 	CStatic m_SNClass;
@@ -39,7 +40,9 @@ public:
 	CString m_strTime;
 	CString m_strCoachID;
 	CString m_strStuID;
+	CString m_strTEL;
 	CString m_strNClass;
+	CString m_strNextClass;
 	CString m_strBookDate;
 	CString m_strClassID;
 	CString m_strOrderDate;

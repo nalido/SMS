@@ -89,6 +89,8 @@ public:
 	CString m_strUsedClass; //已使用课时数
 	CString m_strClassType; //正在进行的课程类别
 
+	//打开此视图的上一个视图
+	UINT m_LAST_VIEW;
 
 	afx_msg void OnBnClickedBook();
 	virtual void OnInitialUpdate();
@@ -96,6 +98,9 @@ public:
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	void Refresh();
+	afx_msg void OnBnClickedExit();
+	afx_msg void OnBnClickedFeedback();
+	afx_msg void OnBnClickedNextclass();
 };
 
 

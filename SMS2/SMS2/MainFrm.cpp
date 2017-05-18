@@ -21,6 +21,9 @@
 #include "ViewStuffEnter.h"
 #include "ViewStudentEnter.h"
 #include "ViewHome.h"
+#include "ViewPermission.h"
+#include "ViewK23Exam.h"
+#include "ViewAllStudents.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,12 +31,19 @@
 
 ////////////////global functions and values///////////////////////
 CString g_strFilePath = "E:\\Photos\\";
+CString g_strOutPath = "E:\\Files";
+CString g_strK1Address;
 xPublic::CMySQLEx g_mysqlCon;
 CString g_sServerIP = "127.0.0.1";
 int g_nClassTotal = 9;
 int g_nMaxBooking = 15;
 int g_nSubForLeave = 8;
 int g_nMinWorkTime = 176;
+int g_nPermissions[6] = { 0 };
+CString g_strUserID = "";
+int g_nMinK2Class = 8;
+int g_nMinK3Class = 10;
+BOOL g_isSMSSended = FALSE;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -127,6 +137,21 @@ CString GetLastMonth(CTime& thisMonth)
 	return lastMonth;
 }
 
+CTime Str2Time(CString str)
+{
+	int pos1, pos2;
+	pos1 = str.Find('/');
+	pos2 = str.ReverseFind('/');
+
+	int nYear = atoi(str.Left(pos1));
+	int nMonth = atoi(str.Mid(pos1 + 1, pos2));
+	int nDay = atoi(str.Mid(pos2 + 1));
+
+	CTime tmp(nYear, nMonth, nDay, 0, 0, 0);
+
+	return tmp;
+}
+
 void ExportExcel(std::vector<CString>& titles, CDStrs &datas)
 {
 	CFileDialog fileDlg(FALSE, "*.csv", NULL, 6UL, "通用表格(*.csv)|*.csv|");
@@ -168,6 +193,48 @@ void ExportExcel(std::vector<CString>& titles, CDStrs &datas)
 	}
 	
 }
+
+void ExportExcel(CString strFileName, std::vector<CString>& titles, CDStrs &datas)
+{
+	CFileDialog fileDlg(FALSE, "*.csv", strFileName, 6UL, "通用表格(*.csv)|*.csv|");
+	CString filename("");
+	if (fileDlg.DoModal() == IDOK)
+	{
+		filename = fileDlg.GetPathName();
+	}
+	else return;
+
+	CFile f;
+	if (f.Open(filename, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeReadWrite))
+	{
+		CString strLine("");
+
+		//列名
+		int cols = titles.size();
+		for (int i = 0; i < cols; i++)
+		{
+			strLine = strLine + titles[i] + ",";
+		}
+		strLine = strLine + "\r\n";
+		f.Write(strLine, strlen(strLine));
+
+		//数据
+		int rows = datas.size();
+		for (int r = 0; r < rows; r++)
+		{
+			strLine = "";
+			for (int c = 0; c < cols; c++)
+			{
+				strLine = strLine + datas[r][c] + ",";
+			}
+			strLine = strLine + "\r\n";
+			f.Write(strLine, strlen(strLine));
+		}
+
+		f.Close();
+	}
+
+}
 ///////////////////////////////end of global functions//////////////
 
 // CMainFrame
@@ -176,10 +243,12 @@ IMPLEMENT_DYNCREATE(CMainFrame, CBCGPFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_WM_CREATE()
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_COMMAND(ID_VIEW_OUTPUT, OnViewOutput)
 	ON_COMMAND_EX(ID_VIEW_REGISTER, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_K1CHECK, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_K1EXAM, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_K23EXAM, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_STUPROGRESS, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING1, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_BOOKING2, OnViewSelected)
@@ -192,6 +261,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_SYSTEMSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_SCHOOLSETTING, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_ORDER_RSP, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_ALLSTUDENTS, OnViewSelected)
+	ON_COMMAND_EX(ID_VIEW_PERMISSION, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
@@ -206,15 +277,25 @@ END_MESSAGE_MAP()
 CMainFrame::CMainFrame()
 : m_threadMySQL(this, ThreadMySQLCallback)
 , m_threadSocket(this, ThreadSocketCallback)
+, m_threadClock(this, ThreadClockCallback)
 {
 	m_pSendBuf = NULL;
 	m_nSendLen = 0;
 	m_isSendReady = FALSE;
+	m_hSocketEvent = ::CreateEventA(NULL, TRUE, FALSE, NULL);
 }
 
 CMainFrame::~CMainFrame()
 {
+
+	if (NULL != m_hSocketEvent)
+	{
+		::CloseHandle(m_hSocketEvent); m_hSocketEvent = NULL;
+	}
 }
+
+
+
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -273,6 +354,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	//开始子线程
 	m_threadMySQL.StartThread();
+	m_threadClock.StartThread();
 	m_threadSocket.StartThread();
 
 	//timer
@@ -447,6 +529,9 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 	case ID_VIEW_K1EXAM:
 		SelectView(VIEW_K1EXAM);
 		break;
+	case ID_VIEW_K23EXAM:
+		SelectView(VIEW_K23EXAM);
+		break;
 	case ID_VIEW_STUPROGRESS:
 		SelectView(VIEW_STUPROGRESS);
 		break;
@@ -473,6 +558,12 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 		break;
 	case ID_VIEW_4STUDENT:
 		SelectView(VIEW_STUDENTENTER);
+		break;
+	case ID_VIEW_ALLSTUDENTS:
+		SelectView(VIEW_ALLSTUDENTS);
+		break;
+	case ID_VIEW_PERMISSION:
+		SelectView(VIEW_PERMISSION);
 		break;
 	}
 	return TRUE;
@@ -529,6 +620,9 @@ CView* CMainFrame::GetView(int nID)
 	case VIEW_K1EXAM:
 		pClass = RUNTIME_CLASS(CViewK1Exam); 
 		break;
+	case VIEW_K23EXAM:
+		pClass = RUNTIME_CLASS(CViewK23Exam);
+		break;
 	case VIEW_COACHES:
 		pClass = RUNTIME_CLASS(CCoaches);
 		break;
@@ -555,6 +649,12 @@ CView* CMainFrame::GetView(int nID)
 		break;
 	case VIEW_SYSTEM:
 		pClass = RUNTIME_CLASS(CSystem);
+		break;
+	case VIEW_ALLSTUDENTS:
+		pClass = RUNTIME_CLASS(CViewAllStudents);
+		break;
+	case VIEW_PERMISSION:
+		pClass = RUNTIME_CLASS(CViewPermission);
 		break;
 	}
 	if (pClass == NULL)
@@ -674,14 +774,89 @@ void CALLBACK CMainFrame::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
 	}
 }
 
+
+void CALLBACK CMainFrame::ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent)
+{
+	CMainFrame* pThis = (CMainFrame*)pParam;
+	DWORD dwWaitTime = 600000; //十分钟刷新一次
+
+	//已连接时等待5s，未连接时等待2s
+	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, dwWaitTime))
+	{
+		CString strMsg, strSQL;
+		//事务一：每月添加新的KPI记录
+		CTime t = CTime::GetCurrentTime();
+		CString thisMonth = t.Format("%Y/%m");
+		strSQL.Format("SELECT * FROM kpis WHERE KMONTH='%s'", thisMonth);
+		CDStrs datas;
+		if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg))
+		{
+			if (datas.size() == 0) //没有本月的记录
+			{
+				g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
+				strSQL.Format("INSERT INTO KPIS (COACH, COACH_ID) SELECT coachinfo.SNAME, coachinfo.FILE_NUM FROM coachinfo INNER JOIN coachstat ON coachinfo.FILE_NUM=coachstat.FILE_NUM WHERE coachstat.BLACK_NAME='0'");
+				if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+				{
+					strSQL.Format("UPDATE KPIS SET KMONTH='%s' WHERE KMONTH='0'", thisMonth);
+					if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+					{
+						g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+					}
+				}
+				else
+					g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+			}
+		}
+
+		//事务二：更新coachstat的KPI
+		CString lastMonth = GetLastMonth(t); 
+		strSQL.Format("UPDATE coachstat, kpis SET coachstat.PERFORMANCE=kpis.SCORE WHERE coachstat.FILE_NUM=kpis.COACH_ID AND kpis.KMONTH='%s'", lastMonth);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+
+		//事务三：代办事务提醒
+
+		//事务四： 提前一天发送提醒短信 每天晚上7点 //在服务器端完成
+		//事务五： 学员下次预约时间提醒 
+		if (t.GetHour() > 14) //下午提醒
+		{
+			CTime tomo = t + CTimeSpan(1, 0, 0, 0);
+			CString strTomo = tomo.Format("%Y/%m/%d");
+			strSQL.Format("SELECT STU_ID FROM stuDates WHERE BOOK_SMS='0' AND BOOK_DATE='%s'", strTomo);
+			datas.clear();
+			g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg);
+			if (datas.size() > 0)
+			{
+				pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)1);
+			}
+		}
+	}
+}
+
+
 void CMainFrame::OnClose()
 {
 	//关闭子线程
+	m_threadClock.StopThread();
 	m_threadMySQL.StopThread();
 	m_threadSocket.StopThread();
 	CBCGPFrameWnd::OnClose();
 }
 
+
+LRESULT CMainFrame::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int type = (int)wParam;
+
+	switch (type)
+	{
+	case 1: //提醒有学员明天的预约
+		if (g_nPermissions[1] != 0)
+			MessageBox("明天有学员的预约，请前往学员进度界面发送预约提醒短信！");
+		break;
+	}
+
+	return 0;
+}
 
 LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 {
@@ -696,7 +871,13 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 				{
 					m_wndRibbonBar.ShowCategory(i, FALSE);
 				}
+				CBCGPRibbonCategory* pCate = m_wndRibbonBar.GetCategory(0);
+				m_wndRibbonBar.SetActiveCategory(pCate);
 				m_wndRibbonBar.RecalcLayout();
+				for (int i = 0; i < 5; i++)
+				{
+					g_nPermissions[i] = 0;
+				}
 				break;
 	}
 	case 1: //最高权限，显示全部
@@ -706,6 +887,34 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 				{
 					m_wndRibbonBar.ShowCategory(i, TRUE);
 				}
+				m_wndRibbonBar.RecalcLayout();
+				break;
+	}
+	default: //非最高权限，按权限设置显示
+	{
+				 int nCount = m_wndRibbonBar.GetCategoryCount();
+				for (int i = 1; i < nCount; i++)
+				{
+					m_wndRibbonBar.ShowCategory(i, TRUE);
+				}
+				
+				if (g_nPermissions[0] == 0) //新生管理
+					m_wndRibbonBar.ShowCategory(1, FALSE);
+
+				if (g_nPermissions[1] == 0) //学员管理
+					m_wndRibbonBar.ShowCategory(2, FALSE);
+
+				if (g_nPermissions[2] == 0) //设备管理
+					m_wndRibbonBar.ShowCategory(3, FALSE);
+
+				if (g_nPermissions[3] == 0) //员工管理
+					m_wndRibbonBar.ShowCategory(4, FALSE);
+
+				if (g_nPermissions[4] == 0) //信息管理
+					m_wndRibbonBar.ShowCategory(5, FALSE);
+
+				m_wndRibbonBar.ShowCategory(6, FALSE);
+
 				m_wndRibbonBar.RecalcLayout();
 				break;
 	}
@@ -764,6 +973,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 		}//检测和创建连接
 
 		//发送数据
+		::ResetEvent(pThis->m_hSocketEvent);
 		strMsg.Format("第%d次发送数据", senttime);
 		pThis->m_wndOutput.AddItem2List4(strMsg);
 		BOOL bSendOK = FALSE;
@@ -772,6 +982,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 		{
 			bSendOK = TRUE;
 			strMsg.Format("数据发送成功");
+			pThis->GetActiveView()->PostMessageA(WM_USER_MESSAGE, (WPARAM)0, (LPARAM)5);
 			pThis->m_wndOutput.AddItem2List4(strMsg);
 
 			if (pThis->m_pSendBuf[0] == 3)
@@ -829,6 +1040,7 @@ void CALLBACK CMainFrame::ThreadSocketCallback(LPVOID pParam, HANDLE hCloseEvent
 				pThis->m_wndOutput.AddItem2List4(strMsg);
 			}
 		}
+		::SetEvent(pThis->m_hSocketEvent);
 	}//end while
 
 

@@ -14,7 +14,8 @@ namespace xPublic{
 		CMySQLEx();
 		~CMySQLEx();
 
-		MYSQL m_mysql;
+		MYSQL m_mysql; 
+		CCriticalSection m_cs;//临界区锁
 		BOOL m_isInit; //检验m_mysql是否被初始化过
 
 		char* m_host;

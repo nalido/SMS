@@ -31,12 +31,23 @@ public:
 	//背景定位
 	CStatic m_BKpos1, m_BKpos2;
 	CRect m_rctBK1, m_rctBK2;
+
+	int m_nEraseBkgnd; //窗口重绘次数(根据控件个数决定)
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 	afx_msg void OnPaint();
 	virtual void OnInitialUpdate();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 
-	int m_nEraseBkgnd; //窗口重绘次数(根据控件个数决定)
-	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
+	CStatic m_Content;
+	CRect m_rctContent;
+
+	CStatic m_S[4]; //静态文本框
+	CString m_strName;
+	CString m_strIDCard;
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnBnClickedConfirm();
+	afx_msg void OnEnChangeE1();
+	afx_msg void OnEnChangeE2();
 };
 
 

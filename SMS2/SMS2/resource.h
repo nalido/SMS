@@ -2,6 +2,7 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 SMS2.rc 使用
 //
+#define IDC_DEL                         2
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDD_SMS2_FORM                   101
@@ -48,6 +49,14 @@
 #define IDD_RESETPSW                    210
 #define IDD_DIALOG4                     211
 #define IDD_HOME                        211
+#define IDD_MYBOOKS                     212
+#define IDD_NEXTCLASS                   213
+#define IDD_DIALOG5                     214
+#define IDD_PERMISSION                  214
+#define IDD_MONTH_PLATE                 215
+#define IDD_NOPASS                      216
+#define IDD_K23EXAM                     217
+#define IDD_ALLSTUDENTS                 218
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -62,9 +71,13 @@
 #define IDC_SETTODAY                    1056
 #define IDC_NEWITEM                     1056
 #define IDC_EXPORT                      1056
+#define IDC_DELSTUFF                    1056
+#define IDC_QUIT                        1056
 #define IDC_BUTTON5                     1057
 #define IDC_DELITEM                     1057
 #define IDC_FORGET                      1057
+#define IDC_SELFDOWN                    1057
+#define IDC_EXPORT2                     1057
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
@@ -80,24 +93,29 @@
 #define IDC_ORDER                       1067
 #define IDC_CHUQIN                      1067
 #define IDC_NEXTCLASS                   1067
+#define IDC_PASS                        1067
 #define IDC_NAME2                       1068
 #define IDC_FILE                        1068
 #define IDC_RESET_PRINT                 1068
 #define IDC_QUEQIN                      1068
 #define IDC_FEEDBACK                    1068
+#define IDC_RETURN                      1068
 #define IDC_TEL                         1069
 #define IDC_NAME3                       1069
 #define IDC__TMP_ORDER                  1069
 #define IDC_WORKTIME                    1069
 #define IDC_BOOK                        1069
+#define IDC_SENDSMS                     1069
 #define IDC_FEE                         1070
 #define IDC_NCLASS                      1070
 #define IDC_JIXIAO                      1070
+#define IDC_K1PASS                      1070
 #define IDC_ID                          1071
 #define IDC_NAME6                       1071
 #define IDC_JIXIAO2                     1071
 #define IDC_KPI                         1071
 #define IDC_HOME                        1072
+#define IDC_MONTHPLATE                  1072
 #define IDC_BIRTH                       1073
 #define IDC_BUTTON1073                  1073
 #define IDC_SAVE                        1073
@@ -105,8 +123,11 @@
 #define IDC_SAVE2                       1074
 #define IDC_GENDER                      1075
 #define IDC_LIST2                       1075
+#define IDC_SAVE3                       1075
 #define IDC_BTN_PASS                    1076
+#define IDC_SAVE4                       1076
 #define IDC_BTN_FRESH                   1077
+#define IDC_SAVE5                       1077
 #define IDC_LIST3                       1078
 #define IDC_RETURN1                     1079
 #define IDC_RETURN2                     1080
@@ -120,16 +141,24 @@
 #define IDC_NEW_STUDENT                 1084
 #define IDC_CHANGEBACK                  1085
 #define IDC_BUTTON1085                  1085
+#define IDC_EDIT_FILEPATH2              1086
 #define IDC_STUPROGRESS                 1087
+#define IDC_FILEPATH2                   1087
 #define IDC_STUFRESH                    1088
+#define IDC_CHANGEPATH2                 1088
 #define IDC_SENDBOOKMSG                 1089
 #define IDC_SPHOTO                      1089
+#define IDC_CHANGEBACK2                 1089
 #define IDC_SLIST                       1090
 #define IDC_TOBOOK                      1090
 #define IDC_NAME0                       1091
 #define IDC_SCAN                        1091
 #define IDC_WEEK                        1092
+#define IDC_TOBOOK2                     1092
+#define IDC_SETTYPE                     1092
 #define IDC_NAME1                       1093
+#define IDC_SCAN2                       1093
+#define IDC_NEXTBOOK                    1093
 #define IDC_NAME4                       1094
 #define IDC_NAME5                       1095
 #define IDC_GRID                        1109
@@ -174,6 +203,7 @@
 #define IDC_DATETIMEPICKER1             1147
 #define IDC_AUTO_ORDER                  1147
 #define IDC_DATETIMEPICKER2             1148
+#define IDC_CHANGECLASS                 1148
 #define IDC_CHECK1                      1149
 #define IDC_COMBO_TYPE                  1150
 #define IDC_COMBO_CAR                   1151
@@ -182,6 +212,8 @@
 #define IDC_COMBO_STU                   1154
 #define IDC_COACH                       1155
 #define IDC_STU                         1156
+#define IDC_COMBO_STU2                  1157
+#define IDC_COMBO_CLASS                 1157
 #define IDC_RADIO1                      1158
 #define IDC_RADIO2                      1159
 #define IDC_SERVICE_SCORE               1160
@@ -192,8 +224,11 @@
 #define IDC_COMBO1                      1162
 #define IDC_MIN_WORK_TIME               1162
 #define IDC_COMBO2                      1163
+#define IDC_K1PLACE                     1163
 #define IDC_COMBO3                      1164
+#define IDC_MIN_K2CLASS                 1164
 #define IDC_COMBO4                      1165
+#define IDC_MIN_K3CLASS                 1165
 #define IDC_COMBO5                      1166
 #define IDC_COMBO6                      1167
 #define IDC_MSG1                        1168
@@ -247,6 +282,7 @@
 #define IDC_D10                         1220
 #define IDC_PIE                         1221
 #define IDC_D11                         1222
+#define IDC_LABEL1                      1222
 #define IDC_D12                         1223
 #define IDC_D13                         1224
 #define IDC_VIEW_4STUDENT               1227
@@ -257,6 +293,17 @@
 #define IDC_E4                          1232
 #define IDC_E5                          1233
 #define IDC_CANCEL                      1236
+#define IDC_CALENDAR                    1243
+#define IDC_TIME                        1246
+#define IDC_COLOR1                      1248
+#define IDC_COLOR2                      1249
+#define IDC_COLOR3                      1250
+#define IDC_COLOR4                      1251
+#define IDC_TAB1                        1252
+#define IDC_DATE1                       1253
+#define IDC_DATE2                       1254
+#define IDC_INFO                        1255
+#define IDC_TAB2                        1256
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -308,14 +355,17 @@
 #define ID_VIEW_STUFF                   32888
 #define ID_VIEW_HSTUDENT                32889
 #define ID_VIEW_HSTUFF                  32890
+#define ID_VIEW_PERMISSION              32891
+#define ID_VIEW_K23EXAM                 32892
+#define ID_VIEW_ALLSTUDENTS             32893
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        212
-#define _APS_NEXT_COMMAND_VALUE         32891
-#define _APS_NEXT_CONTROL_VALUE         1241
+#define _APS_NEXT_RESOURCE_VALUE        219
+#define _APS_NEXT_COMMAND_VALUE         32894
+#define _APS_NEXT_CONTROL_VALUE         1256
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif
