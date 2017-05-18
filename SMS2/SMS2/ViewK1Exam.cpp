@@ -367,6 +367,9 @@ void CViewK1Exam::OnBnClickedSendsms()
 			strSQL.Format("UPDATE stuDates SET K1_DATE='%s' WHERE STU_ID='%s'", strDate, strStuID);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 
+			strDate.Replace("年", "/");
+			strDate.Replace("月", "/");
+			strDate.Replace("日", "");
 			strSQL.Format("INSERT INTO stuDateHistory (EXAM_DATE, STU_ID, EXAM_TYPE) VALUES('%s', '%s', '科目一')", strDate, strStuID);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 

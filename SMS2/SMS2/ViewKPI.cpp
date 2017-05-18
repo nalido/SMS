@@ -19,7 +19,7 @@ CViewKPI::CViewKPI()
 
 CViewKPI::~CViewKPI()
 {
-	m_threadMySQL.StartThread();
+	m_threadMySQL.StopThread();
 }
 
 void CViewKPI::DoDataExchange(CDataExchange* pDX)

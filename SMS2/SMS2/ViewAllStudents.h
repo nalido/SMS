@@ -27,6 +27,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CTabCtrl m_TabCtrl;
+	CTabCtrl m_TabShowType; //按年份月份显示
 	CDateTimeCtrl m_DateS;
 	CDateTimeCtrl m_DateE;
 	CString m_strDateS;
@@ -35,12 +36,12 @@ public:
 	//饼状图信息
 	CStatic m_Pie;
 	CRect m_rctPie;
-	CStatic m_Label[2];
-	CRect m_rctLabel[2];
+	CStatic m_Label;
+	CRect m_rctLabel;
 	CStatic m_S[5];
-	CString m_strLabel[2];
 	int m_nPieTotal;
 	std::vector<int> m_nPiePart;
+	std::vector<CString> m_strPiePart;
 
 	CStatic m_Info;
 	CRect m_rctInfo;
@@ -57,9 +58,22 @@ public:
 	CDStrs m_datas3;
 	CDStrs m_datas4;
 	CDStrs m_datas5;
+	int m_dataSize[5];
 	void InitGrid(CVirtualGridCtrl* pGrid, CRect& rect, std::vector<CString>& arrColumns);
 	void Refresh(int nID, CString strDateS, CString strDateE);
-	void Analysis(int nID);
+
+
+	//数据处理子线程
+	CVirtualGridCtrl m_wndGridM;
+	CVirtualGridCtrl m_wndGridY;
+	CDStrs m_datasM;
+	CDStrs m_datasY;
+	int m_nGridWidth;
+	void InitGridMY(CVirtualGridCtrl* pGrid, std::vector<CString>& arrColumns);
+	xPublic::CThreadBase m_threadProcess;
+	static void CALLBACK ThreadProcessCallback(LPVOID pParam, HANDLE hCloseEvent);
+	BOOL m_canAnal;
+	void Analysis(int nID, int YMD, CDStrs& datas, int cFlag); //nID 表类型 YMD 统计类型, cFlag分类标准的列号
 
 	virtual void OnInitialUpdate();
 	afx_msg void OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult);
@@ -67,6 +81,8 @@ public:
 	afx_msg void OnPaint();
 	afx_msg void OnBnClickedQuery();
 	afx_msg void OnBnClickedQuit();
+	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
+	afx_msg void OnTcnSelchangeTab2(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 

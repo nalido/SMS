@@ -297,6 +297,7 @@
 #define IDC_DATE1                       1253
 #define IDC_DATE2                       1254
 #define IDC_INFO                        1255
+#define IDC_TAB2                        1256
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
