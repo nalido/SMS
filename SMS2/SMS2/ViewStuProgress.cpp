@@ -8,6 +8,7 @@
 #include "MainFrm.h"
 #include <afxmsg_.h>
 #include "MSGINFO.h"
+#include "DlgDateItem.h"
 
 
 static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
@@ -27,6 +28,13 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 				if (nCol < 5)
 				{
 					pdi->item.varValue = pThis->m_datas[nRow][nCol];
+
+					//判断明天是不是预约时间
+					CTime t = CTime::GetCurrentTime();
+					CTime tomo = t + CTimeSpan(1, 0, 0, 0);
+					CString strTomo = tomo.Format("%Y/%m/%d");
+					if (strTomo == pThis->m_datas[nRow][9] && pThis->m_datas[nRow][10] == "0")
+						pdi->item.clrBackground = COLOR_LITTLE;
 				}
 				else if(nCol < 9) //后边是进度
 				{
@@ -141,6 +149,7 @@ BEGIN_MESSAGE_MAP(CViewStuProgress, CBCGPFormView)
 	ON_BN_CLICKED(IDC_TOBOOK, &CViewStuProgress::OnBnClickedTobook)
 	ON_BN_CLICKED(IDC_SCAN, &CViewStuProgress::OnBnClickedScan)
 	ON_BN_CLICKED(IDC_SETTYPE, &CViewStuProgress::OnBnClickedSettype)
+	ON_BN_CLICKED(IDC_NEXTBOOK, &CViewStuProgress::OnBnClickedNextbook)
 END_MESSAGE_MAP()
 
 
@@ -231,13 +240,21 @@ void CViewStuProgress::Refresh()
 	CString strSQL("");
 	strSQL.Format("SELECT students.FILE_NAME, students.SNAME, students.GENDER, students.TEL, \
 					students.CAR_TYPE, students.STEP, students.CLASS_TYPE, \
-					stuDates.K2_STAT, stuDates.K3_STAT FROM students \
+					stuDates.K2_STAT, stuDates.K3_STAT, stuDates.BOOK_DATE, stuDates.BOOK_SMS FROM students \
 					left join stuDates ON students.FILE_NAME=stuDates.STU_ID\
 					WHERE STEP<'1000'");
 	m_datas.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg))
 	{
 		ShowMsg2Output1("查询学生信息成功");
+
+		int n = m_datas.size();
+		for (int i = 0; i < n; i++)
+		{
+			m_datas[i][9].Replace("年", "/");
+			m_datas[i][9].Replace("月", "/");
+			m_datas[i][9].Replace("日", "");
+		}
 	}
 	else ShowMsg2Output1(strMsg);
 
@@ -337,6 +354,13 @@ void CViewStuProgress::OnBnClickedSendbookmsg()
 				m_datas[i][5].Format("%d", SP_K2K3BOOKING);
 			}
 			else ShowMsg2Output1(strMsg);
+
+			CTime t = CTime::GetCurrentTime();
+			CTime tomo = t + CTimeSpan(1, 0, 0, 0);
+			CString strTomo = tomo.Format("%Y/%m/%d");
+			strSQL.Format("UPDATE stuDates SET BOOK_SMS='1' WHERE STU_ID='%s' AND BOOK_DATE='%s'", strStuID, strTomo);
+			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+			m_datas[i][10] = "1";
 
 			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
 		}
@@ -453,5 +477,27 @@ void CViewStuProgress::OnBnClickedSettype()
 		ShowMsg2Output1(strMsg);
 
 		Refresh();
+	}
+}
+
+
+void CViewStuProgress::OnBnClickedNextbook()
+{
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CString strStuID = m_datas[nRow][0];
+
+		CDlgDateItem dlg;
+		if (dlg.DoModal() == IDOK)
+		{
+			CString strMsg, strSQL;
+			strSQL.Format("UPDATE stuDates SET BOOK_DATE='%s' WHERE STU_ID='%s'", dlg.m_strDate, strStuID);
+			if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+			{
+				MessageBox("设置成功!");
+			}
+		}
 	}
 }

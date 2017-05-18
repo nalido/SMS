@@ -525,6 +525,8 @@ void CViewBooking2::Refresh(int nID)
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas2, strMsg) && m_datas2.size()>0)
 		{
 			ShowMsg2Output1("查询教练员信息成功");
+
+			//去掉请假的
 			strSQL.Format("SELECT COACH_ID FROM askforleave WHERE LEAVE_DATE='%s'", strDate);
 			CDStrs leaves; //请假表
 			g_mysqlCon.ExecuteQuery(strSQL, leaves, strMsg);
@@ -543,6 +545,36 @@ void CViewBooking2::Refresh(int nID)
 					}
 				}
 				//m_datas2[i].push_back("0"); //最后一列为已安排课时数，每个教练早上下午晚上各有一次机会
+			}
+
+			//去掉前一天派工未闭环的
+			CTime tYestoday = (m_isToday ? m_tToday : m_tTomorrow) - CTimeSpan(1, 0, 0, 0);
+			CString strYestoday = tYestoday.Format("%Y/%m/%d");
+			strSQL.Format("SELECT ORDER_COACH FROM bookings WHERE BOOK_DATE='%s' AND FLAG='1'", strYestoday);
+			leaves.clear();
+			g_mysqlCon.ExecuteQuery(strSQL, leaves, strMsg);
+			ShowMsg2Output1(strMsg);
+			n = m_datas2.size();
+			nl = leaves.size();
+			for (int i = n - 1; i >= 0; i--)
+			{
+				for (int k = 0; k < nl; k++)
+				{
+					if (leaves[k][0] == m_datas2[i][2])
+					{
+						CDStrs::iterator it = m_datas2.begin() + i;
+						m_datas2.erase(it);
+						break;
+					}
+				}
+			}
+
+			//KPI变为小数
+			int n2 = m_datas2.size();
+			for (int i = 0; i < n2; i++)
+			{
+				double d = atoi(m_datas2[i][3])*1.0 / 100;
+				m_datas2[i][3].Format("%.2f", d);
 			}
 		}
 		else ShowMsg2Output1(strMsg);

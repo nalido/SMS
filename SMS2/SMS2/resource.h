@@ -157,6 +157,8 @@
 #define IDC_TOBOOK2                     1092
 #define IDC_SETTYPE                     1092
 #define IDC_NAME1                       1093
+#define IDC_SCAN2                       1093
+#define IDC_NEXTBOOK                    1093
 #define IDC_NAME4                       1094
 #define IDC_NAME5                       1095
 #define IDC_GRID                        1109

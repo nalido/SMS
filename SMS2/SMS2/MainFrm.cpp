@@ -43,6 +43,7 @@ int g_nPermissions[6] = { 0 };
 CString g_strUserID = "";
 int g_nMinK2Class = 8;
 int g_nMinK3Class = 10;
+BOOL g_isSMSSended = FALSE;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -242,6 +243,7 @@ IMPLEMENT_DYNCREATE(CMainFrame, CBCGPFrameWnd)
 
 BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_WM_CREATE()
+	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_COMMAND(ID_VIEW_OUTPUT, OnViewOutput)
 	ON_COMMAND_EX(ID_VIEW_REGISTER, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_K1CHECK, OnViewSelected)
@@ -291,6 +293,9 @@ CMainFrame::~CMainFrame()
 		::CloseHandle(m_hSocketEvent); m_hSocketEvent = NULL;
 	}
 }
+
+
+
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -349,6 +354,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	//开始子线程
 	m_threadMySQL.StartThread();
+	m_threadClock.StartThread();
 	m_threadSocket.StartThread();
 
 	//timer
@@ -809,6 +815,20 @@ void CALLBACK CMainFrame::ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent)
 
 		//事务三：代办事务提醒
 
+		//事务四： 提前一天发送提醒短信 每天晚上7点 //在服务器端完成
+		//事务五： 学员下次预约时间提醒 
+		if (t.GetHour() > 14) //下午提醒
+		{
+			CTime tomo = t + CTimeSpan(1, 0, 0, 0);
+			CString strTomo = tomo.Format("%Y/%m/%d");
+			strSQL.Format("SELECT STU_ID FROM stuDates WHERE BOOK_SMS='0' AND BOOK_DATE='%s'", strTomo);
+			datas.clear();
+			g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg);
+			if (datas.size() > 0)
+			{
+				pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)1);
+			}
+		}
 	}
 }
 
@@ -816,11 +836,27 @@ void CALLBACK CMainFrame::ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent)
 void CMainFrame::OnClose()
 {
 	//关闭子线程
+	m_threadClock.StopThread();
 	m_threadMySQL.StopThread();
 	m_threadSocket.StopThread();
 	CBCGPFrameWnd::OnClose();
 }
 
+
+LRESULT CMainFrame::OnUserUpdate(WPARAM wParam, LPARAM lParam)
+{
+	int type = (int)wParam;
+
+	switch (type)
+	{
+	case 1: //提醒有学员明天的预约
+		if (g_nPermissions[1] != 0)
+			MessageBox("明天有学员的预约，请前往学员进度界面发送预约提醒短信！");
+		break;
+	}
+
+	return 0;
+}
 
 LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 {
