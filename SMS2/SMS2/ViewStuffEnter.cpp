@@ -256,7 +256,7 @@ void CViewStuffEnter::OnBnClickedLogin()
 
 	CString strMsg, strSQL;
 	CDStrs datas;
-	strSQL.Format("SELECT UID, UPERMISSION, NEW_STUDENTS, STUDENTS, DEVICES, STUFF, SCHOOL FROM stuff WHERE UNAME='%s' AND UPSWD=PASSWORD('%s')", m_strName, m_strPSWD);
+	strSQL.Format("SELECT UID, UPERMISSION, NEW_STUDENTS, STUDENTS, DEVICES, STUFF, ALL_STUDENTS FROM stuff WHERE UNAME='%s' AND UPSWD=PASSWORD('%s')", m_strName, m_strPSWD);
 	if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg))
 	{
 		//strMsg.Format("»¶Ó­Äú£¬ %s", m_strName);

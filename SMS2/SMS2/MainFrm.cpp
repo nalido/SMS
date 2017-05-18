@@ -784,18 +784,18 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 	case 0: //初始化，隐藏全部
 	{
 				//默认全部隐藏
-				//int nCount = m_wndRibbonBar.GetCategoryCount();
-				//for (int i = 1; i < nCount; i++)
-				//{
-				//	m_wndRibbonBar.ShowCategory(i, FALSE);
-				//}
-				//CBCGPRibbonCategory* pCate = m_wndRibbonBar.GetCategory(0);
-				//m_wndRibbonBar.SetActiveCategory(pCate);
-				//m_wndRibbonBar.RecalcLayout();
-				//for (int i = 0; i < 5; i++)
-				//{
-				//	g_nPermissions[i] = 0;
-				//}
+				int nCount = m_wndRibbonBar.GetCategoryCount();
+				for (int i = 1; i < nCount; i++)
+				{
+					m_wndRibbonBar.ShowCategory(i, FALSE);
+				}
+				CBCGPRibbonCategory* pCate = m_wndRibbonBar.GetCategory(0);
+				m_wndRibbonBar.SetActiveCategory(pCate);
+				m_wndRibbonBar.RecalcLayout();
+				for (int i = 0; i < 5; i++)
+				{
+					g_nPermissions[i] = 0;
+				}
 				break;
 	}
 	case 1: //最高权限，显示全部
@@ -828,8 +828,10 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 				if (g_nPermissions[3] == 0) //员工管理
 					m_wndRibbonBar.ShowCategory(4, FALSE);
 
-				if (g_nPermissions[4] == 0) //驾校管理
+				if (g_nPermissions[4] == 0) //信息管理
 					m_wndRibbonBar.ShowCategory(5, FALSE);
+
+				m_wndRibbonBar.ShowCategory(6, FALSE);
 
 				m_wndRibbonBar.RecalcLayout();
 				break;
