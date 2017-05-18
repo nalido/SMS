@@ -62,7 +62,7 @@ LRESULT CViewBooking1::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 	if (flag == 1) //update data from database
 	{
 		//数据初始化
-		CTime t = CTime::GetCurrentTime();
+		CTime t = GetServerTime();//CTime::GetCurrentTime();
 		m_wndCalendar.m_tToday = CTime(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
 		m_wndCalendar.m_PointToday = m_wndCalendar.GetDay0Pos();
 	}

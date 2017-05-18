@@ -125,7 +125,7 @@ void CViewKPI::OnInitialUpdate()
 	//注册虚拟列表回调函数
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
 
-	m_tToday = CTime::GetCurrentTime();
+	m_tToday = GetServerTime();//CTime::GetCurrentTime();
 
 }
 

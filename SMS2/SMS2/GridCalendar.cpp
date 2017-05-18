@@ -89,7 +89,7 @@ void CGridCalendar::InitGrid(int wndWid)
 	/***********************************************************/
 
 	//数据初始化
-	CTime t = CTime::GetCurrentTime();
+	CTime t = GetServerTime();//CTime::GetCurrentTime();
 	m_tToday = CTime(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
 	m_PointToday = GetDay0Pos();
 	//UpdateGrid();
@@ -191,7 +191,7 @@ void CGridCalendar::UpdateGrid()
 	m_tGridDay0 = m_tToday;
 
 	CString strMaxDay, strMaxDay0;
-	CTime t = CTime::GetCurrentTime();
+	CTime t = GetServerTime();//CTime::GetCurrentTime();
 	strMaxDay0 = t.Format("%Y/%m/%d");
 	//CTime t(2017, 12, 1, 0, 0, 0);
 	t += CTimeSpan(89, 0, 0, 0);    //该函数第一个参数为相差的天数  

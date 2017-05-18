@@ -249,7 +249,7 @@ void CTmpOrder::OnBnClickedPrint()
 	sheetInfo.strClassType = m_strType;
 	sheetInfo.strCoach = m_strCoach;
 	sheetInfo.strCoachID = m_strCoachID;
-	CTime t = CTime::GetCurrentTime();
+	CTime t = GetServerTime();//CTime::GetCurrentTime();
 	sheetInfo.strDate = t.Format("%Y年%m月%d日制");
 
 	//学员信息
@@ -306,7 +306,7 @@ void CTmpOrder::OnBnClickedOk()
 		CString strClassID;
 		strClassID.Format("%d", classID + 1);
 		m_strClassID = strClassID;
-		CTime t = CTime::GetCurrentTime();
+		CTime t = GetServerTime();//CTime::GetCurrentTime();
 		m_strOrderDate = t.Format("%Y/%m/%d");
 	}
 

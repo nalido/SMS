@@ -175,7 +175,7 @@ BOOL CDlgMyBooks::OnInitDialog()
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
 	m_wndGrid.SetCallBack_DblClk(OnGridDbClick);
 
-	CTime t = CTime::GetCurrentTime();
+	CTime t = GetServerTime();//CTime::GetCurrentTime();
 	m_strToday = t.Format("%Y/%m/%d");
 
 	Refresh();
@@ -260,7 +260,7 @@ void CDlgMyBooks::UpdateCoach(int nRow, int flag)
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
 
-		CTime t = CTime::GetCurrentTime();
+		CTime t = GetServerTime();//CTime::GetCurrentTime();
 		int year = t.GetYear();
 		CTime midYear(year, 6, 1, 0, 0, 0); //以每年6月1号作为半年检查的标志
 		//半年内 超过3次请假为不合格, 超过半年按6次算

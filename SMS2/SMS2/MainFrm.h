@@ -198,9 +198,10 @@ typedef struct struct_STUDENTINFO
 	}
 }STUDENTINFO;
 
-
+extern CString g_strCurrentTime; //服务器的当前时间
 extern CString GetClassTime(int n); //根据时段编号获得具体时间
 extern CString GetLastMonth(CTime& thisMonth); //获取上个月的月份
 extern CTime Str2Time(CString str); //解析字符串得到时间
+extern CTime GetServerTime(); //解析字符串得到服务器时间
 extern void ExportExcel(std::vector<CString>& titles, CDStrs &datas); //数据导出到excel
 extern void ExportExcel(CString strFileName, std::vector<CString>& titles, CDStrs &datas); //数据导出到excel
