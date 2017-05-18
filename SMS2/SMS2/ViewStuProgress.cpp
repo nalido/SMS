@@ -30,7 +30,7 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 					pdi->item.varValue = pThis->m_datas[nRow][nCol];
 
 					//判断明天是不是预约时间
-					CTime t = CTime::GetCurrentTime();
+					CTime t = GetServerTime();//CTime::GetCurrentTime();
 					CTime tomo = t + CTimeSpan(1, 0, 0, 0);
 					CString strTomo = tomo.Format("%Y/%m/%d");
 					if (strTomo == pThis->m_datas[nRow][9] && pThis->m_datas[nRow][10] == "0")
@@ -355,7 +355,7 @@ void CViewStuProgress::OnBnClickedSendbookmsg()
 			}
 			else ShowMsg2Output1(strMsg);
 
-			CTime t = CTime::GetCurrentTime();
+			CTime t = GetServerTime();//CTime::GetCurrentTime();
 			CTime tomo = t + CTimeSpan(1, 0, 0, 0);
 			CString strTomo = tomo.Format("%Y/%m/%d");
 			strSQL.Format("UPDATE stuDates SET BOOK_SMS='1' WHERE STU_ID='%s' AND BOOK_DATE='%s'", strStuID, strTomo);

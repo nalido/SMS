@@ -115,7 +115,7 @@ BOOL CDlgMontPlate::OnInitDialog()
 	m_wndCalendarCtrl.SetSingleMonthMode();
 	m_wndCalendarCtrl.EnableMutipleSelection(0); //不能多选
 
-	m_tToday = CTime::GetCurrentTime();
+	m_tToday = GetServerTime();//CTime::GetCurrentTime();
 	m_strMonth = m_tToday.Format("%Y/%m/__");
 
 	Refresh();

@@ -44,6 +44,7 @@ CString g_strUserID = "";
 int g_nMinK2Class = 8;
 int g_nMinK3Class = 10;
 BOOL g_isSMSSended = FALSE;
+CString g_strCurrentTime;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
@@ -54,7 +55,7 @@ void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统
 		if (flag)
 		{
 			CTime localtime;
-			localtime = CTime::GetCurrentTime();
+			localtime = GetServerTime();//CTime::GetCurrentTime();
 			str_log = localtime.Format("\r\n\r\n%Y-%m-%d\t%X\r\n") + str_log;
 		}
 		else
@@ -148,6 +149,34 @@ CTime Str2Time(CString str)
 	int nDay = atoi(str.Mid(pos2 + 1));
 
 	CTime tmp(nYear, nMonth, nDay, 0, 0, 0);
+
+	return tmp;
+}
+
+
+CTime GetServerTime()
+{
+	int pos0 = g_strCurrentTime.Find('-');
+	CString strHour = g_strCurrentTime.Mid(pos0 + 1);
+	CString strDate = g_strCurrentTime.Left(pos0);
+
+	//解析日期
+	int pos1, pos2;
+	pos1 = strDate.Find('/');
+	pos2 = strDate.ReverseFind('/');
+
+	int nYear = atoi(strDate.Left(pos1));
+	int nMonth = atoi(strDate.Mid(pos1 + 1, pos2));
+	int nDay = atoi(strDate.Mid(pos2 + 1));
+
+	//解析时间
+	pos1 = strHour.Find(':');
+	pos2 = strHour.ReverseFind(':');
+	int nHour = atoi(strHour.Left(pos1));
+	int nMin = atoi(strHour.Mid(pos1 + 1, pos2));
+	int nSec = atoi(strHour.Mid(pos2 + 1));
+
+	CTime tmp(nYear, nMonth, nDay, nHour, nMin, nSec);
 
 	return tmp;
 }
@@ -785,7 +814,7 @@ void CALLBACK CMainFrame::ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent)
 	{
 		CString strMsg, strSQL;
 		//事务一：每月添加新的KPI记录
-		CTime t = CTime::GetCurrentTime();
+		CTime t = GetServerTime();//CTime::GetCurrentTime();
 		CString thisMonth = t.Format("%Y/%m");
 		strSQL.Format("SELECT * FROM kpis WHERE KMONTH='%s'", thisMonth);
 		CDStrs datas;

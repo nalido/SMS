@@ -473,7 +473,7 @@ void CViewBooking2::OnInitialUpdate()
 	m_isToday = FALSE;
 	m_canChangeOrder = TRUE;
 	GetDlgItem(IDC_ORDER_CHANGE)->EnableWindow(FALSE);
-	m_tToday = CTime::GetCurrentTime();
+	m_tToday = GetServerTime();//CTime::GetCurrentTime();
 	m_tTomorrow = m_tToday + CTimeSpan(1, 0, 0, 0);
 	m_wndDate.GetClientRect(&m_rectDate);
 	m_wndDate.MapWindowPoints(this, &m_rectDate);

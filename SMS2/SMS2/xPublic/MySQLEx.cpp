@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MySQLEx.h"
+#include "..\MainFrm.h"
 
 
 namespace xPublic{
@@ -75,7 +76,15 @@ namespace xPublic{
 	BOOL CMySQLEx::IsConnected()
 	{
 		CString strMsg;
-		return ExecuteQueryExist("SELECT DATE_FORMAT(NOW(),'%Y%m%e-%H:%i:%s')", strMsg);
+		CDStrs Time;
+		BOOL ret = ExecuteQuery("SELECT DATE_FORMAT(NOW(),'%Y/%m/%d-%H:%i:%s')", Time, strMsg);
+		if (Time.size() > 0) g_strCurrentTime = Time[0][0];
+		else 
+		{
+			CTime t = CTime::GetCurrentTime();
+			g_strCurrentTime = t.Format("%Y/%m/%d-%H:%M:%S");
+		}
+		return ret;
 	}
 
 	

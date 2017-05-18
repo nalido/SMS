@@ -340,7 +340,7 @@ void CViewRegister::OnBnClickedNewfile()
 
 
 	CTime localtime;
-	localtime = CTime::GetCurrentTime();
+	localtime = GetServerTime();//CTime::GetCurrentTime();
 
 	//获取已有档案数量
 	CDStrs data;

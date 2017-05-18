@@ -165,7 +165,7 @@ BOOL CDlgCoachCheck::OnInitDialog()
 	//注册虚拟列表回调函数
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
 
-	CTime t = CTime::GetCurrentTime();
+	CTime t = GetServerTime();//CTime::GetCurrentTime();
 	//默认统计当月
 	m_strYearS = t.Format("%Y");
 	m_strMonthS = t.Format("%m");
@@ -665,7 +665,7 @@ void CDlgCoachCheck::OnBnClickedQuery()
 
 void CDlgCoachCheck::OnBnClickedSettoday()
 {
-	CTime t = CTime::GetCurrentTime();
+	CTime t = GetServerTime();//CTime::GetCurrentTime();
 
 	m_strYearE = t.Format("%Y");
 	m_strMonthE = t.Format("%m");
