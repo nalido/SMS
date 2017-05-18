@@ -68,6 +68,11 @@ public:
 	xPublic::CThreadBase m_threadMySQL;
 	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
 
+
+	//定时事务子线程
+	xPublic::CThreadBase m_threadClock;
+	static void CALLBACK ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent);
+
 	//SOCKET
 	HANDLE  m_hSocketEvent;
 	xPublic::CTCPClient m_tcpClient;

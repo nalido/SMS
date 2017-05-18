@@ -247,7 +247,9 @@ void CDlgMyBooks::UpdateCoach(int nRow, int flag)
 
 	if (flag == 1) //旷工一次就更新教练的缺勤次数
 	{
-		strSQL.Format("SELECT COUNT(COACH_ID) FROM coachCheck WHERE COACH_ID='%s' AND TYPE='0'", strCoachID);
+		CString strThisYear;
+		strThisYear = m_strToday.Left(4) + "%%";
+		strSQL.Format("SELECT COUNT(COACH_ID) FROM coachCheck WHERE COACH_ID='%s' AND TYPE='0' AND CHECK_DATE LIKE '%s'", strCoachID, strThisYear);
 		CDStrs counts;
 		int count;
 		g_mysqlCon.ExecuteQuery(strSQL, counts, strMsg);
@@ -273,9 +275,10 @@ void CDlgMyBooks::UpdateCoach(int nRow, int flag)
 	}
 	else if (flag == 0) //正常完成一次，增加一次本月已上课时数
 	{
-		strSQL.Format("UPDATE coachstat SET CLASS_NUM=\
-					  	(SELECT COUNT(COACH_ID) FROM coachCheck WHERE COACH_ID='%s' AND TYPE='1')\
-						WHERE FILE_NUM='%s'", strCoachID, strCoachID);
+		CString strThisMonth = m_strToday.Left(7) + "%%";
+		strSQL.Format("UPDATE coachstat SET CLASS_TIME=\
+					  	(SELECT COUNT(COACH_ID) FROM coachCheck WHERE COACH_ID='%s' AND STUDENT='1' AND CHECK_DATE LIKE '%s')\
+						WHERE FILE_NUM='%s'", strCoachID, strThisMonth, strCoachID);
 
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);

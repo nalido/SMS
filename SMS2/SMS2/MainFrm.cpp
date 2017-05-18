@@ -275,6 +275,7 @@ END_MESSAGE_MAP()
 CMainFrame::CMainFrame()
 : m_threadMySQL(this, ThreadMySQLCallback)
 , m_threadSocket(this, ThreadSocketCallback)
+, m_threadClock(this, ThreadClockCallback)
 {
 	m_pSendBuf = NULL;
 	m_nSendLen = 0;
@@ -766,6 +767,51 @@ void CALLBACK CMainFrame::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
 		}
 	}
 }
+
+
+void CALLBACK CMainFrame::ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent)
+{
+	CMainFrame* pThis = (CMainFrame*)pParam;
+	DWORD dwWaitTime = 600000; //十分钟刷新一次
+
+	//已连接时等待5s，未连接时等待2s
+	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, dwWaitTime))
+	{
+		CString strMsg, strSQL;
+		//事务一：每月添加新的KPI记录
+		CTime t = CTime::GetCurrentTime();
+		CString thisMonth = t.Format("%Y/%m");
+		strSQL.Format("SELECT * FROM kpis WHERE KMONTH='%s'", thisMonth);
+		CDStrs datas;
+		if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg))
+		{
+			if (datas.size() == 0) //没有本月的记录
+			{
+				g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
+				strSQL.Format("INSERT INTO KPIS (COACH, COACH_ID) SELECT coachinfo.SNAME, coachinfo.FILE_NUM FROM coachinfo INNER JOIN coachstat ON coachinfo.FILE_NUM=coachstat.FILE_NUM WHERE coachstat.BLACK_NAME='0'");
+				if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+				{
+					strSQL.Format("UPDATE KPIS SET KMONTH='%s' WHERE KMONTH='0'", thisMonth);
+					if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+					{
+						g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+					}
+				}
+				else
+					g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+			}
+		}
+
+		//事务二：更新coachstat的KPI
+		CString lastMonth = GetLastMonth(t); 
+		strSQL.Format("UPDATE coachstat, kpis SET coachstat.PERFORMANCE=kpis.SCORE WHERE coachstat.FILE_NUM=kpis.COACH_ID AND kpis.KMONTH='%s'", lastMonth);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+
+		//事务三：代办事务提醒
+
+	}
+}
+
 
 void CMainFrame::OnClose()
 {
