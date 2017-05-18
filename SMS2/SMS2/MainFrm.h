@@ -81,7 +81,8 @@ public:
 	void SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int imgSize);//保存图像
 };
 
-extern CString g_strFilePath;
+extern CString g_strFilePath; //图片保存位置
+extern CString g_strOutPath; //输出文件位置
 extern CString g_strK1Address;//科目一上课地址
 extern xPublic::CMySQLEx g_mysqlCon;
 extern void LOG(CString sFileName, CString str_log, int flag = 1);
@@ -195,3 +196,4 @@ extern CString GetClassTime(int n); //根据时段编号获得具体时间
 extern CString GetLastMonth(CTime& thisMonth); //获取上个月的月份
 extern CTime Str2Time(CString str); //解析字符串得到时间
 extern void ExportExcel(std::vector<CString>& titles, CDStrs &datas); //数据导出到excel
+extern void ExportExcel(CString strFileName, std::vector<CString>& titles, CDStrs &datas); //数据导出到excel

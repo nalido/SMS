@@ -77,6 +77,7 @@
 #define IDC_DELITEM                     1057
 #define IDC_FORGET                      1057
 #define IDC_SELFDOWN                    1057
+#define IDC_EXPORT2                     1057
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
@@ -140,10 +141,14 @@
 #define IDC_NEW_STUDENT                 1084
 #define IDC_CHANGEBACK                  1085
 #define IDC_BUTTON1085                  1085
+#define IDC_EDIT_FILEPATH2              1086
 #define IDC_STUPROGRESS                 1087
+#define IDC_FILEPATH2                   1087
 #define IDC_STUFRESH                    1088
+#define IDC_CHANGEPATH2                 1088
 #define IDC_SENDBOOKMSG                 1089
 #define IDC_SPHOTO                      1089
+#define IDC_CHANGEBACK2                 1089
 #define IDC_SLIST                       1090
 #define IDC_TOBOOK                      1090
 #define IDC_NAME0                       1091
@@ -277,7 +282,6 @@
 #define IDC_D11                         1222
 #define IDC_LABEL1                      1222
 #define IDC_D12                         1223
-#define IDC_LABEL2                      1223
 #define IDC_D13                         1224
 #define IDC_VIEW_4STUDENT               1227
 #define IDC_E1                          1229

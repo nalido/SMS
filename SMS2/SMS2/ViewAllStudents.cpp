@@ -56,6 +56,7 @@ BEGIN_MESSAGE_MAP(CViewAllStudents, CBCGPFormView)
 	ON_BN_CLICKED(IDC_QUERY, &CViewAllStudents::OnBnClickedQuery)
 	ON_BN_CLICKED(IDC_QUIT, &CViewAllStudents::OnBnClickedQuit)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &CViewAllStudents::OnTcnSelchangeTab2)
+	ON_BN_CLICKED(IDC_EXPORT2, &CViewAllStudents::OnBnClickedExport2)
 END_MESSAGE_MAP()
 
 
@@ -929,4 +930,56 @@ void CViewAllStudents::OnTcnSelchangeTab2(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 
 	*pResult = 0;
+}
+
+
+void CViewAllStudents::OnBnClickedExport2()
+{
+	int pos1 = m_TabShowType.GetCurSel();
+	int pos0 = m_TabCtrl.GetCurSel();
+
+	CString strT1[] = { "新生统计", "科目一统计", "科目二统计", "科目三统计", "退学统计" };
+	CString strT2[] = { "按天", "按月", "按年" };
+	CString strFileName = strT1[pos0] + strT2[pos1] + m_strDateS + "-" + m_strDateE + ".csv"; //g_strOutPath + "\\" + 
+	strFileName.Replace('/', '_');
+
+	if (pos1==0)
+		switch (pos0)
+	{
+		case 0:
+			ExportExcel(strFileName, m_arrColumns1, m_datas1);
+			break;
+		case 1:
+			ExportExcel(strFileName, m_arrColumns2, m_datas2);
+			break;
+		case 2:
+			ExportExcel(strFileName, m_arrColumns3, m_datas3);
+			break;
+		case 3:
+			ExportExcel(strFileName, m_arrColumns4, m_datas4);
+			break;
+		case 4:
+			ExportExcel(strFileName, m_arrColumns5, m_datas5);
+			break;
+	}
+	else if (pos1 == 1)
+	{
+		std::vector<CString> arrColumns;
+		arrColumns.push_back("统计月份");
+		arrColumns.push_back("统计数量");
+		int n = m_nPiePart.size();
+		for (int i = 0; i < n; i++)
+			arrColumns.push_back(m_strPiePart[i]);
+		ExportExcel(strFileName, arrColumns, m_datasM);
+	}
+	else if (pos1 == 2)
+	{
+		std::vector<CString> arrColumns;
+		arrColumns.push_back("统计年份");
+		arrColumns.push_back("统计数量");
+		int n = m_nPiePart.size();
+		for (int i = 0; i < n; i++)
+			arrColumns.push_back(m_strPiePart[i]);
+		ExportExcel(strFileName, arrColumns, m_datasY);
+	}
 }

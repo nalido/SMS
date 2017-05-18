@@ -31,6 +31,7 @@
 
 ////////////////global functions and values///////////////////////
 CString g_strFilePath = "E:\\Photos\\";
+CString g_strOutPath = "E:\\Files";
 CString g_strK1Address;
 xPublic::CMySQLEx g_mysqlCon;
 CString g_sServerIP = "127.0.0.1";
@@ -190,6 +191,48 @@ void ExportExcel(std::vector<CString>& titles, CDStrs &datas)
 		f.Close();
 	}
 	
+}
+
+void ExportExcel(CString strFileName, std::vector<CString>& titles, CDStrs &datas)
+{
+	CFileDialog fileDlg(FALSE, "*.csv", strFileName, 6UL, "通用表格(*.csv)|*.csv|");
+	CString filename("");
+	if (fileDlg.DoModal() == IDOK)
+	{
+		filename = fileDlg.GetPathName();
+	}
+	else return;
+
+	CFile f;
+	if (f.Open(filename, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeReadWrite))
+	{
+		CString strLine("");
+
+		//列名
+		int cols = titles.size();
+		for (int i = 0; i < cols; i++)
+		{
+			strLine = strLine + titles[i] + ",";
+		}
+		strLine = strLine + "\r\n";
+		f.Write(strLine, strlen(strLine));
+
+		//数据
+		int rows = datas.size();
+		for (int r = 0; r < rows; r++)
+		{
+			strLine = "";
+			for (int c = 0; c < cols; c++)
+			{
+				strLine = strLine + datas[r][c] + ",";
+			}
+			strLine = strLine + "\r\n";
+			f.Write(strLine, strlen(strLine));
+		}
+
+		f.Close();
+	}
+
 }
 ///////////////////////////////end of global functions//////////////
 

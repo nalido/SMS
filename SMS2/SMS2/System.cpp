@@ -17,6 +17,7 @@ CSystem::CSystem()
 {
 	EnableVisualManagerStyle();
 	m_strFilePath = "";
+	m_strOutPath = "";
 }
 
 CSystem::~CSystem()
@@ -27,13 +28,16 @@ void CSystem::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPFormView::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_FILEPATH, m_strFilePath);
+	DDX_Text(pDX, IDC_EDIT_FILEPATH2, m_strOutPath);
 }
 
 BEGIN_MESSAGE_MAP(CSystem, CBCGPFormView)
 	ON_BN_CLICKED(IDC_FILEPATH, &CSystem::OnBnClickedFilepath)
 	ON_BN_CLICKED(IDC_CHANGEPATH, &CSystem::OnBnClickedChangepath)
 	ON_BN_CLICKED(IDC_CHANGEBACK, &CSystem::OnBnClickedChangeback)
-	ON_BN_CLICKED(IDC_BUTTON1, &CSystem::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_FILEPATH2, &CSystem::OnBnClickedFilepath2)
+	ON_BN_CLICKED(IDC_CHANGEPATH2, &CSystem::OnBnClickedChangepath2)
+	ON_BN_CLICKED(IDC_CHANGEBACK2, &CSystem::OnBnClickedChangeback2)
 END_MESSAGE_MAP()
 
 
@@ -99,6 +103,11 @@ void CSystem::OnInitialUpdate()
 	GetDlgItem(IDC_CHANGEPATH)->EnableWindow(FALSE);
 	GetDlgItem(IDC_CHANGEBACK)->EnableWindow(FALSE);
 	m_strFilePath = g_strFilePath;
+
+	GetDlgItem(IDC_CHANGEPATH2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_CHANGEBACK2)->EnableWindow(FALSE);
+	m_strOutPath = g_strOutPath;
+
 	UpdateData(FALSE);
 }
 
@@ -119,8 +128,53 @@ void CSystem::OnBnClickedChangeback()
 }
 
 
-void CSystem::OnBnClickedButton1()
+
+void CSystem::OnBnClickedFilepath2()
 {
-	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-	pFrame->PostMessageA(WM_USER_MESSAGE, (WPARAM)1);
+	TCHAR           szFolderPath[MAX_PATH] = { 0 };
+	CString         strFolderPath = TEXT("");
+
+	BROWSEINFO      sInfo;
+	::ZeroMemory(&sInfo, sizeof(BROWSEINFO));
+	sInfo.pidlRoot = 0;
+	sInfo.lpszTitle = _T("请选择一个文件夹：");
+	sInfo.ulFlags = BIF_DONTGOBELOWDOMAIN | BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_EDITBOX;
+	sInfo.lpfn = NULL;
+
+	// 显示文件夹选择对话框  
+	LPITEMIDLIST lpidlBrowse = ::SHBrowseForFolder(&sInfo);
+	if (lpidlBrowse != NULL)
+	{
+		// 取得文件夹名  
+		if (::SHGetPathFromIDList(lpidlBrowse, szFolderPath))
+		{
+			m_strOutPath = szFolderPath;
+			UpdateData(FALSE);
+			if (m_strOutPath != g_strOutPath)
+			{
+				GetDlgItem(IDC_CHANGEPATH2)->EnableWindow(TRUE);
+				GetDlgItem(IDC_CHANGEBACK2)->EnableWindow(TRUE);
+			}
+		}
+	}
+	if (lpidlBrowse != NULL)
+	{
+		::CoTaskMemFree(lpidlBrowse);
+	}
+}
+
+
+void CSystem::OnBnClickedChangepath2()
+{
+	g_strOutPath = m_strOutPath;
+	xPublic::WRISTR2("Option", "FileSavePath", g_strOutPath);
+	GetDlgItem(IDC_CHANGEPATH2)->EnableWindow(FALSE);
+	GetDlgItem(IDC_CHANGEBACK2)->EnableWindow(FALSE);
+}
+
+
+void CSystem::OnBnClickedChangeback2()
+{
+	m_strOutPath = g_strOutPath;
+	UpdateData(FALSE);
 }
