@@ -91,7 +91,8 @@ BEGIN
     LTEXT           "性别：",IDC_STATIC4,140,181,48,9,0,WS_EX_RIGHT
     COMBOBOX        IDC_GENDER,198,179,100,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     CONTROL         "",IDC_BKBMP,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,0,15,14
-    CONTROL         "",IDC_BKBMP1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,841,484,24,14
+    CONTROL         "",IDC_BKBMP1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,841,472,24,14
+    CONTROL         "",IDC_CONTENT,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,108,47,405,313
 END
 
 IDD_BOOKING1 DIALOGEX 0, 0, 831, 536
@@ -184,8 +185,8 @@ BEGIN
     CONTROL         "",IDC_POS1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,0,14,11
     CONTROL         "",IDC_POS2,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,846,523,14,11
     CONTROL         "",IDC_CONTENT,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,515,214,222,128
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,540,238,67,51
-    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME,637,238,67,51
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_NOTIFY | NOT WS_VISIBLE,540,238,67,51
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,637,238,67,51
 END
 
 IDD_SMSINFO DIALOGEX 0, 0, 351, 271
@@ -1102,9 +1103,9 @@ END
 // Bitmap
 //
 
-IDB_BITMAP3             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\3.bmp"
-IDB_BITMAP2             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\2.bmp"
-IDB_BITMAP1             BITMAP                  "res\\0.bmp"
+//IDB_BITMAP3             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\3.bmp"
+//IDB_BITMAP2             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\2.bmp"
+//IDB_BITMAP1             BITMAP                  "res\\0.bmp"
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

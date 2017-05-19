@@ -771,8 +771,8 @@ HBRUSH CViewAllStudents::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	{
 	case IDC_S1:
 	case IDC_S2:
-	case IDC_S3:
-	case IDC_S4:
+	//case IDC_S3:
+	//case IDC_S4:
 	{
 				   pDC->SetBkMode(TRANSPARENT);
 				   pDC->SetTextColor(RGB(51, 103, 155));
@@ -856,6 +856,10 @@ void CViewAllStudents::OnBnClickedQuery()
 	int type = m_TabCtrl.GetCurSel();
 	Refresh(type, m_strDateS, m_strDateE);
 	m_canAnal = TRUE;
+
+	m_TabShowType.SetCurSel(0);
+	m_wndGridM.EnableWindow(FALSE);
+	m_wndGridY.EnableWindow(FALSE);
 }
 
 

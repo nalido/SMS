@@ -895,18 +895,18 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 	case 0: //初始化，隐藏全部
 	{
 				//默认全部隐藏
-				int nCount = m_wndRibbonBar.GetCategoryCount();
-				for (int i = 1; i < nCount; i++)
-				{
-					m_wndRibbonBar.ShowCategory(i, FALSE);
-				}
-				CBCGPRibbonCategory* pCate = m_wndRibbonBar.GetCategory(0);
-				m_wndRibbonBar.SetActiveCategory(pCate);
-				m_wndRibbonBar.RecalcLayout();
-				for (int i = 0; i < 5; i++)
-				{
-					g_nPermissions[i] = 0;
-				}
+				//int nCount = m_wndRibbonBar.GetCategoryCount();
+				//for (int i = 1; i < nCount; i++)
+				//{
+				//	m_wndRibbonBar.ShowCategory(i, FALSE);
+				//}
+				//CBCGPRibbonCategory* pCate = m_wndRibbonBar.GetCategory(0);
+				//m_wndRibbonBar.SetActiveCategory(pCate);
+				//m_wndRibbonBar.RecalcLayout();
+				//for (int i = 0; i < 5; i++)
+				//{
+				//	g_nPermissions[i] = 0;
+				//}
 				break;
 	}
 	case 1: //最高权限，显示全部

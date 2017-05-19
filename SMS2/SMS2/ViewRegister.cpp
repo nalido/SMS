@@ -55,6 +55,11 @@ void CViewRegister::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STATIC7, m_staticText[7]);
 	DDX_Control(pDX, IDC_STATIC8, m_staticText[8]);
 	DDX_Control(pDX, IDC_STATIC9, m_staticText[9]);
+
+
+	DDX_Control(pDX, IDC_BKBMP, m_BKpos1);
+	DDX_Control(pDX, IDC_BKBMP1, m_BKpos2);
+	DDX_Control(pDX, IDC_CONTENT, m_Content);
 }
 
 BEGIN_MESSAGE_MAP(CViewRegister, CBCGPFormView)
@@ -100,7 +105,7 @@ void CViewRegister::OnBnClickedCamera()
 		if (!m_videoCap.isOpened()) m_videoCap.open(0);
 		if (!m_videoCap.isOpened())
 		{
-			MessageBox("Failed to open camera");
+			MessageBox("摄像头打开失败");
 		}
 
 		//init the timer
@@ -152,6 +157,15 @@ void CViewRegister::OnInitialUpdate()
 {
 	CBCGPFormView::OnInitialUpdate();
 
+	//获取背景定位点位置
+	m_BKpos1.GetClientRect(&m_rctBK1);
+	m_BKpos1.MapWindowPoints(this, &m_rctBK1);
+	m_BKpos2.GetClientRect(&m_rctBK2);
+	m_BKpos2.MapWindowPoints(this, &m_rctBK2);
+
+	m_Content.GetClientRect(&m_rctContent);
+	m_Content.MapWindowPoints(this, &m_rctContent);
+
 	///******初始化一个摄像头捕捉器******/
 
 	//if (!m_videoCap.isOpened()) m_videoCap.open(0);
@@ -181,24 +195,37 @@ void CViewRegister::OnPaint()
 	CPaintDC dc(this); // device context for painting
 
 	//双缓存绘制
-	CRect   rect1, rect0;
+	CRect   rect;
+	GetClientRect(&rect);
+	MapWindowPoints(this, &rect);
 	CDC     MemDC;
 	CBitmap MemMap;
 
-	GetDlgItem(IDC_BKBMP)->GetClientRect(&rect0); //贴图原点
-	GetDlgItem(IDC_BKBMP)->MapWindowPoints(this, &rect0);
-	GetDlgItem(IDC_BKBMP1)->GetClientRect(&rect1); //贴图终点
-	GetDlgItem(IDC_BKBMP1)->MapWindowPoints(this, &rect1);
+
+	Gdiplus::Point p1(m_rctBK1.left, m_rctBK1.top);
+	Gdiplus::Point p2(m_rctBK2.right, m_rctBK2.bottom);
+	int width = m_rctBK2.right - m_rctBK1.left;
+	int height = m_rctBK2.bottom - m_rctBK1.top;
+	int  W = GetSystemMetrics(SM_CXSCREEN);  //得到屏幕宽度 
+	int  H = GetSystemMetrics(SM_CYSCREEN);
+	width = max(W, width);
+	height = max(H, height);
+
 	MemDC.CreateCompatibleDC(&dc); 
-	MemMap.LoadBitmapA(IDB_BITMAP3);
-	BITMAP bmp;
-	MemMap.GetBitmap(&bmp); //获取bmp参数
+	MemMap.CreateCompatibleBitmap(&dc, width, height);
 	MemDC.SelectObject(&MemMap);
 
-	int w = rect1.right - rect0.left;
-	int h = rect1.bottom - rect0.top;
-	dc.StretchBlt(rect0.left, rect0.top, w, h, &MemDC, 0, 0, bmp.bmWidth, bmp.bmHeight, SRCCOPY);
-	//dc.BitBlt(rect0.left, rect0.top, rect.Width(), rect.Height(), &MemDC, 0, 0, SRCCOPY);
+	Graphics graph(MemDC.m_hDC);
+
+	Image img(L"res//r1.jpg");
+	graph.DrawImage(&img, Gdiplus::Rect(p1.X, p1.Y, width, height));
+
+	SolidBrush brush(Color(150, 230, 230, 230));
+	graph.FillRectangle(&brush, m_rctContent.left, m_rctContent.top, m_rctContent.Width(), m_rctContent.Height());
+
+	//复制内存DC到屏幕上
+	CPoint pos = GetScrollPosition();
+	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, pos.x, pos.y, SRCCOPY);
 	MemDC.DeleteDC();
 	MemMap.DeleteObject();
 

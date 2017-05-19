@@ -387,17 +387,24 @@ void CViewScan::OnPaint()
 	Point p2(m_rctBK2.right, m_rctBK2.bottom);
 	int width = m_rctBK2.right - m_rctBK1.left;
 	int height = m_rctBK2.bottom - m_rctBK1.top;
+	int  W = GetSystemMetrics(SM_CXSCREEN);  //µÃµ½ÆÁÄ»¿í¶È 
+	int  H = GetSystemMetrics(SM_CYSCREEN);
+	width = max(W, width);
+	height = max(H, height);
 
 	bitmp.CreateCompatibleBitmap(&dc,  width, height);
 	MemDC.SelectObject(&bitmp);
 
 	Graphics graph(MemDC.m_hDC);
 	//LinearGradientBrush lgb(p1, p2, Color(145, 168, 201), Color(213, 202, 181));
-	LinearGradientBrush lgb(p1, p2, Color(156, 187, 232), Color(213, 202, 181));
-	graph.FillRectangle(&lgb, m_rctBK1.left, m_rctBK1.top, width, height);
+	//LinearGradientBrush lgb(p1, p2, Color(156, 187, 232), Color(213, 202, 181));
+	//graph.FillRectangle(&lgb, m_rctBK1.left, m_rctBK1.top, width, height);
+
+	Image img(L"res//r1.jpg");
+	graph.DrawImage(&img, Gdiplus::Rect(p1.X, p1.Y, width, height));
 
 
-	SolidBrush brush(Color(230, 230, 230));
+	SolidBrush brush(Color(200, 230, 230, 230));
 	graph.FillRectangle(&brush, m_rctContent.left, m_rctContent.top, m_rctContent.Width(), m_rctContent.Height());
 
 	SolidBrush brush1(Color(240, 243, 244));
