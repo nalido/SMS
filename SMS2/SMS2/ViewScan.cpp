@@ -493,7 +493,112 @@ void CViewScan::OnBnClickedBook()
 
 void CViewScan::Refresh()
 {
+	//查询状态
+	CString strSQL, strMsg;
+	strSQL.Format("SELECT students.STEP, stuDates.K1_DATE, stuDates.K1_STAT, stuDates.K2_DATE, stuDates.K2_STAT, \
+				  stuDates.K3_DATE, stuDates.K3_STAT FROM students \
+				  left join stuDates ON stuDates.STU_ID=students.FILE_NAME \
+				  WHERE students.FILE_NAME='%s'", m_student.strFileName);
+	CDStrs datas;
+	if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg) && datas.size() > 0)
+	{
+		int step = atoi(datas[0][0]);
+		CDStrs tmp;
+		CStrs tmpRow;
+		tmpRow.push_back("");
+		tmpRow.push_back("");
+		tmpRow.push_back("");
+		tmpRow.push_back("");
+		tmp.push_back(tmpRow);
+		tmp.push_back(tmpRow);
 
+		//科目一
+		CDStrs K1;
+		K1 = tmp;
+		K1[0][0] = step == 0 ? "审核中" : (step < 1000 ? "已通过" : "审核不通过");
+		K1[0][1] = step == 2 ? "进行中" : (step < 2 ? " " : "已完成");
+		K1[0][2] = step == 3 ? "进行中" : (step < 3 ? " " : "已完成");
+		K1[0][3] = step == 4 ? "进行中" : (step < 4 ? " " : "已完成");
+
+		datas[0][1].Replace("年", "/");
+		datas[0][1].Replace("月", "/");
+		datas[0][1].Replace("日", "");
+		K1[1][2] = K1[1][3] = datas[0][1];
+
+		//科目二
+		CDStrs K2;
+		K2 = tmp;
+		CTime t = GetServerTime();
+		if (m_strClassType == "科目二")
+		{
+			K2[0][0] = "进行中";
+		}
+		int stat = atoi(datas[0][4]);
+		if (!datas[0][3].IsEmpty() && datas[0][3] != "0")
+		{ 
+			K2[0][0] = "进行中";
+			CString str = datas[0][3];
+			str.Replace("年", "/");
+			str.Replace("月", "/");
+			str.Replace("日", "");
+			CTime K2_Date = Str2Time(str);
+			K2[0][1] = "已报考";
+			K2[1][1] = K2_Date.Format("%Y/%m/%d");
+			K2[1][2] = K2_Date.Format("%Y/%m/%d");
+			if (K2_Date < t)
+			{
+				if (stat < 3)
+				{
+					K2[0][2] = "未通过";
+				}
+				else
+				{
+					K2[0][2] = "已通过";
+					K2[0][0] = "已完成";
+				}
+			}
+		}
+
+		//科目三
+		CDStrs K3;
+		K3 = tmp;
+		if (m_strClassType == "科目三")
+		{
+			K3[0][0] = "进行中";
+		}
+		stat = atoi(datas[0][6]);
+		if (!datas[0][5].IsEmpty() && datas[0][5] != "0")
+		{
+			K3[0][0] = "进行中";
+			CString str = datas[0][5];
+			str.Replace("年", "/");
+			str.Replace("月", "/");
+			str.Replace("日", "");
+			CTime K3_Date = Str2Time(str);
+			K3[0][1] = "已报考";
+			K3[1][1] = K3_Date.Format("%Y/%m/%d");
+			K3[1][2] = K3_Date.Format("%Y/%m/%d");
+			if (K3_Date < t)
+			{
+				if (stat < 3)
+				{
+					K3[0][2] = "未通过";
+				}
+				else
+				{
+					K3[0][2] = "已通过";
+					K3[0][0] = "已完成";
+				}
+			}
+		}
+
+		m_datas1 = K1;
+		m_datas2 = K2;
+		m_datas3 = K3;
+		m_wndGrid1.GridRefresh(m_datas1.size());
+		m_wndGrid2.GridRefresh(m_datas2.size());
+		m_wndGrid3.GridRefresh(m_datas3.size());
+	} //查询信息
 }
 
 LRESULT CViewScan::OnUserMessage(WPARAM wp, LPARAM lp)

@@ -790,15 +790,15 @@ HBRUSH CViewAllStudents::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 }
 
 Color colors[9] = {
-	Color(96, 157, 202),
-	Color(255, 150, 65),
-	Color(56, 194, 193),
-	Color(231, 138, 195),
-	Color(184, 135, 195),
-	Color(182, 115, 101),
-	Color(254, 144, 194),
-	Color(164, 160, 155),
-	Color(210, 204, 90)
+	Color(150, 96, 157, 202),
+	Color(150, 255, 150, 65),
+	Color(150, 56, 194, 193),
+	Color(150, 231, 138, 195),
+	Color(150, 184, 135, 195),
+	Color(150, 182, 115, 101),
+	Color(150, 254, 144, 194),
+	Color(150, 164, 160, 155),
+	Color(150, 210, 204, 90)
 };
 void CViewAllStudents::OnPaint()
 {
@@ -811,8 +811,10 @@ void CViewAllStudents::OnPaint()
 	Graphics graph(dc.m_hDC);
 
 	//»­½ø¶È±ýÍ¼
-	SolidBrush brush2(Color(156, 187, 232));
-	SolidBrush brush3(Color(191, 211, 242));
+	SolidBrush brush3(Color(150, 191, 211, 242));
+	//SolidBrush brush2(Color(240, 243, 244));
+	//Rect rctInfo(m_rctInfo.left, m_rctInfo.top, m_rctInfo.Height(), m_rctInfo.Height());
+	//graph.FillRectangle(&brush2, rctInfo);
 	Rect rctPie(m_rctPie.left, m_rctPie.top, m_rctPie.Height(), m_rctPie.Height());
 	graph.FillEllipse(&brush3, rctPie);
 

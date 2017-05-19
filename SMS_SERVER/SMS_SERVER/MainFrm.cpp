@@ -5,6 +5,7 @@
 #include "SMS_SERVER.h"
 
 #include "MainFrm.h"
+#include "xPublic\Common.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -14,12 +15,47 @@
 CString g_strFilePath = "E:\\Server_Photos\\";
 xPublic::CMySQLEx g_mysqlCon;
 CDStrs g_strMsgLog;
+CString g_strCurrentTime; 
+BOOL g_isSMSSended;
+
+
+CTime GetServerTime()
+{
+	int pos0 = g_strCurrentTime.Find('-');
+	CString strHour = g_strCurrentTime.Mid(pos0 + 1);
+	CString strDate = g_strCurrentTime.Left(pos0);
+
+	//解析日期
+	int pos1, pos2;
+	pos1 = strDate.Find('/');
+	pos2 = strDate.ReverseFind('/');
+
+	int nYear = atoi(strDate.Left(pos1));
+	int nMonth = atoi(strDate.Mid(pos1 + 1, pos2));
+	int nDay = atoi(strDate.Mid(pos2 + 1));
+
+	//解析时间
+	pos1 = strHour.Find(':');
+	pos2 = strHour.ReverseFind(':');
+	int nHour = atoi(strHour.Left(pos1));
+	int nMin = atoi(strHour.Mid(pos1 + 1, pos2));
+	int nSec = atoi(strHour.Mid(pos2 + 1));
+
+	CTime tmp(nYear, nMonth, nDay, nHour, nMin, nSec);
+
+	return tmp;
+}
+
+
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
 	//12.6
 	CFile f;
 	if (f.Open(sFileName, CFile::modeCreate | CFile::modeNoTruncate | CFile::modeReadWrite))
 	{
+		LONG filesize = f.GetLength();
+		if (filesize > 40960) f.SetLength(0); //大于40M时清空
+
 		f.SeekToEnd();
 		if (flag)
 		{
@@ -41,6 +77,32 @@ void ShowMsg2Output1(CString strMsg)
 	pFrame->m_wndOutput.AddItem2List1(strMsg);
 }
 
+CString GetClassTime(int n) //根据时段编号获得具体时间
+{
+	CString res("");
+	switch (n)
+	{
+	case 0:
+		res = "A8:00-10:00";
+		break;
+	case 1:
+		res = "A10:00-12:00";
+		break;
+	case 2:
+		res = "P2:00 - 4:00";
+		break;
+	case 3:
+		res = "P4:00 - 6:00";
+		break;
+	case 4:
+		res = "P6:00 - 8:00";
+		break;
+	default:
+		res = "未定义";
+		break;
+	}
+	return res;
+}
 ///////////////////////////////end of global functions//////////////
 
 // CMainFrame
@@ -68,6 +130,7 @@ enum VIEW_TYPE{
 
 CMainFrame::CMainFrame()
 : m_threadMySQL(this, ThreadMySQLCallback)
+, m_threadClock(this, ThreadClockCallback)
 {
 	// TODO: add member initialization code here
 }
@@ -134,6 +197,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	//开始子线程
 	m_threadMySQL.StartThread();
+	m_threadClock.StartThread();
 
 	//开启定时器定时刷新输出信息
 	SetTimer(0, 100, NULL);
@@ -407,6 +471,122 @@ LRESULT CMainFrame::OnRedraw(WPARAM, LPARAM)
 }
 
 
+void CALLBACK CMainFrame::ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent)
+{
+	CMainFrame* pThis = (CMainFrame*)pParam;
+	DWORD dwWaitTime = 600000; //十分钟刷新一次
+
+	//已连接时等待5s，未连接时等待2s
+	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, 10000))
+	{
+		CString strMsg, strSQL;
+		CTime t = GetServerTime();// CTime::GetCurrentTime();
+		//事务四： 提前一天发送提醒短信 每天晚上7点 //在服务器端完成
+
+		int nHour = t.GetHour();
+		if (nHour < 19)
+		{
+			g_isSMSSended = FALSE;
+		}
+		else if (g_isSMSSended == FALSE)
+		{
+			CTime tomo = t + CTimeSpan(1, 0, 0, 0);
+			CString strTomo = tomo.Format("%Y/%m/%d");
+			strSQL.Format("SELECT students.SNAME, students.TEL, bookings.CLASS_NUM, students.CLASS_TYPE, \
+						  bookings.CLASS_ID, coachinfo.SName, bookings.ORDER_CAR FROM bookings \
+						  left join students ON students.FILE_NAME=bookings.FILE_NAME \
+						  left join coachinfo ON coachinfo.FILE_NUM=bookings.ORDER_COACH \
+						  WHERE bookings.BOOK_DATE='%s' AND bookings.FLAG='1'", strTomo);
+			CDStrs orders;
+			g_mysqlCon.ExecuteQuery(strSQL, orders, strMsg);
+
+			int n = orders.size();
+			if (n > 0)
+			{
+				//获取短信模板
+
+				CString strKeyName = "NextClass";
+				CString strSMSTmp = xPublic::GETSTR2("SMS", strKeyName, "failed");
+				if (strSMSTmp == "failed")
+				{
+					LOG("serverLog.log", "获取短信模板失败");
+					continue;
+				}
+
+				for (int i = 0; i < n; i++)
+				{
+					CString strName = orders[i][0];
+					CString strTEL = orders[i][1];
+					CString strCoach = orders[i][5];
+					CString strCar = orders[i][6];
+
+					CString strClassType = orders[i][3];
+					int classStep = atoi(orders[i][2]) + 1;
+					CString strClassi;
+					strClassi.Format("%d", classStep);
+					int classID = atoi(orders[i][4]) - 1;
+					CString strClassTime = GetClassTime(classID);
+					CString strDate = strTomo + strClassTime;
+
+					CString strSMS = strTEL + ":" + strName + ">" + strSMSTmp;
+					strSMS.Replace("N", strName);
+					strSMS.Replace("L", strCoach);
+					strSMS.Replace("M", strCar);
+					strSMS.Replace("K", strClassi);
+					strDate.Replace("A", "上午");
+					strDate.Replace("P", "下午");
+					strSMS.Replace("T", strDate);
+
+					
+					CView* pView = pThis->GetActiveView();
+					pView->SendMessage(WM_USER_MESSAGE, (WPARAM)strSMS.GetBuffer(0), (LPARAM)2);
+					strSMS.ReleaseBuffer();
+
+					CString strLog;
+					strLog.Format("发送上课提醒短信给【%s】", strName);
+					LOG("serverLog.log", strLog);
+				}
+
+			}
+
+			g_isSMSSended = TRUE;
+		}
+
+		////事务一：每月添加新的KPI记录
+		//CString thisMonth = t.Format("%Y/%m");
+		//strSQL.Format("SELECT * FROM kpis WHERE KMONTH='%s'", thisMonth);
+		//CDStrs datas;
+		//if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg))
+		//{
+		//	if (datas.size() == 0) //没有本月的记录
+		//	{
+		//		g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
+		//		strSQL.Format("INSERT INTO KPIS (COACH, COACH_ID) SELECT coachinfo.SNAME, coachinfo.FILE_NUM FROM coachinfo INNER JOIN coachstat ON coachinfo.FILE_NUM=coachstat.FILE_NUM WHERE coachstat.BLACK_NAME='0'");
+		//		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+		//		{
+		//			strSQL.Format("UPDATE KPIS SET KMONTH='%s' WHERE KMONTH='0'", thisMonth);
+		//			if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+		//			{
+		//				g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+		//			}
+		//		}
+		//		else
+		//			g_mysqlCon.ExecuteSQL("ROLLBACK", strMsg);
+		//	}
+		//}
+
+		////事务二：更新coachstat的KPI
+		//CString lastMonth = GetLastMonth(t);
+		//strSQL.Format("UPDATE coachstat, kpis SET coachstat.PERFORMANCE=kpis.SCORE WHERE coachstat.FILE_NUM=kpis.COACH_ID AND kpis.KMONTH='%s'", lastMonth);
+		//g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+
+		//事务三：代办事务提醒
+
+	}
+}
+
+
+
 void CALLBACK CMainFrame::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
 {
 	CMainFrame* pThis = (CMainFrame*)pParam;
@@ -437,6 +617,7 @@ void CMainFrame::OnClose()
 {
 	//关闭子线程
 	m_threadMySQL.StopThread();
+	m_threadClock.StopThread();
 	CBCGPFrameWnd::OnClose();
 }
 

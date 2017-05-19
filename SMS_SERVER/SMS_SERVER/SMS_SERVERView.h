@@ -48,6 +48,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
 
 
 	xPublic::CTCPServer		m_tcpServer;

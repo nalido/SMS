@@ -47,10 +47,23 @@ IMPLEMENT_DYNCREATE(CSMS_SERVERView, CBCGPFormView)
 
 BEGIN_MESSAGE_MAP(CSMS_SERVERView, CBCGPFormView)
 	ON_WM_SIZE()
+	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 	ON_WM_DESTROY()
 	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
+LRESULT CSMS_SERVERView::OnUserMessage(WPARAM wParam, LPARAM lParam)
+{
+	int flag = (int)lParam;
+	if (flag == 2) //…œøŒÃ·–—∂Ã–≈
+	{
+		char* str = (char*)wParam;
+		CString strSMS = str;
+		SendSMS(5, strSMS);
+	}
+
+	return 0;
+}
 // CSMS_SERVERView construction/destruction
 
 static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
