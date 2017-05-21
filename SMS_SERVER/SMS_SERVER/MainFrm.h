@@ -64,6 +64,10 @@ public:
 	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
 	afx_msg void OnClose();
 
+	//定时事务子线程
+	xPublic::CThreadBase m_threadClock;
+	static void CALLBACK ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent);
+
 	//定时刷新输出信息
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
@@ -73,3 +77,8 @@ extern xPublic::CMySQLEx g_mysqlCon;
 extern void LOG(CString sFileName, CString str_log, int flag = 1);
 extern void ShowMsg2Output1(CString strMsg); //用于子窗口显示信息到output1中。
 extern CDStrs g_strMsgLog; //全局消息
+extern CString g_strCurrentTime; //获取数据库服务器时间
+extern CTime GetServerTime(); //解析g_strCurrentTime得到时间
+extern BOOL g_isSMSSended; //当天是否已经发过上课提醒短信
+extern CString GetClassTime(int n); //从0开始的课时时间段
+extern CString g_sMySQLIP; //mysql数据库IP

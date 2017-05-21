@@ -168,6 +168,10 @@ void CViewStuffEnter::OnPaint()
 	Point p2(m_rctBK2.right, m_rctBK2.bottom);
 	int width = m_rctBK2.right - m_rctBK1.left;
 	int height = m_rctBK2.bottom - m_rctBK1.top;
+	int  W = GetSystemMetrics(SM_CXSCREEN);  //µÃµ½ÆÁÄ»¿í¶È 
+	int  H = GetSystemMetrics(SM_CYSCREEN);
+	width = max(W, width);
+	height = max(H, height);
 
 	bitmp.CreateCompatibleBitmap(&dc, width, height);
 	MemDC.SelectObject(&bitmp);

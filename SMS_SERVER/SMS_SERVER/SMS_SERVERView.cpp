@@ -47,10 +47,23 @@ IMPLEMENT_DYNCREATE(CSMS_SERVERView, CBCGPFormView)
 
 BEGIN_MESSAGE_MAP(CSMS_SERVERView, CBCGPFormView)
 	ON_WM_SIZE()
+	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 	ON_WM_DESTROY()
 	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
+LRESULT CSMS_SERVERView::OnUserMessage(WPARAM wParam, LPARAM lParam)
+{
+	int flag = (int)lParam;
+	if (flag == 2) //…œøŒÃ·–—∂Ã–≈
+	{
+		char* str = (char*)wParam;
+		CString strSMS = str;
+		SendSMS(5, strSMS);
+	}
+
+	return 0;
+}
 // CSMS_SERVERView construction/destruction
 
 static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
@@ -421,8 +434,9 @@ void CSMS_SERVERView::SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int
 
 	cv::Mat img = cv::cvarrToMatND(pImg);
 	CString sFileName("");
-	sFileName.Format("%s%s.bmp", g_strFilePath, FileNum);
-	::SHCreateDirectory(NULL, CA2W(g_strFilePath));
+	sFileName.Format("%s\\", g_strFilePath);
+	::SHCreateDirectory(NULL, CA2W(sFileName));
+	sFileName.Format("%s\\%s.bmp", g_strFilePath, FileNum);
 	cv::String s = sFileName.GetBuffer();
 	imwrite(s, img);
 	sFileName.ReleaseBuffer();

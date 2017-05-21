@@ -35,6 +35,7 @@ CString g_strOutPath = "E:\\Files";
 CString g_strK1Address;
 xPublic::CMySQLEx g_mysqlCon;
 CString g_sServerIP = "127.0.0.1";
+CString g_sMySQLIP = "127.0.0.1";
 int g_nClassTotal = 9;
 int g_nMaxBooking = 15;
 int g_nSubForLeave = 8;
@@ -373,14 +374,18 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//连接数据
 	CString strMsg("");
-	if (!g_mysqlCon.Connect("localhost", 3306, "snow", "snow", "snow123", "gbk", strMsg))
+	if (!g_mysqlCon.Connect(g_sMySQLIP.GetBuffer(0), 3306, "snow", "snow", "snow123", "gbk", strMsg))
 	{
-		m_wndOutput.AddItem2List1(_T("连接数据库失败!\r\n") + strMsg);
+		m_wndOutput.AddItem2List1(_T("连接数据库失败!\r\n") + strMsg); 
 	}
 	else
 	{
 		m_wndOutput.AddItem2List1("连接数据库成功！");
 	}
+	CString strConnect;
+	strConnect.Format("数据库IP=%s:3306\r\n", g_sMySQLIP);
+	m_wndOutput.AddItem2List1(strConnect);
+	g_sMySQLIP.ReleaseBuffer();
 	//开始子线程
 	m_threadMySQL.StartThread();
 	m_threadClock.StartThread();

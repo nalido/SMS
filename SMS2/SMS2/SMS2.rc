@@ -91,7 +91,8 @@ BEGIN
     LTEXT           "性别：",IDC_STATIC4,140,181,48,9,0,WS_EX_RIGHT
     COMBOBOX        IDC_GENDER,198,179,100,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     CONTROL         "",IDC_BKBMP,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,0,15,14
-    CONTROL         "",IDC_BKBMP1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,841,484,24,14
+    CONTROL         "",IDC_BKBMP1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,841,472,24,14
+    CONTROL         "",IDC_CONTENT,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,108,47,405,313
 END
 
 IDD_BOOKING1 DIALOGEX 0, 0, 831, 536
@@ -183,6 +184,9 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     CONTROL         "",IDC_POS1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,0,0,14,11
     CONTROL         "",IDC_POS2,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,846,523,14,11
+    CONTROL         "",IDC_CONTENT,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,515,214,222,128
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | SS_NOTIFY | NOT WS_VISIBLE,540,238,67,51
+    CONTROL         "",IDC_STATIC,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,637,238,67,51
 END
 
 IDD_SMSINFO DIALOGEX 0, 0, 351, 271
@@ -732,18 +736,18 @@ BEGIN
     CONTROL         "",IDC_GRID,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,30,56,485,417
     CONTROL         "",IDC_STATIC,"Static",SS_BLACKRECT,11,36,814,1
     CONTROL         "",IDC_TAB1,"SysTabControl32",TCS_FOCUSONBUTTONDOWN,29,43,255,12
-    CONTROL         "",IDC_PIE,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,546,56,172,156
-    CONTROL         "",IDC_LABEL1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,729,197,16,15
+    CONTROL         "",IDC_PIE,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,546,71,172,156
+    CONTROL         "",IDC_LABEL1,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,729,212,16,15
     CONTROL         "",IDC_DATE1,"SysDateTimePick32",DTS_RIGHTALIGN | WS_TABSTOP,83,11,100,15
     CONTROL         "",IDC_DATE2,"SysDateTimePick32",DTS_RIGHTALIGN | WS_TABSTOP,214,11,100,15
     RTEXT           "起止日期",IDC_S3,19,12,58,15
     CTEXT           "——",IDC_S4,186,14,25,15
     PUSHBUTTON      "查询",IDC_QUERY,329,10,66,17
     PUSHBUTTON      "退学结算",IDC_QUIT,410,10,66,17
-    CONTROL         "",IDC_INFO,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,530,42,301,432
+    CONTROL         "",IDC_INFO,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,530,57,301,184
     CONTROL         "",IDC_TAB2,"SysTabControl32",TCS_FIXEDWIDTH | TCS_FOCUSONBUTTONDOWN,316,43,199,12,WS_EX_RIGHT | WS_EX_RTLREADING
-    RTEXT           "起止日期",IDC_S1,633,271,58,15,NOT WS_VISIBLE
-    RTEXT           "起止日期",IDC_S2,626,293,58,15,NOT WS_VISIBLE
+    RTEXT           "起止日期",IDC_S1,631,431,58,15,NOT WS_VISIBLE
+    RTEXT           "起止日期",IDC_S2,623,453,58,15,NOT WS_VISIBLE
     PUSHBUTTON      "输出当前表单",IDC_EXPORT2,492,10,66,17
 END
 
@@ -1099,9 +1103,9 @@ END
 // Bitmap
 //
 
-IDB_BITMAP3             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\3.bmp"
-IDB_BITMAP2             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\2.bmp"
-IDB_BITMAP1             BITMAP                  "res\\0.bmp"
+//IDB_BITMAP3             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\3.bmp"
+//IDB_BITMAP2             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\2.bmp"
+//IDB_BITMAP1             BITMAP                  "res\\0.bmp"
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

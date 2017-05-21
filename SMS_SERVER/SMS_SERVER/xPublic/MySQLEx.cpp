@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MySQLEx.h"
+#include "..\MainFrm.h"
 
 
 namespace xPublic{
@@ -71,26 +72,37 @@ namespace xPublic{
 		Msg = "重连成功！";
 		return 1;
 	}
-	
+
 	BOOL CMySQLEx::IsConnected()
 	{
 		CString strMsg;
-		return ExecuteQueryExist("SELECT DATE_FORMAT(NOW(),'%Y%m%e-%H:%i:%s')", strMsg);
+		CDStrs Time;
+		BOOL ret = ExecuteQuery("SELECT DATE_FORMAT(NOW(),'%Y/%m/%d-%H:%i:%s')", Time, strMsg);
+		if (Time.size() > 0) g_strCurrentTime = Time[0][0];
+		else
+		{
+			CTime t = CTime::GetCurrentTime();
+			g_strCurrentTime = t.Format("%Y/%m/%d-%H:%M:%S");
+		}
+		return ret;
 	}
 
-	
+
 	void CMySQLEx::Close()
 	{
 		if (m_isInit) mysql_close(&m_mysql);
 		m_isInit = false;
 	}
 
-	
+
 	BOOL CMySQLEx::ExecuteQuery(LPCTSTR lpszSQL, CDStrs& Fields, CString& Msg)
 	{
+		m_cs.Lock();
+		Msg = "ExecuteQuery Successed";
 		if (!m_isInit)
 		{
 			Msg = "No connection exist.";
+			m_cs.Unlock();
 			return false;
 		}
 
@@ -98,6 +110,7 @@ namespace xPublic{
 		{
 			CString strSQL = lpszSQL;
 			Msg = "Failed to ExecuteQuery.\r\n" + strSQL;
+			m_cs.Unlock();
 			return false;
 		}
 
@@ -107,6 +120,7 @@ namespace xPublic{
 		if (res == NULL)
 		{
 			Msg = "Failed to store result.";
+			m_cs.Unlock();
 			return false;
 		}
 		int r = mysql_num_rows(res);
@@ -124,16 +138,20 @@ namespace xPublic{
 			Fields.push_back(strs);
 		}
 		mysql_free_result(res);
+
+		m_cs.Unlock();
 		return true;
 	}
 
-	
+
 	BOOL CMySQLEx::ExecuteQueryExist(LPCTSTR lpszSQL, CString& Msg)
 	{
+		m_cs.Lock();
 		Msg = "Exist!";
 		if (!m_isInit)
 		{
 			Msg = "No connection exist.";
+			m_cs.Unlock();
 			return false;
 		}
 
@@ -141,24 +159,32 @@ namespace xPublic{
 		{
 			CString strSQL = lpszSQL;
 			Msg = "Failed to ExecuteQueryExist.\r\n" + strSQL;
+			m_cs.Unlock();
 			return false;
 		}
 
 		MYSQL_RES *res;
 		res = mysql_store_result(&m_mysql);
 		BOOL isExist = FALSE;
-		if (res) isExist = TRUE;
-		mysql_free_result(res);
 
+		int r = mysql_num_rows(res);
+		//int c = mysql_num_fields(res);
+		if (r>0)
+			isExist = TRUE;
+		mysql_free_result(res);
+		m_cs.Unlock();
 		return isExist;
 	}
 
-	
+
 	BOOL CMySQLEx::ExecuteSQL(LPCTSTR lpszSQL, CString& Msg)
 	{
+		m_cs.Lock();
+		Msg = "ExecuteSQL successed";
 		if (!m_isInit)
 		{
 			Msg = "No connection exist.";
+			m_cs.Unlock();
 			return false;
 		}
 		try
@@ -167,12 +193,14 @@ namespace xPublic{
 			{
 				CString strSQL = lpszSQL;
 				Msg = "Failed to ExecuteSQL.\r\n" + strSQL;
+				m_cs.Unlock();
 				return false;
 			}
 		}
 		catch (...)
 		{
 		}
+		m_cs.Unlock();
 		return true;
 	}
 

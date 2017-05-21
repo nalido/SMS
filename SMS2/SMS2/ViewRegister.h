@@ -35,6 +35,11 @@ public:
 	afx_msg void OnBnClickedCamera();
 	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
+	//±³¾°¶¨Î»
+	CStatic m_BKpos1, m_BKpos2;
+	CRect m_rctBK1, m_rctBK2;
+	CStatic m_Content;
+	CRect m_rctContent;
 
 	CStatic m_SPhoto;
 
