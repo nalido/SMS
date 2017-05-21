@@ -74,6 +74,7 @@ public:
 
 	//打开此视图的上一个视图
 	UINT m_LAST_VIEW;
+	afx_msg void OnBnClickedConfirm3();
 };
 
 

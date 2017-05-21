@@ -9,6 +9,7 @@
 #include <afxmsg_.h>
 #include "MSGINFO.h"
 #include "DlgDateItem.h"
+#include "DlgNextBookDate.h"
 
 
 static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
@@ -150,6 +151,7 @@ BEGIN_MESSAGE_MAP(CViewStuProgress, CBCGPFormView)
 	ON_BN_CLICKED(IDC_SCAN, &CViewStuProgress::OnBnClickedScan)
 	ON_BN_CLICKED(IDC_SETTYPE, &CViewStuProgress::OnBnClickedSettype)
 	ON_BN_CLICKED(IDC_NEXTBOOK, &CViewStuProgress::OnBnClickedNextbook)
+	ON_BN_CLICKED(IDC_FIND, &CViewStuProgress::OnBnClickedFind)
 END_MESSAGE_MAP()
 
 
@@ -453,8 +455,8 @@ void CViewStuProgress::OnBnClickedSettype()
 
 		if (strType != "0")
 		{
-			MessageBox("已设置！");
-			return;
+			if(MessageBox("已设置！是否仍然改变？", "警告", MB_YESNOCANCEL) != IDYES)
+				return;
 		}
 
 		CString str = "选择“是”为先报考科目二\r\n选择“否”为先报考科目三";
@@ -489,15 +491,48 @@ void CViewStuProgress::OnBnClickedNextbook()
 		int nRow = pRow->GetRowId();
 		CString strStuID = m_datas[nRow][0];
 
-		CDlgDateItem dlg;
-		if (dlg.DoModal() == IDOK)
+		CDlgNextBookDate dlg;
+		dlg.m_strStuID = strStuID;
+		dlg.DoModal();
+	}
+}
+
+
+void CViewStuProgress::OnBnClickedFind()
+{
+	CString strFind;
+	GetDlgItem(IDC_E1)->GetWindowTextA(strFind);
+
+	if (strFind.IsEmpty()) return;
+
+	int n = m_datas.size();
+	BOOL isFound = FALSE;
+	int i = 0;
+	for (; i < n; i++)
+	{
+		if (m_datas[i][0] == strFind || m_datas[i][1] == strFind || m_datas[i][3] == strFind)
 		{
-			CString strMsg, strSQL;
-			strSQL.Format("UPDATE stuDates SET BOOK_DATE='%s' WHERE STU_ID='%s'", dlg.m_strDate, strStuID);
-			if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
-			{
-				MessageBox("设置成功!");
-			}
+			isFound = TRUE;
+			break;
 		}
+	}
+
+	if (isFound)
+	{
+		CBCGPGridRow* pRow = m_wndGrid.GetRow(i);
+		m_wndGrid.EnsureVisible(pRow);
+
+		CString strIndex;
+		int index = i + 1;
+		strIndex.Format("在第%d行", index);
+		strFind = strFind + strIndex;
+		GetDlgItem(IDC_E1)->SetWindowTextA(strFind);
+
+		m_wndGrid.SetCurSel(i);
+	}
+	else
+	{
+		strFind = "没有找到'" + strFind + "'的相关记录";
+		GetDlgItem(IDC_E1)->SetWindowTextA(strFind);
 	}
 }

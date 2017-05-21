@@ -74,4 +74,5 @@ public:
 	afx_msg void OnBnClickedRadio1();
 	afx_msg void OnBnClickedRadio2();
 	afx_msg void OnBnClickedRadio4();
+	afx_msg void OnBnClickedFind();
 };

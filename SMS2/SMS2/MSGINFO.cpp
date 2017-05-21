@@ -142,6 +142,7 @@ BOOL CMSGINFO::OnInitDialog()
 				m_strHints[5] = "上课时间";
 
 				m_S[0].EnableWindow(TRUE);
+				m_E[0].EnableWindow(TRUE);
 				m_S[5].EnableWindow(TRUE);
 
 				strKeyName = "K1PrePass";
@@ -366,9 +367,12 @@ void CMSGINFO::UpdateSMS()
 	case 2: //退款短信
 	{
 				m_strSMS.Replace("T", m_strDate);
+				m_strSMS.Replace("R", m_strReason);
 	}
 		break;
 	case 3: //科一考试短信
+	case 6: //科二考试短信
+	case 7: //科三考试短信
 	case 4: //培训预约短信
 	{
 				CString str = m_strDate + m_strTime;

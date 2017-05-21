@@ -59,6 +59,9 @@
 #define IDD_ALLSTUDENTS                 218
 #define IDD_QUIT_SCHOOL                 219
 #define File                            222
+#define IDD_NEXT_BOOKDAY                223
+#define IDD_SCAN_ENTER                  224
+#define IDD_DIALOG6                     225
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -67,6 +70,7 @@
 #define IDC_NEWSTUFF                    1055
 #define IDC_REGISTER                    1055
 #define IDC_SMS                         1055
+#define IDC_RESPON                      1055
 #define IDC_BTN_NOPASS                  1056
 #define IDC_BUTTON4                     1056
 #define IDC_RESET                       1056
@@ -162,6 +166,7 @@
 #define IDC_SCAN2                       1093
 #define IDC_NEXTBOOK                    1093
 #define IDC_NAME4                       1094
+#define IDC_FIND                        1094
 #define IDC_NAME5                       1095
 #define IDC_GRID                        1109
 #define IDC_CLASS1                      1109
@@ -181,6 +186,7 @@
 #define IDC_CONFIRM2                    1124
 #define IDC_REMOVE                      1124
 #define IDC_STATIC1                     1125
+#define IDC_CONFIRM3                    1125
 #define IDC_STATIC2                     1126
 #define IDC_STATIC3                     1127
 #define IDC_STATIC4                     1128
@@ -373,9 +379,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        223
+#define _APS_NEXT_RESOURCE_VALUE        226
 #define _APS_NEXT_COMMAND_VALUE         32894
-#define _APS_NEXT_CONTROL_VALUE         1257
+#define _APS_NEXT_CONTROL_VALUE         1259
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

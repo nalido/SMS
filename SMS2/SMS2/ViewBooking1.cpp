@@ -6,6 +6,7 @@
 #include "ViewBooking1.h"
 #include "MainFrm.h"
 #include "ClassDetail.h"
+#include "DlgNextBookDate.h"
 
 CString arrClasses[5] = { "0未定义", "Am08:00-10:00", "Am10:00-12:00", "Pm01:00-03:00", "Pm03:00-05:00" };
 // CViewBooking1
@@ -52,6 +53,7 @@ BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
 ON_BN_CLICKED(IDC_STUDENT_SEL, &CViewBooking1::OnBnClickedStudentSel)
 ON_BN_CLICKED(IDC_CONFIRM, &CViewBooking1::OnBnClickedConfirm)
 ON_BN_CLICKED(IDC_REMOVE, &CViewBooking1::OnBnClickedRemove)
+ON_BN_CLICKED(IDC_CONFIRM3, &CViewBooking1::OnBnClickedConfirm3)
 END_MESSAGE_MAP()
 
 
@@ -566,6 +568,14 @@ void CViewBooking1::OnBnClickedConfirm()
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 			ShowMsg2Output1(strMsg);
 		}
+		else
+		{
+			MessageBox("预约上传成功，您还没有预约全部课程，请选择下次预约时间");
+
+			CDlgNextBookDate dlg;
+			dlg.m_strStuID = m_strFileName;
+			dlg.DoModal();
+		}
 	}
 
 	UpdateBookingList(); //排序
@@ -630,4 +640,12 @@ void CViewBooking1::OnBnClickedRemove()
 
 	//更新图表
 	m_wndGrid.GridRefresh(m_datas.size());
+}
+
+
+void CViewBooking1::OnBnClickedConfirm3()
+{
+	CDlgNextBookDate dlg;
+	dlg.m_strStuID = m_strFileName;
+	dlg.DoModal();
 }

@@ -6,6 +6,7 @@
 #include "DlgDevice.h"
 #include "afxdialogex.h"
 #include "MainFrm.h"
+#include "DlgDateItem.h"
 
 
 // CDlgDevice 对话框
@@ -36,6 +37,29 @@ BEGIN_MESSAGE_MAP(CDlgDevice, CBCGPDialog)
 	ON_BN_CLICKED(IDC_DELITEM, &CDlgDevice::OnBnClickedDelitem)
 END_MESSAGE_MAP()
 
+
+void CALLBACK CDlgDevice::OnGridClick(LPVOID lParam)
+{
+	CDlgDevice* pThis = (CDlgDevice*)lParam;
+
+	if (pThis->m_wndGrid.IsWholeRowSel()) return;
+
+	CBCGPGridItem* pItem = pThis->m_wndGrid.GetCurSelItem();
+	if (pItem != NULL)
+	{
+		int nCol = pItem->GetColumnId();
+		if ((pThis->m_nQueryType == QUERY_DEVICES && nCol == 2) || 
+			(pThis->m_nQueryType == QUERY_CLAIMS && nCol == 1))
+		{
+			CDlgDateItem dlg;
+			if (dlg.DoModal() == IDOK)
+			{
+				pItem->SetValue(dlg.m_strDate.GetBuffer(0));
+				dlg.m_strDate.ReleaseBuffer();
+			}
+		}
+	}
+}
 
 // CDlgDevice 消息处理程序
 
@@ -129,6 +153,7 @@ BOOL CDlgDevice::OnInitDialog()
 	}
 	//注册虚拟列表回调函数
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
+	m_wndGrid.SetCallBack_Clk(OnGridClick);
 
 	GetDlgItem(IDC_SAVE)->EnableWindow(FALSE);
 
@@ -165,6 +190,9 @@ void CDlgDevice::Refresh()
 void CDlgDevice::OnBnClickedUpdate()
 {
 	Refresh();
+	m_wndGrid.SetReadOnly();
+	m_wndGrid.SetWholeRowSel();
+	GetDlgItem(IDC_SAVE)->EnableWindow(FALSE);
 }
 
 

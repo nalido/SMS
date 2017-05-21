@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CCoaches, CBCGPFormView)
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_KPI, &CCoaches::OnBnClickedKpi)
 	ON_BN_CLICKED(IDC_MONTHPLATE, &CCoaches::OnBnClickedMonthplate)
+	ON_BN_CLICKED(IDC_FIND, &CCoaches::OnBnClickedFind)
 END_MESSAGE_MAP()
 
 
@@ -277,5 +278,45 @@ void CCoaches::OnBnClickedMonthplate()
 		CDlgMontPlate dlg;
 		dlg.m_strCoachID = m_arCoaches[nRow][7];
 		dlg.DoModal();
+	}
+}
+
+
+void CCoaches::OnBnClickedFind()
+{
+	CString strFind;
+	GetDlgItem(IDC_E1)->GetWindowTextA(strFind);
+
+	if (strFind.IsEmpty()) return;
+
+	int n = m_arCoaches.size();
+	BOOL isFound = FALSE;
+	int i = 0;
+	for (; i < n; i++)
+	{
+		if (m_arCoaches[i][0] == strFind || m_arCoaches[i][4] == strFind || m_arCoaches[i][7] == strFind)
+		{
+			isFound = TRUE;
+			break;
+		}
+	}
+
+	if (isFound)
+	{
+		CBCGPGridRow* pRow = m_wndCoaches.GetRow(i);
+		m_wndCoaches.EnsureVisible(pRow);
+
+		CString strIndex;
+		int index = i + 1;
+		strIndex.Format("在第%d行", index);
+		strFind = strFind + strIndex;
+		GetDlgItem(IDC_E1)->SetWindowTextA(strFind);
+
+		m_wndCoaches.SetCurSel(i);
+	}
+	else
+	{
+		strFind = "没有找到'" + strFind + "'的相关记录";
+		GetDlgItem(IDC_E1)->SetWindowTextA(strFind);
 	}
 }

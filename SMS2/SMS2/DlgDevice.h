@@ -37,6 +37,7 @@ public:
 	CDStrs m_newDatas; //新添加的记录
 	int m_nColumns; //表的列数
 	virtual BOOL OnInitDialog();
+	static void CALLBACK OnGridClick(LPVOID lParam);
 
 	int m_nQueryType;
 	void Refresh();

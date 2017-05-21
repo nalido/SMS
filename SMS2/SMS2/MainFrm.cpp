@@ -24,6 +24,7 @@
 #include "ViewPermission.h"
 #include "ViewK23Exam.h"
 #include "ViewAllStudents.h"
+#include "ViewScanEnter.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -294,6 +295,59 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_ALLSTUDENTS, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_PERMISSION, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_REGISTER, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_K1CHECK, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_K1EXAM, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_K23EXAM, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_STUPROGRESS, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_BOOKING1, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_BOOKING2, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_COACH, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_KPI, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SCAN, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_4STUDENT, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_STUFF, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_DEVICE, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SYSTEMSETTING, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SCHOOLSETTING, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_ORDER_RSP, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_ALLSTUDENTS, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_PERMISSION, OnUpdateViewOutput)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
 	ON_MESSAGE(UM_REDRAW, OnRedraw)
@@ -372,20 +426,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableAutoHideBars(CBRS_ALIGN_ANY);
 	DockControlBar(&m_wndOutput);
 
-	//连接数据
-	CString strMsg("");
-	if (!g_mysqlCon.Connect(g_sMySQLIP.GetBuffer(0), 3306, "snow", "snow", "snow123", "gbk", strMsg))
-	{
-		m_wndOutput.AddItem2List1(_T("连接数据库失败!\r\n") + strMsg); 
-	}
-	else
-	{
-		m_wndOutput.AddItem2List1("连接数据库成功！");
-	}
-	CString strConnect;
-	strConnect.Format("数据库IP=%s:3306\r\n", g_sMySQLIP);
-	m_wndOutput.AddItem2List1(strConnect);
-	g_sMySQLIP.ReleaseBuffer();
+
 	//开始子线程
 	m_threadMySQL.StartThread();
 	m_threadClock.StartThread();
@@ -535,8 +576,104 @@ void CMainFrame::OnViewOutput()
 
 void CMainFrame::OnUpdateViewOutput(CCmdUI* pCmdUI) 
 {
-	pCmdUI->SetCheck (m_wndOutput.IsVisible ());
-	pCmdUI->Enable (!GetDockManager ()->IsPrintPreviewValid ());
+	CView* pView;
+	switch (pCmdUI->m_nID)
+	{
+	case ID_VIEW_OUTPUT:
+		pCmdUI->SetCheck(m_wndOutput.IsVisible());
+		pCmdUI->Enable(!GetDockManager()->IsPrintPreviewValid());
+		break;
+	//case ID_VIEW_BOOKING1:
+	//	pView = m_arViews[VIEW_BOOKING1];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_BOOKING2:
+	//	pView = m_arViews[VIEW_BOOKING2];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_ORDER_RSP:
+	//	pView = m_arViews[VIEW_ORDER_RSP];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_REGISTER:
+	//	pView = m_arViews[VIEW_REGISTER];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_K1CHECK:
+	//	pView = m_arViews[VIEW_K1CHECK];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_K1EXAM:
+	//	pView = m_arViews[VIEW_K1EXAM];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_K23EXAM:
+	//	pView = m_arViews[VIEW_K23EXAM];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_STUPROGRESS:
+	//	pView = m_arViews[VIEW_STUPROGRESS];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_SYSTEMSETTING:
+	//	pView = m_arViews[VIEW_SYSTEM];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_SCHOOLSETTING:
+	//	pView = m_arViews[VIEW_SCHOOL];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_COACH:
+	//	pView = m_arViews[VIEW_COACHES];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_KPI:
+	//	pView = m_arViews[VIEW_KPI];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_SCAN:
+	//	pView = m_arViews[VIEW_SCAN];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_DEVICE:
+	//	pView = m_arViews[VIEW_DEVICES];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_STUFF:
+	//	pView = m_arViews[VIEW_STUFFENTER];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_4STUDENT:
+	//	pView = m_arViews[VIEW_STUDENTENTER];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_ALLSTUDENTS:
+	//	pView = m_arViews[VIEW_ALLSTUDENTS];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	//case ID_VIEW_PERMISSION:
+	//	pView = m_arViews[VIEW_PERMISSION];
+	//	if (pView != NULL)
+	//		pCmdUI->SetCheck(pView->IsWindowVisible());
+	//	break;
+	}
 }
  // OUTPUTBAR
 
@@ -582,7 +719,7 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 		SelectView(VIEW_KPI);
 		break;
 	case ID_VIEW_SCAN:
-		SelectView(VIEW_SCAN);
+		SelectView(VIEW_SCANENTER);
 		break;
 	case ID_VIEW_DEVICE:
 		SelectView(VIEW_DEVICES);
@@ -664,10 +801,13 @@ CView* CMainFrame::GetView(int nID)
 		pClass = RUNTIME_CLASS(CViewKPI);
 		break;
 	case VIEW_DEVICES:
-		pClass = RUNTIME_CLASS(CViewDevices);
+		pClass = RUNTIME_CLASS(CViewDevices); 
 		break;
 	case VIEW_SCAN:
 		pClass = RUNTIME_CLASS(CViewScan);
+		break;
+	case VIEW_SCANENTER:
+		pClass = RUNTIME_CLASS(CViewScanEnter);
 		break;
 	case VIEW_STUFFENTER:
 		pClass = RUNTIME_CLASS(CViewStuffEnter);
@@ -777,7 +917,7 @@ LRESULT CMainFrame::OnRedraw(WPARAM, LPARAM)
 {
 	RecalcLayout(TRUE);
 	GetActiveView()->UpdateWindow();
-	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ALLCHILDREN | RDW_FRAME);
+	//RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ALLCHILDREN | RDW_FRAME);
 	return 0;
 }
 
@@ -786,6 +926,25 @@ void CALLBACK CMainFrame::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
 {
 	CMainFrame* pThis = (CMainFrame*)pParam;
 	DWORD dwWaitTime = 0;
+	
+	//连接数据
+	CString strMsg("");
+	if (!g_mysqlCon.Connect(g_sMySQLIP.GetBuffer(0), 3306, "snow", "snow", "snow123", "gbk", strMsg))
+	{
+		strMsg = _T("连接数据库失败!\r\n") + strMsg;
+		pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2, (LPARAM)strMsg.GetBuffer(0));
+		strMsg.ReleaseBuffer();
+	}
+	else
+	{
+		strMsg = "连接数据库成功！";
+		pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2, (LPARAM)strMsg.GetBuffer(0));
+		strMsg.ReleaseBuffer();
+	}
+	strMsg.Format("数据库IP=%s:3306\r\n", g_sMySQLIP);
+	pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2, (LPARAM)strMsg.GetBuffer(0));
+	strMsg.ReleaseBuffer();
+	g_sMySQLIP.ReleaseBuffer();
 
 	//已连接时等待5s，未连接时等待2s
 	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, dwWaitTime))
@@ -886,6 +1045,12 @@ LRESULT CMainFrame::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 	case 1: //提醒有学员明天的预约
 		if (g_nPermissions[1] != 0)
 			MessageBox("明天有学员的预约，请前往学员进度界面发送预约提醒短信！");
+		break;
+	case 2: //子线程刷新输出信息
+	{
+				CString strMsg = (char*)lParam;
+				m_wndOutput.AddItem2List1(strMsg);
+	}
 		break;
 	}
 

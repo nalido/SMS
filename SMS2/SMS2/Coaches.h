@@ -42,6 +42,7 @@ public:
 
 	afx_msg void OnBnClickedKpi();
 	afx_msg void OnBnClickedMonthplate();
+	afx_msg void OnBnClickedFind();
 };
 
 

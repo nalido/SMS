@@ -29,6 +29,7 @@ public:
 	CString m_strCoach;
 	CString m_strCar;
 	CString m_strClassIndex;
+	CString m_strReason;
 
 	CStatic m_S[7];
 	CStatic m_SMS;
