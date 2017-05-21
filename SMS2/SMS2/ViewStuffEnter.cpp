@@ -68,7 +68,7 @@ LRESULT CViewStuffEnter::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 
 BOOL CViewStuffEnter::OnEraseBkgnd(CDC* pDC)
 {
-	if (m_nEraseBkgnd<6)
+	if (m_nEraseBkgnd<3)
 	{
 		m_nEraseBkgnd++;
 		return TRUE;

@@ -59,7 +59,7 @@ LRESULT CViewStudentEnter::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 
 BOOL CViewStudentEnter::OnEraseBkgnd(CDC* pDC)
 {
-	if (m_nEraseBkgnd<4)
+	if (m_nEraseBkgnd<2)
 	{
 		m_nEraseBkgnd++;
 		return TRUE;
