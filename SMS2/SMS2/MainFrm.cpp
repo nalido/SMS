@@ -904,7 +904,6 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 				for (int i = 1; i < nCount; i++)
 				{
 					m_wndRibbonBar.ShowCategory(i, FALSE);
-					m_wndRibbonBar.ShowCategory(i, TRUE);
 				}
 				CBCGPRibbonCategory* pCate = m_wndRibbonBar.GetCategory(0);
 				m_wndRibbonBar.SetActiveCategory(pCate);
