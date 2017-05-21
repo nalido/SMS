@@ -81,3 +81,4 @@ extern CString g_strCurrentTime; //获取数据库服务器时间
 extern CTime GetServerTime(); //解析g_strCurrentTime得到时间
 extern BOOL g_isSMSSended; //当天是否已经发过上课提醒短信
 extern CString GetClassTime(int n); //从0开始的课时时间段
+extern CString g_sMySQLIP; //mysql数据库IP

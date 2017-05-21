@@ -73,6 +73,7 @@ BOOL CSMS_SERVERApp::InitInstance()
 	//系统配置初始化
 	xPublic::GetWorkPath("server");
 	g_strFilePath = xPublic::GETSTR2("Option", "PicSavePath", _T("E:\\Server_Photos\\"));
+	g_sMySQLIP = xPublic::GETSTR2("Option", "MySQLIP", _T("127.0.0.1"));
 	int visible = xPublic::GETINT2("Option", "isVisible", 0);
 
 	// Initialize OLE libraries

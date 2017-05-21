@@ -12,7 +12,8 @@
 #endif
 
 ////////////////global functions and values///////////////////////
-CString g_strFilePath = "E:\\Server_Photos\\";
+CString g_strFilePath = "E:\\Server_Photos\\"; 
+CString g_sMySQLIP = "127.0.0.1";
 xPublic::CMySQLEx g_mysqlCon;
 CDStrs g_strMsgLog;
 CString g_strCurrentTime; 
@@ -187,7 +188,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	//连接数据
 	CString strMsg("");
-	if (!g_mysqlCon.Connect("localhost", 3306, "snow", "snow", "snow123", "gbk", strMsg))
+	if (!g_mysqlCon.Connect(g_sMySQLIP.GetBuffer(0), 3306, "snow", "snow", "snow123", "gbk", strMsg))
 	{
 		m_wndOutput.AddItem2List1(_T("连接数据库失败!\r\n") + strMsg);
 	}
@@ -195,6 +196,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		m_wndOutput.AddItem2List1("连接数据库成功！");
 	}
+	g_sMySQLIP.ReleaseBuffer();
 	//开始子线程
 	m_threadMySQL.StartThread();
 	m_threadClock.StartThread();
