@@ -434,8 +434,9 @@ void CSMS_SERVERView::SaveBmp(char* FileNum, BYTE* picBuf, int wid, int hei, int
 
 	cv::Mat img = cv::cvarrToMatND(pImg);
 	CString sFileName("");
-	sFileName.Format("%s%s.bmp", g_strFilePath, FileNum);
-	::SHCreateDirectory(NULL, CA2W(g_strFilePath));
+	sFileName.Format("%s\\", g_strFilePath);
+	::SHCreateDirectory(NULL, CA2W(sFileName));
+	sFileName.Format("%s\\%s.bmp", g_strFilePath, FileNum);
 	cv::String s = sFileName.GetBuffer();
 	imwrite(s, img);
 	sFileName.ReleaseBuffer();
