@@ -57,6 +57,7 @@
 #define IDD_NOPASS                      216
 #define IDD_K23EXAM                     217
 #define IDD_ALLSTUDENTS                 218
+#define IDD_QUIT_SCHOOL                 219
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -260,6 +261,7 @@
 #define IDC_S7                          1198
 #define IDC_S8                          1199
 #define IDC_D1                          1200
+#define IDC_S11                         1200
 #define IDC_D2                          1201
 #define IDC_D3                          1202
 #define IDC_D4                          1203
@@ -292,7 +294,12 @@
 #define IDC_E3                          1231
 #define IDC_E4                          1232
 #define IDC_E5                          1233
+#define IDC_E6                          1234
+#define IDC_E7                          1235
 #define IDC_CANCEL                      1236
+#define IDC_E8                          1236
+#define IDC_E9                          1237
+#define IDC_E10                         1238
 #define IDC_CALENDAR                    1243
 #define IDC_TIME                        1246
 #define IDC_COLOR1                      1248
@@ -363,9 +370,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        219
+#define _APS_NEXT_RESOURCE_VALUE        220
 #define _APS_NEXT_COMMAND_VALUE         32894
-#define _APS_NEXT_CONTROL_VALUE         1256
+#define _APS_NEXT_CONTROL_VALUE         1257
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

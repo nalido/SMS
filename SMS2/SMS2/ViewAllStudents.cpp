@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "SMS2.h"
 #include "ViewAllStudents.h"
+#include "DlgQuitSchool.h"
 
 
 // CViewAllStudents
@@ -869,6 +870,10 @@ void CViewAllStudents::OnBnClickedQuit()
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
+
+		CDlgQuitSchool dlg;
+		dlg.m_strStuInfo[1] = m_datas1[nRow][5];
+		dlg.DoModal();
 	}
 }
 
@@ -914,11 +919,16 @@ void CViewAllStudents::OnTcnSelchangeTab2(NMHDR *pNMHDR, LRESULT *pResult)
 		m_wndGridM.EnableWindow(FALSE);
 		m_wndGridY.EnableWindow(FALSE);
 		m_wndGrid[pos0].AdjustLayout();
+		if (pos0 == 0)
+			GetDlgItem(IDC_QUIT)->EnableWindow(TRUE);
+		else
+			GetDlgItem(IDC_QUIT)->EnableWindow(FALSE);
 		break;
 	case 1: //按月
 		m_wndGrid[pos0].EnableWindow(FALSE);
 		m_wndGridM.EnableWindow(TRUE);
 		m_wndGridY.EnableWindow(FALSE);
+		GetDlgItem(IDC_QUIT)->EnableWindow(FALSE);
 		//m_wndGridM.DeleteAllColumns();
 		//arrColumns.push_back("统计月份");
 		//InitGridMY(&m_wndGridM, arrColumns);
@@ -928,6 +938,7 @@ void CViewAllStudents::OnTcnSelchangeTab2(NMHDR *pNMHDR, LRESULT *pResult)
 		m_wndGrid[pos0].EnableWindow(FALSE);
 		m_wndGridM.EnableWindow(FALSE);
 		m_wndGridY.EnableWindow(TRUE);
+		GetDlgItem(IDC_QUIT)->EnableWindow(FALSE);
 		//m_wndGridY.DeleteAllColumns();
 		//arrColumns.push_back("统计年份");
 		//InitGridMY(&m_wndGridY, arrColumns);

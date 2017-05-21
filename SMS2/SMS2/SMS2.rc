@@ -751,6 +751,36 @@ BEGIN
     PUSHBUTTON      "输出当前表单",IDC_EXPORT2,492,10,66,17
 END
 
+IDD_QUIT_SCHOOL DIALOGEX 0, 0, 325, 176
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "学员退学结算"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,75,151,65,20
+    PUSHBUTTON      "取消",IDCANCEL,168,151,65,20
+    RTEXT           "姓名：",IDC_S1,18,17,52,12
+    RTEXT           "档案号：",IDC_S2,146,17,52,12
+    RTEXT           "身份证：",IDC_S3,18,39,52,12
+    RTEXT           "报名实收费用：",IDC_S4,8,61,62,12
+    RTEXT           "当前培训阶段：",IDC_S5,6,83,64,12
+    RTEXT           "应退金额：",IDC_S6,6,105,64,12
+    RTEXT           "实退金额：",IDC_S7,134,105,64,12
+    RTEXT           "处理时间：",IDC_S8,6,127,64,12
+    EDITTEXT        IDC_E1,74,15,58,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_E2,201,15,58,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_E3,74,37,58,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_E4,74,59,58,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_E5,74,82,186,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_E6,74,103,58,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_E7,201,103,58,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_E8,74,124,58,12,ES_AUTOHSCROLL
+    RTEXT           "申领类型：",IDC_S9,146,39,52,12
+    EDITTEXT        IDC_E9,201,37,58,12,ES_AUTOHSCROLL
+    RTEXT           "手续费：",IDC_S10,134,127,64,12
+    EDITTEXT        IDC_E10,201,124,58,12,ES_AUTOHSCROLL
+    LTEXT           "(不包括手续费)",IDC_S11,261,104,57,12
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1094,18 +1124,17 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 525
     END
+
+    IDD_QUIT_SCHOOL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 318
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-//IDB_BITMAP3             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\3.bmp"
-//IDB_BITMAP2             BITMAP                  "E:\\闲活\\学员进度管控系统\\Code\\SMS2\\SMS2\\res\\2.bmp"
-//IDB_BITMAP1             BITMAP                  "res\\0.bmp"
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

@@ -216,6 +216,7 @@
     <ClInclude Include="DlgNewStuff.h" />
     <ClInclude Include="DlgNextClass.h" />
     <ClInclude Include="DlgNoPass.h" />
+    <ClInclude Include="DlgQuitSchool.h" />
     <ClInclude Include="DlgResetPSW.h" />
     <ClInclude Include="GridCalendar.h" />
     <ClInclude Include="MyPicCtrl.h" />
@@ -273,6 +274,7 @@
     <ClCompile Include="DlgNewStuff.cpp" />
     <ClCompile Include="DlgNextClass.cpp" />
     <ClCompile Include="DlgNoPass.cpp" />
+    <ClCompile Include="DlgQuitSchool.cpp" />
     <ClCompile Include="DlgResetPSW.cpp" />
     <ClCompile Include="GridCalendar.cpp" />
     <ClCompile Include="MyPicCtrl.cpp" />
