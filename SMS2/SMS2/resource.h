@@ -122,9 +122,11 @@
 #define IDC_KPI                         1071
 #define IDC_HOME                        1072
 #define IDC_MONTHPLATE                  1072
+#define IDC_NAME7                       1072
 #define IDC_BIRTH                       1073
 #define IDC_BUTTON1073                  1073
 #define IDC_SAVE                        1073
+#define IDC_NAME8                       1073
 #define IDC_LIST                        1074
 #define IDC_SAVE2                       1074
 #define IDC_GENDER                      1075

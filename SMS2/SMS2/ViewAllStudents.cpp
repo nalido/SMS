@@ -809,17 +809,26 @@ void CViewAllStudents::OnPaint()
 	GetClientRect(&rect);
 	MapWindowPoints(this, &rect);
 
-	CDC     MemDC;
-	//HBITMAP hbitmap;
-	CBitmap bitmp;
-	MemDC.CreateCompatibleDC(&dc);
+	m_Pie.GetClientRect(&m_rctPie);
+	m_Pie.MapWindowPoints(this, &m_rctPie);
+	m_Label.GetClientRect(&m_rctLabel);
+	m_Label.MapWindowPoints(this, &m_rctLabel);
 
-	int  W = GetSystemMetrics(SM_CXSCREEN);  //得到屏幕宽度 
-	int  H = GetSystemMetrics(SM_CYSCREEN);
-	bitmp.CreateCompatibleBitmap(&dc, W, H);
-	MemDC.SelectObject(&bitmp);
+	m_Info.GetClientRect(&m_rctInfo);
+	m_Info.MapWindowPoints(this, &m_rctInfo);
 
-	Graphics graph(MemDC.m_hDC);
+	//CDC     MemDC;
+	////HBITMAP hbitmap;
+	//CBitmap bitmp;
+	//MemDC.CreateCompatibleDC(&dc);
+
+	//int  W = GetSystemMetrics(SM_CXSCREEN);  //得到屏幕宽度 
+	//int  H = GetSystemMetrics(SM_CYSCREEN);
+	//bitmp.CreateCompatibleBitmap(&dc, W, H);
+	//MemDC.SelectObject(&bitmp);
+
+	//Graphics graph(MemDC.m_hDC);
+	Graphics graph(dc.m_hDC);
 
 	//画进度饼图
 	SolidBrush brush3(Color(191, 211, 242));
@@ -859,11 +868,11 @@ void CViewAllStudents::OnPaint()
 	}
 
 
-	CPoint pos = GetScrollPosition();
-	//dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, pos.x, pos.y, SRCCOPY);
-	dc.TransparentBlt(0, 0, rect.Width(), rect.Height(), &MemDC, pos.x, pos.y, rect.Width(), rect.Height(), RGB(0, 0, 0));
-	bitmp.DeleteObject();
-	MemDC.DeleteDC();
+	//CPoint pos = GetScrollPosition();
+	////dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, pos.x, pos.y, SRCCOPY);
+	//dc.TransparentBlt(0, 0, rect.Width(), rect.Height(), &MemDC, pos.x, pos.y, rect.Width(), rect.Height(), RGB(0, 0, 0));
+	//bitmp.DeleteObject();
+	//MemDC.DeleteDC();
 }
 
 
@@ -878,6 +887,8 @@ void CViewAllStudents::OnBnClickedQuery()
 	m_TabShowType.SetCurSel(0);
 	m_wndGridM.ShowWindow(FALSE);
 	m_wndGridY.ShowWindow(FALSE);
+
+	InvalidateRect(&m_rctInfo);
 }
 
 
