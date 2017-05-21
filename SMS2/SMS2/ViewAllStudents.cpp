@@ -454,7 +454,7 @@ void CViewAllStudents::Refresh(int nID, CString strDateS, CString strDateE)
 							students.TEL, students.CAR_TYPE, students.FILE_NAME, students.CLASS_NUM, \
 							students.STEP,  stuQuits.QUIT_DATE FROM students \
 							left join stuQuits ON stuQuits.STU_ID=students.FILE_NAME \
-							WHERE REGIST_DATE>'%s' AND REGIST_DATE<='%s'",
+							WHERE REGIST_DATE>'%s' AND REGIST_DATE<='%s' ORDER BY students.REGIST_DATE",
 							strDateS, strDateE);
 			  g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg);
 			  ShowMsg2Output1(strMsg);
@@ -872,8 +872,11 @@ void CViewAllStudents::OnBnClickedQuit()
 		int nRow = pRow->GetRowId();
 
 		CDlgQuitSchool dlg;
-		dlg.m_strStuInfo[1] = m_datas1[nRow][5];
-		dlg.DoModal();
+		dlg.m_strInfo[1] = m_datas1[nRow][5];
+		if (dlg.DoModal() == IDOK)
+		{
+			OnBnClickedQuery();
+		}
 	}
 }
 

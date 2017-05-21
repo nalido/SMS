@@ -41,7 +41,7 @@ public:
 	CStatic m_Content;
 	CRect m_rctContent;
 
-	CStatic m_S[4]; //静态文本框
+	CStatic m_S[5]; //静态文本框
 	CString m_strName;
 	CString m_strIDCard;
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);

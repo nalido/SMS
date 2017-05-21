@@ -32,6 +32,7 @@ void CViewStudentEnter::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_S2, m_S[1]);
 	DDX_Control(pDX, IDC_S3, m_S[2]);
 	DDX_Control(pDX, IDC_S4, m_S[3]);
+	DDX_Control(pDX, IDC_S5, m_S[4]);
 
 	DDX_Text(pDX, IDC_E1, m_strName);
 	DDX_Text(pDX, IDC_E2, m_strIDCard);
@@ -191,6 +192,17 @@ HBRUSH CViewStudentEnter::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 				   pDC->SetTextColor(RGB(255, 0, 0));
 				   CFont font1;
 				   font1.CreateFontA(17, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0,
+					   0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Î¢ÈíÑÅºÚ");
+				   pDC->SelectObject(&font1);
+				   return HBRUSH(GetStockObject(NULL_BRUSH)); //·µ»ØÒ»¸ö¿Õ»­Ë¢
+				   break;
+	}
+	case IDC_S5:
+	{
+				   pDC->SetBkMode(TRANSPARENT);
+				   pDC->SetTextColor(RGB(51, 103, 155));
+				   CFont font1;
+				   font1.CreateFontA(25, 0, 0, 0, FW_BOLD, 0, 0, 0, 0,
 					   0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Î¢ÈíÑÅºÚ");
 				   pDC->SelectObject(&font1);
 				   return HBRUSH(GetStockObject(NULL_BRUSH)); //·µ»ØÒ»¸ö¿Õ»­Ë¢

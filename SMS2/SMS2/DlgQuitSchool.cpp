@@ -36,6 +36,7 @@ void CDlgQuitSchool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_S8, m_S[7]);
 	DDX_Control(pDX, IDC_S9, m_S[8]);
 	DDX_Control(pDX, IDC_S10, m_S[9]);
+	DDX_Control(pDX, IDC_S11, m_S[10]);
 
 	DDX_Control(pDX, IDC_E1, m_E[0]);
 	DDX_Control(pDX, IDC_E2, m_E[1]);
@@ -47,6 +48,7 @@ void CDlgQuitSchool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_E8, m_E[7]);
 	DDX_Control(pDX, IDC_E9, m_E[8]);
 	DDX_Control(pDX, IDC_E10, m_E[9]);
+	DDX_Control(pDX, IDC_E11, m_E[10]);
 
 	DDX_Text(pDX, IDC_E1, m_strInfo[0]);
 	DDX_Text(pDX, IDC_E2, m_strInfo[1]);
@@ -58,11 +60,13 @@ void CDlgQuitSchool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_E8, m_strInfo[7]);
 	DDX_Text(pDX, IDC_E9, m_strInfo[8]);
 	DDX_Text(pDX, IDC_E10, m_strInfo[9]);
+	DDX_Text(pDX, IDC_E11, m_strInfo[10]);
 }
 
 
 BEGIN_MESSAGE_MAP(CDlgQuitSchool, CBCGPDialog)
 	ON_WM_CTLCOLOR()
+	ON_BN_CLICKED(IDOK, &CDlgQuitSchool::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -89,7 +93,9 @@ BOOL CDlgQuitSchool::OnInitDialog()
 		m_E[i].EnableWindow(FALSE);
 	}
 	m_E[7].EnableWindow(FALSE);
+	m_E[8].EnableWindow(FALSE);
 
+	Refrsh();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常:  OCX 属性页应返回 FALSE
 }
@@ -128,11 +134,96 @@ void CDlgQuitSchool::Refrsh()
 			m_strInfo[5].Format("%d", reMoney); //应退金额
 			m_strInfo[9] = "100";
 		}
-		else if (step < 2)
+		else if (step < 3)
 		{
 			m_strInfo[4] = "已注册，未开始培训"; //step
+
+			//只退还培训费
+			int reMoney = fee - 270;
+			m_strInfo[5].Format("%d", reMoney); //应退金额
+			m_strInfo[9] = "200";
 		}
-		
+		else if (step < 7) //科目一
+		{
+			m_strInfo[4] = "正进行科目一理论培训"; //step
+
+			//退还培训费75%
+			int reMoney = fee * 3 / 4;
+			m_strInfo[5].Format("%d", reMoney); //应退金额
+			m_strInfo[9] = "0";
+		}
+		else //科目二、三
+		{
+			m_strInfo[9] = "0";
+			if (strClassType == "科目二")
+			{
+				if (classStep < g_nMinK2Class)
+				{
+					m_strInfo[4] = "正进行科目二基础驾驶培训"; //step
+
+					//只退还培训费60%
+					int reMoney = fee * 3 / 5;
+					m_strInfo[5].Format("%d", reMoney); //应退金额
+				}
+				else
+				{
+					m_strInfo[4] = "正进行科目二场内式样驾驶培训"; //step
+					//只退还培训费50%
+					int reMoney = fee / 2;
+					m_strInfo[5].Format("%d", reMoney); //应退金额
+				}
+			}
+			else
+			{
+				if (classStep < g_nMinK3Class)
+				{
+					m_strInfo[4] = "正进行科目三道路驾驶培训"; //step
+
+					//只退还培训费20%
+					int reMoney = fee / 5;
+					m_strInfo[5].Format("%d", reMoney); //应退金额
+				}
+				else
+				{
+					m_strInfo[4] = "正进行科目三考前综合驾驶培训"; //step
+
+					//只退还培训费0%
+					int reMoney = 0;
+					m_strInfo[5].Format("%d", reMoney); //应退金额
+				}
+			}
+
+		}
+	}
+	ShowMsg2Output1(strMsg);
+	UpdateData(FALSE);
+}
+
+void CDlgQuitSchool::OnBnClickedOk()
+{
+	UpdateData();
+	if (m_strInfo[6].IsEmpty() || m_strInfo[9].IsEmpty())
+	{
+		MessageBox("必须填金额");
+		return;
+	}
+
+	int rmoney = atoi(m_strInfo[6]);
+	int fee = atoi(m_strInfo[9]);
+	m_strInfo[6].Format("%d", rmoney);
+	m_strInfo[9].Format("%d", fee);
+
+	CString strSQL, strMsg;
+	strSQL.Format("INSERT INTO stuquits (QUIT_DATE, STU_ID, QUIT_REASON, SHOULD_MONEY, RETURN_MONEY, FEE) \
+				  VALUES('%s', '%s', '%s', '%s', '%s', '%s')", 
+		m_strInfo[7], m_strInfo[1], m_strInfo[10], m_strInfo[5], m_strInfo[6], m_strInfo[9]);
+	if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+	{
+		MessageBox("退款成功");
+		OnOK();
+	}
+	else {
+		MessageBox("退款失败，请稍后再试");
 	}
 	ShowMsg2Output1(strMsg);
 }

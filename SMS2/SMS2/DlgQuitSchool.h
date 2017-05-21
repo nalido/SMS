@@ -23,8 +23,9 @@ public:
 	virtual BOOL OnInitDialog();
 	void Refrsh();
 
-	CString m_strInfo[10];
+	CString m_strInfo[11];
 
-	CStatic m_S[10];
-	CEdit m_E[10];
+	CStatic m_S[11];
+	CEdit m_E[11];
+	afx_msg void OnBnClickedOk();
 };
