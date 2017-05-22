@@ -794,7 +794,7 @@ void CDlgDevice2::OnBnClickedProxy()
 		CString strFileName = g_strOutPath + "\\" + m_strCarID + "_" + m_strPlateNum 
 			+ "_" + strDate + ".xls";
 
-		if (!PathFileExistsA(strFileName)) //无则复制模板
+		if (!PathFileExistsA(strFileName)) //无则复制模板 模板保护密码是123456
 			CopyFileA("template.xls", strFileName, FALSE);
 
 		MessageBox("请在打开的表格中编辑并保存");

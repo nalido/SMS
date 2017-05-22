@@ -546,7 +546,7 @@ BEGIN
     LTEXT           "Static",IDC_D6,338,107,325,15
     LTEXT           "Static",IDC_D7,338,125,94,15
     LTEXT           "Static",IDC_D8,338,143,94,15
-    RTEXT           "费用",IDC_S9,450,125,39,15
+    RTEXT           "报名费用",IDC_S9,450,125,39,15
     LTEXT           "Static",IDC_D9,500,125,94,15
     CONTROL         "",IDC_BASICINFO2,"Static",SS_BLACKFRAME | NOT WS_VISIBLE,193,179,479,70
     LTEXT           "基本信息",IDC_T1,204,34,78,15
