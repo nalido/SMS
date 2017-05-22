@@ -31,6 +31,7 @@ void CViewKPI::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CViewKPI, CBCGPFormView)
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_EXPORT, &CViewKPI::OnBnClickedExport)
+	ON_BN_CLICKED(IDC_TALK, &CViewKPI::OnBnClickedTalk)
 END_MESSAGE_MAP()
 
 
@@ -68,6 +69,12 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		if (!it->empty())
 		{
 			pdi->item.varValue = pThis->m_datas[nRow][nCol];
+
+			int satisfied = atoi(pThis->m_datas[nRow][3]);
+			if (satisfied < 60)
+			{
+				pdi->item.clrBackground = COLOR_LITTLE;
+			}
 		}
 		else
 		{
@@ -325,4 +332,64 @@ void CALLBACK CViewKPI::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
 		pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)3);
 	}
 	catch (...){}
+}
+
+
+void CViewKPI::OnBnClickedTalk()
+{
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CString strCoachID = m_datas[nRow][0];
+		CString strCoach = m_datas[nRow][1];
+		CTime today = GetServerTime();
+		CString strMonth = today.Format("%Y/%m");
+
+		//查询是否已经打印过
+		CString strMsg, strSQL;
+		strSQL.Format("SELECT ADMONISH_NUM FROM admonishment WHERE COACH_ID='%s' AND ALARM_MONTH='%s'", strCoachID, strMonth);
+		CDStrs datas;
+		if (!g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg)) 
+		{
+			ShowMsg2Output1(strMsg); 
+			return;
+		}
+
+		int num = 0;
+		CDStrs counts;
+		if (datas.size() == 0) //没有打印过，新建记录
+		{
+			strSQL.Format("SELECT COUNT(COACH_ID) FROM admonishment");
+			if (!g_mysqlCon.ExecuteQuery(strSQL, counts, strMsg))
+			{
+				ShowMsg2Output1(strMsg);
+				return;
+			}
+			num = atoi(counts[0][0]) + 1;
+
+			strSQL.Format("INSERT INTO admonishment (COACH_ID, COACH_NAME, ALARM_MONTH, ADMONISH_NUM) VALUES('%s', '%s', '%s', '%d')", strCoachID, strCoach, strMonth, num);
+			if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+			{
+				ShowMsg2Output1(strMsg);
+				return;
+			}
+		}
+		else
+		{
+			num = atoi(datas[0][0]);
+		}
+		CString fileNum;
+		fileNum.Format("DJ%03d", num);
+
+		//诫勉单文件名
+		strMonth.Replace("/", "-");
+		CString strFileName = g_strOutPath + "\\" + fileNum + "_" + strCoach + "_" + strMonth + ".xls";
+
+		if (!PathFileExistsA(strFileName)) //无则复制模板 模板保护密码是123456
+			CopyFileA("admonishment.xls", strFileName, FALSE);
+
+		MessageBox("请在打开的表格中编辑并保存");
+		ShellExecuteA(NULL, NULL, strFileName, NULL, NULL, SW_SHOWNORMAL);
+	}
 }

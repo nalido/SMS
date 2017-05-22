@@ -4,6 +4,11 @@
 #include "xPublic\MySQLEx.h"
 
 
+enum DLG_TYPE
+{
+	DLG_RESP,  //课程评分
+	DLG_MONEY //缴费明细
+};
 // CDlgMyBooks 对话框
 
 class CDlgMyBooks : public CBCGPDialog
@@ -23,6 +28,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
+	int m_nDlgType; 
+	BOOL m_isPublic; //1:不显示缴费按钮 0:显示缴费按钮
 
 	//virtualGrid
 	CStatic m_wndGridLocation;
@@ -38,4 +45,5 @@ public:
 
 	virtual BOOL OnInitDialog();
 	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
+	afx_msg void OnBnClickedMoney();
 };

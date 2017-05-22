@@ -279,6 +279,14 @@ void CTmpOrder::OnBnClickedPrint()
 	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	ShowMsg2Output1(strMsg);
 
+	//更新已预约课时数
+	strSQL.Format("UPDATE students SET BOOK_NUM=(\
+				  	SELECT COUNT(FILE_NAME) FROM bookings WHERE FILE_NAME='%s')\
+					WHERE FILE_NAME='%s'", 
+					m_strStuID, m_strStuID);
+	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	ShowMsg2Output1(strMsg);
+
 	//打印
 	printx.PrinterInit(&sheetInfo, &classInfo);
 	printx.Printx(1, strMsg);
@@ -325,6 +333,15 @@ void CTmpOrder::OnBnClickedOk()
 				  	FILE_NAME, BOOK_DATE, CLASS_ID) VALUES(1, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
 					m_strOrderDate, m_strCoachID, m_strCar, m_strNClass, m_strType
 					, m_strStuID, m_strBookDate, m_strClassID);
+	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	ShowMsg2Output1(strMsg);
+
+
+	//更新已预约课时数
+	strSQL.Format("UPDATE students SET BOOK_NUM=(\
+				  	SELECT COUNT(FILE_NAME) FROM bookings WHERE FILE_NAME='%s')\
+					WHERE FILE_NAME='%s'",
+					m_strStuID, m_strStuID);
 	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	ShowMsg2Output1(strMsg);
 

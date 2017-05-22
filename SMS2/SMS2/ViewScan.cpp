@@ -79,6 +79,8 @@ void CViewScan::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_D11, m_D[10]); //全部课时
 	DDX_Control(pDX, IDC_D12, m_D[11]); //已预约课时
 	DDX_Control(pDX, IDC_D13, m_D[12]); //已使用课时
+	DDX_Control(pDX, IDC_D14, m_D[13]); //已超过课时
+	DDX_Control(pDX, IDC_D15, m_D[14]); //已超过课时
 	DDX_Text(pDX, IDC_D1, m_student.strName); //姓名
 	DDX_Text(pDX, IDC_D2, m_student.strBirthDay); //出生日期
 	DDX_Text(pDX, IDC_D3, m_student.strTEL); //电话
@@ -92,6 +94,8 @@ void CViewScan::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_D11, m_strMaxClass); //全部课时
 	DDX_Text(pDX, IDC_D12, m_strBookedClass); //已预约课时
 	DDX_Text(pDX, IDC_D13, m_strUsedClass); //已使用课时
+	DDX_Text(pDX, IDC_D14, m_strOutClass); //已超过课时
+	DDX_Text(pDX, IDC_D15, m_strFee); //待缴费金额
 }
 
 BEGIN_MESSAGE_MAP(CViewScan, CBCGPFormView)
@@ -104,6 +108,7 @@ BEGIN_MESSAGE_MAP(CViewScan, CBCGPFormView)
 	ON_BN_CLICKED(IDC_EXIT, &CViewScan::OnBnClickedExit)
 	ON_BN_CLICKED(IDC_FEEDBACK, &CViewScan::OnBnClickedFeedback)
 	ON_BN_CLICKED(IDC_NEXTCLASS, &CViewScan::OnBnClickedNextclass)
+	ON_BN_CLICKED(IDC_MONEY, &CViewScan::OnBnClickedMoney)
 END_MESSAGE_MAP()
 
 
@@ -166,6 +171,18 @@ HBRUSH CViewScan::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 				   pDC->SetTextColor(RGB(46, 100, 153));
 				   CFont font1;
 				   font1.CreateFontA(25, 0, 0, 0, FW_BOLD, 0, 0, 0, 0,
+					   0, 0, 0, VARIABLE_PITCH | FF_SWISS, "微软雅黑");
+				   pDC->SelectObject(&font1);
+				   return HBRUSH(GetStockObject(NULL_BRUSH)); //返回一个空画刷
+				   break;
+	}
+	case IDC_D14:
+	case IDC_D15:
+	{
+				   pDC->SetBkMode(TRANSPARENT);
+				   pDC->SetTextColor(RGB(255, 0, 0));
+				   CFont font1;
+				   font1.CreateFontA(20, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0,
 					   0, 0, 0, VARIABLE_PITCH | FF_SWISS, "微软雅黑");
 				   pDC->SelectObject(&font1);
 				   return HBRUSH(GetStockObject(NULL_BRUSH)); //返回一个空画刷
@@ -630,7 +647,7 @@ LRESULT CViewScan::OnUserMessage(WPARAM wp, LPARAM lp)
 		CDStrs datas;
 		strSQL.Format("SELECT BIRTHDAY, REGIST_DATE, TEL, ID, HOME, FEE, CLASS_TYPE, CLASS_NUM, BOOK_NUM \
 					  FROM students WHERE FILE_NAME='%s'", m_student.strFileName);
-		if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg))
+		if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg) && datas.size()>0)
 		{
 			m_student.strBirthDay = datas[0][0];
 			m_student.strSignDate = datas[0][1];
@@ -646,7 +663,41 @@ LRESULT CViewScan::OnUserMessage(WPARAM wp, LPARAM lp)
 		}
 		ShowMsg2Output1(strMsg);
 
+		//
+		datas.clear();
+		strSQL.Format("SELECT BOOK_TYPE, FEE FROM bookings WHERE FILE_NAME='%s' AND BOOK_TYPE>'0' AND FEE_DONE!='-1'", m_student.strFileName);
+		if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg) && datas.size()>0)
+		{
+			m_D[13].ShowWindow(SW_SHOW);
+			m_D[14].ShowWindow(SW_SHOW);
+			GetDlgItem(IDC_MONEY)->ShowWindow(SW_SHOW);
 
+			int n = datas.size();
+			int sum = 0;
+			for (int i = 0; i < n; i++)
+			{
+				int BookType = atoi(datas[i][0]);
+				int nFee = atoi(datas[i][1]);
+
+				if (BookType == 1)
+				{
+					sum += nFee;
+				}
+				else if (BookType == 2)
+				{
+					sum -= nFee;
+				}
+			}
+			m_strOutClass.Format("需收费%02d课时", n);
+			m_strFee.Format("待缴费%04d元", sum);
+		}
+		else
+		{
+			m_D[13].ShowWindow(SW_HIDE);
+			m_D[14].ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_MONEY)->ShowWindow(SW_HIDE);
+		}
+		ShowMsg2Output1(strMsg);
 
 		//本地打开照片，若本地无，则查询服务器下载
 		ShowMsg2Output1("选择预约对象：档案" + m_student.strFileName);
@@ -734,6 +785,8 @@ void CViewScan::OnBnClickedFeedback()
 {
 	CDlgMyBooks dlg;
 	dlg.m_strStuID = m_student.strFileName;
+	dlg.m_isPublic = m_isPublic;
+	dlg.m_nDlgType = DLG_RESP;
 	dlg.DoModal();
 }
 
@@ -741,5 +794,15 @@ void CViewScan::OnBnClickedFeedback()
 void CViewScan::OnBnClickedNextclass()
 {
 	CDlgNextClass dlg;
+	dlg.DoModal();
+}
+
+
+void CViewScan::OnBnClickedMoney()
+{
+	CDlgMyBooks dlg;
+	dlg.m_strStuID = m_student.strFileName;
+	dlg.m_nDlgType = DLG_MONEY;
+	dlg.m_isPublic = m_isPublic;
 	dlg.DoModal();
 }

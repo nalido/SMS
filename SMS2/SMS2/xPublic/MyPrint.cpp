@@ -485,7 +485,7 @@ namespace xPublic{
 		m_dcPrinter.SelectObject(pOldPen);
 	}
 
-	void CMyPrint::PrintTrainSheet2(int page)
+	void CMyPrint::PrintTrainSheet2(int page) //诫勉谈话单
 	{
 		CPen pen, *pOldPen;// 定义笔对象和指针  
 		pen.CreatePen(PS_SOLID, 10, RGB(0, 255, 0));

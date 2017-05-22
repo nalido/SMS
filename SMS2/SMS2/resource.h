@@ -61,7 +61,7 @@
 #define File                            222
 #define IDD_NEXT_BOOKDAY                223
 #define IDD_SCAN_ENTER                  224
-#define IDD_DIALOG6                     225
+#define IDD_FEE_UP                      225
 #define IDD_PROXY                       226
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
@@ -85,6 +85,7 @@
 #define IDC_FORGET                      1057
 #define IDC_SELFDOWN                    1057
 #define IDC_EXPORT2                     1057
+#define IDC_TALK                        1057
 #define IDC_PHOTO                       1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
@@ -117,6 +118,7 @@
 #define IDC_NCLASS                      1070
 #define IDC_JIXIAO                      1070
 #define IDC_K1PASS                      1070
+#define IDC_MONEY                       1070
 #define IDC_ID                          1071
 #define IDC_NAME6                       1071
 #define IDC_JIXIAO2                     1071
@@ -322,7 +324,9 @@
 #define IDC_D13                         1224
 #define IDC_S35                         1224
 #define IDC_S36                         1225
+#define IDC_D14                         1225
 #define IDC_S37                         1226
+#define IDC_D15                         1226
 #define IDC_VIEW_4STUDENT               1227
 #define IDC_S38                         1227
 #define IDC_S39                         1228
