@@ -217,6 +217,7 @@
     <ClInclude Include="DlgNextBookDate.h" />
     <ClInclude Include="DlgNextClass.h" />
     <ClInclude Include="DlgNoPass.h" />
+    <ClInclude Include="DlgProxy.h" />
     <ClInclude Include="DlgQuitSchool.h" />
     <ClInclude Include="DlgResetPSW.h" />
     <ClInclude Include="GridCalendar.h" />
@@ -277,6 +278,7 @@
     <ClCompile Include="DlgNextBookDate.cpp" />
     <ClCompile Include="DlgNextClass.cpp" />
     <ClCompile Include="DlgNoPass.cpp" />
+    <ClCompile Include="DlgProxy.cpp" />
     <ClCompile Include="DlgQuitSchool.cpp" />
     <ClCompile Include="DlgResetPSW.cpp" />
     <ClCompile Include="GridCalendar.cpp" />

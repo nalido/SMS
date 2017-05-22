@@ -99,12 +99,14 @@ namespace xPublic{
 	{
 		m_cs.Lock();
 		Msg = "ExecuteQuery Successed";
-		if (!m_isInit)
+		if (!m_isInit || m_mysql.net.vio == NULL)
 		{
 			Msg = "No connection exist.";
 			m_cs.Unlock();
 			return false;
 		}
+
+
 
 		if (mysql_real_query(&m_mysql, lpszSQL, strlen(lpszSQL)))
 		{
@@ -148,7 +150,7 @@ namespace xPublic{
 	{
 		m_cs.Lock();
 		Msg = "Exist!";
-		if (!m_isInit)
+		if (!m_isInit || m_mysql.net.vio == NULL)
 		{
 			Msg = "No connection exist.";
 			m_cs.Unlock();
@@ -181,7 +183,7 @@ namespace xPublic{
 	{
 		m_cs.Lock();
 		Msg = "ExecuteSQL successed";
-		if (!m_isInit)
+		if (!m_isInit || m_mysql.net.vio == NULL)
 		{
 			Msg = "No connection exist.";
 			m_cs.Unlock();

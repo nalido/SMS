@@ -171,6 +171,14 @@ CTime GetServerTime()
 	int nMonth = atoi(strDate.Mid(pos1 + 1, pos2));
 	int nDay = atoi(strDate.Mid(pos2 + 1));
 
+	CTime t = CTime::GetCurrentTime();
+	if (nYear == 0 || nMonth == 0 || nDay == 0) //时间错误
+	{
+		nYear = t.GetYear();
+		nMonth = t.GetMonth();
+		nDay = t.GetDay();
+	}
+
 	//解析时间
 	pos1 = strHour.Find(':');
 	pos2 = strHour.ReverseFind(':');
@@ -583,96 +591,96 @@ void CMainFrame::OnUpdateViewOutput(CCmdUI* pCmdUI)
 		pCmdUI->SetCheck(m_wndOutput.IsVisible());
 		pCmdUI->Enable(!GetDockManager()->IsPrintPreviewValid());
 		break;
-	//case ID_VIEW_BOOKING1:
-	//	pView = m_arViews[VIEW_BOOKING1];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_BOOKING2:
-	//	pView = m_arViews[VIEW_BOOKING2];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_ORDER_RSP:
-	//	pView = m_arViews[VIEW_ORDER_RSP];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_REGISTER:
-	//	pView = m_arViews[VIEW_REGISTER];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_K1CHECK:
-	//	pView = m_arViews[VIEW_K1CHECK];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_K1EXAM:
-	//	pView = m_arViews[VIEW_K1EXAM];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_K23EXAM:
-	//	pView = m_arViews[VIEW_K23EXAM];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_STUPROGRESS:
-	//	pView = m_arViews[VIEW_STUPROGRESS];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_SYSTEMSETTING:
-	//	pView = m_arViews[VIEW_SYSTEM];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_SCHOOLSETTING:
-	//	pView = m_arViews[VIEW_SCHOOL];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_COACH:
-	//	pView = m_arViews[VIEW_COACHES];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_KPI:
-	//	pView = m_arViews[VIEW_KPI];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_SCAN:
-	//	pView = m_arViews[VIEW_SCAN];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_DEVICE:
-	//	pView = m_arViews[VIEW_DEVICES];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_STUFF:
-	//	pView = m_arViews[VIEW_STUFFENTER];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_4STUDENT:
-	//	pView = m_arViews[VIEW_STUDENTENTER];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_ALLSTUDENTS:
-	//	pView = m_arViews[VIEW_ALLSTUDENTS];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
-	//case ID_VIEW_PERMISSION:
-	//	pView = m_arViews[VIEW_PERMISSION];
-	//	if (pView != NULL)
-	//		pCmdUI->SetCheck(pView->IsWindowVisible());
-	//	break;
+	case ID_VIEW_BOOKING1:
+		pView = m_arViews[VIEW_BOOKING1];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_BOOKING2:
+		pView = m_arViews[VIEW_BOOKING2];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_ORDER_RSP:
+		pView = m_arViews[VIEW_ORDER_RSP];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_REGISTER:
+		pView = m_arViews[VIEW_REGISTER];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_K1CHECK:
+		pView = m_arViews[VIEW_K1CHECK];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_K1EXAM:
+		pView = m_arViews[VIEW_K1EXAM];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_K23EXAM:
+		pView = m_arViews[VIEW_K23EXAM];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_STUPROGRESS:
+		pView = m_arViews[VIEW_STUPROGRESS];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_SYSTEMSETTING:
+		pView = m_arViews[VIEW_SYSTEM];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_SCHOOLSETTING:
+		pView = m_arViews[VIEW_SCHOOL];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_COACH:
+		pView = m_arViews[VIEW_COACHES];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_KPI:
+		pView = m_arViews[VIEW_KPI];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_SCAN:
+		pView = m_arViews[VIEW_SCAN];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_DEVICE:
+		pView = m_arViews[VIEW_DEVICES];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_STUFF:
+		pView = m_arViews[VIEW_STUFFENTER];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_4STUDENT:
+		pView = m_arViews[VIEW_STUDENTENTER];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_ALLSTUDENTS:
+		pView = m_arViews[VIEW_ALLSTUDENTS];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_PERMISSION:
+		pView = m_arViews[VIEW_PERMISSION];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
 	}
 }
  // OUTPUTBAR

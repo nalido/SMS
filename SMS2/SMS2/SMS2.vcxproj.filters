@@ -198,6 +198,9 @@
     <ClInclude Include="ViewScanEnter.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DlgProxy.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SMS2.cpp">
@@ -369,6 +372,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ViewScanEnter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgProxy.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
