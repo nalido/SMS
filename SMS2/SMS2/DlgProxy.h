@@ -3,7 +3,7 @@
 
 // CDlgProxy ¶Ô»°¿ò
 
-class CDlgProxy : public CDialog
+class CDlgProxy : public CBCGPDialog
 {
 	DECLARE_DYNAMIC(CDlgProxy)
 

@@ -229,7 +229,7 @@ BEGIN
     PUSHBUTTON      "取消",IDC_CHANGEBACK,530,22,53,13
     EDITTEXT        IDC_EDIT_FILEPATH2,128,44,272,13,ES_AUTOHSCROLL
     PUSHBUTTON      "浏览",IDC_FILEPATH2,408,44,53,13
-    LTEXT           "照片本地存储位置：",IDC_STATIC,48,46,73,11
+    RTEXT           "文件输出位置：",IDC_STATIC,48,46,73,11
     PUSHBUTTON      "确定并应用",IDC_CHANGEPATH2,470,44,53,13
     PUSHBUTTON      "取消",IDC_CHANGEBACK2,530,44,53,13
 END
@@ -501,6 +501,7 @@ BEGIN
     CONTROL         "按年显示",IDC_RADIO4,"Button",BS_AUTORADIOBUTTON,519,339,49,10
     PUSHBUTTON      "搜索",IDC_FIND,548,13,40,17
     EDITTEXT        IDC_E1,428,13,116,17,ES_AUTOHSCROLL
+    PUSHBUTTON      "委托书",IDC_PROXY,344,13,70,19,NOT WS_VISIBLE
 END
 
 IDD_DATE_ITEM DIALOGEX 0, 0, 140, 106
@@ -828,13 +829,70 @@ BEGIN
     PUSHBUTTON      "取消",IDCANCEL,252,155,50,14
 END
 
-IDD_PROXY DIALOGEX 0, 0, 309, 176
+IDD_PROXY DIALOGEX 0, 0, 735, 447
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "委托书"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "确定",IDOK,198,155,50,14
-    PUSHBUTTON      "取消",IDCANCEL,252,155,50,14
+    LTEXT           "南京东华汽车服务有限公司（驾校）",IDC_S1,5,4,155,14
+    CTEXT           "委托书",IDC_S2,290,20,155,14
+    CTEXT           "年",IDC_S3,513,20,26,14
+    CTEXT           "月",IDC_S4,558,20,26,14
+    CTEXT           "日",IDC_S5,603,20,26,14
+    LTEXT           "牌号：",IDC_S6,23,39,28,14
+    LTEXT           "车架号：",IDC_S7,137,39,39,14
+    LTEXT           "申请人：",IDC_S8,289,39,39,14
+    LTEXT           "送修人：",IDC_S11,393,39,39,14
+    LTEXT           "验收人：",IDC_S12,499,39,39,14
+    LTEXT           "维修内容：",IDC_S13,6,61,51,14
+    LTEXT           "（故障描述）",IDC_S14,80,61,55,14
+    LTEXT           "1.",IDC_S15,9,77,18,14
+    LTEXT           "2.",IDC_S16,9,92,18,14
+    LTEXT           "3.",IDC_S17,9,108,18,14
+    LTEXT           "维修项目：",IDC_S18,5,128,78,14
+    LTEXT           "（厂方制定）",IDC_S19,92,128,59,14
+    LTEXT           "1.",IDC_S20,9,148,18,14
+    LTEXT           "2.",IDC_S21,9,163,18,14
+    LTEXT           "3.",IDC_S22,9,181,18,14
+    CTEXT           "工时",IDC_S23,225,147,61,14
+    CTEXT           "材料",IDC_S24,365,147,61,14
+    CTEXT           "辅料",IDC_S25,497,147,61,14
+    CTEXT           "元",IDC_S26,270,158,61,14
+    CTEXT           "元",IDC_S27,402,158,61,14
+    CTEXT           "元",IDC_S28,502,158,61,14
+    CTEXT           "工时",IDC_S29,225,179,61,14
+    CTEXT           "材料",IDC_S30,365,179,61,14
+    CTEXT           "辅料",IDC_S31,497,179,61,14
+    CTEXT           "元",IDC_S32,270,189,61,14
+    CTEXT           "元",IDC_S33,402,189,61,14
+    CTEXT           "元",IDC_S34,502,189,61,14
+    CTEXT           "工时",IDC_S35,229,216,61,14
+    CTEXT           "材料",IDC_S36,369,216,61,14
+    CTEXT           "辅料",IDC_S37,501,216,61,14
+    CTEXT           "元",IDC_S38,274,226,61,14
+    CTEXT           "元",IDC_S39,406,226,61,14
+    CTEXT           "元",IDC_S40,506,226,61,14
+    LTEXT           "商定工作时限：",IDC_S41,0,246,78,14
+    LTEXT           "（双方确定）",IDC_S42,90,248,59,14
+    CTEXT           "送修日、时",IDC_S43,16,265,59,14
+    CTEXT           "竣工日、时",IDC_S44,115,262,59,14
+    CTEXT           "交车日、时",IDC_S45,207,263,59,14
+    CTEXT           "实际交车日、时",IDC_S46,295,256,59,14
+    CTEXT           "及时性评估",IDC_S47,429,260,59,14
+    CTEXT           "月",IDC_S48,16,281,20,14
+    CTEXT           "日",IDC_S49,48,281,20,14
+    CTEXT           "时",IDC_S50,76,281,20,14
+    CTEXT           "月",IDC_S51,113,279,20,14
+    CTEXT           "日",IDC_S52,145,279,20,14
+    CTEXT           "时",IDC_S53,173,279,20,14
+    CTEXT           "月",IDC_S54,209,279,20,14
+    CTEXT           "日",IDC_S55,241,279,20,14
+    CTEXT           "时",IDC_S56,269,279,20,14
+    CTEXT           "月",IDC_S57,307,276,20,14
+    CTEXT           "日",IDC_S58,339,276,20,14
+    CTEXT           "时",IDC_S59,367,276,20,14
+    CTEXT           "及时",IDC_S60,451,273,32,14
+    CTEXT           "不及时",IDC_S61,521,273,51,14
 END
 
 
@@ -1216,9 +1274,9 @@ BEGIN
     IDD_PROXY, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 302
+        RIGHTMARGIN, 728
         TOPMARGIN, 7
-        BOTTOMMARGIN, 169
+        BOTTOMMARGIN, 440
     END
 END
 #endif    // APSTUDIO_INVOKED

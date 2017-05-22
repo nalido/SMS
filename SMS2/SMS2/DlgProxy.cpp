@@ -9,12 +9,12 @@
 
 // CDlgProxy ¶Ô»°¿ò
 
-IMPLEMENT_DYNAMIC(CDlgProxy, CDialog)
+IMPLEMENT_DYNAMIC(CDlgProxy, CBCGPDialog)
 
 CDlgProxy::CDlgProxy(CWnd* pParent /*=NULL*/)
-	: CDialog(CDlgProxy::IDD, pParent)
+	: CBCGPDialog(CDlgProxy::IDD, pParent)
 {
-
+	EnableVisualManagerStyle();
 }
 
 CDlgProxy::~CDlgProxy()
@@ -23,11 +23,11 @@ CDlgProxy::~CDlgProxy()
 
 void CDlgProxy::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CBCGPDialog::DoDataExchange(pDX);
 }
 
 
-BEGIN_MESSAGE_MAP(CDlgProxy, CDialog)
+BEGIN_MESSAGE_MAP(CDlgProxy, CBCGPDialog)
 END_MESSAGE_MAP()
 
 

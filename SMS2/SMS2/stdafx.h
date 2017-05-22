@@ -84,3 +84,7 @@
 #include <gdiplus.h>
 #pragma comment(lib, "gdiplus.lib")
 using namespace Gdiplus;
+
+//判断目录下是否包含指定文件
+#include <shlwapi.h>  
+#pragma comment(lib,"Shlwapi.lib") //如果没有这行，会出现link错误  
