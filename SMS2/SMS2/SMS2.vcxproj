@@ -337,6 +337,9 @@
     <None Include="res\SMS2.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\..\Files\car_48px_1105519_easyicon.net.png" />
+    <Image Include="..\..\..\界面参考\car_16px_1105519_easyicon.net.ico" />
+    <Image Include="..\..\..\界面参考\car_32px_1105519_easyicon.net.ico" />
     <Image Include="..\1.bmp" />
     <Image Include="..\2.bmp" />
     <Image Include="..\3.bmp" />
@@ -353,6 +356,9 @@
     <Image Include="res\BCGSoft_ribbon\main.png" />
     <Image Include="res\BCGSoft_ribbon\ribbon_bar.png" />
     <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\car.ico" />
+    <Image Include="res\car_32px.ico" />
+    <Image Include="res\Car_red_32px.ico" />
     <Image Include="res\SMS2.ico" />
     <Image Include="res\SMS2Doc.ico" />
     <Image Include="res\tool14.bmp" />

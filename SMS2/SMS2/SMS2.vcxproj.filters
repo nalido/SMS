@@ -467,6 +467,24 @@
     <Image Include="res\0.bmp">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="res\car.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\Car_red_32px.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\car_32px.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\..\..\..\..\Files\car_48px_1105519_easyicon.net.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\..\..\界面参考\car_16px_1105519_easyicon.net.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\..\..\界面参考\car_32px_1105519_easyicon.net.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="res\BCGSoft_ribbon\ribbon.xml" />
