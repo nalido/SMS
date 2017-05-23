@@ -245,7 +245,6 @@
 #define IDC_COMBO4                      1165
 #define IDC_MIN_K3CLASS                 1165
 #define IDC_COMBO5                      1166
-#define IDC_MIN_K3CLASS2                1166
 #define IDC_FEEFORONECLASS              1166
 #define IDC_COMBO6                      1167
 #define IDC_MSG1                        1168
@@ -325,8 +324,10 @@
 #define IDC_S33                         1222
 #define IDC_D12                         1223
 #define IDC_S34                         1223
+#define IDC_LABEL2                      1223
 #define IDC_D13                         1224
 #define IDC_S35                         1224
+#define IDC_LABEL3                      1224
 #define IDC_S36                         1225
 #define IDC_D14                         1225
 #define IDC_S37                         1226
@@ -381,6 +382,9 @@
 #define IDC_INFO                        1255
 #define IDC_TAB2                        1256
 #define IDC_PROXY                       1259
+#define IDC_SLABEL1                     1260
+#define IDC_SLABEL2                     1261
+#define IDC_SLABEL3                     1262
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -442,7 +446,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        227
 #define _APS_NEXT_COMMAND_VALUE         32894
-#define _APS_NEXT_CONTROL_VALUE         1260
+#define _APS_NEXT_CONTROL_VALUE         1261
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

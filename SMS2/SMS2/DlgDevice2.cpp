@@ -793,9 +793,16 @@ void CDlgDevice2::OnBnClickedProxy()
 
 		CString strFileName = g_strOutPath + "\\" + m_strCarID + "_" + m_strPlateNum 
 			+ "_" + strDate + ".xls";
+		::SHCreateDirectory(NULL, CA2W(g_strOutPath + "\\"));
 
 		if (!PathFileExistsA(strFileName)) //无则复制模板 模板保护密码是123456
-			CopyFileA("template.xls", strFileName, FALSE);
+		{
+			if (!CopyFileA("template.xls", strFileName, FALSE))
+			{
+				MessageBox("未找到模板！");
+				return;
+			}
+		}
 
 		MessageBox("请在打开的表格中编辑并保存");
 		ShellExecuteA(NULL, NULL, strFileName, NULL, NULL, SW_SHOWNORMAL);

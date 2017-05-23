@@ -306,7 +306,7 @@ void CViewOrderRsp::UpdateStudent(int nRow, int flag)
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
 	}
-	else if (flag == 2) //教练缺勤，FLAG字段更新为“-1”， 已上课时数不变
+	else if (flag == 2) //教练缺勤，FLAG字段更新为“-2”， 已上课时数不变
 	{
 		strSQL.Format("UPDATE bookings SET FLAG='-2'\
 					  	WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",

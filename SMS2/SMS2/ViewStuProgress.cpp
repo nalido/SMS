@@ -152,6 +152,7 @@ BEGIN_MESSAGE_MAP(CViewStuProgress, CBCGPFormView)
 	ON_BN_CLICKED(IDC_SETTYPE, &CViewStuProgress::OnBnClickedSettype)
 	ON_BN_CLICKED(IDC_NEXTBOOK, &CViewStuProgress::OnBnClickedNextbook)
 	ON_BN_CLICKED(IDC_FIND, &CViewStuProgress::OnBnClickedFind)
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
@@ -535,4 +536,27 @@ void CViewStuProgress::OnBnClickedFind()
 		strFind = "没有找到'" + strFind + "'的相关记录";
 		GetDlgItem(IDC_E1)->SetWindowTextA(strFind);
 	}
+}
+
+
+void CViewStuProgress::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	// TODO:  在此处添加消息处理程序代码
+
+	CRect rect;
+	GetDlgItem(IDC_LABEL1)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL1)->MapWindowPoints(this, &rect);
+	CBrush brush(COLOR_DONE);
+	dc.FillRect(rect, &brush);
+
+	GetDlgItem(IDC_LABEL2)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL2)->MapWindowPoints(this, &rect);
+	CBrush brush1(COLOR_DOING);
+	dc.FillRect(rect, &brush1);
+
+	GetDlgItem(IDC_LABEL3)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL3)->MapWindowPoints(this, &rect);
+	CBrush brush2(COLOR_LITTLE);
+	dc.FillRect(rect, &brush2);
 }

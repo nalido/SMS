@@ -46,6 +46,7 @@ public:
 	afx_msg void OnBnClickedSettype();
 	afx_msg void OnBnClickedNextbook();
 	afx_msg void OnBnClickedFind();
+	afx_msg void OnPaint();
 };
 
 

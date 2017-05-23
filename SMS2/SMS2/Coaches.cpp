@@ -39,6 +39,7 @@ BEGIN_MESSAGE_MAP(CCoaches, CBCGPFormView)
 	ON_BN_CLICKED(IDC_KPI, &CCoaches::OnBnClickedKpi)
 	ON_BN_CLICKED(IDC_MONTHPLATE, &CCoaches::OnBnClickedMonthplate)
 	ON_BN_CLICKED(IDC_FIND, &CCoaches::OnBnClickedFind)
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
@@ -319,4 +320,17 @@ void CCoaches::OnBnClickedFind()
 		strFind = "没有找到'" + strFind + "'的相关记录";
 		GetDlgItem(IDC_E1)->SetWindowTextA(strFind);
 	}
+}
+
+
+void CCoaches::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	// TODO:  在此处添加消息处理程序代码
+
+	CRect rect;
+	GetDlgItem(IDC_LABEL1)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL1)->MapWindowPoints(this, &rect);
+	CBrush brush(COLOR_NONE);
+	dc.FillRect(rect, &brush);
 }

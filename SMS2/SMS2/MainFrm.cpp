@@ -995,6 +995,77 @@ void CALLBACK CMainFrame::ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent)
 		{
 			if (datas.size() == 0) //没有本月的记录
 			{
+				//更新上个月的最后记录
+				{
+					CString lastMonth = GetLastMonth(t) + "%%";
+					CDStrs coaches;
+					strSQL.Format("SELECT COACH_ID, COACH FROM kpis WHERE KMONTH LIKE '%s'", lastMonth);
+					g_mysqlCon.ExecuteQuery(strSQL, coaches, strMsg);
+
+					//更新KPI数据
+					int nc = coaches.size();
+					if (nc == 0) continue;
+					for (int nCoach = 0; nCoach < nc; nCoach++)
+					{
+						CDStrs data;
+						//学员评分记录
+						strSQL.Format("SELECT BOOK_DATE, SERVICE_SCORE, SELF_SCORE FROM bookings WHERE ORDER_COACH='%s' \
+									  	AND BOOK_DATE LIKE '%s' AND FLAG='2' ORDER BY BOOK_DATE",
+										coaches[nCoach][0], lastMonth);
+						g_mysqlCon.ExecuteQuery(strSQL, data, strMsg);
+
+						int nStudents = data.size();
+						if (nStudents == 0) //当月没有学员的, 不更新
+						{
+							continue;
+						}
+
+						int service = 0; //服务评价 满意度
+						int self = 0; //技能评价 合格率
+						int good = 0; //满意率
+						for (int i = 0; i < nStudents; i++)
+						{
+							int d1 = atoi(data[i][1]);
+							int d2 = atoi(data[i][2]);
+
+							service += d1;
+							self += d2;
+							if (d1 >= 80) good++;
+						}
+						service = service * 100 / nStudents;
+						self = self * 100 / nStudents;
+						good = good * 10000 / nStudents;
+
+						double KPI = (service + self)*1.0 / 200;
+
+						CString strData;
+						strData.Format("%d", nStudents);
+						coaches[nCoach].push_back(strData);
+						double d = service*1.0 / 100;
+						strData.Format("%.2f", d);
+						coaches[nCoach].push_back(strData);
+						d = good*1.0 / 100;
+						strData.Format("%.2f", d);
+						coaches[nCoach].push_back(strData);
+						d = self*1.0 / 100;
+						strData.Format("%.2f", d);
+						coaches[nCoach].push_back(strData);
+						coaches[nCoach].push_back("100"); //设备完好率
+						coaches[nCoach].push_back("0"); //介绍学生数
+						coaches[nCoach].push_back("0"); //介绍学生目标数
+						strData.Format("%.2f", KPI);
+						coaches[nCoach].push_back(strData);
+
+						//更新数据库
+						int kpi = KPI * 100;
+						strSQL.Format("UPDATE KPIS SET SAMPLE_NUM='%d', SATISFIED_DEGREE='%d', SATISFIED_PERCENT='%d',\
+									  	SKILL_PERCENT='%d', SCORE='%d'\
+										WHERE COACH_ID='%s' AND KMONTH='%s'",
+										nStudents, service, good, self, kpi, coaches[nCoach][0], lastMonth.Left(7));
+						g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+					}
+				}//结束更新上个月的最后记录
+				//添加本月记录
 				g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
 				strSQL.Format("INSERT INTO KPIS (COACH, COACH_ID) SELECT coachinfo.SNAME, coachinfo.FILE_NUM FROM coachinfo INNER JOIN coachstat ON coachinfo.FILE_NUM=coachstat.FILE_NUM WHERE coachstat.BLACK_NAME='0'");
 				if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))

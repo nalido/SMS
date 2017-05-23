@@ -259,13 +259,14 @@ void CALLBACK CViewKPI::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
 		g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg);
 
 		int nStudents = datas.size();
-		if (nStudents == 0)
+		if (nStudents == 0) //当月没有学员的, 置为及格60分
 		{
 			for (int i = 0; i < 8; i++)
 			{
 				coaches[nCoach].push_back("0");
 			}
-			item.second = 0;
+			coaches[nCoach][9] = "60.00";
+			item.second = 0; //不参与排名
 			c.push_back(item);
 			continue;
 		}
@@ -341,6 +342,13 @@ void CViewKPI::OnBnClickedTalk()
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
+
+		int KPI = atoi(m_datas[nRow][9]);
+		if (KPI >= 60)
+		{
+			if (MessageBox("该员工KPI合格，是否继续打印诫勉单？", "警告", MB_YESNOCANCEL) != IDYES) return;
+		}
+
 		CString strCoachID = m_datas[nRow][0];
 		CString strCoach = m_datas[nRow][1];
 		CTime today = GetServerTime();
@@ -385,9 +393,16 @@ void CViewKPI::OnBnClickedTalk()
 		//诫勉单文件名
 		strMonth.Replace("/", "-");
 		CString strFileName = g_strOutPath + "\\" + fileNum + "_" + strCoach + "_" + strMonth + ".xls";
+		::SHCreateDirectory(NULL, CA2W(g_strOutPath + "\\"));
 
 		if (!PathFileExistsA(strFileName)) //无则复制模板 模板保护密码是123456
-			CopyFileA("admonishment.xls", strFileName, FALSE);
+		{
+			if (!CopyFileA("admonishment.xls", strFileName, FALSE))
+			{
+				MessageBox("未找到模板！");
+				return;
+			}
+		}
 
 		MessageBox("请在打开的表格中编辑并保存");
 		ShellExecuteA(NULL, NULL, strFileName, NULL, NULL, SW_SHOWNORMAL);
