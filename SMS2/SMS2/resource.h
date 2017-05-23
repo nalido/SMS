@@ -64,6 +64,7 @@
 #define IDD_FEE_UP                      225
 #define IDD_PROXY                       226
 #define IDI_ICON2                       229
+#define IDD_CARSTAT                     234
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -89,6 +90,7 @@
 #define IDC_EXPORT2                     1057
 #define IDC_TALK                        1057
 #define IDC_PHOTO                       1058
+#define IDC_EDITITEM                    1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
 #define IDC_CARTYPE                     1063
@@ -386,6 +388,7 @@
 #define IDC_PROXY                       1259
 #define IDC_SLABEL1                     1260
 #define IDC_SLABEL2                     1261
+#define IDC_SETSTAT                     1261
 #define IDC_SLABEL3                     1262
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
@@ -446,9 +449,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        234
+#define _APS_NEXT_RESOURCE_VALUE        235
 #define _APS_NEXT_COMMAND_VALUE         32894
-#define _APS_NEXT_CONTROL_VALUE         1261
+#define _APS_NEXT_CONTROL_VALUE         1262
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

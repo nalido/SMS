@@ -57,4 +57,5 @@ public:
 	afx_msg void OnEnChangeE3();
 	afx_msg void OnEnChangeE4();
 	afx_msg void OnCbnSelchangeCombo1();
+	afx_msg void OnBnClickedOk();
 };

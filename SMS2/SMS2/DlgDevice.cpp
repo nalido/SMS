@@ -7,6 +7,7 @@
 #include "afxdialogex.h"
 #include "MainFrm.h"
 #include "DlgDateItem.h"
+#include "DlgState.h"
 
 
 // CDlgDevice 对话框
@@ -35,6 +36,7 @@ BEGIN_MESSAGE_MAP(CDlgDevice, CBCGPDialog)
 	ON_BN_CLICKED(IDC_NEWITEM, &CDlgDevice::OnBnClickedNewitem)
 	ON_BN_CLICKED(IDC_SAVE, &CDlgDevice::OnBnClickedSave)
 	ON_BN_CLICKED(IDC_DELITEM, &CDlgDevice::OnBnClickedDelitem)
+	ON_BN_CLICKED(IDC_SETSTAT, &CDlgDevice::OnBnClickedSetstat)
 END_MESSAGE_MAP()
 
 
@@ -78,6 +80,23 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		if (!it->empty())
 		{
 			pdi->item.varValue = pThis->m_datas[nRow][nCol];
+
+			if (pThis->m_nQueryType == QUERY_DEVICES && nCol == 7)
+			{
+				int state = atoi(pThis->m_datas[nRow][nCol]);
+				switch (state)
+				{
+				case 0:
+					pdi->item.varValue = "正常";
+					break;
+				case 1:
+					pdi->item.varValue = "维修中";
+					break;
+				case 2:
+					pdi->item.varValue = "停用";
+					break;
+				}
+			}
 		}
 		else
 		{
@@ -122,6 +141,8 @@ BOOL CDlgDevice::OnInitDialog()
 		arrColumns.push_back("牌号");
 		arrColumns.push_back("数量");
 		arrColumns.push_back("产地");
+		arrColumns.push_back("车辆编号");
+		arrColumns.push_back("车辆状态");
 		break;
 	case QUERY_INSURANCES:
 		arrColumns.push_back("名称");
@@ -156,6 +177,9 @@ BOOL CDlgDevice::OnInitDialog()
 	m_wndGrid.SetCallBack_Clk(OnGridClick);
 
 	GetDlgItem(IDC_SAVE)->EnableWindow(FALSE);
+	GetDlgItem(IDC_SETSTAT)->ShowWindow(SW_HIDE);
+	if (m_nQueryType == QUERY_DEVICES)
+		GetDlgItem(IDC_SETSTAT)->ShowWindow(SW_SHOW);
 
 	m_nOldRows = 0;
 	Refresh();
@@ -169,7 +193,7 @@ void CDlgDevice::Refresh()
 	switch (m_nQueryType)
 	{
 	case QUERY_DEVICES:
-		strSQL.Format("SELECT * FROM cars ORDER BY BUY_DAY DESC");
+		strSQL.Format("SELECT * FROM cars ORDER BY BUY_DAY, CAR_ID");
 		break;
 	case QUERY_INSURANCES:
 		strSQL.Format("SELECT * FROM insurances ORDER BY PLATE_NUM DESC");
@@ -270,9 +294,9 @@ void CDlgDevice::AddNewRowToDB(CStrs strs)
 	switch (m_nQueryType)
 	{
 	case QUERY_DEVICES:
-		strSQL.Format("INSERT INTO cars (CAR_NAME, TYPE, BUY_DAY, PLATE_NUM, CAR_NUM, PRODUCTION_PLACE)\
-					  VALUES('%s', '%s', '%s', '%s', '%s', '%s')",
-					  strs[0], strs[1], strs[2], strs[3], strs[4], strs[5]);
+		strSQL.Format("INSERT INTO cars (CAR_NAME, TYPE, BUY_DAY, PLATE_NUM, CAR_NUM, PRODUCTION_PLACE, CAR_ID)\
+					  VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+					  strs[0], strs[1], strs[2], strs[3], strs[4], strs[5], strs[6]);
 		break;
 	case QUERY_INSURANCES:
 		strSQL.Format("INSERT INTO insurances (ITEM_NAME, PLATE_NUM, ITEM_NUM, CHEJIA_NUM, FEE, DUE_DATE, COMPANY)\
@@ -338,4 +362,23 @@ void CDlgDevice::DelRowFromDB(CStrs strs)
 
 	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	ShowMsg2Output1(strMsg);
+}
+
+void CDlgDevice::OnBnClickedSetstat()
+{
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow == NULL) return;
+
+	int nRow = pRow->GetRowId();
+	CDlgState dlg;
+	if (dlg.DoModal() == IDOK)
+	{
+		CString strMsg, strSQL;
+		strSQL.Format("UPDATE cars SET CAR_STAT='%d' WHERE CAR_ID='%s'", dlg.m_nStat, m_datas[nRow][6]);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+
+		Refresh();
+	}
+
 }

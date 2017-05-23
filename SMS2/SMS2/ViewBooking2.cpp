@@ -606,7 +606,7 @@ void CViewBooking2::Refresh(int nID)
 
 	if (nID == 0 || nID == 3)//查询可用车辆信息
 	{
-		strSQL.Format("select CAR_ID from carinfo WHERE STATE<'5'");
+		strSQL.Format("select CAR_ID from cars WHERE CAR_STAT='0'");
 		m_datas3.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas3, strMsg))
 		{
