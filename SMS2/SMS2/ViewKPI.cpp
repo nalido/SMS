@@ -32,6 +32,8 @@ BEGIN_MESSAGE_MAP(CViewKPI, CBCGPFormView)
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
 	ON_BN_CLICKED(IDC_EXPORT, &CViewKPI::OnBnClickedExport)
 	ON_BN_CLICKED(IDC_TALK, &CViewKPI::OnBnClickedTalk)
+	ON_WM_PAINT()
+	ON_BN_CLICKED(IDC_UPDATE, &CViewKPI::OnBnClickedUpdate)
 END_MESSAGE_MAP()
 
 
@@ -73,7 +75,11 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 			int satisfied = atoi(pThis->m_datas[nRow][3]);
 			if (satisfied < 60)
 			{
-				pdi->item.clrBackground = COLOR_LITTLE;
+				CString strCoachID = pThis->m_datas[nRow][0];
+				if (pThis->m_arrAdmonish[strCoachID]<2)
+					pdi->item.clrBackground = COLOR_LITTLE;
+				else
+					pdi->item.clrBackground = COLOR_HALF;
 			}
 		}
 		else
@@ -149,6 +155,19 @@ void CViewKPI::Refresh()
 					strLastMonth);
 	g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg);
 	ShowMsg2Output1(strMsg);
+
+	//查询已经打印诫勉单的状态
+	strSQL.Format("SELECT COACH_ID, ADMONISH_DATE FROM admonishment WHERE ALARM_MONTH='%s'", m_tToday.Format("%Y/%m"));
+	CDStrs datas;
+	m_arrAdmonish.clear(); 
+	if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg) && datas.size() > 0)
+	{
+		int na = datas.size();
+		for (int i = 0; i < na; i++)
+			m_arrAdmonish[datas[i][0]] = datas[i][1] == '0' ? 1 : 2;
+	}
+	ShowMsg2Output1(strMsg);
+
 
 	if (m_datas.size() == 0) //没有上个月的信息
 	{
@@ -343,6 +362,7 @@ void CViewKPI::OnBnClickedTalk()
 	{
 		int nRow = pRow->GetRowId();
 
+
 		int KPI = atoi(m_datas[nRow][9]);
 		if (KPI >= 60)
 		{
@@ -403,8 +423,45 @@ void CViewKPI::OnBnClickedTalk()
 				return;
 			}
 		}
+		else //存在诫勉单，询问是否录入谈话结果
+		{
+			strMsg = "已经开过诫勉单，是否录入谈话结果并激活派工？\r\n选择“是”录入谈话结果并激活派工。\r\n选择“否”打开诫勉单，并不激活派工。\r\n选择“取消”重新打印诫勉单。";
+			int k = MessageBox(strMsg, "操作提示", MB_YESNOCANCEL);
+			if (k == IDYES)
+			{
+				strSQL.Format("UPDATE admonishment SET ADMONISH_DATE='%s' WHERE COACH_ID='%s' AND ALARM_MONTH='%s'", today.Format("%Y/%m/%d"), strCoachID, today.Format("%Y/%m"));
+				g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+				ShowMsg2Output1(strMsg);
+			}
+		}
 
 		MessageBox("请在打开的表格中编辑并保存");
 		ShellExecuteA(NULL, NULL, strFileName, NULL, NULL, SW_SHOWNORMAL);
+
+		Refresh();
 	}
+}
+
+
+void CViewKPI::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	// TODO:  在此处添加消息处理程序代码
+
+	CRect rect;
+	GetDlgItem(IDC_LABEL1)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL1)->MapWindowPoints(this, &rect);
+	CBrush brush(COLOR_LITTLE);
+	dc.FillRect(rect, &brush);
+
+	GetDlgItem(IDC_LABEL2)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL2)->MapWindowPoints(this, &rect);
+	CBrush brush1(COLOR_HALF);
+	dc.FillRect(rect, &brush1);
+}
+
+
+void CViewKPI::OnBnClickedUpdate()
+{
+	Refresh();
 }
