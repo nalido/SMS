@@ -36,6 +36,7 @@ public:
 	CStatic m_wndGridLocation;
 	CVirtualGridCtrl m_wndGrid;
 	CDStrs m_datas;
+	std::map<CString, int> m_arrAdmonish; //first:coach_ID, second:是否处理，0=未打印， 1=已打印未处理， 2=已反馈可激活
 	std::vector<CString> m_arrColumns;
 	virtual void OnInitialUpdate();
 
@@ -47,6 +48,8 @@ public:
 	xPublic::CThreadBase m_threadMySQL;
 	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
 	afx_msg void OnBnClickedTalk();
+	afx_msg void OnPaint();
+	afx_msg void OnBnClickedUpdate();
 };
 
 

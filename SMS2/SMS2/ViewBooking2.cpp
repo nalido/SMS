@@ -569,6 +569,28 @@ void CViewBooking2::Refresh(int nID)
 				}
 			}
 
+			//去掉正在被约谈的
+			CString strThisMonth = m_tToday.Format("%Y/%m");
+			strSQL.Format("SELECT COACH_ID FROM admonishment WHERE ADMONISH_DATE='0' AND ALARM_MONTH='%s'", strThisMonth);
+			leaves.clear();
+			g_mysqlCon.ExecuteQuery(strSQL, leaves, strMsg);
+			ShowMsg2Output1(strMsg);
+			n = m_datas2.size();
+			nl = leaves.size();
+			for (int i = n - 1; i >= 0; i--)
+			{
+				for (int k = 0; k < nl; k++)
+				{
+					if (leaves[k][0] == m_datas2[i][2])
+					{
+						CDStrs::iterator it = m_datas2.begin() + i;
+						m_datas2.erase(it);
+						break;
+					}
+				}
+			}
+
+
 			//KPI变为小数
 			int n2 = m_datas2.size();
 			for (int i = 0; i < n2; i++)
