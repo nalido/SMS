@@ -72,6 +72,7 @@
 #define IDC_REGISTER                    1055
 #define IDC_SMS                         1055
 #define IDC_RESPON                      1055
+#define IDC_SELSTUDENT                  1055
 #define IDC_BTN_NOPASS                  1056
 #define IDC_BUTTON4                     1056
 #define IDC_RESET                       1056

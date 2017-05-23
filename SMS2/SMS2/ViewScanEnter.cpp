@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CViewScanEnter, CBCGPFormView)
 	ON_BN_CLICKED(IDC_CONFIRM, &CViewScanEnter::OnBnClickedConfirm)
 	ON_EN_CHANGE(IDC_E1, &CViewScanEnter::OnEnChangeE1)
 	ON_EN_CHANGE(IDC_E2, &CViewScanEnter::OnEnChangeE2)
+	ON_BN_CLICKED(IDC_SELSTUDENT, &CViewScanEnter::OnBnClickedSelstudent)
 END_MESSAGE_MAP()
 
 LRESULT CViewScanEnter::OnUserUpdate(WPARAM wParam, LPARAM lParam)
@@ -283,4 +284,11 @@ void CViewScanEnter::OnEnChangeE1()
 void CViewScanEnter::OnEnChangeE2()
 {
 	m_S[2].ShowWindow(FALSE);
+}
+
+
+void CViewScanEnter::OnBnClickedSelstudent()
+{
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+	pFrame->SelectView(VIEW_STUPROGRESS);
 }

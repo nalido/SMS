@@ -241,7 +241,7 @@ BOOL CDlgMyBooks::OnInitDialog()
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
 	m_wndGrid.SetCallBack_DblClk(OnGridDbClick);
 
-	if (!m_isPublic && m_nDlgType==DLG_MONEY)
+	if (!m_isPublic && m_nDlgType == DLG_MONEY && g_nPermissions[3] != 0)
 	{
 		GetDlgItem(IDC_MONEY)->ShowWindow(SW_SHOW);
 	}

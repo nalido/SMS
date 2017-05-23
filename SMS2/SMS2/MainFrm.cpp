@@ -1161,6 +1161,10 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 	}
 	case 1: //最高权限，显示全部
 	{
+				for (int i = 0; i < 5; i++)
+				{
+					g_nPermissions[i] = 1;
+				}
 				int nCount = m_wndRibbonBar.GetCategoryCount();
 				for (int i = 1; i < nCount; i++)
 				{

@@ -47,6 +47,7 @@ public:
 	afx_msg void OnBnClickedConfirm();
 	afx_msg void OnEnChangeE1();
 	afx_msg void OnEnChangeE2();
+	afx_msg void OnBnClickedSelstudent();
 };
 
 

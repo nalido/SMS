@@ -164,6 +164,22 @@ LRESULT CViewStuProgress::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 	{
 	case 1:
 		Refresh();
+
+		if (g_nPermissions[1] == 0)
+		{
+			GetDlgItem(IDC_SENDBOOKMSG)->EnableWindow(FALSE);
+			GetDlgItem(IDC_SETTYPE)->EnableWindow(FALSE);
+			GetDlgItem(IDC_TOBOOK)->EnableWindow(FALSE);
+			GetDlgItem(IDC_NEXTBOOK)->EnableWindow(FALSE);
+		}
+		else
+		{
+			GetDlgItem(IDC_SENDBOOKMSG)->EnableWindow(TRUE);
+			GetDlgItem(IDC_SETTYPE)->EnableWindow(TRUE);
+			GetDlgItem(IDC_TOBOOK)->EnableWindow(TRUE);
+			GetDlgItem(IDC_NEXTBOOK)->EnableWindow(TRUE);
+		}
+
 		break;
 	}
 

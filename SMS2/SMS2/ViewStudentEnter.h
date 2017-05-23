@@ -44,10 +44,12 @@ public:
 	CStatic m_S[5]; //¾²Ì¬ÎÄ±¾¿ò
 	CString m_strName;
 	CString m_strIDCard;
+	CString m_strTEL;
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnBnClickedConfirm();
 	afx_msg void OnEnChangeE1();
 	afx_msg void OnEnChangeE2();
+	afx_msg void OnEnChangeE3();
 };
 
 

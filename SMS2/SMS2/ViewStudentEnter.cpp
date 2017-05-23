@@ -32,9 +32,11 @@ void CViewStudentEnter::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_S2, m_S[1]);
 	DDX_Control(pDX, IDC_S3, m_S[2]);
 	DDX_Control(pDX, IDC_S4, m_S[3]);
+	DDX_Control(pDX, IDC_S5, m_S[4]);
 
 	DDX_Text(pDX, IDC_E1, m_strName);
 	DDX_Text(pDX, IDC_E2, m_strIDCard);
+	DDX_Text(pDX, IDC_E3, m_strTEL);
 }
 
 BEGIN_MESSAGE_MAP(CViewStudentEnter, CBCGPFormView)
@@ -45,6 +47,7 @@ BEGIN_MESSAGE_MAP(CViewStudentEnter, CBCGPFormView)
 	ON_BN_CLICKED(IDC_CONFIRM, &CViewStudentEnter::OnBnClickedConfirm)
 	ON_EN_CHANGE(IDC_E1, &CViewStudentEnter::OnEnChangeE1)
 	ON_EN_CHANGE(IDC_E2, &CViewStudentEnter::OnEnChangeE2)
+	ON_EN_CHANGE(IDC_E3, &CViewStudentEnter::OnEnChangeE3)
 END_MESSAGE_MAP()
 
 LRESULT CViewStudentEnter::OnUserUpdate(WPARAM wParam, LPARAM lParam)
@@ -175,6 +178,7 @@ HBRUSH CViewStudentEnter::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	case IDC_S1:
 	case IDC_S2:
 	case IDC_S4:
+	case IDC_S5:
 	{
 				   pDC->SetBkMode(TRANSPARENT);
 				   pDC->SetTextColor(RGB(51, 103, 155));
@@ -196,17 +200,7 @@ HBRUSH CViewStudentEnter::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 				   return HBRUSH(GetStockObject(NULL_BRUSH)); //返回一个空画刷
 				   break;
 	}
-	case IDC_S5:
-	{
-				   pDC->SetBkMode(TRANSPARENT);
-				   pDC->SetTextColor(RGB(51, 103, 155));
-				   CFont font1;
-				   font1.CreateFontA(25, 0, 0, 0, FW_BOLD, 0, 0, 0, 0,
-					   0, 0, 0, VARIABLE_PITCH | FF_SWISS, "微软雅黑");
-				   pDC->SelectObject(&font1);
-				   return HBRUSH(GetStockObject(NULL_BRUSH)); //返回一个空画刷
-				   break;
-	}
+	
 	}
 
 	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
@@ -218,7 +212,7 @@ void CViewStudentEnter::OnBnClickedConfirm()
 {
 	UpdateData();
 
-	if (m_strIDCard.IsEmpty() && m_strName.IsEmpty()) return;
+	if (m_strIDCard.IsEmpty() && m_strName.IsEmpty() && m_strTEL.IsEmpty()) return;
 
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 	CString strMsg, strSQL;
@@ -246,7 +240,7 @@ void CViewStudentEnter::OnBnClickedConfirm()
 			m_S[2].ShowWindow(TRUE);
 		}
 	}
-	if (!m_strName.IsEmpty())
+	else if (!m_strName.IsEmpty())
 	{
 		strSQL.Format("SELECT SNAME, GENDER, CAR_TYPE \
 					  	FROM students WHERE FILE_NAME='%s'", m_strName);
@@ -267,9 +261,31 @@ void CViewStudentEnter::OnBnClickedConfirm()
 			m_S[2].ShowWindow(TRUE);
 		}
 	}
+	else if (!m_strTEL.IsEmpty())
+	{
+		strSQL.Format("SELECT SNAME, GENDER, CAR_TYPE, FILE_NAME \
+					  	FROM students WHERE TEL='%s'", m_strTEL);
+		if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg) && datas.size()>0)
+		{
+			student.strName = datas[0][0];
+			student.strGender = datas[0][1];
+			student.strCarType = datas[0][2];
+			student.strFileName = datas[0][3];
+
+			pFrame->SelectView(VIEW_SCAN);
+			CView* pView = (CView*)pFrame->GetActiveView();
+			pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)VIEW_STUDENTENTER, (LPARAM)3);
+			pView->SendMessageA(WM_USER_MESSAGE, (WPARAM)&student, (LPARAM)1);
+		}
+		else
+		{
+			m_S[2].ShowWindow(TRUE);
+		}
+	}
 
 	m_strIDCard = "";
 	m_strName = "";
+	m_strTEL = "";
 	UpdateData(FALSE);
 }
 
@@ -281,6 +297,12 @@ void CViewStudentEnter::OnEnChangeE1()
 
 
 void CViewStudentEnter::OnEnChangeE2()
+{
+	m_S[2].ShowWindow(FALSE);
+}
+
+
+void CViewStudentEnter::OnEnChangeE3()
 {
 	m_S[2].ShowWindow(FALSE);
 }
