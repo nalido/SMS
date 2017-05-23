@@ -665,7 +665,7 @@ LRESULT CViewScan::OnUserMessage(WPARAM wp, LPARAM lp)
 
 		//
 		datas.clear();
-		strSQL.Format("SELECT BOOK_TYPE, FEE FROM bookings WHERE FILE_NAME='%s' AND BOOK_TYPE>'0' AND FEE_DONE!='-1'", m_student.strFileName);
+		strSQL.Format("SELECT BOOK_TYPE, FEE, FEE_DONE FROM bookings WHERE FILE_NAME='%s' AND BOOK_TYPE>'0'", m_student.strFileName);
 		if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg) && datas.size()>0)
 		{
 			m_D[13].ShowWindow(SW_SHOW);
@@ -678,6 +678,9 @@ LRESULT CViewScan::OnUserMessage(WPARAM wp, LPARAM lp)
 			{
 				int BookType = atoi(datas[i][0]);
 				int nFee = atoi(datas[i][1]);
+				int feeD = atoi(datas[i][2]);
+
+				if (feeD == -1) continue;
 
 				if (BookType == 1)
 				{

@@ -46,6 +46,7 @@ CString g_strUserID = "";
 int g_nMinK2Class = 8;
 int g_nMinK3Class = 10;
 BOOL g_isSMSSended = FALSE;
+int g_nFeeForOneClass = 50;
 CString g_strCurrentTime;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {

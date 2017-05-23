@@ -92,6 +92,7 @@ BOOL CSMS2App::InitInstance()
 	g_nMinWorkTime = xPublic::GETINT2("Coach", "MinWorkTime", 8);
 	g_nMinK2Class = xPublic::GETINT2("Students", "MinK2Class", 8);
 	g_nMinK3Class = xPublic::GETINT2("Students", "MinK3Class", 10);
+	g_nFeeForOneClass = xPublic::GETINT2("Students", "FeeForOneClass", 50);
 
 	// Initialize OLE libraries
 	if (!AfxOleInit())

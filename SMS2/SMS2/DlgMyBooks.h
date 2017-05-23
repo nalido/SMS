@@ -31,6 +31,9 @@ public:
 	int m_nDlgType; 
 	BOOL m_isPublic; //1:不显示缴费按钮 0:显示缴费按钮
 
+	CString m_strMsg;
+	int m_nSumM; //总未缴费金额
+
 	//virtualGrid
 	CStatic m_wndGridLocation;
 	CVirtualGridCtrl m_wndGrid;

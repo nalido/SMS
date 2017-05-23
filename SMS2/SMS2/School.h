@@ -32,6 +32,7 @@ public:
 	CString m_strK1Place; //科目一上课地址
 	CString m_strMinK2Class;
 	CString m_strMinK3Class;
+	CString m_strFeeForOneClass;
 
 	virtual void OnInitialUpdate();
 	afx_msg void OnBnClickedSave();
@@ -39,6 +40,7 @@ public:
 	afx_msg void OnBnClickedSave3();
 	afx_msg void OnBnClickedSave4();
 	afx_msg void OnBnClickedSave5();
+	afx_msg void OnBnClickedSave6();
 };
 
 

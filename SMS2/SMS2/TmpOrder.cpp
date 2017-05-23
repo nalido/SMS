@@ -27,6 +27,7 @@ void CTmpOrder::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_COMBO_TYPE, m_Comb_Type);
+	DDX_Control(pDX, IDC_COMBO_TYPE2, m_Comb_Type2);
 	DDX_Control(pDX, IDC_COMBO_CAR, m_Comb_Car);
 	DDX_Control(pDX, IDC_COMBO_COACH, m_Comb_Coach);
 	DDX_Control(pDX, IDC_COMBO_STU, m_Comb_Stu);
@@ -73,6 +74,10 @@ BOOL CTmpOrder::OnInitDialog()
 	m_Comb_Type.AddString("科目一");
 	m_Comb_Type.AddString("科目二");
 	m_Comb_Type.AddString("科目三");
+
+
+	m_Comb_Type2.AddString("超过基础课时");
+	m_Comb_Type2.AddString("临时增加课时");
 
 	m_Comb_Time.AddString("A8:00-10:00");
 	m_Comb_Time.AddString("A10:00-12:00");
@@ -226,9 +231,11 @@ void CTmpOrder::OnBnClickedPrint()
 	m_isDataReady = FALSE;
 
 	UpdateData(TRUE);
+	int bookType = -1;
+	bookType = m_Comb_Type2.GetCurSel();
 	if (m_strCar.IsEmpty() || m_strCoach.IsEmpty() || m_strBookDate.IsEmpty() ||
 		m_strNextClass.IsEmpty() || m_strStu.IsEmpty() || m_strStuID=="查无此人" ||
-		m_strTime.IsEmpty() || m_strType.IsEmpty() || m_strCoachID=="查无此人")
+		m_strTime.IsEmpty() || m_strType.IsEmpty() || m_strCoachID == "查无此人" || bookType == -1)
 	{
 		MessageBox("派工单信息未完善，不能打印");
 		return;
@@ -273,9 +280,9 @@ void CTmpOrder::OnBnClickedPrint()
 
 	//添加新记录
 	strSQL.Format("INSERT INTO bookings (FLAG, ORDER_DATE, ORDER_COACH, ORDER_CAR, CLASS_NUM, CLASS_TYPE,\
-				  	FILE_NAME, BOOK_DATE, CLASS_ID) VALUES(1, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+				  	FILE_NAME, BOOK_DATE, CLASS_ID, BOOK_TYPE, FEE) VALUES(1, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d')",
 					t.Format("%Y/%m/%d"), m_strCoachID, m_strCar, m_strNClass, m_strType
-					, m_strStuID, m_strBookDate, strClassID);
+					, m_strStuID, m_strBookDate, strClassID, bookType+1, g_nFeeForOneClass);
 	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	ShowMsg2Output1(strMsg);
 
@@ -299,12 +306,14 @@ void CTmpOrder::OnBnClickedPrint()
 
 void CTmpOrder::OnBnClickedOk()
 {
+	int bookType = -1;
 	if (m_isDataReady == FALSE)
 	{
 		UpdateData(TRUE);
+		bookType = m_Comb_Type2.GetCurSel();
 		if (m_strCar.IsEmpty() || m_strCoach.IsEmpty() || m_strBookDate.IsEmpty() ||
 			m_strNextClass.IsEmpty() || m_strStu.IsEmpty() || m_strStuID == "查无此人" ||
-			m_strTime.IsEmpty() || m_strType.IsEmpty() || m_strCoachID == "查无此人")
+			m_strTime.IsEmpty() || m_strType.IsEmpty() || m_strCoachID == "查无此人" || bookType==-1)
 		{
 			MessageBox("派工单信息未完善!");
 			return;
@@ -330,9 +339,9 @@ void CTmpOrder::OnBnClickedOk()
 
 	//添加新记录
 	strSQL.Format("INSERT INTO bookings (FLAG, ORDER_DATE, ORDER_COACH, ORDER_CAR, CLASS_NUM, CLASS_TYPE,\
-				  	FILE_NAME, BOOK_DATE, CLASS_ID) VALUES(1, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+				  	FILE_NAME, BOOK_DATE, CLASS_ID, BOOK_TYPE, FEE) VALUES(1, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d')",
 					m_strOrderDate, m_strCoachID, m_strCar, m_strNClass, m_strType
-					, m_strStuID, m_strBookDate, m_strClassID);
+					, m_strStuID, m_strBookDate, m_strClassID, bookType+1, g_nFeeForOneClass);
 	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 	ShowMsg2Output1(strMsg);
 

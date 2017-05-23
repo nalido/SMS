@@ -31,6 +31,8 @@ void CDlgMyBooks::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_GRID, m_wndGridLocation);
+
+	DDX_Text(pDX, IDC_S1, m_strMsg);
 }
 
 
@@ -205,6 +207,9 @@ BOOL CDlgMyBooks::OnInitDialog()
 	m_wndGrid.EnableRowHeader(TRUE);
 	m_wndGrid.EnableLineNumbers();
 
+	if (m_nDlgType==DLG_MONEY)
+		m_wndGrid.SetSingleSel(0);
+
 	int nColumn = 0;
 	int hw = m_wndGrid.GetRowHeaderWidth();
 	std::vector<CString> arrColumns;
@@ -284,6 +289,42 @@ void CDlgMyBooks::Refresh()
 	g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg);
 	ShowMsg2Output1(strMsg);
 
+	if (m_nDlgType == DLG_MONEY)
+	{
+		int n = m_datas.size();
+		int sumN = 0; //需缴费数量
+		int sumM0 = 0; //需缴费总金额
+		int sumM = 0; //未缴费金额
+		for (int i = 0; i < n; i++)
+		{
+			int type = atoi(m_datas[i][9]);
+			int fee = atoi(m_datas[i][10]);
+			int feeD = atoi(m_datas[i][11]);
+			if (type != 0)
+			{
+				sumN++;
+				if (type == 1) //学生缴费
+				{
+					sumM0 += fee;
+					if (feeD != -1)
+						sumM += fee - feeD;
+				}
+				else if (type == 2) //驾校缴费
+				{
+					sumM0 -= fee;
+					if (feeD != -1)
+						sumM -= fee - feeD;
+				}
+			}
+		}
+		m_nSumM = sumM;
+		m_strMsg.Format("统计信息： 共有%d节课时需要额外缴费，总共需缴费%d元，未缴费%d元", sumN, sumM0, sumM);
+	}
+	else
+	{
+		m_strMsg = "";
+	}
+	UpdateData(FALSE);
 
 	m_wndGrid.GridRefresh(m_datas.size());
 }
@@ -397,6 +438,67 @@ void CDlgMyBooks::UpdateStudent(int nRow, int flag)
 
 void CDlgMyBooks::OnBnClickedMoney()
 {
-	CDlgFee dlg;
-	dlg.DoModal();
+	if (m_nSumM == 0)
+	{
+		MessageBox("当前学员没有需缴费项目", "警告");
+		return;
+	}
+
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	CString strMsg, strSQL;
+	BOOL isOneTime = FALSE;
+	if (pRow == NULL) //没有选中，全部一次性缴清
+	{
+		strMsg = "您没有选择缴费对象，是否选择一次性缴清全部费用？";
+		if (MessageBox(strMsg, "警告", MB_YESNOCANCEL) != IDYES) return;
+		isOneTime = TRUE;
+	}
+	if (isOneTime == TRUE)
+	{
+		strMsg.Format("当前学员共欠费%d元，请确认缴清后点击确认！", m_nSumM);
+		if (MessageBox(strMsg, "警告", MB_YESNO) != IDYES) return;
+
+		strSQL.Format("UPDATE bookings SET FEE_DONE='-1' WHERE FILE_NAME='%s' AND BOOK_TYPE!='0'", m_strStuID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+		Refresh();
+		return;
+	}
+
+	int n = m_datas.size();
+	int sumM = 0;
+	std::vector<int> indexes;
+	for (int i = 0; i < n; i++)
+	{
+		if (!m_wndGrid.IsRowSelected(i)) continue;
+
+		int type = atoi(m_datas[i][9]);
+		int fee = atoi(m_datas[i][10]);
+		int feeD = atoi(m_datas[i][11]);
+		if (type != 0)
+		{
+			indexes.push_back(i);
+			if (type == 1) //学生缴费
+			{
+				sumM += fee - feeD;
+			}
+			else if (type == 2) //驾校缴费
+			{
+				sumM -= fee - feeD;
+			}
+		}
+	}
+	strMsg.Format("当前选中范围中，该学员需缴费%d元，请确认缴清后点击确认！", sumM);
+	if (MessageBox(strMsg, "警告", MB_YESNO) != IDYES) return;
+
+	//更新数据库
+	n = indexes.size();
+	for (int i = 0; i < n; i++)
+	{
+		int nRow = indexes[i];
+		strSQL.Format("UPDATE bookings SET FEE_DONE='-1' WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'", m_strStuID, m_datas[nRow][0], m_datas[nRow][1]);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+	}
+	Refresh();
 }

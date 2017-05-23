@@ -29,6 +29,7 @@ void CSchool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_K1PLACE, m_strK1Place);
 	DDX_Text(pDX, IDC_MIN_K2CLASS, m_strMinK2Class);
 	DDX_Text(pDX, IDC_MIN_K3CLASS, m_strMinK3Class);
+	DDX_Text(pDX, IDC_FEEFORONECLASS, m_strFeeForOneClass);
 }
 
 BEGIN_MESSAGE_MAP(CSchool, CBCGPFormView)
@@ -37,6 +38,7 @@ BEGIN_MESSAGE_MAP(CSchool, CBCGPFormView)
 	ON_BN_CLICKED(IDC_SAVE3, &CSchool::OnBnClickedSave3)
 	ON_BN_CLICKED(IDC_SAVE4, &CSchool::OnBnClickedSave4)
 	ON_BN_CLICKED(IDC_SAVE5, &CSchool::OnBnClickedSave5)
+	ON_BN_CLICKED(IDC_SAVE6, &CSchool::OnBnClickedSave6)
 END_MESSAGE_MAP()
 
 
@@ -69,6 +71,7 @@ void CSchool::OnInitialUpdate()
 	m_strK1Place = g_strK1Address;
 	m_strMinK2Class.Format("%d", g_nMinK2Class);
 	m_strMinK3Class.Format("%d", g_nMinK3Class);
+	m_strFeeForOneClass.Format("%d", g_nFeeForOneClass);
 	UpdateData(FALSE);
 }
 
@@ -152,4 +155,20 @@ void CSchool::OnBnClickedSave5()
 
 	g_nMinK3Class = atoi(m_strMinK3Class);
 	xPublic::WRIINT2("Students", "MinK3Class", g_nMinK3Class);
+}
+
+
+void CSchool::OnBnClickedSave6()
+{
+	UpdateData();
+	if (m_strFeeForOneClass.IsEmpty())
+	{
+		MessageBox("输入不合法！");
+		m_strFeeForOneClass.Format("%d", g_nFeeForOneClass);
+		UpdateData(FALSE);
+		return;
+	}
+
+	g_nFeeForOneClass = atoi(m_strFeeForOneClass);
+	xPublic::WRIINT2("Students", "FeeForOneClass", g_nFeeForOneClass);
 }

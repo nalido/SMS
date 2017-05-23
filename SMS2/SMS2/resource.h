@@ -140,6 +140,7 @@
 #define IDC_BTN_FRESH                   1077
 #define IDC_SAVE5                       1077
 #define IDC_LIST3                       1078
+#define IDC_SAVE6                       1078
 #define IDC_RETURN1                     1079
 #define IDC_RETURN2                     1080
 #define IDC_BTN_SMS1                    1081
@@ -228,6 +229,7 @@
 #define IDC_COMBO_STU2                  1157
 #define IDC_COMBO_CLASS                 1157
 #define IDC_RADIO1                      1158
+#define IDC_COMBO_TYPE2                 1158
 #define IDC_RADIO2                      1159
 #define IDC_SERVICE_SCORE               1160
 #define IDC_RADIO4                      1160
@@ -243,6 +245,8 @@
 #define IDC_COMBO4                      1165
 #define IDC_MIN_K3CLASS                 1165
 #define IDC_COMBO5                      1166
+#define IDC_MIN_K3CLASS2                1166
+#define IDC_FEEFORONECLASS              1166
 #define IDC_COMBO6                      1167
 #define IDC_MSG1                        1168
 #define IDC_MSG2                        1169
