@@ -52,6 +52,7 @@ public:
 	//flag=0 正常完成训练， bookings表FLAG字段更新为“2”， 已上课时数加一
 	//flag=1 缺勤，FLAG字段更新为“-1”， 已上课时数不变
 	void UpdateStudent(int nRow, int flag = 0);
+	afx_msg void OnBnClickedRespon();
 };
 
 

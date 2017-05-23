@@ -103,6 +103,7 @@ extern int g_nMinWorkTime; //教练一个月最少工时
 extern int g_nMinK2Class; //科目二可以报考的最小课时
 extern int g_nMinK3Class; //科目三可以报考的最小课时
 extern BOOL g_isSMSSended; //每天发送一次上课提醒短信的标志
+extern int g_nFeeForOneClass; //学员额外增加课时的费用
 
 extern CString g_strUserID; //当前用户工号
 extern int g_nPermissions[6]; //当前用户的权限
@@ -149,6 +150,7 @@ enum VIEW_TYPE{
 	VIEW_SCHOOL,
 	VIEW_SYSTEM,
 	VIEW_SCAN,
+	VIEW_SCANENTER,
 	VIEW_STUFFENTER,
 	VIEW_STUDENTENTER,
 	VIEW_ALLSTUDENTS,

@@ -23,6 +23,7 @@ protected:
 
 public:
 	CComboBox m_Comb_Type;
+	CComboBox m_Comb_Type2;// 预约性质，是否超课时派工或者临时增加派工
 	CComboBox m_Comb_Car;
 	CComboBox m_Comb_Coach;
 	CComboBox m_Comb_Stu;

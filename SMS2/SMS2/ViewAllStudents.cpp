@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "SMS2.h"
 #include "ViewAllStudents.h"
+#include "DlgQuitSchool.h"
 
 
 // CViewAllStudents
@@ -346,17 +347,17 @@ void CViewAllStudents::OnInitialUpdate()
 	m_arrColumns2.push_back("考试结果");
 	InitGrid(&m_wndGrid[1], rect, m_arrColumns2);
 	m_wndGrid[1].EnableVirtualMode(Grid2Callback, (LPARAM)this);
-	m_wndGrid[1].EnableWindow(FALSE);
+	m_wndGrid[1].ShowWindow(FALSE);
 
 	m_arrColumns3 = m_arrColumns2;
 	InitGrid(&m_wndGrid[2], rect, m_arrColumns3);
 	m_wndGrid[2].EnableVirtualMode(Grid3Callback, (LPARAM)this);
-	m_wndGrid[2].EnableWindow(FALSE);
+	m_wndGrid[2].ShowWindow(FALSE);
 
 	m_arrColumns4 = m_arrColumns2;
 	InitGrid(&m_wndGrid[3], rect, m_arrColumns4);
 	m_wndGrid[3].EnableVirtualMode(Grid4Callback, (LPARAM)this);
-	m_wndGrid[3].EnableWindow(FALSE);
+	m_wndGrid[3].ShowWindow(FALSE);
 
 	m_arrColumns5.push_back("退学日期");
 	m_arrColumns5.push_back("姓名");
@@ -370,7 +371,7 @@ void CViewAllStudents::OnInitialUpdate()
 	m_arrColumns5.push_back("实退金额");
 	InitGrid(&m_wndGrid[4], rect, m_arrColumns5);
 	m_wndGrid[4].EnableVirtualMode(Grid5Callback, (LPARAM)this);
-	m_wndGrid[4].EnableWindow(FALSE);
+	m_wndGrid[4].ShowWindow(FALSE);
 
 	std::vector<CString> arrColumns;
 	arrColumns.push_back("统计时间");
@@ -378,8 +379,8 @@ void CViewAllStudents::OnInitialUpdate()
 	InitGrid(&m_wndGridY, rect, arrColumns);
 	m_wndGridM.EnableVirtualMode(GridMCallback, (LPARAM)this);
 	m_wndGridY.EnableVirtualMode(GridYCallback, (LPARAM)this);
-	m_wndGridM.EnableWindow(FALSE);
-	m_wndGridY.EnableWindow(FALSE);
+	m_wndGridM.ShowWindow(FALSE);
+	m_wndGridY.ShowWindow(FALSE);
 
 	m_nPieTotal = 0;
 	m_nPiePart.clear();
@@ -453,7 +454,7 @@ void CViewAllStudents::Refresh(int nID, CString strDateS, CString strDateE)
 							students.TEL, students.CAR_TYPE, students.FILE_NAME, students.CLASS_NUM, \
 							students.STEP,  stuQuits.QUIT_DATE FROM students \
 							left join stuQuits ON stuQuits.STU_ID=students.FILE_NAME \
-							WHERE REGIST_DATE>'%s' AND REGIST_DATE<='%s'",
+							WHERE REGIST_DATE>'%s' AND REGIST_DATE<='%s' ORDER BY students.REGIST_DATE",
 							strDateS, strDateE);
 			  g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg);
 			  ShowMsg2Output1(strMsg);
@@ -790,15 +791,15 @@ HBRUSH CViewAllStudents::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 }
 
 Color colors[9] = {
-	Color(150, 96, 157, 202),
-	Color(150, 255, 150, 65),
-	Color(150, 56, 194, 193),
-	Color(150, 231, 138, 195),
-	Color(150, 184, 135, 195),
-	Color(150, 182, 115, 101),
-	Color(150, 254, 144, 194),
-	Color(150, 164, 160, 155),
-	Color(150, 210, 204, 90)
+	Color(96, 157, 202),
+	Color(255, 150, 65),
+	Color(56, 194, 193),
+	Color(231, 138, 195),
+	Color(184, 135, 195),
+	Color(182, 115, 101),
+	Color(254, 144, 194),
+	Color(164, 160, 155),
+	Color(210, 204, 90)
 };
 void CViewAllStudents::OnPaint()
 {
@@ -808,10 +809,29 @@ void CViewAllStudents::OnPaint()
 	GetClientRect(&rect);
 	MapWindowPoints(this, &rect);
 
+	m_Pie.GetClientRect(&m_rctPie);
+	m_Pie.MapWindowPoints(this, &m_rctPie);
+	m_Label.GetClientRect(&m_rctLabel);
+	m_Label.MapWindowPoints(this, &m_rctLabel);
+
+	m_Info.GetClientRect(&m_rctInfo);
+	m_Info.MapWindowPoints(this, &m_rctInfo);
+
+	//CDC     MemDC;
+	////HBITMAP hbitmap;
+	//CBitmap bitmp;
+	//MemDC.CreateCompatibleDC(&dc);
+
+	//int  W = GetSystemMetrics(SM_CXSCREEN);  //得到屏幕宽度 
+	//int  H = GetSystemMetrics(SM_CYSCREEN);
+	//bitmp.CreateCompatibleBitmap(&dc, W, H);
+	//MemDC.SelectObject(&bitmp);
+
+	//Graphics graph(MemDC.m_hDC);
 	Graphics graph(dc.m_hDC);
 
 	//画进度饼图
-	SolidBrush brush3(Color(150, 191, 211, 242));
+	SolidBrush brush3(Color(191, 211, 242));
 	//SolidBrush brush2(Color(240, 243, 244));
 	//Rect rctInfo(m_rctInfo.left, m_rctInfo.top, m_rctInfo.Height(), m_rctInfo.Height());
 	//graph.FillRectangle(&brush2, rctInfo);
@@ -846,6 +866,13 @@ void CViewAllStudents::OnPaint()
 		dc.TextOutA(TextX, rctLabel.Y, strPercent);
 		graph.FillRectangle(&brushI, rctLabel);
 	}
+
+
+	//CPoint pos = GetScrollPosition();
+	////dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, pos.x, pos.y, SRCCOPY);
+	//dc.TransparentBlt(0, 0, rect.Width(), rect.Height(), &MemDC, pos.x, pos.y, rect.Width(), rect.Height(), RGB(0, 0, 0));
+	//bitmp.DeleteObject();
+	//MemDC.DeleteDC();
 }
 
 
@@ -858,8 +885,10 @@ void CViewAllStudents::OnBnClickedQuery()
 	m_canAnal = TRUE;
 
 	m_TabShowType.SetCurSel(0);
-	m_wndGridM.EnableWindow(FALSE);
-	m_wndGridY.EnableWindow(FALSE);
+	m_wndGridM.ShowWindow(FALSE);
+	m_wndGridY.ShowWindow(FALSE);
+
+	InvalidateRect(&m_rctInfo);
 }
 
 
@@ -869,6 +898,13 @@ void CViewAllStudents::OnBnClickedQuit()
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
+
+		CDlgQuitSchool dlg;
+		dlg.m_strInfo[1] = m_datas1[nRow][5];
+		if (dlg.DoModal() == IDOK)
+		{
+			OnBnClickedQuery();
+		}
 	}
 }
 
@@ -878,13 +914,13 @@ void CViewAllStudents::OnTcnSelchangeTab1(NMHDR *pNMHDR, LRESULT *pResult)
 	int pos = m_TabCtrl.GetCurSel();
 
 	for (int i = 0; i < 5; i++)
-		m_wndGrid[i].EnableWindow(FALSE);
+		m_wndGrid[i].ShowWindow(FALSE);
 
 	m_TabShowType.SetCurSel(0);
-	m_wndGridM.EnableWindow(FALSE);
-	m_wndGridY.EnableWindow(FALSE);
+	m_wndGridM.ShowWindow(FALSE);
+	m_wndGridY.ShowWindow(FALSE);
 
-	m_wndGrid[pos].EnableWindow(TRUE);
+	m_wndGrid[pos].ShowWindow(TRUE);
 	m_wndGrid[pos].AdjustLayout();
 
 	if (pos == 0)
@@ -910,24 +946,30 @@ void CViewAllStudents::OnTcnSelchangeTab2(NMHDR *pNMHDR, LRESULT *pResult)
 	switch (pos)
 	{
 	case 0: //按天
-		m_wndGrid[pos0].EnableWindow(TRUE);
-		m_wndGridM.EnableWindow(FALSE);
-		m_wndGridY.EnableWindow(FALSE);
+		m_wndGrid[pos0].ShowWindow(TRUE);
+		m_wndGridM.ShowWindow(FALSE);
+		m_wndGridY.ShowWindow(FALSE);
 		m_wndGrid[pos0].AdjustLayout();
+		if (pos0 == 0)
+			GetDlgItem(IDC_QUIT)->EnableWindow(TRUE);
+		else
+			GetDlgItem(IDC_QUIT)->EnableWindow(FALSE);
 		break;
 	case 1: //按月
-		m_wndGrid[pos0].EnableWindow(FALSE);
-		m_wndGridM.EnableWindow(TRUE);
-		m_wndGridY.EnableWindow(FALSE);
+		m_wndGrid[pos0].ShowWindow(FALSE);
+		m_wndGridM.ShowWindow(TRUE);
+		m_wndGridY.ShowWindow(FALSE);
+		GetDlgItem(IDC_QUIT)->EnableWindow(FALSE);
 		//m_wndGridM.DeleteAllColumns();
 		//arrColumns.push_back("统计月份");
 		//InitGridMY(&m_wndGridM, arrColumns);
 		//m_wndGridM.AdjustLayout();
 		break;
 	case 2: //按年
-		m_wndGrid[pos0].EnableWindow(FALSE);
-		m_wndGridM.EnableWindow(FALSE);
-		m_wndGridY.EnableWindow(TRUE);
+		m_wndGrid[pos0].ShowWindow(FALSE);
+		m_wndGridM.ShowWindow(FALSE);
+		m_wndGridY.ShowWindow(TRUE);
+		GetDlgItem(IDC_QUIT)->EnableWindow(FALSE);
 		//m_wndGridY.DeleteAllColumns();
 		//arrColumns.push_back("统计年份");
 		//InitGridMY(&m_wndGridY, arrColumns);

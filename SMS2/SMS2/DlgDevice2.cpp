@@ -7,6 +7,7 @@
 #include "afxdialogex.h"
 #include "MainFrm.h"
 #include "DlgDateItem.h"
+#include "DlgProxy.h"
 
 
 // CDlgDevice2 对话框
@@ -41,6 +42,8 @@ BEGIN_MESSAGE_MAP(CDlgDevice2, CBCGPDialog)
 	ON_BN_CLICKED(IDC_RADIO1, &CDlgDevice2::OnBnClickedRadio1)
 	ON_BN_CLICKED(IDC_RADIO2, &CDlgDevice2::OnBnClickedRadio2)
 	ON_BN_CLICKED(IDC_RADIO4, &CDlgDevice2::OnBnClickedRadio4)
+	ON_BN_CLICKED(IDC_FIND, &CDlgDevice2::OnBnClickedFind)
+	ON_BN_CLICKED(IDC_PROXY, &CDlgDevice2::OnBnClickedProxy)
 END_MESSAGE_MAP()
 
 
@@ -173,6 +176,7 @@ BOOL CDlgDevice2::OnInitDialog()
 	m_wndGrid.SetSingleSel(); //只能选一个
 	m_wndGrid.EnableRowHeader(TRUE);
 	m_wndGrid.EnableLineNumbers();
+
 
 	int nColumn = 0;
 	int hw = m_wndGrid.GetRowHeaderWidth();
@@ -345,6 +349,8 @@ BOOL CDlgDevice2::OnInitDialog()
 	GetDlgItem(IDC_NEWITEM)->EnableWindow(FALSE);
 	GetDlgItem(IDC_DELITEM)->EnableWindow(FALSE);
 
+	if (m_nQueryType == QUERY_MAINTENANCE)
+		GetDlgItem(IDC_PROXY)->ShowWindow(SW_SHOW);
 	m_nOldRows = 0;
 	UpdateData(FALSE);
 
@@ -541,6 +547,9 @@ void CDlgDevice2::CountData()
 void CDlgDevice2::OnBnClickedUpdate()
 {
 	Refresh();
+	m_wndGrid.SetReadOnly();
+	m_wndGrid.SetWholeRowSel();
+	GetDlgItem(IDC_SAVE)->EnableWindow(FALSE);
 }
 
 
@@ -700,6 +709,10 @@ void CDlgDevice2::OnBnClickedRadio1()
 		GetDlgItem(IDC_DELITEM)->EnableWindow(TRUE);
 		GetDlgItem(IDC_NEWITEM)->EnableWindow(TRUE);
 	}
+
+
+	if (m_nQueryType == QUERY_MAINTENANCE)
+		GetDlgItem(IDC_PROXY)->ShowWindow(SW_SHOW);
 }
 
 
@@ -712,6 +725,7 @@ void CDlgDevice2::OnBnClickedRadio2()
 
 	GetDlgItem(IDC_DELITEM)->EnableWindow(FALSE);
 	GetDlgItem(IDC_NEWITEM)->EnableWindow(FALSE);
+	GetDlgItem(IDC_PROXY)->ShowWindow(SW_HIDE);
 }
 
 
@@ -724,4 +738,73 @@ void CDlgDevice2::OnBnClickedRadio4()
 
 	GetDlgItem(IDC_DELITEM)->EnableWindow(FALSE);
 	GetDlgItem(IDC_NEWITEM)->EnableWindow(FALSE);
+	GetDlgItem(IDC_PROXY)->ShowWindow(SW_HIDE);
+}
+
+
+void CDlgDevice2::OnBnClickedFind()
+{
+	CString strFind;
+	GetDlgItem(IDC_E1)->GetWindowTextA(strFind);
+
+	if (strFind.IsEmpty()) return;
+
+	int n = m_datasC.size();
+	BOOL isFound = FALSE;
+	int i = 0;
+	for (; i < n; i++)
+	{
+		if (m_datasC[i][0] == strFind || m_datasC[i][2] == strFind)
+		{
+			isFound = TRUE;
+			break;
+		}
+	}
+
+	if (isFound)
+	{
+		CBCGPGridRow* pRow = m_wndGridC.GetRow(i);
+		m_wndGridC.EnsureVisible(pRow);
+
+		CString strIndex;
+		int index = i + 1;
+		strIndex.Format("在第%d行", index);
+		strFind = strFind + strIndex;
+		GetDlgItem(IDC_E1)->SetWindowTextA(strFind);
+
+		m_wndGridC.SetCurSel(i);
+	}
+	else
+	{
+		strFind = "没有找到'" + strFind + "'的相关记录";
+		GetDlgItem(IDC_E1)->SetWindowTextA(strFind);
+	}
+}
+
+
+void CDlgDevice2::OnBnClickedProxy()
+{
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		CString strDate = m_datas[nRow][0];
+		strDate.Replace("/", "-");
+
+		CString strFileName = g_strOutPath + "\\" + m_strCarID + "_" + m_strPlateNum 
+			+ "_" + strDate + ".xls";
+		::SHCreateDirectory(NULL, CA2W(g_strOutPath + "\\"));
+
+		if (!PathFileExistsA(strFileName)) //无则复制模板 模板保护密码是123456
+		{
+			if (!CopyFileA("template.xls", strFileName, FALSE))
+			{
+				MessageBox("未找到模板！");
+				return;
+			}
+		}
+
+		MessageBox("请在打开的表格中编辑并保存");
+		ShellExecuteA(NULL, NULL, strFileName, NULL, NULL, SW_SHOWNORMAL);
+	}
 }

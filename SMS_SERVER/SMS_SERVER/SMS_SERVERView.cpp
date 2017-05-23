@@ -409,6 +409,7 @@ void CSMS_SERVERView::SendSMS(BYTE flag, CString& vFiles)
 		}
 		strSQL.Format("UPDATE students SET STEP='%d' WHERE FILE_NAME='%s'", step, strStuID);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		m_arMsg.AddTail(strMsg);
 	}
 	else if (flag==6 || flag==7) //路训报考
 	{
@@ -419,6 +420,7 @@ void CSMS_SERVERView::SendSMS(BYTE flag, CString& vFiles)
 			strTypeName = "K3_STAT";
 		strSQL.Format("UPDATE stuDates SET %s='2' WHERE STU_ID='%s'", strTypeName, strStuID);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		m_arMsg.AddTail(strMsg);
 	}
 
 	m_arMsg.AddTail("发送成功。");

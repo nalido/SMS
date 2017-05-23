@@ -899,6 +899,12 @@ void CViewBooking2::OnBnClickedOrder()
 {
 	int n = m_order.size();
 
+	if (!m_canChangeOrder)
+	{
+		MessageBox("非法操作！请重置派工单或者点击修改按钮修改此派工单");
+		return;
+	}
+
 	if (n < 3) //没有学生
 	{
 		MessageBox("未选定学员！");

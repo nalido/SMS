@@ -30,6 +30,7 @@ void CViewOrderRsp::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CViewOrderRsp, CBCGPFormView)
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
+	ON_BN_CLICKED(IDC_RESPON, &CViewOrderRsp::OnBnClickedRespon)
 END_MESSAGE_MAP()
 
 
@@ -305,7 +306,7 @@ void CViewOrderRsp::UpdateStudent(int nRow, int flag)
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		ShowMsg2Output1(strMsg);
 	}
-	else if (flag == 2) //教练缺勤，FLAG字段更新为“-1”， 已上课时数不变
+	else if (flag == 2) //教练缺勤，FLAG字段更新为“-2”， 已上课时数不变
 	{
 		strSQL.Format("UPDATE bookings SET FLAG='-2'\
 					  	WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'",
@@ -331,4 +332,44 @@ LRESULT CViewOrderRsp::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 	}
 
 	return 0;
+}
+
+void CViewOrderRsp::OnBnClickedRespon()
+{
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	int nRow = pRow->GetRowId();
+	if (m_datas[nRow][4] != "1") return; //已经反馈过
+
+	CResponse dlg;
+	if (dlg.DoModal() == IDOK)
+	{
+		int rspType = dlg.m_nRspType;
+		CString strService = dlg.m_strServiceScore;
+		CString strSelf = dlg.m_strSelfScore;
+
+		//CBCGPGridRow* pRow = pThis->m_wndGrid.GetCurSel();
+		//int nRow = pRow->GetRowId();
+
+		m_datas[nRow][7] = strService;
+		m_datas[nRow][8] = strSelf;
+		switch (dlg.m_nRspType)
+		{
+		case 0:
+			m_datas[nRow][4] = "2";
+			UpdateCoach(nRow, 0);
+			UpdateStudent(nRow, 0);
+			break;
+		case 1:
+			m_datas[nRow][4] = "-2";
+			UpdateCoach(nRow, 1);
+			UpdateStudent(nRow, 2);
+			break;
+		case 2:
+			m_datas[nRow][4] = "-1";
+			UpdateCoach(nRow, 2);
+			UpdateStudent(nRow, 1);
+			break;
+		}
+		PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2);
+	}
 }

@@ -7,6 +7,7 @@
 #include "afxdialogex.h"
 #include "MainFrm.h"
 #include "Response.h"
+#include "DlgFee.h"
 
 
 // CDlgMyBooks 对话框
@@ -17,6 +18,9 @@ CDlgMyBooks::CDlgMyBooks(CWnd* pParent /*=NULL*/)
 	: CBCGPDialog(CDlgMyBooks::IDD, pParent)
 {
 	EnableVisualManagerStyle();
+
+	m_isPublic = TRUE;
+	m_nDlgType = DLG_RESP;
 }
 
 CDlgMyBooks::~CDlgMyBooks()
@@ -27,11 +31,14 @@ void CDlgMyBooks::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_GRID, m_wndGridLocation);
+
+	DDX_Text(pDX, IDC_S1, m_strMsg);
 }
 
 
 BEGIN_MESSAGE_MAP(CDlgMyBooks, CBCGPDialog)
 	ON_MESSAGE(WM_USER_UPDATE_VIEW, OnUserUpdate)
+	ON_BN_CLICKED(IDC_MONEY, &CDlgMyBooks::OnBnClickedMoney)
 END_MESSAGE_MAP()
 
 
@@ -70,17 +77,54 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 				else if (pThis->m_datas[nRow][nCol] == "0")
 					pdi->item.varValue = "未派工";
 			}
+			else if (nCol == 7)
+			{
+				if (pThis->m_datas[nRow][9] == "0")
+					pdi->item.varValue = "正常";
+				else if (pThis->m_datas[nRow][9] == "1")
+					pdi->item.varValue = "超过基本课时";
+				else if (pThis->m_datas[nRow][9] == "2")
+					pdi->item.varValue = "临时增加课时";
+			}
+			else if (nCol == 9)
+			{
+				if (pThis->m_datas[nRow][9] != "0")
+				{
+					if (pThis->m_datas[nRow][11] == "0")
+						pdi->item.varValue = "未缴费";
+					else if (pThis->m_datas[nRow][11] == "-1")
+						pdi->item.varValue = "已缴清";
+					else
+						pdi->item.varValue = "已缴" + pThis->m_datas[nRow][11];
+				}
+			}
+			else if (nCol == 8)
+			{
+				pdi->item.varValue = pThis->m_datas[nRow][10];
+			}
 			else
 				pdi->item.varValue = pThis->m_datas[nRow][nCol];
 
 			//颜色控制
-			if (pThis->m_datas[nRow][4] == "1" || pThis->m_datas[nRow][4] == "0")
+			if (pThis->m_nDlgType == DLG_MONEY)
 			{
-				//pdi->item.clrBackground = COLOR_DOING;
+				if (pThis->m_datas[nRow][11] != "-1" && pThis->m_datas[nRow][9] != "0")
+				{
+					pdi->item.clrBackground = COLOR_LITTLE;
+				}
 			}
-			else
+
+
+			if (pThis->m_nDlgType == DLG_RESP)
 			{
-				pdi->item.clrBackground = COLOR_DONE;
+				if (pThis->m_datas[nRow][4] == "1" || pThis->m_datas[nRow][4] == "0")
+				{
+					//pdi->item.clrBackground = COLOR_DOING;
+				}
+				else
+				{
+					pdi->item.clrBackground = COLOR_DONE;
+				}
 			}
 		}
 		else
@@ -101,7 +145,12 @@ void CALLBACK CDlgMyBooks::OnGridDbClick(LPVOID lParam)
 	CBCGPGridRow* pRow = pThis->m_wndGrid.GetCurSel();
 	int nRow = pRow->GetRowId();
 	if (pThis->m_datas[nRow][4] != "1") return; //已经反馈过
-	if (pThis->m_datas[nRow][0] != pThis->m_strToday) return; //未来的训练预约 不能反馈
+
+	//只能反馈最近两天的
+	CTime t = GetServerTime();
+	CString yestoday = t.Format("%Y/%m/%d");
+	if (pThis->m_datas[nRow][0] != pThis->m_strToday
+		&& pThis->m_datas[nRow][0] != yestoday) return; //未来的训练预约 不能反馈
 
 	CResponse dlg;
 	if (dlg.DoModal() == IDOK)
@@ -158,11 +207,28 @@ BOOL CDlgMyBooks::OnInitDialog()
 	m_wndGrid.EnableRowHeader(TRUE);
 	m_wndGrid.EnableLineNumbers();
 
+	if (m_nDlgType==DLG_MONEY)
+		m_wndGrid.SetSingleSel(0);
+
 	int nColumn = 0;
 	int hw = m_wndGrid.GetRowHeaderWidth();
-	LPCTSTR arrColumns[] = { _T("训练日期"), _T("训练时间"), _T("车辆编号"), _T("教练"), _T("完成情况")
-		, _T("服务评价"), _T("自我评价") };
-	const int nColumns = sizeof (arrColumns) / sizeof (LPCTSTR);
+	std::vector<CString> arrColumns;
+	arrColumns.push_back("训练日期");
+	arrColumns.push_back("训练时间");
+	arrColumns.push_back("车辆编号");
+	arrColumns.push_back("教练");
+	arrColumns.push_back("完成情况");
+	arrColumns.push_back("服务评价");
+	arrColumns.push_back("自我评价");
+
+	if (m_nDlgType == DLG_MONEY)
+	{
+		arrColumns.push_back("预约性质"); //nCol = 7
+		arrColumns.push_back("费用");
+		arrColumns.push_back("缴费情况");
+	}
+
+	const int nColumns = arrColumns.size();
 	int w = rect.Width() - hw;
 	int nColumnWidth = w / nColumns;
 	for (int i = 0; i < nColumns; i++)
@@ -174,6 +240,13 @@ BOOL CDlgMyBooks::OnInitDialog()
 	//注册虚拟列表回调函数
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
 	m_wndGrid.SetCallBack_DblClk(OnGridDbClick);
+
+	if (!m_isPublic && m_nDlgType == DLG_MONEY && g_nPermissions[3] != 0)
+	{
+		GetDlgItem(IDC_MONEY)->ShowWindow(SW_SHOW);
+	}
+	else
+		GetDlgItem(IDC_MONEY)->ShowWindow(SW_HIDE);
 
 	CTime t = GetServerTime();//CTime::GetCurrentTime();
 	m_strToday = t.Format("%Y/%m/%d");
@@ -206,7 +279,7 @@ void CDlgMyBooks::Refresh()
 	CString strMsg, strSQL;
 	strSQL.Format("SELECT bookings.BOOK_DATE, bookings.CLASS_ID, bookings.ORDER_CAR, coachinfo.SName\
 				  	, bookings.FLAG, bookings.SERVICE_SCORE, bookings.SELF_SCORE, bookings.FILE_NAME, \
-					bookings.ORDER_COACH FROM bookings \
+					bookings.ORDER_COACH, bookings.BOOK_TYPE, bookings.FEE, bookings.FEE_DONE FROM bookings \
 					inner join students ON bookings.FILE_NAME = students.FILE_NAME \
 					left join coachinfo ON bookings.ORDER_COACH = coachinfo.FILE_NUM\
 					WHERE bookings.FILE_NAME='%s' \
@@ -216,6 +289,42 @@ void CDlgMyBooks::Refresh()
 	g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg);
 	ShowMsg2Output1(strMsg);
 
+	if (m_nDlgType == DLG_MONEY)
+	{
+		int n = m_datas.size();
+		int sumN = 0; //需缴费数量
+		int sumM0 = 0; //需缴费总金额
+		int sumM = 0; //未缴费金额
+		for (int i = 0; i < n; i++)
+		{
+			int type = atoi(m_datas[i][9]);
+			int fee = atoi(m_datas[i][10]);
+			int feeD = atoi(m_datas[i][11]);
+			if (type != 0)
+			{
+				sumN++;
+				if (type == 1) //学生缴费
+				{
+					sumM0 += fee;
+					if (feeD != -1)
+						sumM += fee - feeD;
+				}
+				else if (type == 2) //驾校缴费
+				{
+					sumM0 -= fee;
+					if (feeD != -1)
+						sumM -= fee - feeD;
+				}
+			}
+		}
+		m_nSumM = sumM;
+		m_strMsg.Format("统计信息： 共有%d节课时需要额外缴费，总共需缴费%d元，未缴费%d元", sumN, sumM0, sumM);
+	}
+	else
+	{
+		m_strMsg = "";
+	}
+	UpdateData(FALSE);
 
 	m_wndGrid.GridRefresh(m_datas.size());
 }
@@ -324,4 +433,72 @@ void CDlgMyBooks::UpdateStudent(int nRow, int flag)
 		ShowMsg2Output1(strMsg);
 	}
 
+}
+
+
+void CDlgMyBooks::OnBnClickedMoney()
+{
+	if (m_nSumM == 0)
+	{
+		MessageBox("当前学员没有需缴费项目", "警告");
+		return;
+	}
+
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	CString strMsg, strSQL;
+	BOOL isOneTime = FALSE;
+	if (pRow == NULL) //没有选中，全部一次性缴清
+	{
+		strMsg = "您没有选择缴费对象，是否选择一次性缴清全部费用？";
+		if (MessageBox(strMsg, "警告", MB_YESNOCANCEL) != IDYES) return;
+		isOneTime = TRUE;
+	}
+	if (isOneTime == TRUE)
+	{
+		strMsg.Format("当前学员共欠费%d元，请确认缴清后点击确认！", m_nSumM);
+		if (MessageBox(strMsg, "警告", MB_YESNO) != IDYES) return;
+
+		strSQL.Format("UPDATE bookings SET FEE_DONE='-1' WHERE FILE_NAME='%s' AND BOOK_TYPE!='0'", m_strStuID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+		Refresh();
+		return;
+	}
+
+	int n = m_datas.size();
+	int sumM = 0;
+	std::vector<int> indexes;
+	for (int i = 0; i < n; i++)
+	{
+		if (!m_wndGrid.IsRowSelected(i)) continue;
+
+		int type = atoi(m_datas[i][9]);
+		int fee = atoi(m_datas[i][10]);
+		int feeD = atoi(m_datas[i][11]);
+		if (type != 0)
+		{
+			indexes.push_back(i);
+			if (type == 1) //学生缴费
+			{
+				sumM += fee - feeD;
+			}
+			else if (type == 2) //驾校缴费
+			{
+				sumM -= fee - feeD;
+			}
+		}
+	}
+	strMsg.Format("当前选中范围中，该学员需缴费%d元，请确认缴清后点击确认！", sumM);
+	if (MessageBox(strMsg, "警告", MB_YESNO) != IDYES) return;
+
+	//更新数据库
+	n = indexes.size();
+	for (int i = 0; i < n; i++)
+	{
+		int nRow = indexes[i];
+		strSQL.Format("UPDATE bookings SET FEE_DONE='-1' WHERE FILE_NAME='%s' AND BOOK_DATE='%s' AND CLASS_ID='%s'", m_strStuID, m_datas[nRow][0], m_datas[nRow][1]);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		ShowMsg2Output1(strMsg);
+	}
+	Refresh();
 }

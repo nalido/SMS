@@ -105,6 +105,7 @@ LRESULT CViewK1Check::OnUserMessage(WPARAM wp, LPARAM lp)
 	if (flag == 5)  //数据发送成功
 	{
 		Refresh(1);
+		ShowMsg2Output1("发送短信成功");
 	}
 	return 0;
 }
@@ -249,7 +250,7 @@ void CViewK1Check::Refresh(BOOL isInit)
 
 	if (isInit)
 	{
-		strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NAME FROM students WHERE STEP='0001'");
+		strSQL.Format("SELECT SNAME, GENDER, TEL, CAR_TYPE, FILE_NAME FROM students WHERE STEP='1'");
 		m_datas_pass.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas_pass, strMsg))
 		{
@@ -347,7 +348,7 @@ void CViewK1Check::OnBnClickedBtnNopass()
 			CDlgNoPass dlg;
 			dlg.m_strStuName = m_datas[i][0];
 			if (dlg.DoModal() != IDOK) continue;
-			CString strReason = "nopass:" + dlg.m_strReason;
+			CString strReason = "原因:" + dlg.m_strReason;
 
 			nSel++;
 			CString fileNum = m_datas[i][4];
@@ -527,9 +528,11 @@ void CViewK1Check::OnBnClickedBtnSms2()
 			dlgMsg.m_nFlag = 2;
 			dlgMsg.m_strStu = m_datas_nopass[i][0];
 			dlgMsg.m_strClassIssue = strClassIssue;
+			dlgMsg.m_strReason = m_datas_nopass[i][3];
 			if (dlgMsg.DoModal() != IDOK) continue;
 			strClassIssue = dlgMsg.m_strClassIssue;
 			CString strSMS0 = dlgMsg.m_strSMS;
+
 
 			//数据打包发送
 			CString strStuID = m_datas_nopass[i][4];

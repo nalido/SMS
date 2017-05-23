@@ -46,6 +46,7 @@ public:
 	//查询子线程
 	xPublic::CThreadBase m_threadMySQL;
 	static void CALLBACK ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent);
+	afx_msg void OnBnClickedTalk();
 };
 
 

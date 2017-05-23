@@ -162,6 +162,7 @@ void CDlgResetPSW::OnBnClickedConfirm()
 
 	m_strSMS.MakeLower();
 	m_strSMS0.MakeLower();
+	m_strSMS0 = m_strSMS0.Right(4);
 	if (m_strSMS == m_strSMS0)
 	{
 		m_S[2].ShowWindow(TRUE);
@@ -208,11 +209,12 @@ void CDlgResetPSW::OnBnClickedReset()
 	}
 
 	CString strMsg, strSQL;
-	strSQL.Format("UPDATE stuff SET UPSWD=PASSOWRD('%s') WHERE UTEL='%s'", m_strPSW1, m_strTel);
+	strSQL.Format("UPDATE stuff SET UPSWD=PASSWORD('%s') WHERE UTEL='%s'", m_strPSW1, m_strTel);
 	if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 	{
 		strMsg.Format("修改密码成功，您可以登录了");
 		MessageBox(strMsg);
+		OnOK();
 		return;
 	}
 	else

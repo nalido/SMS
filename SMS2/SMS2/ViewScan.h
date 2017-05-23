@@ -64,7 +64,7 @@ public:
 	//字体控制
 	CStatic m_S[11]; //静态文本框
 	CStatic m_T[5]; //栏目标题
-	CStatic m_D[13]; //信息文本框
+	CStatic m_D[15]; //信息文本框
 
 	//列表
 	CStatic m_wndGridLocation1;
@@ -88,6 +88,8 @@ public:
 	CString m_strBookedClass; //已预约课时数
 	CString m_strUsedClass; //已使用课时数
 	CString m_strClassType; //正在进行的课程类别
+	CString m_strOutClass; //已超过课时数
+	CString m_strFee; //待缴费金额
 
 	//打开此视图的上一个视图
 	UINT m_LAST_VIEW;
@@ -101,6 +103,7 @@ public:
 	afx_msg void OnBnClickedExit();
 	afx_msg void OnBnClickedFeedback();
 	afx_msg void OnBnClickedNextclass();
+	afx_msg void OnBnClickedMoney();
 };
 
 

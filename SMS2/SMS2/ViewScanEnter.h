@@ -2,18 +2,18 @@
 
 
 
-// CViewStudentEnter 窗体视图
+// CViewScanEnter 窗体视图
 
-class CViewStudentEnter : public CBCGPFormView
+class CViewScanEnter : public CBCGPFormView
 {
-	DECLARE_DYNCREATE(CViewStudentEnter)
+	DECLARE_DYNCREATE(CViewScanEnter)
 
 protected:
-	CViewStudentEnter();           // 动态创建所使用的受保护的构造函数
-	virtual ~CViewStudentEnter();
+	CViewScanEnter();           // 动态创建所使用的受保护的构造函数
+	virtual ~CViewScanEnter();
 
 public:
-	enum { IDD = IDD_STUDENT_ENTER };
+	enum { IDD = IDD_SCAN_ENTER };
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE
@@ -25,7 +25,6 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
 
 	DECLARE_MESSAGE_MAP()
-
 public:
 
 	//背景定位
@@ -44,12 +43,11 @@ public:
 	CStatic m_S[5]; //静态文本框
 	CString m_strName;
 	CString m_strIDCard;
-	CString m_strTEL;
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnBnClickedConfirm();
 	afx_msg void OnEnChangeE1();
 	afx_msg void OnEnChangeE2();
-	afx_msg void OnEnChangeE3();
+	afx_msg void OnBnClickedSelstudent();
 };
 
 

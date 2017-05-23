@@ -24,6 +24,7 @@
 #include "ViewPermission.h"
 #include "ViewK23Exam.h"
 #include "ViewAllStudents.h"
+#include "ViewScanEnter.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,6 +46,7 @@ CString g_strUserID = "";
 int g_nMinK2Class = 8;
 int g_nMinK3Class = 10;
 BOOL g_isSMSSended = FALSE;
+int g_nFeeForOneClass = 50;
 CString g_strCurrentTime;
 void LOG(CString sFileName, CString str_log, int flag) // 程序运行日志：记录系统运行状态 
 {
@@ -170,6 +172,14 @@ CTime GetServerTime()
 	int nMonth = atoi(strDate.Mid(pos1 + 1, pos2));
 	int nDay = atoi(strDate.Mid(pos2 + 1));
 
+	CTime t = CTime::GetCurrentTime();
+	if (nYear == 0 || nMonth == 0 || nDay == 0) //时间错误
+	{
+		nYear = t.GetYear();
+		nMonth = t.GetMonth();
+		nDay = t.GetDay();
+	}
+
 	//解析时间
 	pos1 = strHour.Find(':');
 	pos2 = strHour.ReverseFind(':');
@@ -294,6 +304,59 @@ BEGIN_MESSAGE_MAP(CMainFrame, CBCGPFrameWnd)
 	ON_COMMAND_EX(ID_VIEW_ALLSTUDENTS, OnViewSelected)
 	ON_COMMAND_EX(ID_VIEW_PERMISSION, OnViewSelected)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUT, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_REGISTER, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_K1CHECK, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_K1EXAM, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_K23EXAM, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_STUPROGRESS, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_BOOKING1, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_BOOKING2, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_COACH, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_KPI, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SCAN, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_4STUDENT, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_STUFF, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_DEVICE, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SYSTEMSETTING, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_SCHOOLSETTING, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_ORDER_RSP, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_ALLSTUDENTS, OnUpdateViewOutput)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_PERMISSION, OnUpdateViewOutput)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	ON_REGISTERED_MESSAGE(BCGM_ON_RIBBON_CUSTOMIZE, OnRibbonCustomize)
 	ON_COMMAND(ID_TOOLS_OPTIONS, OnToolsOptions)
 	ON_MESSAGE(UM_REDRAW, OnRedraw)
@@ -372,20 +435,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableAutoHideBars(CBRS_ALIGN_ANY);
 	DockControlBar(&m_wndOutput);
 
-	//连接数据
-	CString strMsg("");
-	if (!g_mysqlCon.Connect(g_sMySQLIP.GetBuffer(0), 3306, "snow", "snow", "snow123", "gbk", strMsg))
-	{
-		m_wndOutput.AddItem2List1(_T("连接数据库失败!\r\n") + strMsg); 
-	}
-	else
-	{
-		m_wndOutput.AddItem2List1("连接数据库成功！");
-	}
-	CString strConnect;
-	strConnect.Format("数据库IP=%s:3306\r\n", g_sMySQLIP);
-	m_wndOutput.AddItem2List1(strConnect);
-	g_sMySQLIP.ReleaseBuffer();
+
 	//开始子线程
 	m_threadMySQL.StartThread();
 	m_threadClock.StartThread();
@@ -535,8 +585,104 @@ void CMainFrame::OnViewOutput()
 
 void CMainFrame::OnUpdateViewOutput(CCmdUI* pCmdUI) 
 {
-	pCmdUI->SetCheck (m_wndOutput.IsVisible ());
-	pCmdUI->Enable (!GetDockManager ()->IsPrintPreviewValid ());
+	CView* pView;
+	switch (pCmdUI->m_nID)
+	{
+	case ID_VIEW_OUTPUT:
+		pCmdUI->SetCheck(m_wndOutput.IsVisible());
+		pCmdUI->Enable(!GetDockManager()->IsPrintPreviewValid());
+		break;
+	case ID_VIEW_BOOKING1:
+		pView = m_arViews[VIEW_BOOKING1];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_BOOKING2:
+		pView = m_arViews[VIEW_BOOKING2];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_ORDER_RSP:
+		pView = m_arViews[VIEW_ORDER_RSP];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_REGISTER:
+		pView = m_arViews[VIEW_REGISTER];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_K1CHECK:
+		pView = m_arViews[VIEW_K1CHECK];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_K1EXAM:
+		pView = m_arViews[VIEW_K1EXAM];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_K23EXAM:
+		pView = m_arViews[VIEW_K23EXAM];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_STUPROGRESS:
+		pView = m_arViews[VIEW_STUPROGRESS];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_SYSTEMSETTING:
+		pView = m_arViews[VIEW_SYSTEM];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_SCHOOLSETTING:
+		pView = m_arViews[VIEW_SCHOOL];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_COACH:
+		pView = m_arViews[VIEW_COACHES];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_KPI:
+		pView = m_arViews[VIEW_KPI];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_SCAN:
+		pView = m_arViews[VIEW_SCAN];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_DEVICE:
+		pView = m_arViews[VIEW_DEVICES];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_STUFF:
+		pView = m_arViews[VIEW_STUFFENTER];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_4STUDENT:
+		pView = m_arViews[VIEW_STUDENTENTER];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_ALLSTUDENTS:
+		pView = m_arViews[VIEW_ALLSTUDENTS];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	case ID_VIEW_PERMISSION:
+		pView = m_arViews[VIEW_PERMISSION];
+		if (pView != NULL)
+			pCmdUI->SetCheck(pView->IsWindowVisible());
+		break;
+	}
 }
  // OUTPUTBAR
 
@@ -582,7 +728,7 @@ BOOL CMainFrame::OnViewSelected(UINT nID)
 		SelectView(VIEW_KPI);
 		break;
 	case ID_VIEW_SCAN:
-		SelectView(VIEW_SCAN);
+		SelectView(VIEW_SCANENTER);
 		break;
 	case ID_VIEW_DEVICE:
 		SelectView(VIEW_DEVICES);
@@ -664,10 +810,13 @@ CView* CMainFrame::GetView(int nID)
 		pClass = RUNTIME_CLASS(CViewKPI);
 		break;
 	case VIEW_DEVICES:
-		pClass = RUNTIME_CLASS(CViewDevices);
+		pClass = RUNTIME_CLASS(CViewDevices); 
 		break;
 	case VIEW_SCAN:
 		pClass = RUNTIME_CLASS(CViewScan);
+		break;
+	case VIEW_SCANENTER:
+		pClass = RUNTIME_CLASS(CViewScanEnter);
 		break;
 	case VIEW_STUFFENTER:
 		pClass = RUNTIME_CLASS(CViewStuffEnter);
@@ -777,7 +926,7 @@ LRESULT CMainFrame::OnRedraw(WPARAM, LPARAM)
 {
 	RecalcLayout(TRUE);
 	GetActiveView()->UpdateWindow();
-	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ALLCHILDREN | RDW_FRAME);
+	//RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ALLCHILDREN | RDW_FRAME);
 	return 0;
 }
 
@@ -786,6 +935,25 @@ void CALLBACK CMainFrame::ThreadMySQLCallback(LPVOID pParam, HANDLE hCloseEvent)
 {
 	CMainFrame* pThis = (CMainFrame*)pParam;
 	DWORD dwWaitTime = 0;
+	
+	//连接数据
+	CString strMsg("");
+	if (!g_mysqlCon.Connect(g_sMySQLIP.GetBuffer(0), 3306, "snow", "snow", "snow123", "gbk", strMsg))
+	{
+		strMsg = _T("连接数据库失败!\r\n") + strMsg;
+		pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2, (LPARAM)strMsg.GetBuffer(0));
+		strMsg.ReleaseBuffer();
+	}
+	else
+	{
+		strMsg = "连接数据库成功！";
+		pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2, (LPARAM)strMsg.GetBuffer(0));
+		strMsg.ReleaseBuffer();
+	}
+	strMsg.Format("数据库IP=%s:3306\r\n", g_sMySQLIP);
+	pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2, (LPARAM)strMsg.GetBuffer(0));
+	strMsg.ReleaseBuffer();
+	g_sMySQLIP.ReleaseBuffer();
 
 	//已连接时等待5s，未连接时等待2s
 	while (WAIT_TIMEOUT == ::WaitForSingleObject(hCloseEvent, dwWaitTime))
@@ -827,6 +995,77 @@ void CALLBACK CMainFrame::ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent)
 		{
 			if (datas.size() == 0) //没有本月的记录
 			{
+				//更新上个月的最后记录
+				{
+					CString lastMonth = GetLastMonth(t) + "%%";
+					CDStrs coaches;
+					strSQL.Format("SELECT COACH_ID, COACH FROM kpis WHERE KMONTH LIKE '%s'", lastMonth);
+					g_mysqlCon.ExecuteQuery(strSQL, coaches, strMsg);
+
+					//更新KPI数据
+					int nc = coaches.size();
+					if (nc == 0) continue;
+					for (int nCoach = 0; nCoach < nc; nCoach++)
+					{
+						CDStrs data;
+						//学员评分记录
+						strSQL.Format("SELECT BOOK_DATE, SERVICE_SCORE, SELF_SCORE FROM bookings WHERE ORDER_COACH='%s' \
+									  	AND BOOK_DATE LIKE '%s' AND FLAG='2' ORDER BY BOOK_DATE",
+										coaches[nCoach][0], lastMonth);
+						g_mysqlCon.ExecuteQuery(strSQL, data, strMsg);
+
+						int nStudents = data.size();
+						if (nStudents == 0) //当月没有学员的, 不更新
+						{
+							continue;
+						}
+
+						int service = 0; //服务评价 满意度
+						int self = 0; //技能评价 合格率
+						int good = 0; //满意率
+						for (int i = 0; i < nStudents; i++)
+						{
+							int d1 = atoi(data[i][1]);
+							int d2 = atoi(data[i][2]);
+
+							service += d1;
+							self += d2;
+							if (d1 >= 80) good++;
+						}
+						service = service * 100 / nStudents;
+						self = self * 100 / nStudents;
+						good = good * 10000 / nStudents;
+
+						double KPI = (service + self)*1.0 / 200;
+
+						CString strData;
+						strData.Format("%d", nStudents);
+						coaches[nCoach].push_back(strData);
+						double d = service*1.0 / 100;
+						strData.Format("%.2f", d);
+						coaches[nCoach].push_back(strData);
+						d = good*1.0 / 100;
+						strData.Format("%.2f", d);
+						coaches[nCoach].push_back(strData);
+						d = self*1.0 / 100;
+						strData.Format("%.2f", d);
+						coaches[nCoach].push_back(strData);
+						coaches[nCoach].push_back("100"); //设备完好率
+						coaches[nCoach].push_back("0"); //介绍学生数
+						coaches[nCoach].push_back("0"); //介绍学生目标数
+						strData.Format("%.2f", KPI);
+						coaches[nCoach].push_back(strData);
+
+						//更新数据库
+						int kpi = KPI * 100;
+						strSQL.Format("UPDATE KPIS SET SAMPLE_NUM='%d', SATISFIED_DEGREE='%d', SATISFIED_PERCENT='%d',\
+									  	SKILL_PERCENT='%d', SCORE='%d'\
+										WHERE COACH_ID='%s' AND KMONTH='%s'",
+										nStudents, service, good, self, kpi, coaches[nCoach][0], lastMonth.Left(7));
+						g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+					}
+				}//结束更新上个月的最后记录
+				//添加本月记录
 				g_mysqlCon.ExecuteSQL("BEGIN;\r\nSET AUTOCOMMIT=0\r\n", strMsg);
 				strSQL.Format("INSERT INTO KPIS (COACH, COACH_ID) SELECT coachinfo.SNAME, coachinfo.FILE_NUM FROM coachinfo INNER JOIN coachstat ON coachinfo.FILE_NUM=coachstat.FILE_NUM WHERE coachstat.BLACK_NAME='0'");
 				if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
@@ -887,6 +1126,12 @@ LRESULT CMainFrame::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 		if (g_nPermissions[1] != 0)
 			MessageBox("明天有学员的预约，请前往学员进度界面发送预约提醒短信！");
 		break;
+	case 2: //子线程刷新输出信息
+	{
+				CString strMsg = (char*)lParam;
+				m_wndOutput.AddItem2List1(strMsg);
+	}
+		break;
 	}
 
 	return 0;
@@ -916,6 +1161,10 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 	}
 	case 1: //最高权限，显示全部
 	{
+				for (int i = 0; i < 5; i++)
+				{
+					g_nPermissions[i] = 1;
+				}
 				int nCount = m_wndRibbonBar.GetCategoryCount();
 				for (int i = 1; i < nCount; i++)
 				{

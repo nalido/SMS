@@ -6,6 +6,7 @@
 #include "ViewBooking1.h"
 #include "MainFrm.h"
 #include "ClassDetail.h"
+#include "DlgNextBookDate.h"
 
 CString arrClasses[5] = { "0未定义", "Am08:00-10:00", "Am10:00-12:00", "Pm01:00-03:00", "Pm03:00-05:00" };
 // CViewBooking1
@@ -52,6 +53,7 @@ BEGIN_MESSAGE_MAP(CViewBooking1, CBCGPFormView)
 ON_BN_CLICKED(IDC_STUDENT_SEL, &CViewBooking1::OnBnClickedStudentSel)
 ON_BN_CLICKED(IDC_CONFIRM, &CViewBooking1::OnBnClickedConfirm)
 ON_BN_CLICKED(IDC_REMOVE, &CViewBooking1::OnBnClickedRemove)
+ON_BN_CLICKED(IDC_CONFIRM3, &CViewBooking1::OnBnClickedConfirm3)
 END_MESSAGE_MAP()
 
 
@@ -115,10 +117,22 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 				if (pThis->m_datas[nRow][2] == "2") //正常完成预约的灰化
 				{
 					pdi->item.clrBackground = RGB(140, 140, 140);
+
+					if (nCol==2)
+						pdi->item.varValue = "正常完成";
 				}
 				else //预约后未参加训练的 暗红色显示
 				{
 					pdi->item.clrBackground = RGB(240, 140, 140);
+					if (nCol == 2)
+					{
+						if (pThis->m_datas[nRow][2] == "-1")
+							pdi->item.varValue = "学员缺勤";
+						else if (pThis->m_datas[nRow][2] == "-2")
+							pdi->item.varValue = "教练缺勤";
+						else
+							pdi->item.varValue = "未反馈";
+					}
 				}
 				pdi->item.clrText = RGB(220, 220, 220);
 			}
@@ -381,24 +395,17 @@ void CViewBooking1::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
-	////双缓存绘制
-	//CRect   rect;
-	//CDC     MemDC;
-	//CBitmap MemMap;
 
-	//GetClientRect(&rect);
-	//MemDC.CreateCompatibleDC(&dc);
-	//MemMap.CreateCompatibleBitmap(&dc, rect.Width(), rect.Height());
-	//MemDC.SelectObject(&MemMap);
-	//MemDC.FillSolidRect(&rect, RGB(255, 255, 255));
+	CRect rect;
+	GetDlgItem(IDC_LABEL1)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL1)->MapWindowPoints(this, &rect);
+	CBrush brush(RGB(140, 140, 140));
+	dc.FillRect(rect, &brush);
 
-	////调用默认的OnPaint(),把图形画在内存DC表上
-	//DefWindowProc(WM_PAINT, (WPARAM)MemDC.m_hDC, (LPARAM)0);
-
-	////输出   
-	//dc.BitBlt(0, 0, rect.Width(), rect.Height(), &MemDC, 0, 0, SRCCOPY);
-	//MemDC.DeleteDC();
-	//MemMap.DeleteObject();
+	GetDlgItem(IDC_LABEL2)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL2)->MapWindowPoints(this, &rect);
+	CBrush brush1(RGB(240, 140, 140));
+	dc.FillRect(rect, &brush1);
 }
 
 LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
@@ -566,6 +573,14 @@ void CViewBooking1::OnBnClickedConfirm()
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 			ShowMsg2Output1(strMsg);
 		}
+		else
+		{
+			MessageBox("预约上传成功，您还没有预约全部课程，请选择下次预约时间");
+
+			CDlgNextBookDate dlg;
+			dlg.m_strStuID = m_strFileName;
+			dlg.DoModal();
+		}
 	}
 
 	UpdateBookingList(); //排序
@@ -630,4 +645,12 @@ void CViewBooking1::OnBnClickedRemove()
 
 	//更新图表
 	m_wndGrid.GridRefresh(m_datas.size());
+}
+
+
+void CViewBooking1::OnBnClickedConfirm3()
+{
+	CDlgNextBookDate dlg;
+	dlg.m_strStuID = m_strFileName;
+	dlg.DoModal();
 }
