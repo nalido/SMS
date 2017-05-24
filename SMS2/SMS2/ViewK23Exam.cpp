@@ -409,6 +409,9 @@ void CViewK23Exam::OnBnClickedSendsms()
 		{
 			if (!m_wndGrid2.IsRowSelected(i)) continue;
 
+			BOOL isResend = FALSE; //是否当前考试不通过，报考下一场。
+			CString strOldDate;
+
 			CString strType = m_datas2[i][6];
 			int statIndex = 7; //默认科目二的状态
 			CString strTypeName = "K2_DATE";
@@ -419,6 +422,11 @@ void CViewK23Exam::OnBnClickedSendsms()
 			}
 			if (m_datas2[i][statIndex] == "2") 
 			{
+				isResend = TRUE;
+				strOldDate = m_datas2[i][5];
+				strOldDate.Replace("年", "/");
+				strOldDate.Replace("月", "/");
+				strOldDate.Replace("日", "");
 				CString strM;
 				strM.Format("%s已经发送过通知短信，是否继续发送？", m_datas2[i][0]);
 				if (MessageBox(strM, "警告", MB_YESNO) != IDYES) continue;
@@ -453,11 +461,18 @@ void CViewK23Exam::OnBnClickedSendsms()
 			strSQL.Format("UPDATE stuDates SET %s='%s' WHERE STU_ID='%s'", strTypeName, strDate, strStuID);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 
+			if (isResend == TRUE)
+			{
+				strSQL.Format("UPDATE stuDateHistory SET EXAM_RESULT='2' WHERE EXAM_DATE='%s' AND STU_ID='%s' AND EXAM_TYPE='%s'", strOldDate, strStuID, strType);
+				g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+			}
+
 			strDate.Replace("年", "/");
 			strDate.Replace("月", "/");
 			strDate.Replace("日", "");
 			strSQL.Format("INSERT INTO stuDateHistory (EXAM_DATE, STU_ID, EXAM_TYPE) VALUES('%s', '%s', '%s')", strDate, strStuID, strType);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+
 
 			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
 		}
@@ -499,6 +514,12 @@ void CViewK23Exam::OnBnClickedK23pass()
 		strSQL.Format("UPDATE stuDates SET %s='3' WHERE STU_ID='%s'", strTypeName, m_datas2[nRow][4]);
 		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 
+		strDate.Replace("年", "/");
+		strDate.Replace("月", "/");
+		strDate.Replace("日", "");
+		strSQL.Format("UPDATE stuDateHistory SET EXAM_RESULT='1' WHERE EXAM_DATE='%s' AND STU_ID='%s' AND EXAM_TYPE='%s'", strDate, m_datas2[nRow][4], strType);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+
 		//检查该学员是否通过全部考试
 		int anotherStat = atoi(m_datas2[nRow][statIndex]);
 		if (anotherStat < 3) //另一个科目没有过
@@ -509,6 +530,8 @@ void CViewK23Exam::OnBnClickedK23pass()
 		else //全部通过，完成驾校学习，设置标志位
 		{
 			strSQL.Format("UPDATE stuDates SET ENDED='1' WHERE STU_ID='%s'", m_datas2[nRow][4]);
+			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+			strSQL.Format("UPDATE students SET STEP='1010' WHERE FILE_NAME='%s'", m_datas2[nRow][4]);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 		}
 

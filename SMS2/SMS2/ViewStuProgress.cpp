@@ -261,7 +261,7 @@ void CViewStuProgress::Refresh()
 					students.CAR_TYPE, students.STEP, students.CLASS_TYPE, \
 					stuDates.K2_STAT, stuDates.K3_STAT, stuDates.BOOK_DATE, stuDates.BOOK_SMS FROM students \
 					left join stuDates ON students.FILE_NAME=stuDates.STU_ID\
-					WHERE STEP<'1000'");
+					WHERE STEP<'1000' ORDER BY students.FILE_NAME");
 	m_datas.clear();
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg))
 	{

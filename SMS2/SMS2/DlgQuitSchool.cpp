@@ -118,13 +118,14 @@ void CDlgQuitSchool::Refrsh()
 		m_strInfo[2] = datas[0][2]; //IDcard
 		m_strInfo[3] = datas[0][3]; //fee
 		m_strInfo[8] = datas[0][4]; //car_type
-
+		m_strStuID = datas[0][1]; //ID
 
 		int fee = atoi(datas[0][3]);
 
-		int step = atoi(datas[0][6]);
+		int step = atoi(datas[0][5]);
 		CString strClassType = datas[0][6];
 		int classStep = atoi(datas[0][7]);
+		m_nQuitFlag = 1002; //默认中途退学;
 		if (step < 2)
 		{
 			m_strInfo[4] = "已报名，未开始科目一理论学习"; //step 
@@ -151,6 +152,17 @@ void CDlgQuitSchool::Refrsh()
 			int reMoney = fee * 3 / 4;
 			m_strInfo[5].Format("%d", reMoney); //应退金额
 			m_strInfo[9] = "0";
+		}
+		else if (step == 1001 || step == 1002)
+		{
+			m_nQuitFlag = 1001;
+
+			m_strInfo[4] = "政治审核不通过"; //step 
+
+			//未办理注册的， 全部退款，收100手续费
+			int reMoney = fee;
+			m_strInfo[5].Format("%d", reMoney); //应退金额
+			m_strInfo[9] = "100";
 		}
 		else //科目二、三
 		{
@@ -214,16 +226,20 @@ void CDlgQuitSchool::OnBnClickedOk()
 	m_strInfo[9].Format("%d", fee);
 
 	CString strSQL, strMsg;
-	strSQL.Format("INSERT INTO stuquits (QUIT_DATE, STU_ID, QUIT_REASON, SHOULD_MONEY, RETURN_MONEY, FEE) \
-				  VALUES('%s', '%s', '%s', '%s', '%s', '%s')", 
-		m_strInfo[7], m_strInfo[1], m_strInfo[10], m_strInfo[5], m_strInfo[6], m_strInfo[9]);
+	strSQL.Format("UPDATE students SET STEP='%d' WHERE FILE_NAME='%s'", m_nQuitFlag, m_strStuID);
 	if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 	{
-		MessageBox("退款成功");
-		OnOK();
-	}
-	else {
-		MessageBox("退款失败，请稍后再试");
+		strSQL.Format("INSERT INTO stuquits (QUIT_DATE, STU_ID, QUIT_REASON, SHOULD_MONEY, RETURN_MONEY, FEE) \
+					  				  VALUES('%s', '%s', '%s', '%s', '%s', '%s')",
+									  m_strInfo[7], m_strInfo[1], m_strInfo[10], m_strInfo[5], m_strInfo[6], m_strInfo[9]);
+		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+		{
+			MessageBox("退款成功");
+			OnOK();
+		}
+		else {
+			MessageBox("退款失败，请稍后再试");
+		}
 	}
 	ShowMsg2Output1(strMsg);
 }

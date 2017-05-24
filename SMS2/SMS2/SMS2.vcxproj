@@ -347,6 +347,13 @@
     <Image Include="..\3.bmp" />
     <Image Include="..\4.bmp" />
     <Image Include="..\bitmap3.bmp" />
+    <Image Include="C:\Users\NALIDO\Desktop\32X32.ico" />
+    <Image Include="C:\Users\NALIDO\Desktop\48X48.ico" />
+    <Image Include="C:\Users\NALIDO\Desktop\64X64.ico" />
+    <Image Include="C:\Users\NALIDO\Desktop\c16.ico" />
+    <Image Include="C:\Users\NALIDO\Desktop\c32.ico" />
+    <Image Include="C:\Users\NALIDO\Desktop\c64.ico" />
+    <Image Include="C:\Users\NALIDO\Desktop\car_64X64.ico" />
     <Image Include="res\0.bmp" />
     <Image Include="res\1.bmp" />
     <Image Include="res\2.bmp" />
@@ -361,6 +368,7 @@
     <Image Include="res\car.ico" />
     <Image Include="res\car_32px.ico" />
     <Image Include="res\Car_red_32px.ico" />
+    <Image Include="res\ccar.ico" />
     <Image Include="res\SMS2.ico" />
     <Image Include="res\SMS2Doc.ico" />
     <Image Include="res\tool14.bmp" />

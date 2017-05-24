@@ -491,6 +491,30 @@
     <Image Include="..\..\..\界面参考\car_32px_1105519_easyicon.net.ico">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="C:\Users\NALIDO\Desktop\32X32.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="C:\Users\NALIDO\Desktop\48X48.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="C:\Users\NALIDO\Desktop\64X64.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\ccar.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="C:\Users\NALIDO\Desktop\car_64X64.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="C:\Users\NALIDO\Desktop\c64.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="C:\Users\NALIDO\Desktop\c32.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="C:\Users\NALIDO\Desktop\c16.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="res\BCGSoft_ribbon\ribbon.xml" />

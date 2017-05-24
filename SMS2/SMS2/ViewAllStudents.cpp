@@ -469,8 +469,10 @@ void CViewAllStudents::Refresh(int nID, CString strDateS, CString strDateE)
 					  m_datas1[nRow][7] = "正常";
 				  else if (step < 1002)
 					  m_datas1[nRow][7] = "政审不通过";
-				  else
+				  else if (step<1010)
 					  m_datas1[nRow][7] = "中途退学";
+				  else
+					  m_datas1[nRow][7] = "已毕业";
 			  }
 	}
 		break;
@@ -862,7 +864,7 @@ void CViewAllStudents::OnPaint()
 		A0 += sweepA;
 
 		//图例
-		rctLabel.Offset(0, -m_rctLabel.Height()*1.5*i);
+		rctLabel.Offset(0, -m_rctLabel.Height()*1.5);
 		dc.TextOutA(TextX, rctLabel.Y, strPercent);
 		graph.FillRectangle(&brushI, rctLabel);
 	}
@@ -888,6 +890,19 @@ void CViewAllStudents::OnBnClickedQuery()
 	m_wndGridM.ShowWindow(FALSE);
 	m_wndGridY.ShowWindow(FALSE);
 
+
+	int pos = m_TabCtrl.GetCurSel();
+	m_wndGrid[pos].ShowWindow(TRUE);
+	m_wndGrid[pos].AdjustLayout();
+	if (pos == 0)
+	{
+		GetDlgItem(IDC_QUIT)->EnableWindow(TRUE);
+	}
+	else
+	{
+		GetDlgItem(IDC_QUIT)->EnableWindow(FALSE);
+	}
+
 	InvalidateRect(&m_rctInfo);
 }
 
@@ -898,12 +913,14 @@ void CViewAllStudents::OnBnClickedQuit()
 	if (pRow != NULL)
 	{
 		int nRow = pRow->GetRowId();
-
-		CDlgQuitSchool dlg;
-		dlg.m_strInfo[1] = m_datas1[nRow][5];
-		if (dlg.DoModal() == IDOK)
+		if (m_datas1[nRow][8].IsEmpty())
 		{
-			OnBnClickedQuery();
+			CDlgQuitSchool dlg;
+			dlg.m_strInfo[1] = m_datas1[nRow][5];
+			if (dlg.DoModal() == IDOK)
+			{
+				OnBnClickedQuery();
+			}
 		}
 	}
 }

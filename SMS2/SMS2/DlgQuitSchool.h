@@ -24,6 +24,8 @@ public:
 	void Refrsh();
 
 	CString m_strInfo[11];
+	CString m_strStuID;
+	int m_nQuitFlag; //退学标志， 1002为中途退学， 1000~1001为政审不通过，
 
 	CStatic m_S[11];
 	CEdit m_E[11];

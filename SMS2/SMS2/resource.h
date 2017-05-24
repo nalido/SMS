@@ -63,7 +63,6 @@
 #define IDD_SCAN_ENTER                  224
 #define IDD_FEE_UP                      225
 #define IDD_PROXY                       226
-#define IDI_ICON2                       229
 #define IDD_CARSTAT                     234
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
@@ -449,7 +448,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        235
+#define _APS_NEXT_RESOURCE_VALUE        243
 #define _APS_NEXT_COMMAND_VALUE         32894
 #define _APS_NEXT_CONTROL_VALUE         1262
 #define _APS_NEXT_SYMED_VALUE           118
