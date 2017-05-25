@@ -3,6 +3,7 @@
 // π© SMS2.rc  π”√
 //
 #define IDC_DEL                         2
+#define IDOK2                           3
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDD_SMS2_FORM                   101
@@ -112,7 +113,6 @@
 #define IDC_QUEQIN                      1068
 #define IDC_FEEDBACK                    1068
 #define IDC_RETURN                      1068
-#define IDC_NEWFILE2                    1068
 #define IDC_CLEAR                       1068
 #define IDC_TEL                         1069
 #define IDC_NAME3                       1069
@@ -148,6 +148,7 @@
 #define IDC_LIST3                       1078
 #define IDC_SAVE6                       1078
 #define IDC_RETURN1                     1079
+#define IDC_SAVE7                       1079
 #define IDC_RETURN2                     1080
 #define IDC_BTN_SMS1                    1081
 #define IDC_BTN_SMS2                    1082
@@ -394,6 +395,7 @@
 #define IDC_SETSTAT                     1261
 #define IDC_SLABEL3                     1262
 #define IDC_OOK                         1262
+#define IDC_LINE                        1265
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -455,7 +457,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        243
 #define _APS_NEXT_COMMAND_VALUE         32894
-#define _APS_NEXT_CONTROL_VALUE         1264
+#define _APS_NEXT_CONTROL_VALUE         1266
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

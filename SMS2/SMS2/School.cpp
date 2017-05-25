@@ -5,6 +5,7 @@
 #include "SMS2.h"
 #include "School.h"
 #include "MainFrm.h"
+#include "DlgNextClass.h"
 
 
 // CSchool
@@ -39,6 +40,7 @@ BEGIN_MESSAGE_MAP(CSchool, CBCGPFormView)
 	ON_BN_CLICKED(IDC_SAVE4, &CSchool::OnBnClickedSave4)
 	ON_BN_CLICKED(IDC_SAVE5, &CSchool::OnBnClickedSave5)
 	ON_BN_CLICKED(IDC_SAVE6, &CSchool::OnBnClickedSave6)
+	ON_BN_CLICKED(IDC_SAVE7, &CSchool::OnBnClickedSave7)
 END_MESSAGE_MAP()
 
 
@@ -171,4 +173,12 @@ void CSchool::OnBnClickedSave6()
 
 	g_nFeeForOneClass = atoi(m_strFeeForOneClass);
 	xPublic::WRIINT2("Students", "FeeForOneClass", g_nFeeForOneClass);
+}
+
+
+void CSchool::OnBnClickedSave7()
+{
+	CDlgNextClass dlg;
+	dlg.m_nFlag = 1;
+	dlg.DoModal();
 }
