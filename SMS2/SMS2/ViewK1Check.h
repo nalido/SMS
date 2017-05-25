@@ -59,6 +59,7 @@ public:
 
 	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 	afx_msg LRESULT OnUserMessage(WPARAM wp, LPARAM lp);
+	afx_msg void OnBnClickedDelStudent();
 };
 
 

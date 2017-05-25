@@ -74,6 +74,7 @@
 #define IDC_SMS                         1055
 #define IDC_RESPON                      1055
 #define IDC_SELSTUDENT                  1055
+#define IDC_CCANCEL                     1055
 #define IDC_BTN_NOPASS                  1056
 #define IDC_BUTTON4                     1056
 #define IDC_RESET                       1056
@@ -111,6 +112,8 @@
 #define IDC_QUEQIN                      1068
 #define IDC_FEEDBACK                    1068
 #define IDC_RETURN                      1068
+#define IDC_NEWFILE2                    1068
+#define IDC_CLEAR                       1068
 #define IDC_TEL                         1069
 #define IDC_NAME3                       1069
 #define IDC__TMP_ORDER                  1069
@@ -156,6 +159,7 @@
 #define IDC_NEW_STUDENT                 1084
 #define IDC_CHANGEBACK                  1085
 #define IDC_BUTTON1085                  1085
+#define IDC_DEL_STUDENT                 1085
 #define IDC_EDIT_FILEPATH2              1086
 #define IDC_STUPROGRESS                 1087
 #define IDC_FILEPATH2                   1087
@@ -389,6 +393,7 @@
 #define IDC_SLABEL2                     1261
 #define IDC_SETSTAT                     1261
 #define IDC_SLABEL3                     1262
+#define IDC_OOK                         1262
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -450,7 +455,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        243
 #define _APS_NEXT_COMMAND_VALUE         32894
-#define _APS_NEXT_CONTROL_VALUE         1262
+#define _APS_NEXT_CONTROL_VALUE         1264
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

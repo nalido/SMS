@@ -495,7 +495,10 @@ void CDlgDevice2::CountData()
 		if (m_datas[i][0].Left(7) == strThisMonth)
 		{
 			sum_m++;
-			money_m += atoi(m_datas[i][3]);
+			if (m_nQueryType == QUERY_MAINTENANCE)
+				money_m += atoi(m_datas[i][3]);
+			else if (m_nQueryType == QUERY_OIL)
+				money_m += atoi(m_datas[i][1]);
 		}
 		else
 		{
@@ -509,6 +512,10 @@ void CDlgDevice2::CountData()
 			m_datasM.push_back(strs);
 
 			sum_m = 1;
+			if (m_nQueryType == QUERY_MAINTENANCE)
+				money_m = atoi(m_datas[i][3]);
+			else if (m_nQueryType == QUERY_OIL)
+				money_m = atoi(m_datas[i][1]);
 			strThisMonth = m_datas[i][0].Left(7);
 		}
 
@@ -531,7 +538,7 @@ void CDlgDevice2::CountData()
 	CString strThisYear = m_datasM[0][0].Left(4);
 	for (int i = 0; i < m; i++)
 	{
-		if (m_datas[i][0].Left(4) == strThisYear)
+		if (m_datasM[i][0].Left(4) == strThisYear)
 		{
 			sum_y += atoi(m_datasM[i][1]);
 			money_y += atoi(m_datasM[i][2]);
@@ -548,6 +555,7 @@ void CDlgDevice2::CountData()
 			m_datasY.push_back(strsy);
 
 			sum_y = 1;
+			money_y = atoi(m_datasM[i][2]);
 			strThisYear = m_datasM[i][0].Left(4);
 		}
 	}

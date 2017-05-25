@@ -96,6 +96,7 @@ BEGIN_MESSAGE_MAP(CViewK1Check, CBCGPFormView)
 	ON_BN_CLICKED(IDC_BTN_SMS2, &CViewK1Check::OnBnClickedBtnSms2)
 	ON_BN_CLICKED(IDC_BTN_FRESH2, &CViewK1Check::OnBnClickedBtnFresh2)
 	ON_BN_CLICKED(IDC_NEW_STUDENT, &CViewK1Check::OnBnClickedNewStudent)
+	ON_BN_CLICKED(IDC_DEL_STUDENT, &CViewK1Check::OnBnClickedDelStudent)
 END_MESSAGE_MAP()
 
 
@@ -117,7 +118,7 @@ LRESULT CViewK1Check::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 	if (flag == 1) //update data from database
 	{
 		//数据初始化
-		Refresh();
+		Refresh(TRUE);
 	}
 
 	return 0;
@@ -332,7 +333,7 @@ void CViewK1Check::RemoveData(int type, int nRow)
 
 void CViewK1Check::OnBnClickedBtnFresh()
 {
-	Refresh();
+	Refresh(TRUE);
 }
 
 
@@ -562,7 +563,19 @@ void CViewK1Check::OnBnClickedBtnSms2()
 
 void CViewK1Check::OnBnClickedBtnFresh2()
 {
-	Refresh(TRUE);
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+
+		CString strStuID = m_datas[nRow][4];
+
+		CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+		pFrame->SelectView(VIEW_REGISTER);
+
+		CView* pView = pFrame->GetActiveView();
+		pView->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)2, (LPARAM)(LPCSTR)strStuID);
+	}
 }
 
 
@@ -570,4 +583,27 @@ void CViewK1Check::OnBnClickedNewStudent()
 {
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 	pFrame->SelectView(VIEW_REGISTER);
+}
+
+
+void CViewK1Check::OnBnClickedDelStudent()
+{
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+
+		if (MessageBox("确定要删除该学员信息吗？（无法撤销）", "警告", MB_OKCANCEL) != IDOK) return;
+
+		CString strMsg, strSQL;
+		CString strStuID = m_datas[nRow][4];
+		strSQL.Format("UPDATE students SET STEP='1011' WHERE FILE_NAME='%s'", strStuID);
+		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+			MessageBox("删除成功！");
+		else
+			MessageBox("删除失败，请检查网络连接。");
+		ShowMsg2Output1(strMsg);
+
+		Refresh();
+	}
 }

@@ -5,6 +5,7 @@
 #include "SMS2.h"
 #include "ViewK23Exam.h"
 #include "MSGINFO.h"
+#include "DlgDateItem.h"
 
 
 // CViewK23Exam
@@ -393,90 +394,63 @@ void CViewK23Exam::OnBnClickedReturn()
 
 void CViewK23Exam::OnBnClickedSendsms()
 {
-	int nCount = m_datas2.size();
-
-	//数据打包
-	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
-
-	if (pFrame->m_pSendBuf != NULL)
+	CBCGPGridRow* pRow = m_wndGrid2.GetCurSel();
+	if (pRow != NULL)
 	{
-		MessageBox("上一个信息还未处理完毕，请稍等重试。");
-	}
-	else
-	{
-		CString strSMS("");
-		for (int i = 0; i < nCount; i++)
+		int nRow = pRow->GetRowId();
+
+
+		BOOL isResend = FALSE; //是否当前考试不通过，报考下一场。
+		CString strOldDate;
+
+		CString strType = m_datas2[nRow][6];
+		int statIndex = 7; //默认科目二的状态
+		CString strTypeName = "K2_DATE";
+		if (strType == "科目三")
 		{
-			if (!m_wndGrid2.IsRowSelected(i)) continue;
+			statIndex = 8;
+			strTypeName = "K3_DATE";
+		}
+		if (m_datas2[nRow][statIndex] == "2")
+		{
+			isResend = TRUE;
+			strOldDate = m_datas2[nRow][5];
+			strOldDate.Replace("年", "/");
+			strOldDate.Replace("月", "/");
+			strOldDate.Replace("日", "");
+			CString strM;
+			strM.Format("%s已经设置过考试日期，是否上一次考试未通过？", m_datas2[nRow][0]);
+			if (MessageBox(strM, "警告", MB_YESNO) != IDYES) return;
+		}
+		CString strTypeStat = strTypeName.Left(3) + "STAT";
 
-			BOOL isResend = FALSE; //是否当前考试不通过，报考下一场。
-			CString strOldDate;
+		CString strStuID = m_datas2[nRow][4];
 
-			CString strType = m_datas2[i][6];
-			int statIndex = 7; //默认科目二的状态
-			CString strTypeName = "K2_DATE";
-			if (strType == "科目三")
-			{
-				statIndex = 8;
-				strTypeName = "K3_DATE";
-			}
-			if (m_datas2[i][statIndex] == "2") 
-			{
-				isResend = TRUE;
-				strOldDate = m_datas2[i][5];
-				strOldDate.Replace("年", "/");
-				strOldDate.Replace("月", "/");
-				strOldDate.Replace("日", "");
-				CString strM;
-				strM.Format("%s已经发送过通知短信，是否继续发送？", m_datas2[i][0]);
-				if (MessageBox(strM, "警告", MB_YESNO) != IDYES) continue;
-			}
 
-			CMSGINFO dlgMsg;
-			dlgMsg.m_nFlag = statIndex-1;
-			dlgMsg.m_strStu = m_datas2[i][0];
-			if (dlgMsg.DoModal() != IDOK) continue;
-			CString strSMS0 = dlgMsg.m_strSMS;
+		CDlgDateItem dlg;
+		if(dlg.DoModal() != IDOK) return;
 
-			//数据打包发送
-			CString strStuID = m_datas2[i][4];
-			CString strTel = m_datas2[i][2];
-			strSMS.Format("%s:%s>%s", strTel, strStuID, strSMS0);
-			int SMSlen = strlen(strSMS);
-			int len = 6 + SMSlen;
-			pFrame->m_isSendReady = FALSE;
-			pFrame->m_pSendBuf = new BYTE[len];//发送完删除
-			pFrame->m_nSendLen = len;
-			pFrame->m_pSendBuf[0] = 2; //发送短信平台数据
-			pFrame->m_pSendBuf[1] = dlgMsg.m_nFlag; //短信类型
-			memcpy(pFrame->m_pSendBuf + 2, &SMSlen, 4); //档案数量
+		CString strDate = dlg.m_strDate; //考试日期
+		CString strSQL, strMsg;
+		strSQL.Format("UPDATE stuDates SET %s='%s', %s='2' WHERE STU_ID='%s'", strTypeName, strDate, strTypeStat, strStuID);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 
-			char* data = strSMS.GetBuffer();
-			memcpy(pFrame->m_pSendBuf + 6, data, SMSlen);
-			strSMS.ReleaseBuffer();
-			pFrame->m_isSendReady = TRUE;
-
-			CString strDate = dlgMsg.m_strDate; //考试日期
-			CString strSQL, strMsg;
-			strSQL.Format("UPDATE stuDates SET %s='%s' WHERE STU_ID='%s'", strTypeName, strDate, strStuID);
+		if (isResend == TRUE)
+		{
+			strSQL.Format("UPDATE stuDateHistory SET EXAM_RESULT='2' WHERE EXAM_DATE='%s' AND STU_ID='%s' AND EXAM_TYPE='%s'", strOldDate, strStuID, strType);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
-
-			if (isResend == TRUE)
-			{
-				strSQL.Format("UPDATE stuDateHistory SET EXAM_RESULT='2' WHERE EXAM_DATE='%s' AND STU_ID='%s' AND EXAM_TYPE='%s'", strOldDate, strStuID, strType);
-				g_mysqlCon.ExecuteSQL(strSQL, strMsg);
-			}
-
-			strDate.Replace("年", "/");
-			strDate.Replace("月", "/");
-			strDate.Replace("日", "");
-			strSQL.Format("INSERT INTO stuDateHistory (EXAM_DATE, STU_ID, EXAM_TYPE) VALUES('%s', '%s', '%s')", strDate, strStuID, strType);
-			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
-
-
-			WaitForSingleObject(pFrame->m_hSocketEvent, 2000); //等待信息发送
 		}
 
+		strDate.Replace("年", "/");
+		strDate.Replace("月", "/");
+		strDate.Replace("日", "");
+		//删除重复数据
+		strSQL.Format("DELETE FROM stuDateHistory WHERE EXAM_DATE='%s' AND STU_ID='%s' AND EXAM_TYPE='%s'", strDate, strStuID, strType);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+		strSQL.Format("INSERT INTO stuDateHistory (EXAM_DATE, STU_ID, EXAM_TYPE) VALUES('%s', '%s', '%s')", strDate, strStuID, strType);
+		g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+
+		Refresh();
 	}
 }
 

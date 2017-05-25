@@ -9,6 +9,14 @@
 #include <opencv\cxcore.h>
 #include <opencv2\core.hpp>
 #include <opencv2\opencv.hpp>
+#include "MainFrm.h"
+#include "MyPicCtrl.h"
+
+enum DATA_TYPE
+{
+	DATA_NEW, //新添信息
+	DATA_EDIT //修改信息
+};
 
 class CViewRegister : public CBCGPFormView
 {
@@ -35,13 +43,16 @@ public:
 	afx_msg void OnBnClickedCamera();
 	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 
+	int m_nDataType; //当前信息类型
+	int m_nLastView; //上一个视图,只在修改信息时有效
+
 	//背景定位
 	CStatic m_BKpos1, m_BKpos2;
 	CRect m_rctBK1, m_rctBK2;
 	CStatic m_Content;
 	CRect m_rctContent;
 
-	CStatic m_SPhoto;
+	CMyPicCtrl m_SPhoto;
 
 	CStatic m_Sta_Num;
 	CString m_strNumber; //档案号
@@ -70,6 +81,7 @@ public:
 
 	//背景设置
 	CStatic m_staticText[10]; //10个静态文本框
+	afx_msg void OnBnClickedClear();
 };
 
 

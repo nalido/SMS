@@ -1189,6 +1189,14 @@ void CViewBooking2::OnBnClickedAutoOrder()
 		m_datas1[iStu][5] = "1";
 		m_order.push_back(iStu);
 
+		//课程信息
+		int classStep = atoi(m_datas1[iStu][3]);
+		CString classType = m_datas1[iStu][4];
+		CString cn;
+		cn.Format("c%d", classStep + 1);
+		m_wndPrint.m_classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
+		m_wndPrint.m_sheetInfo.strClassType = classType;
+
 		//确定上下午
 		CString strClassID = m_datas1[iStu][2];
 		int classIndex = (atoi(strClassID)-1) / 2;

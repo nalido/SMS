@@ -25,11 +25,14 @@ CDlgDateItem::~CDlgDateItem()
 void CDlgDateItem::DoDataExchange(CDataExchange* pDX)
 {
 	CBCGPDialog::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_E1, m_strDate);
 }
 
 
 BEGIN_MESSAGE_MAP(CDlgDateItem, CBCGPDialog)
 	ON_NOTIFY(MCN_SELECT, IDC_MONTHCALENDAR1, &CDlgDateItem::OnMcnSelectMonthcalendar1)
+	ON_BN_CLICKED(IDC_OOK, &CDlgDateItem::OnBnClickedOok)
+	ON_BN_CLICKED(IDC_CCANCEL, &CDlgDateItem::OnBnClickedCcancel)
 END_MESSAGE_MAP()
 
 
@@ -45,7 +48,8 @@ void CDlgDateItem::OnMcnSelectMonthcalendar1(NMHDR *pNMHDR, LRESULT *pResult)
 
 	*pResult = 0;
 
-	OnOK();
+	UpdateData(FALSE);
+	//OnOK();
 }
 
 
@@ -71,4 +75,16 @@ BOOL CDlgDateItem::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// 异常:  OCX 属性页应返回 FALSE
+}
+
+
+void CDlgDateItem::OnBnClickedOok()
+{
+	OnOK();
+}
+
+
+void CDlgDateItem::OnBnClickedCcancel()
+{
+	OnCancel();
 }

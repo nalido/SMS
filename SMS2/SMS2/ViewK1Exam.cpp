@@ -370,6 +370,9 @@ void CViewK1Exam::OnBnClickedSendsms()
 			strDate.Replace("年", "/");
 			strDate.Replace("月", "/");
 			strDate.Replace("日", "");
+			//删除重复数据
+			strSQL.Format("DELETE FROM stuDateHistory WHERE EXAM_DATE='%s' AND STU_ID='%s' AND EXAM_TYPE='科目一'", strDate, strStuID);
+			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 			strSQL.Format("INSERT INTO stuDateHistory (EXAM_DATE, STU_ID, EXAM_TYPE) VALUES('%s', '%s', '科目一')", strDate, strStuID);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 

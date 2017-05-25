@@ -454,7 +454,7 @@ void CViewAllStudents::Refresh(int nID, CString strDateS, CString strDateE)
 							students.TEL, students.CAR_TYPE, students.FILE_NAME, students.CLASS_NUM, \
 							students.STEP,  stuQuits.QUIT_DATE FROM students \
 							left join stuQuits ON stuQuits.STU_ID=students.FILE_NAME \
-							WHERE REGIST_DATE>'%s' AND REGIST_DATE<='%s' ORDER BY students.REGIST_DATE, students.FILE_NAME",
+							WHERE REGIST_DATE>'%s' AND REGIST_DATE<='%s' AND students.STEP<'1011' ORDER BY students.REGIST_DATE, students.FILE_NAME",
 							strDateS, strDateE);
 			  g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg);
 			  ShowMsg2Output1(strMsg);
@@ -469,9 +469,11 @@ void CViewAllStudents::Refresh(int nID, CString strDateS, CString strDateE)
 					  m_datas1[nRow][7] = "正常";
 				  else if (step < 1002)
 					  m_datas1[nRow][7] = "政审不通过";
-				  else if (step<1010)
+				  else if (step==1002)
 					  m_datas1[nRow][7] = "中途退学";
-				  else
+				  else if (step == 1011)
+					  m_datas1[nRow][7] = "放弃报名";
+				  else if (step == 1010)
 					  m_datas1[nRow][7] = "已毕业";
 			  }
 	}
