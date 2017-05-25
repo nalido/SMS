@@ -159,6 +159,10 @@ LRESULT CViewRegister::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE);
 		GetDlgItem(IDC_CLEAR)->ShowWindow(SW_HIDE);
 		OnBnClickedClear();
+		KillTimer(0);
+		m_isCaptured = FALSE;
+		GetDlgItem(IDC_CAMERA)->SetWindowTextA("打开摄像头");
+		m_cap.setTo(255);
 	}
 	else if (flag == 2)
 	{
@@ -564,12 +568,14 @@ HBRUSH CViewRegister::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 void CViewRegister::OnBnClickedClear()
 {
 	//清空输入框
+	m_Sta_Num.SetWindowTextA("");
 	m_Ed_Name.SetWindowTextA("");
 	m_Ed_ID.SetWindowTextA("");
 	m_Ed_Tel.SetWindowTextA("");
 	m_Ed_Home.SetWindowTextA("");
 	m_Ed_Fee.SetWindowTextA("");
 	m_Comb_CarType.SetCurSel(0);
+	m_cap.setTo(255);
 
 	if (m_nLastView == VIEW_K1CHECK)
 	{
