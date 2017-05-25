@@ -3,6 +3,7 @@
 // π© SMS2.rc  π”√
 //
 #define IDC_DEL                         2
+#define IDOK2                           3
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDD_SMS2_FORM                   101
@@ -63,7 +64,7 @@
 #define IDD_SCAN_ENTER                  224
 #define IDD_FEE_UP                      225
 #define IDD_PROXY                       226
-#define IDI_ICON2                       229
+#define IDD_CARSTAT                     234
 #define IDC_COMPANY_URL                 1041
 #define IDC_BUTTON1                     1055
 #define IDC_SEL_DAY                     1055
@@ -74,6 +75,7 @@
 #define IDC_SMS                         1055
 #define IDC_RESPON                      1055
 #define IDC_SELSTUDENT                  1055
+#define IDC_CCANCEL                     1055
 #define IDC_BTN_NOPASS                  1056
 #define IDC_BUTTON4                     1056
 #define IDC_RESET                       1056
@@ -89,6 +91,7 @@
 #define IDC_EXPORT2                     1057
 #define IDC_TALK                        1057
 #define IDC_PHOTO                       1058
+#define IDC_EDITITEM                    1058
 #define IDC_CAMERA                      1059
 #define IDC_DATE_SIGNIN                 1061
 #define IDC_CARTYPE                     1063
@@ -110,6 +113,7 @@
 #define IDC_QUEQIN                      1068
 #define IDC_FEEDBACK                    1068
 #define IDC_RETURN                      1068
+#define IDC_CLEAR                       1068
 #define IDC_TEL                         1069
 #define IDC_NAME3                       1069
 #define IDC__TMP_ORDER                  1069
@@ -144,6 +148,7 @@
 #define IDC_LIST3                       1078
 #define IDC_SAVE6                       1078
 #define IDC_RETURN1                     1079
+#define IDC_SAVE7                       1079
 #define IDC_RETURN2                     1080
 #define IDC_BTN_SMS1                    1081
 #define IDC_BTN_SMS2                    1082
@@ -155,6 +160,7 @@
 #define IDC_NEW_STUDENT                 1084
 #define IDC_CHANGEBACK                  1085
 #define IDC_BUTTON1085                  1085
+#define IDC_DEL_STUDENT                 1085
 #define IDC_EDIT_FILEPATH2              1086
 #define IDC_STUPROGRESS                 1087
 #define IDC_FILEPATH2                   1087
@@ -386,7 +392,10 @@
 #define IDC_PROXY                       1259
 #define IDC_SLABEL1                     1260
 #define IDC_SLABEL2                     1261
+#define IDC_SETSTAT                     1261
 #define IDC_SLABEL3                     1262
+#define IDC_OOK                         1262
+#define IDC_LINE                        1265
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -446,9 +455,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        234
+#define _APS_NEXT_RESOURCE_VALUE        243
 #define _APS_NEXT_COMMAND_VALUE         32894
-#define _APS_NEXT_CONTROL_VALUE         1261
+#define _APS_NEXT_CONTROL_VALUE         1266
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

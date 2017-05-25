@@ -606,7 +606,7 @@ void CViewBooking2::Refresh(int nID)
 
 	if (nID == 0 || nID == 3)//查询可用车辆信息
 	{
-		strSQL.Format("select CAR_ID from carinfo WHERE STATE<'5'");
+		strSQL.Format("select CAR_ID from cars WHERE CAR_STAT='0'");
 		m_datas3.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas3, strMsg))
 		{
@@ -1188,6 +1188,14 @@ void CViewBooking2::OnBnClickedAutoOrder()
 		//选定第一个学生
 		m_datas1[iStu][5] = "1";
 		m_order.push_back(iStu);
+
+		//课程信息
+		int classStep = atoi(m_datas1[iStu][3]);
+		CString classType = m_datas1[iStu][4];
+		CString cn;
+		cn.Format("c%d", classStep + 1);
+		m_wndPrint.m_classInfo.nClassID = xPublic::GETINT2(classType, cn, 0);
+		m_wndPrint.m_sheetInfo.strClassType = classType;
 
 		//确定上下午
 		CString strClassID = m_datas1[iStu][2];

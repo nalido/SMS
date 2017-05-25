@@ -44,6 +44,7 @@ BEGIN_MESSAGE_MAP(CDlgDevice2, CBCGPDialog)
 	ON_BN_CLICKED(IDC_RADIO4, &CDlgDevice2::OnBnClickedRadio4)
 	ON_BN_CLICKED(IDC_FIND, &CDlgDevice2::OnBnClickedFind)
 	ON_BN_CLICKED(IDC_PROXY, &CDlgDevice2::OnBnClickedProxy)
+	ON_BN_CLICKED(IDC_EDITITEM, &CDlgDevice2::OnBnClickedEdititem)
 END_MESSAGE_MAP()
 
 
@@ -139,10 +140,7 @@ static BOOL CALLBACK GridCCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		std::vector<CStrs>::iterator it = pThis->m_datasC.begin() + nRow;
 		if (!it->empty())
 		{
-			if (nCol==1)
-				pdi->item.varValue = pThis->m_datasC[nRow][2];
-			else
-				pdi->item.varValue = pThis->m_datasC[nRow][nCol];
+			pdi->item.varValue = pThis->m_datasC[nRow][nCol];
 		}
 		else
 		{
@@ -348,6 +346,8 @@ BOOL CDlgDevice2::OnInitDialog()
 	GetDlgItem(IDC_SAVE)->EnableWindow(FALSE);
 	GetDlgItem(IDC_NEWITEM)->EnableWindow(FALSE);
 	GetDlgItem(IDC_DELITEM)->EnableWindow(FALSE);
+	GetDlgItem(IDC_EDITITEM)->EnableWindow(FALSE);
+	m_isEditting = FALSE;
 
 	if (m_nQueryType == QUERY_MAINTENANCE)
 		GetDlgItem(IDC_PROXY)->ShowWindow(SW_SHOW);
@@ -365,6 +365,22 @@ void CALLBACK CDlgDevice2::OnGridClick(LPVOID lParam)
 	CDlgDevice2* pThis = (CDlgDevice2*)lParam;
 
 	if (pThis->m_wndGrid.IsWholeRowSel()) return;
+
+
+	CBCGPGridRow* pRow = pThis->m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		int nRow = pRow->GetRowId();
+		if (nRow != pThis->m_nRow && pThis->m_isEditting)
+		{
+			pThis->MessageBox("请先保存当前行的修改后再修改别的行");
+			return;
+		}
+		if (nRow < pThis->m_nOldRows && !pThis->m_isEditting)
+		{
+			pThis->MessageBox("对旧记录的修改将不会被保存");
+		}
+	}
 
 	CBCGPGridItem* pItem = pThis->m_wndGrid.GetCurSelItem();
 	if (pItem != NULL)
@@ -392,7 +408,7 @@ void CALLBACK CDlgDevice2::OnGridCClick(LPVOID lParam)
 	{
 		int nRow = pRow->GetRowId();
 		pThis->m_strCarID = pThis->m_datasC[nRow][0];
-		pThis->m_strPlateNum = pThis->m_datasC[nRow][2];
+		pThis->m_strPlateNum = pThis->m_datasC[nRow][1];
 		pThis->PostMessageA(WM_USER_UPDATE_VIEW, (WPARAM)1);
 	}
 }
@@ -406,6 +422,9 @@ LRESULT CDlgDevice2::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 		GetDlgItem(IDC_NEWITEM)->EnableWindow(TRUE);
 		GetDlgItem(IDC_DELITEM)->EnableWindow(TRUE);
 
+		if (m_nQueryType == QUERY_MAINTENANCE)
+			GetDlgItem(IDC_EDITITEM)->EnableWindow(TRUE);
+
 		m_wndGrid.EnableWindow(TRUE);
 		m_wndGridM.EnableWindow(FALSE);
 		m_wndGridY.EnableWindow(FALSE);
@@ -418,7 +437,7 @@ void CDlgDevice2::RefreshCar()
 {
 	CString strMsg, strSQL;
 
-	strSQL.Format("SELECT * FROM carinfo");
+	strSQL.Format("SELECT CAR_ID, PLATE_NUM FROM cars");
 	m_datasC.clear();
 	g_mysqlCon.ExecuteQuery(strSQL, m_datasC, strMsg);
 	ShowMsg2Output1(strMsg);
@@ -476,7 +495,10 @@ void CDlgDevice2::CountData()
 		if (m_datas[i][0].Left(7) == strThisMonth)
 		{
 			sum_m++;
-			money_m += atoi(m_datas[i][3]);
+			if (m_nQueryType == QUERY_MAINTENANCE)
+				money_m += atoi(m_datas[i][3]);
+			else if (m_nQueryType == QUERY_OIL)
+				money_m += atoi(m_datas[i][1]);
 		}
 		else
 		{
@@ -490,6 +512,10 @@ void CDlgDevice2::CountData()
 			m_datasM.push_back(strs);
 
 			sum_m = 1;
+			if (m_nQueryType == QUERY_MAINTENANCE)
+				money_m = atoi(m_datas[i][3]);
+			else if (m_nQueryType == QUERY_OIL)
+				money_m = atoi(m_datas[i][1]);
 			strThisMonth = m_datas[i][0].Left(7);
 		}
 
@@ -512,7 +538,7 @@ void CDlgDevice2::CountData()
 	CString strThisYear = m_datasM[0][0].Left(4);
 	for (int i = 0; i < m; i++)
 	{
-		if (m_datas[i][0].Left(4) == strThisYear)
+		if (m_datasM[i][0].Left(4) == strThisYear)
 		{
 			sum_y += atoi(m_datasM[i][1]);
 			money_y += atoi(m_datasM[i][2]);
@@ -529,6 +555,7 @@ void CDlgDevice2::CountData()
 			m_datasY.push_back(strsy);
 
 			sum_y = 1;
+			money_y = atoi(m_datasM[i][2]);
 			strThisYear = m_datasM[i][0].Left(4);
 		}
 	}
@@ -564,6 +591,8 @@ void CDlgDevice2::OnBnClickedNewitem()
 		strs.push_back("");
 	}
 	m_datas.push_back(strs);
+
+	m_nRow = m_datas.size() - 1;
 
 	m_wndGrid.GridRefresh(m_datas.size());
 }
@@ -603,19 +632,61 @@ void CDlgDevice2::GetNewData()
 	//不更新m_nOldRows，作为新老数据的分界点
 }
 
+
+CStrs CDlgDevice2::GetNewData(int nRow)
+{
+	CBCGPGridRow* pRow = m_wndGrid.GetRow(nRow);
+
+	BOOL isValid = FALSE; //一行数据至少有一个非空才有效
+	CStrs strs;
+	for (int i = 0; i < m_nColumns; i++)
+	{
+		CBCGPGridItem* pItem = pRow->GetItem(i);
+		CString d = pItem->GetValue();
+		strs.push_back(d);
+		if (!d.IsEmpty())
+		{
+			isValid = TRUE;
+		}
+	}
+
+	if (!isValid)
+	{
+		strs.clear();
+	}
+
+	return strs;
+
+	//不更新m_nOldRows，作为新老数据的分界点
+}
+
+
 void CDlgDevice2::OnBnClickedSave()
 {
 	m_wndGrid.SetReadOnly();
 	m_wndGrid.SetWholeRowSel();
 	GetDlgItem(IDC_SAVE)->EnableWindow(FALSE);
+	GetDlgItem(IDC_EDITITEM)->EnableWindow(TRUE);
 
-	GetNewData();
-	int nRows = m_datas.size();
-	if (m_nOldRows >= nRows) return; //没有新数据
-
-	for (int nRow = m_nOldRows; nRow < nRows; nRow++)
+	if (!m_isEditting) //添加新记录
 	{
-		AddNewRowToDB(m_datas[nRow]);
+		GetNewData();
+		int nRows = m_datas.size();
+		if (m_nOldRows >= nRows) return; //没有新数据
+
+		for (int nRow = m_nOldRows; nRow < nRows; nRow++)
+		{
+			AddNewRowToDB(m_datas[nRow]);
+		}
+	}
+	else //修改记录
+	{
+		m_isEditting = FALSE;
+		CStrs strs = GetNewData(m_nRow);
+		if (strs.size()>0)
+		{
+			UpdateRowTODB(strs);
+		}
 	}
 
 	Refresh();
@@ -640,6 +711,33 @@ void CDlgDevice2::AddNewRowToDB(CStrs strs)
 		strSQL.Format("INSERT INTO mots (MOT_DATE, MOT_RESULT, RNAME, CAR_ID, PLATE_NUM)\
 						VALUES('%s', '%s', '%s', '%s', '%s')",
 						strs[0], strs[1], strs[2], m_strCarID, m_strPlateNum);
+		break;
+	}
+
+	g_mysqlCon.ExecuteSQL(strSQL, strMsg);
+	ShowMsg2Output1(strMsg);
+}
+
+
+void CDlgDevice2::UpdateRowTODB(CStrs strs)
+{
+	CString strMsg, strSQL;
+	switch (m_nQueryType)
+	{
+	case QUERY_OIL:
+		strSQL.Format("UPDATE oils SET OIL_DATE='%s', MONEY='%s', RNAME='%s' \
+					  	WHERE CAR_ID='%s' AND PLAT_NUM='%s' AND OIL_DATE='%s'",
+						strs[0], strs[1], strs[2], m_strCarID, m_strPlateNum, strs[0]);
+		break;
+	case QUERY_MAINTENANCE:
+		strSQL.Format("UPDATE maintenances SET MDATE='%s', MITEM='%s', COMPLETE_DATE='%s', FEE='%s', \
+						RNAME='%s' WHERE CAR_ID='%s' AND PLATE_NUM='%s' AND MDATE='%s'",
+						strs[0], strs[1], strs[2], strs[3], strs[4], m_strCarID, m_strPlateNum, strs[0]);
+		break;
+	case QUERY_MOT:
+		strSQL.Format("UPDATE mots SET MOT_DATE='%s', MOT_RESULT='%s', RNAME='%s' WHERE CAR_ID='%s' \
+						AND PLATE_NUM='%s' AND MOT_DATE='%s'",
+						strs[0], strs[1], strs[2], m_strCarID, m_strPlateNum, strs[0]);
 		break;
 	}
 
@@ -703,11 +801,13 @@ void CDlgDevice2::OnBnClickedRadio1()
 	m_wndGridY.EnableWindow(FALSE);
 	m_wndGrid.GridRefresh(m_datas.size());
 
-	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	CBCGPGridRow* pRow = m_wndGridC.GetCurSel();
 	if (pRow != NULL)
 	{
 		GetDlgItem(IDC_DELITEM)->EnableWindow(TRUE);
 		GetDlgItem(IDC_NEWITEM)->EnableWindow(TRUE);
+		GetDlgItem(IDC_EDITITEM)->EnableWindow(TRUE);
+		m_isEditting = FALSE;
 	}
 
 
@@ -725,6 +825,8 @@ void CDlgDevice2::OnBnClickedRadio2()
 
 	GetDlgItem(IDC_DELITEM)->EnableWindow(FALSE);
 	GetDlgItem(IDC_NEWITEM)->EnableWindow(FALSE);
+	GetDlgItem(IDC_EDITITEM)->EnableWindow(FALSE);
+	m_isEditting = FALSE;
 	GetDlgItem(IDC_PROXY)->ShowWindow(SW_HIDE);
 }
 
@@ -738,6 +840,8 @@ void CDlgDevice2::OnBnClickedRadio4()
 
 	GetDlgItem(IDC_DELITEM)->EnableWindow(FALSE);
 	GetDlgItem(IDC_NEWITEM)->EnableWindow(FALSE);
+	GetDlgItem(IDC_EDITITEM)->EnableWindow(FALSE);
+	m_isEditting = FALSE;
 	GetDlgItem(IDC_PROXY)->ShowWindow(SW_HIDE);
 }
 
@@ -807,4 +911,19 @@ void CDlgDevice2::OnBnClickedProxy()
 		MessageBox("请在打开的表格中编辑并保存");
 		ShellExecuteA(NULL, NULL, strFileName, NULL, NULL, SW_SHOWNORMAL);
 	}
+}
+
+
+void CDlgDevice2::OnBnClickedEdititem()
+{
+	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow != NULL)
+	{
+		m_nRow = pRow->GetRowId();
+		GetDlgItem(IDC_EDITITEM)->EnableWindow(FALSE);
+		GetDlgItem(IDC_SAVE)->EnableWindow(TRUE);
+		m_isEditting = TRUE;
+		m_wndGrid.SetReadOnly(0);
+	}
+
 }

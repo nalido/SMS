@@ -73,6 +73,7 @@ BEGIN_MESSAGE_MAP(CMSGINFO, CBCGPDialog)
 	ON_EN_CHANGE(IDC_E3, &CMSGINFO::OnEnChangeE3)
 	ON_EN_CHANGE(IDC_E4, &CMSGINFO::OnEnChangeE4)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CMSGINFO::OnCbnSelchangeCombo1)
+	ON_BN_CLICKED(IDOK, &CMSGINFO::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 
@@ -446,4 +447,24 @@ void CMSGINFO::OnEnChangeE4()
 void CMSGINFO::OnCbnSelchangeCombo1()
 {
 	// TODO:  在此添加控件通知处理程序代码
+}
+
+
+void CMSGINFO::OnBnClickedOk()
+{
+	switch (m_nFlag)
+	{
+	case 1: //开班短信
+	{		
+				if (m_strClassIssue.IsEmpty())
+				{
+					MessageBox("请输入学员期数");
+					return;
+				}
+
+	}
+		break;
+	}
+
+	OnOK();
 }

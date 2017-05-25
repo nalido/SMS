@@ -84,6 +84,7 @@ void CViewPermission::OnInitialUpdate()
 	arrColumns.push_back("设备管理");
 	arrColumns.push_back("员工管理");
 	arrColumns.push_back("信息管理");
+	arrColumns.push_back("驾校管理");
 
 	int nColumns = arrColumns.size();
 	m_nColumns = nColumns;
@@ -101,7 +102,7 @@ void CViewPermission::Refresh()
 {
 	CString strMsg, strSQL;
 	m_datas.clear();
-	strSQL.Format("SELECT UNAME, NEW_STUDENTS, STUDENTS, DEVICES, STUFF, ALL_STUDENTS, UID FROM stuff WHERE UPERMISSION != '1'");
+	strSQL.Format("SELECT UNAME, NEW_STUDENTS, STUDENTS, DEVICES, STUFF, ALL_STUDENTS, SCHOOL, UID FROM stuff WHERE UPERMISSION != '1'");
 	if (g_mysqlCon.ExecuteQuery(strSQL, m_datas, strMsg) && m_datas.size() > 0)
 	{
 		m_wndGrid.RemoveAll();
@@ -158,9 +159,9 @@ void CViewPermission::OnBnClickedUpdate()
 		{
 			CString strMsg, strSQL;
 			strSQL.Format("UPDATE stuff SET UPERMISSION='2', NEW_STUDENTS='%s', STUDENTS='%s', DEVICES='%s'\
-						  , STUFF='%s', ALL_STUDENTS='%s' WHERE UID='%s'"
+						  , STUFF='%s', ALL_STUDENTS='%s', SCHOOL='%s' WHERE UID='%s'"
 						  , m_datas[nRow][1], m_datas[nRow][2], m_datas[nRow][3], m_datas[nRow][4]
-						  , m_datas[nRow][5], m_datas[nRow][6]);
+						  , m_datas[nRow][5], m_datas[nRow][6], m_datas[nRow][7]);
 			g_mysqlCon.ExecuteSQL(strSQL, strMsg);
 			ShowMsg2Output1(strMsg);
 		}

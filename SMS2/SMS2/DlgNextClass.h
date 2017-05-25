@@ -21,7 +21,11 @@ protected:
 public:
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 
-	CStatic m_S[11]; //静态文本框
+	int m_nFlag; //flag=1 表示修改设置
+
+	CStatic m_S[12]; //静态文本框
+	CEdit m_E[8];
+	CFont m_fontE;
 	CComboBox m_Comb;
 	CString m_strSelectedClass; //选中的课时
 	std::vector<CString> m_arrClassText;
@@ -29,4 +33,5 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnCbnSelchangeCombo1();
 	afx_msg void OnBnClickedOk();
+	afx_msg void OnBnClickedOk2();
 };

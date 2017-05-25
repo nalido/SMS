@@ -260,7 +260,7 @@ void CViewStuffEnter::OnBnClickedLogin()
 
 	CString strMsg, strSQL;
 	CDStrs datas;
-	strSQL.Format("SELECT UID, UPERMISSION, NEW_STUDENTS, STUDENTS, DEVICES, STUFF, ALL_STUDENTS FROM stuff WHERE UNAME='%s' AND UPSWD=PASSWORD('%s')", m_strName, m_strPSWD);
+	strSQL.Format("SELECT UID, UPERMISSION, NEW_STUDENTS, STUDENTS, DEVICES, STUFF, ALL_STUDENTS, SCHOOL FROM stuff WHERE UNAME='%s' AND UPSWD=PASSWORD('%s')", m_strName, m_strPSWD);
 	if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg))
 	{
 		//strMsg.Format("»¶Ó­Äú£¬ %s", m_strName);
@@ -273,7 +273,7 @@ void CViewStuffEnter::OnBnClickedLogin()
 			m_isLoged = TRUE;
 			g_strUserID = datas[0][0];
 			int permission = atoi(datas[0][1]);
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				g_nPermissions[i] = atoi(datas[0][i + 2]);
 			}

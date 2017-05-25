@@ -31,6 +31,9 @@ public:
 
 	virtual BOOL OnInitDialog();
 
+	int m_nRow; //修改的行数
+	BOOL m_isEditting; //是否正在修改历史记录
+
 	//virtualGrid
 	//按天显示
 	CStatic m_wndGridLocation;
@@ -68,12 +71,15 @@ public:
 	afx_msg void OnBnClickedNewitem();
 	afx_msg void OnBnClickedSave();
 	void AddNewRowToDB(CStrs strs);
+	void UpdateRowTODB(CStrs strs);
 	void DelRowFromDB(CStrs strs);
 	void GetNewData(); //获取用户输入的新数据
+	CStrs GetNewData(int nRow); //获取用户输入的新数据
 	afx_msg void OnBnClickedDelitem();
 	afx_msg void OnBnClickedRadio1();
 	afx_msg void OnBnClickedRadio2();
 	afx_msg void OnBnClickedRadio4();
 	afx_msg void OnBnClickedFind();
 	afx_msg void OnBnClickedProxy();
+	afx_msg void OnBnClickedEdititem();
 };

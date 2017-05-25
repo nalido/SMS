@@ -48,4 +48,5 @@ public:
 	void DelRowFromDB(CStrs strs);
 	void GetNewData(); //获取用户输入的新数据
 	afx_msg void OnBnClickedDelitem();
+	afx_msg void OnBnClickedSetstat();
 };

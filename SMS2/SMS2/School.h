@@ -41,6 +41,7 @@ public:
 	afx_msg void OnBnClickedSave4();
 	afx_msg void OnBnClickedSave5();
 	afx_msg void OnBnClickedSave6();
+	afx_msg void OnBnClickedSave7();
 };
 
 

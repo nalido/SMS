@@ -17,6 +17,7 @@ CViewRegister::CViewRegister()
 : CBCGPFormView(CViewRegister::IDD)
 , m_isCaptured(FALSE)
 , m_canCap(FALSE)
+, m_nDataType(DATA_NEW)
 {
 	EnableVisualManagerStyle();
 
@@ -72,6 +73,7 @@ BEGIN_MESSAGE_MAP(CViewRegister, CBCGPFormView)
 	ON_BN_CLICKED(IDC_NEWFILE, &CViewRegister::OnBnClickedNewfile)
 	ON_MESSAGE(WM_USER_MESSAGE, OnUserMessage)
 	ON_WM_CTLCOLOR()
+	ON_BN_CLICKED(IDC_CLEAR, &CViewRegister::OnBnClickedClear)
 END_MESSAGE_MAP()
 
 
@@ -135,11 +137,12 @@ void CViewRegister::OnTimer(UINT_PTR nIDEvent)
 	if (!cap.empty())
 	{
 		m_cap = cap(cv::Rect(150, 2, 340, 476)).clone(); //按照5:7的一寸照片比例截取
-		IplImage* frame;
-		frame = &IplImage(m_cap);
-		CvvImage cvvImage;
-		cvvImage.CopyOf(frame);
-		cvvImage.DrawToHDC(hdc, rect);
+		m_SPhoto.Invalidate();
+		//IplImage* frame;
+		//frame = &IplImage(m_cap);
+		//CvvImage cvvImage;
+		//cvvImage.CopyOf(frame);
+		//cvvImage.DrawToHDC(hdc, rect);
 	}
 
 	CBCGPFormView::OnTimer(nIDEvent);
@@ -147,8 +150,108 @@ void CViewRegister::OnTimer(UINT_PTR nIDEvent)
 
 LRESULT CViewRegister::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 {
-	//Invalidate();
-	//UpdateWindow();
+	int flag = (int)wParam;
+	if (flag == 1)
+	{
+		m_nLastView = VIEW_REGISTER;
+		m_nDataType = DATA_NEW;
+		GetDlgItem(IDC_BTN_SIGN)->SetWindowTextA("注册");
+		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE);
+		GetDlgItem(IDC_CLEAR)->ShowWindow(SW_HIDE);
+		OnBnClickedClear();
+		KillTimer(0);
+		m_isCaptured = FALSE;
+		GetDlgItem(IDC_CAMERA)->SetWindowTextA("打开摄像头");
+		m_cap.setTo(255);
+	}
+	else if (flag == 2)
+	{
+		m_nLastView = VIEW_K1CHECK;
+		m_nDataType = DATA_EDIT;
+		GetDlgItem(IDC_BTN_SIGN)->SetWindowTextA("确认修改");
+		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(TRUE);
+		GetDlgItem(IDC_CLEAR)->ShowWindow(SW_SHOW);
+		KillTimer(0);
+		m_isCaptured = FALSE;
+		GetDlgItem(IDC_CAMERA)->SetWindowTextA("重新采集照片");
+
+
+		CString strStuID = (char*)lParam;
+		CString strMsg, strSQL;
+
+		strSQL.Format("SELECT REGIST_DATE, CAR_TYPE, SNAME, GENDER, BIRTHDAY, TEL, FEE, ID, HOME FROM students WHERE FILE_NAME='%s'", strStuID);
+		CDStrs datas;
+		if (g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg) && datas.size()>0)
+		{
+			m_strNumber = strStuID;
+			CString date = datas[0][0];
+			CString type = datas[0][1];
+			CString name = datas[0][2];
+			CString gender = datas[0][3];
+			CString birth = datas[0][4];
+			CString tel = datas[0][5];
+			CString fee = datas[0][6];
+			CString id = datas[0][7];
+			CString home = datas[0][8];
+
+			m_Sta_Num.SetWindowTextA(m_strNumber);
+			m_Ed_Name.SetWindowTextA(name);
+			m_Ed_Tel.SetWindowTextA(tel);
+			m_Ed_Fee.SetWindowTextA(fee);
+			m_Ed_ID.SetWindowTextA(id);
+			m_Ed_Home.SetWindowTextA(home);
+			m_Comb_CarType.SetWindowTextA(type);
+			m_Comb_Gender.SetWindowTextA(gender);
+			m_Date_Sign.SetWindowTextA(date);
+			m_Date_Birth.SetWindowTextA(birth);
+			CRect rect;
+			m_Sta_Num.GetClientRect(&rect);
+			m_Sta_Num.MapWindowPoints(this, &rect);
+			InvalidateRect(&rect, TRUE); //重绘背景 消除重影
+
+
+			//本地打开照片，若本地无，则查询服务器下载
+			ShowMsg2Output1("选择修改对象：档案" + m_strNumber);
+			CString strFile;
+			strFile.Format("%s\\%s.bmp", g_strFilePath, m_strNumber);
+			char* file = strFile.GetBuffer();
+			m_cap = cv::imread(file);
+			strFile.ReleaseBuffer();
+			if (m_cap.empty()) //本地无照片，从服务器下载
+			{
+				//数据打包
+				CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+				if (pFrame->m_pSendBuf != NULL)
+				{
+					MessageBox("上一个信息还未处理完毕，请稍等重试。");
+				}
+				else
+				{
+					int len = 11; //
+					pFrame->m_isSendReady = FALSE;
+					pFrame->m_pSendBuf = new BYTE[len];//发送完删除
+					pFrame->m_nSendLen = len;
+					pFrame->m_pSendBuf[0] = 3; //请求图像数据
+					char* cID = m_strNumber.GetBuffer();
+					memcpy(pFrame->m_pSendBuf + 1, cID, 10); //档案号
+					m_strNumber.ReleaseBuffer();
+					pFrame->m_isSendReady = TRUE;
+				}
+			}
+			else
+			{
+				m_isCaptured = TRUE;
+				m_SPhoto.Invalidate();
+			}
+		}
+		else
+		{
+			MessageBox("查询学员信息失败！");
+			return 0;
+		}
+
+
+	}
 
 	return 0;
 }
@@ -187,6 +290,8 @@ void CViewRegister::OnInitialUpdate()
 
 	GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE); //必须先有档案号
 	GetDlgItem(IDC_NEWFILE)->EnableWindow(TRUE);
+
+	m_SPhoto.InitPicSource(&m_cap);
 }
 
 
@@ -229,21 +334,21 @@ void CViewRegister::OnPaint()
 	MemDC.DeleteDC();
 	MemMap.DeleteObject();
 
-	if (m_isCaptured)
-	{
-		CRect rect;
-		m_SPhoto.GetClientRect(&rect);
-		CDC* pDc = m_SPhoto.GetDC();
-		HDC hdc = pDc->GetSafeHdc();
-		if (!m_cap.empty())
-		{
-			IplImage* frame;
-			frame = &IplImage(m_cap);
-			CvvImage cvvImage;
-			cvvImage.CopyOf(frame);
-			cvvImage.DrawToHDC(hdc, rect);
-		}
-	}
+	//if (m_isCaptured)
+	//{
+	//	CRect rect;
+	//	m_SPhoto.GetClientRect(&rect);
+	//	CDC* pDc = m_SPhoto.GetDC();
+	//	HDC hdc = pDc->GetSafeHdc();
+	//	if (!m_cap.empty())
+	//	{
+	//		IplImage* frame;
+	//		frame = &IplImage(m_cap);
+	//		CvvImage cvvImage;
+	//		cvvImage.CopyOf(frame);
+	//		cvvImage.DrawToHDC(hdc, rect);
+	//	}
+	//}
 }
 
 
@@ -273,6 +378,8 @@ void CViewRegister::OnBnClickedBtnSign()
 		return;
 	}
 
+	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+
 	//m_strNumber = ""; //档案号
 	CString name, type, tel, fee, id, home, birth, date, gender;
 	m_Ed_Name.GetWindowText(name);
@@ -288,21 +395,33 @@ void CViewRegister::OnBnClickedBtnSign()
 		|| fee.IsEmpty() || id.IsEmpty() || home.IsEmpty()
 		|| birth.IsEmpty() || date.IsEmpty() || gender.IsEmpty())
 	{
-		MessageBox("必须每一项都填完再点击注册！");
+		MessageBox("数据不完整！");
 		ShowMsg2Output1("没填完数据就点击了注册按钮");
 	}
 	else
 	{
 		CString strMsg("");
 		CString strSQL("");
+
+		if (m_nDataType == DATA_EDIT)
+		{
+			strSQL.Format("DELETE FROM students WHERE FILE_NAME='%s'", m_strNumber);
+			if (!g_mysqlCon.ExecuteSQL(strSQL, strMsg))
+			{
+				MessageBox("操作失败，请检查网络连接！");
+				pFrame->SelectView(m_nLastView);
+				return;
+			}
+		}
+
 		strSQL.Format("INSERT INTO STUDENTS \
 			(ID, SNAME, BIRTHDAY, FILE_NUMBER, FILE_NAME, REGIST_DATE, CAR_TYPE, TEL, HOME, FEE, GENDER, STEP) \
-					  			VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '0000')",
-								id, name, birth, m_strNumber.Right(8), m_strNumber, date, type, tel, home, fee, gender);
+			VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '0')",
+			id, name, birth, m_strNumber.Right(8), m_strNumber, date, type, tel, home, fee, gender);
 		if (g_mysqlCon.ExecuteSQL(strSQL, strMsg))
 		{
-			MessageBox("注册成功！");
-			ShowMsg2Output1(name + "注册成功！");
+			MessageBox("操作成功！");
+			ShowMsg2Output1(name + "操作成功！");
 			GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE); //防止重复注册同一个信息
 			GetDlgItem(IDC_NEWFILE)->EnableWindow(TRUE);
 
@@ -316,7 +435,7 @@ void CViewRegister::OnBnClickedBtnSign()
 			sFileName.ReleaseBuffer();
 
 			//数据打包
-			CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+			//CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 			IplImage ipl_img = m_cap;
 			int len = ipl_img.imageSize + 23;
 			if (pFrame->m_pSendBuf != NULL)
@@ -344,14 +463,24 @@ void CViewRegister::OnBnClickedBtnSign()
 		{
 			MessageBox("注册错误！");
 			ShowMsg2Output1("注册操作错误：" + strSQL);
-			LOG("SQLERROR.log", strSQL);
-			LOG("SQLERROR.log", g_mysqlCon.GetError());
+			//LOG("SQLERROR.log", strSQL);
+			//LOG("SQLERROR.log", g_mysqlCon.GetError());
 		}
+
+		if (m_nLastView == VIEW_K1CHECK)
+			pFrame->SelectView(m_nLastView);
 	}
 }
 
 LRESULT CViewRegister::OnUserMessage(WPARAM wParam, LPARAM lParam)
 {
+	int flag = (int)lParam;
+	if (flag == 2)
+	{
+		cv::Mat* pImg = (cv::Mat*)wParam;
+		m_cap = pImg->clone();
+		m_SPhoto.Invalidate();
+	}
 	return 0;
 }
 
@@ -400,6 +529,8 @@ void CViewRegister::OnBnClickedNewfile()
 			m_strNumber.Format("DJ%s%04d", strMonth, nfiles);
 		}
 		m_Sta_Num.SetWindowTextA(m_strNumber);
+		m_nDataType = DATA_NEW;
+		GetDlgItem(IDC_BTN_SIGN)->SetWindowTextA("注册");
 		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(TRUE);
 		GetDlgItem(IDC_CAMERA)->SetWindowTextA("打开摄像头");
 		OnBnClickedCamera();
@@ -431,4 +562,24 @@ HBRUSH CViewRegister::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	HBRUSH hbr = CBCGPFormView::OnCtlColor(pDC, pWnd, nCtlColor);
 	
 	return hbr;
+}
+
+
+void CViewRegister::OnBnClickedClear()
+{
+	//清空输入框
+	m_Sta_Num.SetWindowTextA("");
+	m_Ed_Name.SetWindowTextA("");
+	m_Ed_ID.SetWindowTextA("");
+	m_Ed_Tel.SetWindowTextA("");
+	m_Ed_Home.SetWindowTextA("");
+	m_Ed_Fee.SetWindowTextA("");
+	m_Comb_CarType.SetCurSel(0);
+	m_cap.setTo(255);
+
+	if (m_nLastView == VIEW_K1CHECK)
+	{
+		CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+		pFrame->SelectView(m_nLastView);
+	}
 }

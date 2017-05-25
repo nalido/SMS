@@ -1,6 +1,5 @@
 #pragma once
 
-
 // CDlgNextBookDate ¶Ô»°¿ò
 
 class CDlgNextBookDate : public CBCGPDialog
@@ -20,6 +19,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog();
+
 
 	CString m_strStuID;
 	CEdit m_E;

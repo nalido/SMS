@@ -23,4 +23,6 @@ public:
 	CString m_strDate;
 //	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnInitDialog();
+	afx_msg void OnBnClickedOok();
+	afx_msg void OnBnClickedCcancel();
 };

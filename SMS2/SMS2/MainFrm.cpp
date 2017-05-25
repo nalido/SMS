@@ -395,10 +395,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CBCGPFrameWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 	
-	HICON m_hIcon;
-	m_hIcon = AfxGetApp()->LoadIcon(IDI_ICON2);
-	SetIcon(m_hIcon, TRUE); // Set big icon
-	SetIcon(m_hIcon, FALSE); // Set small icon
+	//HICON m_hIcon;
+	//m_hIcon = AfxGetApp()->LoadIcon(IDI_ICON1);
+	//SetIcon(m_hIcon, TRUE); // Set big icon
+	//SetIcon(m_hIcon, FALSE); // Set small icon
 
 	if (!CreateRibbonBar ())
 	{
@@ -1200,7 +1200,11 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 				if (g_nPermissions[4] == 0) //信息管理
 					m_wndRibbonBar.ShowCategory(5, FALSE);
 
-				m_wndRibbonBar.ShowCategory(6, FALSE);
+				if (g_nPermissions[5] == 0) //驾校管理
+					m_wndRibbonBar.ShowCategory(6, FALSE);
+
+
+				m_wndRibbonBar.ShowCategory(7, FALSE); //员工权限
 
 				m_wndRibbonBar.RecalcLayout();
 				break;
