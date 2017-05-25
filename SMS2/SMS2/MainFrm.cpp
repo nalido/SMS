@@ -1200,7 +1200,11 @@ LRESULT CMainFrame::OnUserMessage(WPARAM wParam, LPARAM lParam)
 				if (g_nPermissions[4] == 0) //信息管理
 					m_wndRibbonBar.ShowCategory(5, FALSE);
 
-				m_wndRibbonBar.ShowCategory(6, FALSE);
+				if (g_nPermissions[5] == 0) //驾校管理
+					m_wndRibbonBar.ShowCategory(6, FALSE);
+
+
+				m_wndRibbonBar.ShowCategory(7, FALSE); //员工权限
 
 				m_wndRibbonBar.RecalcLayout();
 				break;

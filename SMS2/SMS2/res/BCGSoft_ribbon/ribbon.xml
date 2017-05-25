@@ -2,7 +2,7 @@
 <BCGP_RIBBON>
 	<HEADER>
 		<VERSION>1</VERSION>
-		<VERSION_STAMP>12</VERSION_STAMP>
+		<VERSION_STAMP>13</VERSION_STAMP>
 	</HEADER>
 	<RIBBON_BAR>
 		<ELEMENT_NAME>RibbonBar</ELEMENT_NAME>
@@ -373,15 +373,6 @@
 								<TEXT>KPI</TEXT>
 								<INDEX_LARGE>1</INDEX_LARGE>
 							</ELEMENT>
-							<ELEMENT>
-								<ELEMENT_NAME>Button</ELEMENT_NAME>
-								<ID>
-									<NAME>ID_VIEW_SCAN</NAME>
-									<VALUE>32884</VALUE>
-								</ID>
-								<TEXT>查阅</TEXT>
-								<INDEX_LARGE>11</INDEX_LARGE>
-							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>
 				</PANELS>
@@ -405,6 +396,15 @@
 								</ID>
 								<TEXT>学生信息统计</TEXT>
 								<INDEX_LARGE>0</INDEX_LARGE>
+							</ELEMENT>
+							<ELEMENT>
+								<ELEMENT_NAME>Button</ELEMENT_NAME>
+								<ID>
+									<NAME>ID_VIEW_SCAN</NAME>
+									<VALUE>32884</VALUE>
+								</ID>
+								<TEXT>查阅</TEXT>
+								<INDEX_LARGE>1</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>
@@ -431,6 +431,21 @@
 								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
 								<INDEX_LARGE>0</INDEX_LARGE>
 							</ELEMENT>
+						</ELEMENTS>
+					</PANEL>
+				</PANELS>
+			</CATEGORY>
+			<CATEGORY>
+				<ELEMENT_NAME>Category</ELEMENT_NAME>
+				<NAME>员工权限</NAME>
+				<IMAGE_LARGE>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_7</NAME>
+				</IMAGE_LARGE>
+				<PANELS>
+					<PANEL>
+						<ELEMENT_NAME>Panel</ELEMENT_NAME>
+						<NAME>员工权限</NAME>
+						<ELEMENTS>
 							<ELEMENT>
 								<ELEMENT_NAME>Button</ELEMENT_NAME>
 								<ID>
@@ -439,7 +454,7 @@
 								</ID>
 								<TEXT>员工权限管理</TEXT>
 								<ALWAYS_LARGE>TRUE</ALWAYS_LARGE>
-								<INDEX_LARGE>1</INDEX_LARGE>
+								<INDEX_LARGE>0</INDEX_LARGE>
 							</ELEMENT>
 						</ELEMENTS>
 					</PANEL>
@@ -449,10 +464,10 @@
 				<ELEMENT_NAME>Category</ELEMENT_NAME>
 				<NAME>设置</NAME>
 				<IMAGE_SMALL>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_SMALL_7</NAME>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_SMALL_8</NAME>
 				</IMAGE_SMALL>
 				<IMAGE_LARGE>
-					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_7</NAME>
+					<NAME>IDR_BCGP_IMAGE_CATEGORY_LARGE_8</NAME>
 				</IMAGE_LARGE>
 				<PANELS>
 					<PANEL>
