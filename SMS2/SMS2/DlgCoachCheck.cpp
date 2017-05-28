@@ -27,25 +27,15 @@ void CDlgCoachCheck::DoDataExchange(CDataExchange* pDX)
 	CBCGPDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_GRID1, m_wndGridLocation);
 
-	DDX_Control(pDX, IDC_COMBO1, m_Comb_YearS);
-	DDX_Control(pDX, IDC_COMBO2, m_Comb_MonthS);
-	DDX_Control(pDX, IDC_COMBO3, m_Comb_DayS);
-	DDX_Control(pDX, IDC_COMBO4, m_Comb_YearE);
-	DDX_Control(pDX, IDC_COMBO5, m_Comb_MonthE);
-	DDX_Control(pDX, IDC_COMBO6, m_Comb_DayE);
-	DDX_Text(pDX, IDC_COMBO1, m_strYearS);
-	DDX_Text(pDX, IDC_COMBO2, m_strMonthS);
-	DDX_Text(pDX, IDC_COMBO3, m_strDayS);
-	DDX_Text(pDX, IDC_COMBO4, m_strYearE);
-	DDX_Text(pDX, IDC_COMBO5, m_strMonthE);
-	DDX_Text(pDX, IDC_COMBO6, m_strDayE);
-
 	DDX_Radio(pDX, IDC_RADIO1, m_nQueryType);
 
 	DDX_Text(pDX, IDC_MSG1, m_strMsg1);
 	DDX_Text(pDX, IDC_MSG2, m_strMsg2);
 	DDX_Text(pDX, IDC_MSG3, m_strMsg3);
 
+
+	DDX_Control(pDX, IDC_DATES, m_DateS);
+	DDX_Control(pDX, IDC_DATE2, m_DateE);
 
 	DDX_Control(pDX, IDC_MSG1, m_Static_Msg1);
 	DDX_Control(pDX, IDC_MSG2, m_Static_Msg2);
@@ -54,15 +44,14 @@ void CDlgCoachCheck::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CDlgCoachCheck, CBCGPDialog)
-	ON_CBN_SELCHANGE(IDC_COMBO2, &CDlgCoachCheck::OnCbnSelchangeCombo2)
-	ON_CBN_SELCHANGE(IDC_COMBO5, &CDlgCoachCheck::OnCbnSelchangeCombo5)
 //	ON_CBN_CLOSEUP(IDC_COMBO2, &CDlgCoachCheck::OnCbnCloseupCombo2)
 ON_BN_CLICKED(IDC_RADIO1, &CDlgCoachCheck::OnBnClickedRadio1)
 ON_BN_CLICKED(IDC_RADIO2, &CDlgCoachCheck::OnBnClickedRadio2)
 ON_BN_CLICKED(IDC_RADIO4, &CDlgCoachCheck::OnBnClickedRadio4)
 ON_BN_CLICKED(IDC_QUERY, &CDlgCoachCheck::OnBnClickedQuery)
-ON_BN_CLICKED(IDC_SETTODAY, &CDlgCoachCheck::OnBnClickedSettoday)
+//ON_BN_CLICKED(IDC_SETTODAY, &CDlgCoachCheck::OnBnClickedSettoday)
 ON_WM_CTLCOLOR()
+ON_BN_CLICKED(IDC_EXPORT, &CDlgCoachCheck::OnBnClickedExport)
 END_MESSAGE_MAP()
 
 
@@ -93,6 +82,58 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 	return TRUE;
 }
 
+
+static BOOL CALLBACK GridMCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
+{
+	ASSERT(pdi != NULL);
+
+	CDlgCoachCheck* pThis = (CDlgCoachCheck*)lp;
+
+	int nRow = pdi->item.nRow;	// Row of an item
+	int nCol = pdi->item.nCol;	// Column of an item
+	int ndata = pThis->m_datasM.size(); //number of data exist
+	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
+	{
+		std::vector<CStrs>::iterator it = pThis->m_datasM.begin() + nRow;
+		if (!it->empty())
+		{
+			pdi->item.varValue = pThis->m_datasM[nRow][nCol];
+		}
+		else
+		{
+			pdi->item.varValue = "访问内存出错";
+		}
+	}
+
+	return TRUE;
+}
+
+static BOOL CALLBACK GridYCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
+{
+	ASSERT(pdi != NULL);
+
+	CDlgCoachCheck* pThis = (CDlgCoachCheck*)lp;
+
+	int nRow = pdi->item.nRow;	// Row of an item
+	int nCol = pdi->item.nCol;	// Column of an item
+	int ndata = pThis->m_datasY.size(); //number of data exist
+	if (nCol >= 0 && nRow >= 0 && ndata > 0 && nRow < ndata)
+	{
+		std::vector<CStrs>::iterator it = pThis->m_datasY.begin() + nRow;
+		if (!it->empty())
+		{
+			pdi->item.varValue = pThis->m_datasY[nRow][nCol];
+		}
+		else
+		{
+			pdi->item.varValue = "访问内存出错";
+		}
+	}
+
+	return TRUE;
+}
+
+
 CString arrType[] = { "出勤统计", "缺勤统计", "工时统计", "绩效统计", "KPI" };
 BOOL CDlgCoachCheck::OnInitDialog()
 {
@@ -104,6 +145,7 @@ BOOL CDlgCoachCheck::OnInitDialog()
 	m_wndGridLocation.MapWindowPoints(this, &rect);
 
 	DWORD nStyle = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER;
+	//按天统计
 	m_wndGrid.Create(nStyle, rect, this, IDC_GRID_STUPRO);
 	m_wndGrid.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
 	m_wndGrid.EnableHeader(TRUE, 0); //不允许表头移动
@@ -115,30 +157,71 @@ BOOL CDlgCoachCheck::OnInitDialog()
 	m_wndGrid.EnableRowHeader(TRUE);
 	m_wndGrid.EnableLineNumbers();
 
+	//按月统计
+	m_wndGridM.Create(nStyle, rect, this, IDC_GRID_STUPRO+1);
+	m_wndGridM.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
+	m_wndGridM.EnableHeader(TRUE, 0); //不允许表头移动
+	// Set grid tab order (first):
+	m_wndGridM.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndGridM.SetReadOnly();
+	m_wndGridM.SetWholeRowSel();
+	m_wndGridM.SetSingleSel(); //只能选一个
+	m_wndGridM.EnableRowHeader(TRUE);
+	m_wndGridM.EnableLineNumbers();
+
+	//按年统计
+	m_wndGridY.Create(nStyle, rect, this, IDC_GRID_STUPRO+2);
+	m_wndGridY.SetCustomColors(-1, -1, -1, -1, -1, RGB(213, 213, 213)); //设置边框
+	m_wndGridY.EnableHeader(TRUE, 0); //不允许表头移动
+	// Set grid tab order (first):
+	m_wndGridY.SetWindowPos(&CWnd::wndTop, -1, -1, -1, -1, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	m_wndGridY.SetReadOnly();
+	m_wndGridY.SetWholeRowSel();
+	m_wndGridY.SetSingleSel(); //只能选一个
+	m_wndGridY.EnableRowHeader(TRUE);
+	m_wndGridY.EnableLineNumbers();
+
 	int nColumn = 0;
 	int hw = m_wndGrid.GetRowHeaderWidth();
 	std::vector<CString> arrColumns;
+	std::vector<CString> arrColumnsM;
 	switch (m_nCheckType)
 	{
 	case CHECK_CHUQIN:
 		arrColumns.push_back("出勤日期");
 		arrColumns.push_back("出勤时间");
 		arrColumns.push_back("学员个数");
+
+		arrColumnsM.push_back("统计时期");
+		arrColumnsM.push_back("记录总数");
+		arrColumnsM.push_back("出勤统计");
 		break;
 	case CHECK_QUEQIN:
 		arrColumns.push_back("缺勤日期");
 		arrColumns.push_back("缺勤时间");
 		arrColumns.push_back("学员个数");
+
+		arrColumnsM.push_back("统计时期");
+		arrColumnsM.push_back("记录总数");
+		arrColumnsM.push_back("缺勤统计");
 		break;
 	case CHECK_WORKTIME:
 		arrColumns.push_back("工作日期");
 		arrColumns.push_back("工作时间");
 		arrColumns.push_back("工作时长");
+
+		arrColumnsM.push_back("统计时期");
+		arrColumnsM.push_back("记录总数");
+		arrColumnsM.push_back("工时统计");
 		break;
 	case CHECK_JIXIAO:
 		arrColumns.push_back("记录日期");
 		arrColumns.push_back("记录时间");
 		arrColumns.push_back("学员个数");
+
+		arrColumnsM.push_back("统计时期");
+		arrColumnsM.push_back("记录总数");
+		arrColumnsM.push_back("绩效统计");
 		break;
 	case CHECK_KPI:
 		arrColumns.push_back("记录日期");
@@ -150,8 +233,12 @@ BOOL CDlgCoachCheck::OnInitDialog()
 		arrColumns.push_back("介绍学员数");
 		arrColumns.push_back("介绍目标数");
 		arrColumns.push_back("总分");
+
+		arrColumnsM = arrColumns;
 		break;
 	}
+	m_arrColumnsM = arrColumnsM;
+	m_arrColumns = arrColumns;
 
 	int nColumns = arrColumns.size();
 	int w = rect.Width() - hw;
@@ -165,35 +252,45 @@ BOOL CDlgCoachCheck::OnInitDialog()
 	//注册虚拟列表回调函数
 	m_wndGrid.EnableVirtualMode(GridCallback, (LPARAM)this);
 
-	CTime t = GetServerTime();//CTime::GetCurrentTime();
+
+	nColumns = arrColumnsM.size();
+	w = rect.Width() - hw;
+	nColumnWidth = w / nColumns;
+	for (int i = 0; i < nColumns; i++)
+	{
+		m_wndGridM.InsertColumn(i, arrColumnsM[i], nColumnWidth);
+		m_wndGridM.SetColumnAlign(i, HDF_CENTER);
+		m_wndGridM.SetHeaderAlign(i, HDF_CENTER);
+	}
+	//注册虚拟列表回调函数
+	m_wndGridM.EnableVirtualMode(GridMCallback, (LPARAM)this);
+	m_wndGridM.EnableWindow(FALSE);
+
+
+	nColumns = arrColumnsM.size();
+	w = rect.Width() - hw;
+	nColumnWidth = w / nColumns;
+	for (int i = 0; i < nColumns; i++)
+	{
+		m_wndGridY.InsertColumn(i, arrColumnsM[i], nColumnWidth);
+		m_wndGridY.SetColumnAlign(i, HDF_CENTER);
+		m_wndGridY.SetHeaderAlign(i, HDF_CENTER);
+	}
+	//注册虚拟列表回调函数
+	m_wndGridY.EnableVirtualMode(GridYCallback, (LPARAM)this);
+	m_wndGridY.EnableWindow(FALSE);
+
 	//默认统计当月
-	m_strYearS = t.Format("%Y");
-	m_strMonthS = t.Format("%m");
-	//int month = atoi(m_strMonthS) - 1;
-	m_strDayS = "01";
-	m_strYearE = t.Format("%Y");
-	m_strMonthE = t.Format("%m");
-	m_strDayE = t.Format("%d");
-	int month = atoi(m_strMonthE) + 1;
-	m_strMonthE.Format("%02d", month);
-	//UpdateData(FALSE);
-
-	int year = atoi(m_strYearS) + 1; //最多查询近三年的数据
-	for (int i = 3; i >= 0; i--)
-	{
-		CString strYear; 
-		strYear.Format("%d", year - i);
-		m_Comb_YearS.AddString(strYear);
-		m_Comb_YearE.AddString(strYear);
-	}
-
-	for (int i = 1; i <= 12; i++)
-	{
-		CString strMonth;
-		strMonth.Format("%02d", i);
-		m_Comb_MonthS.AddString(strMonth);
-		m_Comb_MonthE.AddString(strMonth);
-	}
+	m_DateS.SetFormat("yyyy/MM/dd");
+	m_DateE.SetFormat("yyyy/MM/dd");
+	//获得本月
+	CTime t = GetServerTime() + CTimeSpan(31, 0, 0, 0);
+	m_DateE.SetTime(&t);
+	t = GetServerTime();
+	int month = t.GetMonth();
+	int year = t.GetYear();
+	CTime ts(year, month, 1, 0, 0, 0);
+	m_DateS.SetTime(&ts);
 
 
 	m_nQueryType = 0; 
@@ -213,20 +310,16 @@ BOOL CDlgCoachCheck::OnInitDialog()
 
 	if (m_nCheckType == CHECK_JIXIAO) //绩效只能按月或者年查询
 	{
-		//GetDlgItem(IDC_RADIO1)->EnableWindow(FALSE);
-		m_Comb_DayS.EnableWindow(FALSE);
-		m_Comb_DayE.EnableWindow(FALSE);
 		m_nQueryType = 1;
 		m_strMsg20.Format("本月绩效为");
 		UpdateData(FALSE);
 		GetJiXiao();
 		UpdateCStatic();
 	}
-	else if (m_nCheckType == CHECK_KPI) //KPI只能按月或者年查询
+	else if (m_nCheckType == CHECK_KPI) //KPI只能按月查询
 	{
 		GetDlgItem(IDC_RADIO1)->EnableWindow(FALSE);
-		m_Comb_DayS.EnableWindow(FALSE);
-		m_Comb_DayE.EnableWindow(FALSE);
+		GetDlgItem(IDC_RADIO4)->EnableWindow(FALSE);
 		m_nQueryType = 1;
 		m_strMsg20.Format("本月KPI为");
 		UpdateData(FALSE);
@@ -249,102 +342,49 @@ int GetDateNum(int year, int month)
 	return days[month];
 }
 
-void CDlgCoachCheck::OnCbnSelchangeCombo2()
-{
-	UpdateData();
-	int pos = 0;
-	pos = m_Comb_YearS.GetCurSel();
-	if (pos < 0)
-	{
-		m_Comb_YearS.SetCurSel(2);
-		pos = 2;
-	}
-	m_Comb_YearS.GetLBText(pos, m_strYearS);
-	pos = m_Comb_MonthS.GetCurSel();
-	m_Comb_MonthS.GetLBText(pos, m_strMonthS);
-	int year = atoi(m_strYearS);
-	int month = atoi(m_strMonthS);
-	int days = GetDateNum(year, month);
-	m_Comb_DayS.ResetContent();
-	for (int i = 1; i <= days; i++)
-	{
-		CString strDay;
-		strDay.Format("%02d", i);
-		m_Comb_DayS.AddString(strDay);
-	}
-	m_Comb_DayS.GetCurSel();
-}
-
-
-void CDlgCoachCheck::OnCbnSelchangeCombo5()
-{
-	UpdateData();
-	int pos = 0;
-	pos = m_Comb_YearE.GetCurSel();
-	if (pos < 0) 
-	{
-		m_Comb_YearE.SetCurSel(2);
-		pos = 2;
-	}
-	m_Comb_YearE.GetLBText(pos, m_strYearE);
-	pos = m_Comb_MonthE.GetCurSel();
-	m_Comb_MonthE.GetLBText(pos, m_strMonthE);
-	int year = atoi(m_strYearE);
-	int month = atoi(m_strMonthE);
-	int days = GetDateNum(year, month);
-	m_Comb_DayE.ResetContent();
-	for (int i = 1; i <= days; i++)
-	{
-		CString strDay;
-		strDay.Format("%02d", i);
-		m_Comb_DayE.AddString(strDay);
-	}
-}
-
-
-
 
 void CDlgCoachCheck::OnBnClickedRadio1()
 {
-	UpdateData();
-	m_Comb_YearS.EnableWindow(TRUE);
-	m_Comb_MonthS.EnableWindow(TRUE);
-	m_Comb_DayS.EnableWindow(TRUE);
-	m_Comb_YearE.EnableWindow(TRUE);
-	m_Comb_MonthE.EnableWindow(TRUE);
-	m_Comb_DayE.EnableWindow(TRUE);
+	m_nQueryType = 0;
+
+	m_wndGrid.EnableWindow(TRUE);
+	m_wndGridM.EnableWindow(FALSE);
+	m_wndGridY.EnableWindow(FALSE);
+
+	m_wndGrid.GridRefresh(m_datas.size());
 }
 
 
 void CDlgCoachCheck::OnBnClickedRadio2()
 {
-	UpdateData();
-	m_Comb_YearS.EnableWindow(TRUE);
-	m_Comb_MonthS.EnableWindow(TRUE);
-	m_Comb_DayS.EnableWindow(FALSE);
-	m_Comb_YearE.EnableWindow(TRUE);
-	m_Comb_MonthE.EnableWindow(TRUE);
-	m_Comb_DayE.EnableWindow(FALSE);
+	m_nQueryType = 1;
+
+	m_wndGrid.EnableWindow(FALSE);
+	m_wndGridM.EnableWindow(TRUE);
+	m_wndGridY.EnableWindow(FALSE);
+	m_wndGridM.GridRefresh(m_datasM.size());
 }
 
 
 void CDlgCoachCheck::OnBnClickedRadio4()
 {
-	UpdateData();
-	m_Comb_YearS.EnableWindow(TRUE);
-	m_Comb_MonthS.EnableWindow(FALSE);
-	m_Comb_DayS.EnableWindow(FALSE);
-	m_Comb_YearE.EnableWindow(TRUE);
-	m_Comb_MonthE.EnableWindow(FALSE);
-	m_Comb_DayE.EnableWindow(FALSE);
+	m_nQueryType = 2;
+
+	m_wndGrid.EnableWindow(FALSE);
+	m_wndGridM.EnableWindow(FALSE);
+	m_wndGridY.EnableWindow(TRUE);
+	m_wndGridY.GridRefresh(m_datasY.size());
 }
 
 
 void CDlgCoachCheck::GetKPI()
 {
 	CString strMsg, strSQL;
-	CString strDayStart = GetSelDate(0);
-	CString strDayEnd = GetSelDate(1);
+	CString strDayStart;
+	CString strDayEnd;
+	m_DateS.GetWindowTextA(strDayStart);
+	m_DateE.GetWindowTextA(strDayEnd);
+
 	CDStrs datas;
 
 	//学员评分记录
@@ -396,8 +436,10 @@ void CDlgCoachCheck::GetKPI()
 void CDlgCoachCheck::GetJiXiao()
 {
 	CString strMsg, strSQL;
-	CString strDayStart = GetSelDate(0);
-	CString strDayEnd = GetSelDate(1);
+	CString strDayStart;
+	CString strDayEnd;
+	m_DateS.GetWindowTextA(strDayStart);
+	m_DateE.GetWindowTextA(strDayEnd);
 	CDStrs datas;
 
 	//原始绩效
@@ -430,8 +472,10 @@ void CDlgCoachCheck::GetJiXiao()
 void CDlgCoachCheck::Refresh()
 {
 	CString strMsg, strSQL;
-	CString strDayStart = GetSelDate(0);
-	CString strDayEnd = GetSelDate(1);
+	CString strDayStart;
+	CString strDayEnd;
+	m_DateS.GetWindowTextA(strDayStart);
+	m_DateE.GetWindowTextA(strDayEnd);
 	CDStrs datas;
 	switch (m_nCheckType)
 	{
@@ -497,10 +541,15 @@ void CDlgCoachCheck::Refresh()
 			d = atoi(m_datas[i][8])*1.0 / 100;
 			m_datas[i][8].Format("%.2f", d);
 		}
+
+		m_datasM = m_datasY = m_datas;
+
 		break;
 	}
 
-
+	m_wndGridM.EnableWindow(FALSE);
+	m_wndGridY.EnableWindow(FALSE);
+	m_wndGrid.EnableWindow(TRUE);
 	m_wndGrid.GridRefresh(m_datas.size());
 }
 
@@ -515,8 +564,12 @@ void CDlgCoachCheck::UpdateCStatic()
 void CDlgCoachCheck::RemadeData(CDStrs& datas)
 {
 	m_datas.clear();
+	m_datasM.clear();
+	m_datasY.clear();
 
 	int n = datas.size();
+	if (n == 0) return;
+
 	//显示
 	int num = n;
 	if (m_nCheckType == CHECK_WORKTIME) num *= 2;
@@ -540,9 +593,9 @@ void CDlgCoachCheck::RemadeData(CDStrs& datas)
 	if (n == 0) return;
 
 
-	switch (m_nQueryType)
+	//switch (m_nQueryType)
 	{
-	case 0: //按天
+	//case 0: //按天
 		{
 				m_datas = datas;
 				for (int i = 0; i < n; i++)
@@ -550,9 +603,9 @@ void CDlgCoachCheck::RemadeData(CDStrs& datas)
 					int nClass = atoi(m_datas[i][1]) - 1;
 					m_datas[i][1] = GetClassTime(nClass);
 				}
-				break;
+				//break;
 		}
-	case 1: //按月
+	//case 1: //按月
 		{
 				int sum_m = 0;
 				CString strThisMonth = datas[0][0].Left(7);
@@ -564,12 +617,13 @@ void CDlgCoachCheck::RemadeData(CDStrs& datas)
 					{
 						CStrs strs;
 						strs.push_back(strThisMonth);
-						strs.push_back("");
 						CString strSum;
+						strSum.Format("%d", sum_m);
+						strs.push_back(strSum);
 						if (m_nCheckType == CHECK_WORKTIME) sum_m *= 2;
 						strSum.Format("%d", sum_m);
 						strs.push_back(strSum);
-						m_datas.push_back(strs);
+						m_datasM.push_back(strs);
 
 						sum_m = 1;
 						strThisMonth = datas[i][0].Left(7);
@@ -578,15 +632,16 @@ void CDlgCoachCheck::RemadeData(CDStrs& datas)
 
 				CStrs strs;
 				strs.push_back(strThisMonth);
-				strs.push_back("");
 				CString strSum;
+				strSum.Format("%d", sum_m);
+				strs.push_back(strSum);
 				if (m_nCheckType == CHECK_WORKTIME) sum_m *= 2;
 				strSum.Format("%d", sum_m);
 				strs.push_back(strSum);
-				m_datas.push_back(strs);
-				break;
+				m_datasM.push_back(strs);
+				//break;
 		}
-	case 2: //按年
+	//case 2: //按年
 		{
 				int sum = 0;
 				CString strThisYear = datas[0][0].Left(4);
@@ -598,12 +653,13 @@ void CDlgCoachCheck::RemadeData(CDStrs& datas)
 					{
 						CStrs strs;
 						strs.push_back(strThisYear);
-						strs.push_back("");
 						CString strSum;
+						strSum.Format("%d", sum);
+						strs.push_back(strSum);
 						if (m_nCheckType == CHECK_WORKTIME) sum *= 2;
 						strSum.Format("%d", sum);
 						strs.push_back(strSum);
-						m_datas.push_back(strs);
+						m_datasY.push_back(strs);
 
 						sum = 1;
 						strThisYear = datas[i][0].Left(7);
@@ -611,66 +667,23 @@ void CDlgCoachCheck::RemadeData(CDStrs& datas)
 				}
 				CStrs strs;
 				strs.push_back(strThisYear);
-				strs.push_back("");
 				CString strSum;
+				strSum.Format("%d", sum);
+				strs.push_back(strSum);
 				if (m_nCheckType == CHECK_WORKTIME) sum *= 2;
 				strSum.Format("%d", sum);
 				strs.push_back(strSum);
-				m_datas.push_back(strs);
-				break;
+				m_datasY.push_back(strs);
+				//break;
 		}
 	}
 
 }
 
-CString CDlgCoachCheck::GetSelDate(int nID)
-{
-	UpdateData(TRUE);
-	CString date, year, month, day;
-
-	if (nID == 0) //起始时间
-	{
-		year = m_strYearS;
-		month = m_strMonthS;
-		day = m_strDayS;
-	}
-	else if (nID == 1)  //终止时间
-	{
-		year = m_strYearE;
-		month = m_strMonthE;
-		day = m_strDayE;
-	}
-
-	switch (m_nQueryType)
-	{
-	case 0: //按天
-		date.Format("%s/%s/%s", year, month, day);
-		break;
-	case 1: //按月
-		date.Format("%s/%s/00", year, month);
-		break;
-	case 2: //按年
-		date.Format("%s/00/00", year);
-		break;
-	}
-
-	return date;
-}
 
 void CDlgCoachCheck::OnBnClickedQuery()
 {
 	Refresh();
-}
-
-
-void CDlgCoachCheck::OnBnClickedSettoday()
-{
-	CTime t = GetServerTime();//CTime::GetCurrentTime();
-
-	m_strYearE = t.Format("%Y");
-	m_strMonthE = t.Format("%m");
-	m_strDayE = t.Format("%d");
-	UpdateData(FALSE);
 }
 
 
@@ -712,4 +725,40 @@ HBRUSH CDlgCoachCheck::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
 	return hbr;
+}
+
+
+void CDlgCoachCheck::OnBnClickedExport()
+{
+	CString strDayS;
+	CString strDayE;
+	m_DateS.GetWindowTextA(strDayS);
+	m_DateE.GetWindowTextA(strDayE);
+	
+	if (m_nQueryType == 1)
+	{
+		strDayS = strDayS.Left(7);
+		strDayE = strDayE.Left(7);
+	}
+	else if (m_nQueryType == 2)
+	{
+		strDayS = strDayS.Left(4);
+		strDayE = strDayE.Left(4);
+	}
+
+	CString strFileName = arrType[m_nCheckType] + m_strCoach + m_strCoachID + "-" + strDayS + "-" + strDayE + ".csv"; //g_strOutPath + "\\" + 
+	strFileName.Replace('/', '_');
+
+	switch (m_nQueryType)
+	{
+	case 0:
+		ExportExcel(strFileName, m_arrColumns, m_datas);
+		break;
+	case 1:
+		ExportExcel(strFileName, m_arrColumnsM, m_datasM);
+		break;
+	case 2:
+		ExportExcel(strFileName, m_arrColumnsM, m_datasY);
+		break;
+	}
 }

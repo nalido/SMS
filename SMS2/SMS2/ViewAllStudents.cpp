@@ -58,6 +58,7 @@ BEGIN_MESSAGE_MAP(CViewAllStudents, CBCGPFormView)
 	ON_BN_CLICKED(IDC_QUIT, &CViewAllStudents::OnBnClickedQuit)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB2, &CViewAllStudents::OnTcnSelchangeTab2)
 	ON_BN_CLICKED(IDC_EXPORT2, &CViewAllStudents::OnBnClickedExport2)
+	ON_BN_CLICKED(IDC_FIND, &CViewAllStudents::OnBnClickedFind)
 END_MESSAGE_MAP()
 
 
@@ -1048,5 +1049,75 @@ void CViewAllStudents::OnBnClickedExport2()
 		for (int i = 0; i < n; i++)
 			arrColumns.push_back(m_strPiePart[i]);
 		ExportExcel(strFileName, arrColumns, m_datasY);
+	}
+}
+
+
+void CViewAllStudents::OnBnClickedFind()
+{
+	int pos0 = m_TabCtrl.GetCurSel();
+	int pos1 = m_TabShowType.GetCurSel();
+	if (pos1 > 0) return; //只提供按天查询界面的搜索功能
+
+	CString strFind;
+	GetDlgItem(IDC_E1)->GetWindowTextA(strFind);
+
+	if (strFind.IsEmpty()) return;
+
+	int n;
+	CDStrs& datas = m_datas1;
+	switch (pos0)
+	{
+	case 0:
+		n = m_datas1.size();
+		datas = m_datas1;
+		break;
+	case 1:
+		n = m_datas2.size();
+		datas = m_datas2;
+		break;
+	case 2:
+		n = m_datas3.size();
+		datas = m_datas3;
+		break;
+	case 3:
+		n = m_datas4.size();
+		datas = m_datas4;
+		break;
+	case 4:
+		n = m_datas5.size();
+		datas = m_datas5;
+		break;
+	}
+	if (n == 0) return;
+
+	BOOL isFound = FALSE;
+	int i = 0;
+	for (; i < n; i++)
+	{
+		if (datas[i][0] == strFind || datas[i][1] == strFind || datas[i][3] == strFind)
+		{
+			isFound = TRUE;
+			break;
+		}
+	}
+
+	if (isFound)
+	{
+		CBCGPGridRow* pRow = m_wndGrid[pos0].GetRow(i);
+		m_wndGrid[pos0].EnsureVisible(pRow);
+
+		CString strIndex;
+		int index = i + 1;
+		strIndex.Format("在第%d行", index);
+		strFind = strFind + strIndex;
+		GetDlgItem(IDC_E1)->SetWindowTextA(strFind);
+
+		m_wndGrid[pos0].SetCurSel(i);
+	}
+	else
+	{
+		strFind = "没有找到'" + strFind + "'的相关记录";
+		GetDlgItem(IDC_E1)->SetWindowTextA(strFind);
 	}
 }

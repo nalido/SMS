@@ -43,22 +43,18 @@ public:
 	CStatic m_wndGridLocation;
 	CVirtualGridCtrl m_wndGrid;
 	CDStrs m_datas;
+	CVirtualGridCtrl m_wndGridM;
+	CDStrs m_datasM;
+	CVirtualGridCtrl m_wndGridY;
+	CDStrs m_datasY;
+	std::vector<CString> m_arrColumns;
+	std::vector<CString> m_arrColumnsM;
 
-	CComboBox m_Comb_YearS; //起始年份
-	CComboBox m_Comb_MonthS;
-	CComboBox m_Comb_DayS;
-	CComboBox m_Comb_YearE; //终止年份
-	CComboBox m_Comb_MonthE;
-	CComboBox m_Comb_DayE;
-	CString m_strYearS; //起始年份
-	CString m_strMonthS;
-	CString m_strDayS;
-	CString m_strYearE; //终止年份
-	CString m_strMonthE;
-	CString m_strDayE;
+	CDateTimeCtrl m_DateS;
+	CDateTimeCtrl m_DateE;
+
+
 	int m_nQueryType; //查询方式
-	afx_msg void OnCbnSelchangeCombo2();
-	afx_msg void OnCbnSelchangeCombo5();
 
 	afx_msg void OnBnClickedRadio1();
 	afx_msg void OnBnClickedRadio2();
@@ -67,10 +63,9 @@ public:
 	void Refresh();
 	void GetJiXiao(); //获取本月绩效
 	void GetKPI(); //获取本月KPI
-	CString GetSelDate(int nID); //获取选择的时间点 nID=0 起始时间
 	void RemadeData(CDStrs& datas); //根据不同的类型重新整理查询到的数据
 	afx_msg void OnBnClickedQuery();
-	afx_msg void OnBnClickedSettoday();
+//	afx_msg void OnBnClickedSettoday();
 
 	//统计信息
 	CStatic m_Static_Msg1;
@@ -85,4 +80,5 @@ public:
 	CString m_strMsg3;
 	void UpdateCStatic();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnBnClickedExport();
 };

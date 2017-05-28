@@ -1098,7 +1098,7 @@ void CALLBACK CMainFrame::ThreadClockCallback(LPVOID pParam, HANDLE hCloseEvent)
 		{
 			CTime tomo = t + CTimeSpan(1, 0, 0, 0);
 			CString strTomo = tomo.Format("%Y/%m/%d");
-			strSQL.Format("SELECT STU_ID FROM stuDates WHERE BOOK_SMS='0' AND BOOK_DATE='%s'", strTomo);
+			strSQL.Format("SELECT STU_ID FROM stuDates WHERE BOOK_SMS='0' AND BOOK_DATE='%s' AND ENDED='0' ", strTomo);
 			datas.clear();
 			g_mysqlCon.ExecuteQuery(strSQL, datas, strMsg);
 			if (datas.size() > 0)

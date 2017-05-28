@@ -37,7 +37,7 @@ public:
 	int m_nColumns1;
 	void Refresh();
 
-	CStatic m_C[4];
+	CStatic m_C[6];
 
 	CStatic m_wndGridLocation2;
 	CVirtualGridCtrl m_wndGrid2;

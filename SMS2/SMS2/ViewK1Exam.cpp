@@ -36,6 +36,7 @@ BEGIN_MESSAGE_MAP(CViewK1Exam, CBCGPFormView)
 	ON_BN_CLICKED(IDC_SENDSMS, &CViewK1Exam::OnBnClickedSendsms)
 	ON_BN_CLICKED(IDC_K1PASS, &CViewK1Exam::OnBnClickedK1pass)
 	ON_BN_CLICKED(IDC_UPDATE, &CViewK1Exam::OnBnClickedUpdate)
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 
@@ -411,4 +412,17 @@ void CViewK1Exam::OnBnClickedK1pass()
 void CViewK1Exam::OnBnClickedUpdate()
 {
 	Refresh();
+}
+
+
+void CViewK1Exam::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+	// TODO:  在此处添加消息处理程序代码
+
+	CRect rect;
+	GetDlgItem(IDC_LABEL1)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL1)->MapWindowPoints(this, &rect);
+	CBrush brush(COLOR_MANY);
+	dc.FillRect(rect, &brush);
 }

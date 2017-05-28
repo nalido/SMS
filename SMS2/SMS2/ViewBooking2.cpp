@@ -496,7 +496,7 @@ void CViewBooking2::Refresh(int nID)
 		strSQL.Format("SELECT students.SNAME, students.CAR_TYPE, bookings.CLASS_ID, students.CLASS_NUM, \
 						students.CLASS_TYPE, bookings.FLAG, students.FILE_NAME, students.TEL \
 					  	FROM bookings inner join students on bookings.FILE_NAME = students.FILE_NAME \
-						WHERE BOOK_DATE='%s' ORDER BY bookings.CLASS_ID, students.CLASS_NUM, students.SNAME", strDate);
+						WHERE bookings.BOOK_DATE='%s' AND students.STEP<'1000' ORDER BY bookings.CLASS_ID, students.CLASS_NUM, students.SNAME", strDate);
 		m_datas1.clear();
 		if (g_mysqlCon.ExecuteQuery(strSQL, m_datas1, strMsg))
 		{
@@ -735,7 +735,7 @@ void CViewBooking2::OnBnClickedDoPrint()
 	int printType = 0; //打印类型
 
 	CString strMsg;
-	strMsg.Format("是否打印全部派工？（点击是打印全部，否打印当前选择）");
+	strMsg.Format("是否打印全部派工单？\r\n【是】:打印全部\r\n【否】:打印当前选择");
 	switch (MessageBox(strMsg, "打印类型选择", MB_YESNOCANCEL))
 	{
 	case IDYES:

@@ -337,6 +337,8 @@ LRESULT CViewOrderRsp::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 void CViewOrderRsp::OnBnClickedRespon()
 {
 	CBCGPGridRow* pRow = m_wndGrid.GetCurSel();
+	if (pRow == NULL) return;
+
 	int nRow = pRow->GetRowId();
 	if (m_datas[nRow][4] != "1") return; //已经反馈过
 

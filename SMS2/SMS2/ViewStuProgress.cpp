@@ -26,6 +26,7 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 			std::vector<CStrs>::iterator it = pThis->m_datas.begin() + nRow;
 			if (!it->empty())
 			{
+				CString strClassType = pThis->m_datas[nRow][6];
 				if (nCol < 5)
 				{
 					pdi->item.varValue = pThis->m_datas[nRow][nCol];
@@ -36,6 +37,17 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 					CString strTomo = tomo.Format("%Y/%m/%d");
 					if (strTomo == pThis->m_datas[nRow][9] && pThis->m_datas[nRow][10] == "0")
 						pdi->item.clrBackground = COLOR_LITTLE;
+
+
+					if (nCol == 1)
+					{
+						if (strClassType.IsEmpty() || strClassType=="0")
+							pdi->item.clrBackground = COLOR_K1;
+						else if (strClassType == "科目二")
+							pdi->item.clrBackground = COLOR_K2;
+						else if (strClassType == "科目三")
+							pdi->item.clrBackground = COLOR_K3;
+					}
 				}
 				else if(nCol < 9) //后边是进度
 				{
@@ -56,7 +68,6 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 				}
 				else // 9列开始是培训类型的进度
 				{
-					CString strClassType = pThis->m_datas[nRow][6];
 					int stat = atoi(pThis->m_datas[nRow][(nCol+5) / 2]);
 					if (nCol == 9)
 					{
@@ -112,6 +123,7 @@ static BOOL CALLBACK GridCallback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 						}
 					}
 				}
+
 			}
 			else
 			{
@@ -476,7 +488,7 @@ void CViewStuProgress::OnBnClickedSettype()
 				return;
 		}
 
-		CString str = "选择“是”为先报考科目二\r\n选择“否”为先报考科目三";
+		CString str = "选择培训模式:\r\n【是】:先报考科目二\r\n【否】:先报考科目三";
 		int n = MessageBoxA(str, "培训模式选择", MB_YESNOCANCEL);
 		if (n == IDYES)
 		{
@@ -575,4 +587,18 @@ void CViewStuProgress::OnPaint()
 	GetDlgItem(IDC_LABEL3)->MapWindowPoints(this, &rect);
 	CBrush brush2(COLOR_LITTLE);
 	dc.FillRect(rect, &brush2);
+
+
+	GetDlgItem(IDC_LABEL4)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL4)->MapWindowPoints(this, &rect);
+	CBrush brush4(COLOR_K2);
+	dc.FillRect(rect, &brush4);
+	GetDlgItem(IDC_LABEL5)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL5)->MapWindowPoints(this, &rect);
+	CBrush brush5(COLOR_K3);
+	dc.FillRect(rect, &brush5);
+	GetDlgItem(IDC_LABEL6)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL6)->MapWindowPoints(this, &rect);
+	CBrush brush6(COLOR_K1);
+	dc.FillRect(rect, &brush6);
 }

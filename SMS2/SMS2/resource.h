@@ -338,10 +338,13 @@
 #define IDC_LABEL3                      1224
 #define IDC_S36                         1225
 #define IDC_D14                         1225
+#define IDC_LABEL4                      1225
 #define IDC_S37                         1226
 #define IDC_D15                         1226
+#define IDC_LABEL5                      1226
 #define IDC_VIEW_4STUDENT               1227
 #define IDC_S38                         1227
+#define IDC_LABEL6                      1227
 #define IDC_S39                         1228
 #define IDC_E1                          1229
 #define IDC_S40                         1229
@@ -385,7 +388,9 @@
 #define IDC_S61                         1250
 #define IDC_COLOR4                      1251
 #define IDC_TAB1                        1252
+#define IDC_COLOR5                      1252
 #define IDC_DATE1                       1253
+#define IDC_COLOR6                      1253
 #define IDC_DATE2                       1254
 #define IDC_INFO                        1255
 #define IDC_TAB2                        1256
@@ -395,7 +400,11 @@
 #define IDC_SETSTAT                     1261
 #define IDC_SLABEL3                     1262
 #define IDC_OOK                         1262
+#define IDC_SLABEL4                     1263
+#define IDC_SLABEL5                     1264
 #define IDC_LINE                        1265
+#define IDC_SLABEL6                     1265
+#define IDC_DATES                       1266
 #define IDC_GRID_STUPRO                 3000
 #define ID_VIEW_TOOLBARS                32771
 #define ID_VIEW_OUTPUT                  32803
@@ -457,7 +466,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        243
 #define _APS_NEXT_COMMAND_VALUE         32894
-#define _APS_NEXT_CONTROL_VALUE         1266
+#define _APS_NEXT_CONTROL_VALUE         1267
 #define _APS_NEXT_SYMED_VALUE           118
 #endif
 #endif

@@ -132,6 +132,9 @@ enum enum_StudentProgress{
 #define COLOR_DOING RGB(195, 218, 195)
 #define COLOR_DONE RGB(149, 200, 146)
 #define COLOR_HALF RGB(214, 195, 147)
+#define COLOR_K1 RGB(46, 255, 61)
+#define COLOR_K2 RGB(46, 179, 255)
+#define COLOR_K3 RGB(255, 238, 46)
 
 enum VIEW_TYPE{
 	VIEW_MAIN = 0,

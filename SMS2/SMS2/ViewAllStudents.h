@@ -84,6 +84,7 @@ public:
 	afx_msg LRESULT OnUserUpdate(WPARAM wp, LPARAM lp);
 	afx_msg void OnTcnSelchangeTab2(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedExport2();
+	afx_msg void OnBnClickedFind();
 };
 
 

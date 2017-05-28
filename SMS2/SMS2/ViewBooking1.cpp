@@ -406,6 +406,26 @@ void CViewBooking1::OnPaint()
 	GetDlgItem(IDC_LABEL2)->MapWindowPoints(this, &rect);
 	CBrush brush1(RGB(240, 140, 140));
 	dc.FillRect(rect, &brush1);
+
+	GetDlgItem(IDC_LABEL3)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL3)->MapWindowPoints(this, &rect);
+	CBrush brush3(COLOR_SELECTED);
+	dc.FillRect(rect, &brush3);
+
+	GetDlgItem(IDC_LABEL4)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL4)->MapWindowPoints(this, &rect);
+	CBrush brush4(COLOR_MANY);
+	dc.FillRect(rect, &brush4);
+
+	GetDlgItem(IDC_LABEL5)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL5)->MapWindowPoints(this, &rect);
+	CBrush brush5(COLOR_LITTLE);
+	dc.FillRect(rect, &brush5);
+
+	GetDlgItem(IDC_LABEL6)->GetClientRect(&rect);
+	GetDlgItem(IDC_LABEL6)->MapWindowPoints(this, &rect);
+	CBrush brush6(COLOR_NONE);
+	dc.FillRect(rect, &brush6);
 }
 
 LRESULT CViewBooking1::OnUserMessage(WPARAM wp, LPARAM lp)
