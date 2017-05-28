@@ -46,6 +46,7 @@ public:
 	afx_msg void OnBnClickedSendsms();
 	afx_msg void OnBnClickedK1pass();
 	afx_msg void OnBnClickedUpdate();
+	afx_msg void OnPaint();
 };
 
 

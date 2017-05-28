@@ -185,7 +185,7 @@ void COrders::OnBnClickedQuery()
 					FROM bookings \
 					inner join students ON bookings.FILE_NAME = students.FILE_NAME \
 					inner join coachinfo ON bookings.ORDER_COACH = coachinfo.FILE_NUM\
-					WHERE ORDER_DATE>='%s' AND ORDER_DATE<='%s' \
+					WHERE bookings.ORDER_DATE>='%s' AND bookings.ORDER_DATE<='%s' AND students.STEP<'1000' \
 					ORDER BY bookings.ORDER_DATE, bookings.BOOK_DATE, bookings.CLASS_ID, bookings.ORDER_CAR",
 					dateS, dateE);
 	m_datas1.clear();

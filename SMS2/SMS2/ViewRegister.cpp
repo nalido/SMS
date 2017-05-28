@@ -172,7 +172,7 @@ LRESULT CViewRegister::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 		GetDlgItem(IDC_BTN_SIGN)->EnableWindow(TRUE);
 		GetDlgItem(IDC_CLEAR)->ShowWindow(SW_SHOW);
 		KillTimer(0);
-		m_isCaptured = FALSE;
+		m_isCaptured = TRUE;
 		GetDlgItem(IDC_CAMERA)->SetWindowTextA("重新采集照片");
 
 
@@ -202,8 +202,10 @@ LRESULT CViewRegister::OnUserUpdate(WPARAM wParam, LPARAM lParam)
 			m_Ed_Home.SetWindowTextA(home);
 			m_Comb_CarType.SetWindowTextA(type);
 			m_Comb_Gender.SetWindowTextA(gender);
-			m_Date_Sign.SetWindowTextA(date);
-			m_Date_Birth.SetWindowTextA(birth);
+			CTime signDate = Str2Time(date);
+			m_Date_Sign.SetTime(&signDate);
+			CTime birthDay = Str2Time(birth);
+			m_Date_Birth.SetTime(&birthDay);
 			CRect rect;
 			m_Sta_Num.GetClientRect(&rect);
 			m_Sta_Num.MapWindowPoints(this, &rect);
@@ -424,6 +426,7 @@ void CViewRegister::OnBnClickedBtnSign()
 			ShowMsg2Output1(name + "操作成功！");
 			GetDlgItem(IDC_BTN_SIGN)->EnableWindow(FALSE); //防止重复注册同一个信息
 			GetDlgItem(IDC_NEWFILE)->EnableWindow(TRUE);
+			GetDlgItem(IDC_CAMERA)->SetWindowTextA("打开摄像头");
 
 			//保存照片
 			CString sFileName("");
@@ -457,6 +460,7 @@ void CViewRegister::OnBnClickedBtnSign()
 				memcpy(pFrame->m_pSendBuf + 23, ipl_img.imageData, ipl_img.imageSize); //图像数据
 
 				pFrame->m_isSendReady = TRUE;
+				OnBnClickedClear();
 			}
 		}
 		else
@@ -494,6 +498,9 @@ void CViewRegister::OnBnClickedNewfile()
 	m_Ed_Fee.SetWindowTextA("");
 	m_Comb_CarType.SetCurSel(0);
 
+	CTime today = GetServerTime();
+	m_Date_Birth.SetTime(&today);
+	m_Date_Sign.SetTime(&today);
 
 	CTime localtime;
 	localtime = GetServerTime();//CTime::GetCurrentTime();
@@ -576,6 +583,9 @@ void CViewRegister::OnBnClickedClear()
 	m_Ed_Fee.SetWindowTextA("");
 	m_Comb_CarType.SetCurSel(0);
 	m_cap.setTo(255);
+	CTime today = GetServerTime();
+	m_Date_Birth.SetTime(&today);
+	m_Date_Sign.SetTime(&today);
 
 	if (m_nLastView == VIEW_K1CHECK)
 	{

@@ -32,6 +32,8 @@ void CViewK23Exam::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COLOR2, m_C[1]);
 	DDX_Control(pDX, IDC_COLOR3, m_C[2]);
 	DDX_Control(pDX, IDC_COLOR4, m_C[3]);
+	DDX_Control(pDX, IDC_COLOR5, m_C[4]);
+	DDX_Control(pDX, IDC_COLOR6, m_C[5]);
 }
 
 BEGIN_MESSAGE_MAP(CViewK23Exam, CBCGPFormView)
@@ -152,7 +154,13 @@ static BOOL CALLBACK Grid1Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 			break;
 		}
 		
-		
+		if (nCol == 4)
+		{
+			if (strType == "科目二")
+				pdi->item.clrBackground = COLOR_K2;
+			else if (strType == "科目三")
+				pdi->item.clrBackground = COLOR_K3;
+		}
 	}
 
 	return TRUE;
@@ -191,6 +199,18 @@ static BOOL CALLBACK Grid2Callback(BCGPGRID_DISPINFO* pdi, LPARAM lp)
 		if (stat == 2)
 		{
 			pdi->item.clrBackground = COLOR_DONE;
+		}
+		else if (stat == 1)
+		{
+			pdi->item.clrBackground = COLOR_DOING;
+		}
+
+		if (nCol == 6)
+		{
+			if (strType == "科目二")
+				pdi->item.clrBackground = COLOR_K2;
+			else if (strType == "科目三")
+				pdi->item.clrBackground = COLOR_K3;
 		}
 	}
 
@@ -524,8 +544,8 @@ void CViewK23Exam::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 	
-	COLORREF col[4] = { COLOR_LITTLE, COLOR_DOING, COLOR_DONE, COLOR_HALF };
-	for (int i = 0; i < 4; i++)
+	COLORREF col[6] = { COLOR_LITTLE, COLOR_DOING, COLOR_DONE, COLOR_HALF, COLOR_K2, COLOR_K3 };
+	for (int i = 0; i < 6; i++)
 	{
 		CRect rect;
 		m_C[i].GetClientRect(&rect);
